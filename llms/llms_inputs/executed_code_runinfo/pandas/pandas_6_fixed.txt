@@ -1,0 +1,94 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+## Cell 2:
+
+df= pd.read_csv(r'data/Retailsales.csv')
+df=df.drop(columns='Unnamed: 0')
+df.head()
+
+## Cell 3:
+
+df=df.dropna(how='all')
+df
+
+# Current relevent runtime information:
+{'__method__df_dropna': {'type': "<class 'method'>"},
+ '__method__pd_to_numeric': {'type': "<class 'function'>"},
+ 'df': {'execution_cell_source': {'cellno': 4, 'lineno': 1},
+        'has_nan': False,
+        'per_column': {'Order Date': {'dtype': 'object',
+                                      'example_values': ['10/24/19 14:43',
+                                                         '07/29/19 12:40',
+                                                         '10/21/19 18:35',
+                                                         '11/02/19 10:21',
+                                                         '04/30/19 09:23'],
+                                      'num_unique': 142396,
+                                      'type': 'categorical'},
+                       'Order ID': {'dtype': 'object',
+                                    'example_values': ['276550',
+                                                       '184058',
+                                                       '215263',
+                                                       '152760',
+                                                       '158112'],
+                                    'num_unique': 178438,
+                                    'type': 'categorical'},
+                       'Price Each': {'dtype': 'object',
+                                      'example_values': ['109.99',
+                                                         '11.99',
+                                                         '700.0',
+                                                         '150.0',
+                                                         '379.99'],
+                                      'num_unique': 24,
+                                      'type': 'categorical'},
+                       'Product': {'dtype': 'object',
+                                   'example_values': ['Lightning Charging C...',
+                                                      '34in Ultrawide Monit...',
+                                                      'Macbook Pro Laptop',
+                                                      'USB-C Charging Cable',
+                                                      'Vareebadd Phone'],
+                                   'num_unique': 20,
+                                   'type': 'categorical'},
+                       'Purchase Address': {'dtype': 'object',
+                                            'example_values': ['587 13th St, '
+                                                               'San Fra...',
+                                                               '113 Jackson '
+                                                               'St, San ...',
+                                                               '360 Elm St, '
+                                                               'Boston, ...',
+                                                               '904 12th St, '
+                                                               'New Yor...',
+                                                               '169 Sunset St, '
+                                                               'New Y...'],
+                                            'num_unique': 140788,
+                                            'type': 'categorical'},
+                       'Quantity Ordered': {'dtype': 'object',
+                                            'example_values': ['Quantity '
+                                                               'Ordered',
+                                                               '7',
+                                                               '3',
+                                                               '8',
+                                                               '9'],
+                                            'num_unique': 10,
+                                            'type': 'categorical'}},
+        'shape': (186305, 6),
+        'type': 'pandas.core.frame.DataFrame'},
+ 'pd': {'type': "<class 'module'>"}}
+# Target Cell:
+
+
+
+df["Order ID"] = pd.to_numeric(df["Order ID"], errors="coerce")
+df = df.dropna(subset=["Order ID"])
+

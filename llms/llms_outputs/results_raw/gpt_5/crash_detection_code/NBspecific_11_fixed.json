@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "adv is defined, transposed to HWC shape in Cell 12, and matplotlib is imported; plt.imshow accepts the array. No undefined variables or shape issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is defined as a NumPy array with shape (224, 224, 3) and suitable for plt.imshow. No undefined variables or device issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is defined and reshaped to HWC in prior cells; plt is imported. No undefined variables or shape issues apparent.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is defined and transposed to HxWxC shape in prior cells; plt is imported. No missing variables or type issues apparent.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is defined and shaped to HxWxC in prior cells; plt is imported. plt.imshow accepts float arrays. No undefined variables or type errors evident.",
+    "detection": false
+  }
+]

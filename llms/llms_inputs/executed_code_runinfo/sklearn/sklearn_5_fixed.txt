@@ -1,0 +1,65 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, accuracy_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+## Cell 2:
+
+df= pd.read_csv("data/iris.csv")
+
+## Cell 3:
+
+X = df.drop("species",axis=1)
+Y = df["species"]
+x_train, x_test , y_train, y_test=train_test_split (X ,Y , test_size=0.25, random_state=42)
+
+## Cell 4:
+
+clf = LogisticRegression()
+clf.fit(x_train, y_train)
+
+## Cell 5:
+
+y_pred = clf.predict(x_test)
+
+# Current relevent runtime information:
+{'__method__np_concatenate': {'type': '<class '
+                                      "'numpy._ArrayFunctionDispatcher'>"},
+ '__method__np_unique': {'type': "<class 'numpy._ArrayFunctionDispatcher'>"},
+ '__method__plt_show': {'type': "<class 'function'>"},
+ 'confusion_matrix': {'type': "<class 'function'>"},
+ 'np': {'type': "<class 'module'>"},
+ 'plt': {'type': "<class 'module'>"},
+ 'y_pred': {'dtype': 'object',
+            'execution_cell_source': {'cellno': 9, 'lineno': 1},
+            'shape': (38,),
+            'type': 'numpy.ndarray',
+            'value_info': {'num_unique': 3,
+                           'unique_values': ['versicolor',
+                                             'setosa',
+                                             'virginica'],
+                           'value_type': 'categorical or object'}},
+ 'y_test': {'type': "<class 'pandas.core.series.Series'>",
+            'value_info': {'num_unique': 3,
+                           'unique_values': ['versicolor',
+                                             'setosa',
+                                             'virginica'],
+                           'value_type': 'categorical or object'}}}
+# Target Cell:
+
+from sklearn import metrics
+confusion_matrix = metrics.confusion_matrix(y_test , y_pred)
+
+
+
+labels = np.unique(np.concatenate((y_test, y_pred)))
+cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix , display_labels=labels)
+
+cm_display.plot()
+plt.show()

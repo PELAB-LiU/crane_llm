@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "multiplicative_model is defined only inside the decompose function and has not been assigned in the global scope, so referencing it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "multiplicative_model is only defined inside the decompose function and hasn't been assigned in the global scope.",
+    "detection": true
+  },
+  {
+    "reasoning": "multiplicative_model is only defined inside the decompose function and hasn't been assigned in the global scope, so referencing it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "multiplicative_model is only defined inside the decompose function and hasn't been created in the global scope; referencing it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "multiplicative_model is only defined inside the decompose function and has not been created in the global scope; referencing it will raise a NameError.",
+    "detection": true
+  }
+]

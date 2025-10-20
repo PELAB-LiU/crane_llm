@@ -1,0 +1,30 @@
+[
+  {
+    "code_line": "124: ax.margins(0.05)",
+    "message": "Cannot access attribute \"margins\" for class \"ndarray[Any, dtype[Any]]\"\n\u00a0\u00a0Attribute \"margins\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "126:     ax.plot(group.tsne1, group.tsne2, marker='o', linestyle='', ms=12, label=name)",
+    "message": "Cannot access attribute \"plot\" for class \"ndarray[Any, dtype[Any]]\"\n\u00a0\u00a0Attribute \"plot\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "127: ax.legend()",
+    "message": "Cannot access attribute \"legend\" for class \"ndarray[Any, dtype[Any]]\"\n\u00a0\u00a0Attribute \"legend\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "200: study.optimize(find_out_params_model, n_trials=2)",
+    "message": "Argument of type \"(trial: Unknown) -> floating[Any]\" cannot be assigned to parameter \"func\" of type \"ObjectiveFuncType\" in function \"optimize\"\n\u00a0\u00a0Type \"(trial: Unknown) -> floating[Any]\" is not assignable to type \"ObjectiveFuncType\"\n\u00a0\u00a0\u00a0\u00a0Function return type \"floating[Any]\" is incompatible with type \"float | Sequence[float]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0Type \"floating[Any]\" is not assignable to type \"float | Sequence[float]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"floating[Any]\" is not assignable to \"float\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"floating[Any]\" is not assignable to \"Sequence[float]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

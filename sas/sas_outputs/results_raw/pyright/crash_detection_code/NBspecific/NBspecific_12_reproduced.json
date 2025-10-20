@@ -1,0 +1,58 @@
+[
+  {
+    "code_line": "60:         self.df.index = np.arange(len(self.df))",
+    "message": "Cannot assign to attribute \"index\" for class \"DataFrame\"\n\u00a0\u00a0\"ndarray[Any, dtype[signedinteger[Any]]]\" is not assignable to \"Index[Unknown]\"",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "61:         self.df.index.name = 'id'",
+    "message": "Cannot assign to attribute \"name\" for class \"NDArray[signedinteger[Any]]\"\n\u00a0\u00a0Attribute \"name\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "102: fig, axs = plt.subplots(6, 3, figsize=(7, 17))",
+    "message": "\"plt\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "103: for col,ax in zip(numvars,axs.ravel()):",
+    "message": "\"numvars\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "105:         sns.histplot(ax = ax, data = pp.train[col],bins=100)",
+    "message": "\"sns\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "106:         plt.xlabel(col)",
+    "message": "\"plt\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "112:         plt.xlabel(col)",
+    "message": "\"plt\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "114: plt.tight_layout()",
+    "message": "\"plt\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

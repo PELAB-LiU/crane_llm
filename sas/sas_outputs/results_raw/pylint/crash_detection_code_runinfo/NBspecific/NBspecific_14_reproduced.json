@@ -1,0 +1,30 @@
+[
+  {
+    "code_line": "27: y = train_data[\"Survived\"]",
+    "message": "Undefined variable 'train_data'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "30: X = pd.get_dummies(train_data[features])",
+    "message": "Undefined variable 'train_data'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "31: X_test = pd.get_dummies(test_data[features])",
+    "message": "Undefined variable 'test_data'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "37: output = pd.DataFrame({'PassengerId': test_data.PassengerId, 'Survived': predictions})",
+    "message": "Undefined variable 'test_data'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

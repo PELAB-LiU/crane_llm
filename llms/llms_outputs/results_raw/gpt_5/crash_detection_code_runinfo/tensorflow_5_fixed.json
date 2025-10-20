@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model expects two integer input arrays shaped (batch,1); X_train_array/X_test_array are lists of two 1D arrays, which Keras accepts and will reshape implicitly. y is a Series of float in [0,1], compatible with sigmoid+binary_crossentropy. Callbacks and batch size are valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model expects two inputs shaped (batch,1) with Embedding, but X_train_array elements are 1D arrays of encoded ids without an extra dimension; Keras will auto-expand dims for integer inputs, so fit should run. Callbacks and data types look valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model expects two input tensors matching X_train_array elements and y_train is float series; batch size and callbacks are valid. No shape/type mismatch is evident.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model expects two integer input tensors shaped (batch,1); X_train_array contains two arrays but likely shaped (batch,) each, which Keras will accept by implicit expansion. y is normalized floats matching sigmoid+binary_crossentropy; callbacks and batch_size are valid. No clear error certain.",
+    "detection": false
+  },
+  {
+    "reasoning": "model expects two 1D inputs; X_train_array and X_test_array are lists of two arrays. y_train/y_test are Series of normalized floats. Batch size, callbacks valid. Shapes likely compatible with Embedding inputs. Not certain of any crash.",
+    "detection": false
+  }
+]

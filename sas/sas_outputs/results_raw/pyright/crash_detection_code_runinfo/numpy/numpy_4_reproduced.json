@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "125:                         verbose = 1)",
+    "message": "Argument of type \"Literal[1]\" cannot be assigned to parameter \"verbose\" of type \"str\" in function \"fit\"\n\u00a0\u00a0\"Literal[1]\" is not assignable to \"str\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

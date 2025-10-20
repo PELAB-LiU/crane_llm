@@ -1,0 +1,72 @@
+[
+  {
+    "code_line": "5: !ls {INPUT_DIR}",
+    "message": "Invalid character \"\\u21\" in token",
+    "rule": null,
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "118: X_train_array = [X_train[:, 0], X_train[:, 1]]",
+    "message": "No overloads for \"__getitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "118: X_train_array = [X_train[:, 0], X_train[:, 1]]",
+    "message": "Argument of type \"tuple[slice[None, None, None], Literal[0]]\" cannot be assigned to parameter \"s\" of type \"slice[Any, Any, Any]\" in function \"__getitem__\"\n\u00a0\u00a0\"tuple[slice[None, None, None], Literal[0]]\" is not assignable to \"slice[Any, Any, Any]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "118: X_train_array = [X_train[:, 0], X_train[:, 1]]",
+    "message": "No overloads for \"__getitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "118: X_train_array = [X_train[:, 0], X_train[:, 1]]",
+    "message": "Argument of type \"tuple[slice[None, None, None], Literal[1]]\" cannot be assigned to parameter \"s\" of type \"slice[Any, Any, Any]\" in function \"__getitem__\"\n\u00a0\u00a0\"tuple[slice[None, None, None], Literal[1]]\" is not assignable to \"slice[Any, Any, Any]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "119: X_test_array = [X_test[:, 0], X_test[:, 1]]",
+    "message": "No overloads for \"__getitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "119: X_test_array = [X_test[:, 0], X_test[:, 1]]",
+    "message": "Argument of type \"tuple[slice[None, None, None], Literal[0]]\" cannot be assigned to parameter \"s\" of type \"slice[Any, Any, Any]\" in function \"__getitem__\"\n\u00a0\u00a0\"tuple[slice[None, None, None], Literal[0]]\" is not assignable to \"slice[Any, Any, Any]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "119: X_test_array = [X_test[:, 0], X_test[:, 1]]",
+    "message": "No overloads for \"__getitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "119: X_test_array = [X_test[:, 0], X_test[:, 1]]",
+    "message": "Argument of type \"tuple[slice[None, None, None], Literal[1]]\" cannot be assigned to parameter \"s\" of type \"slice[Any, Any, Any]\" in function \"__getitem__\"\n\u00a0\u00a0\"tuple[slice[None, None, None], Literal[1]]\" is not assignable to \"slice[Any, Any, Any]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "227:     verbose=1,",
+    "message": "Argument of type \"Literal[1]\" cannot be assigned to parameter \"verbose\" of type \"str\" in function \"fit\"\n\u00a0\u00a0\"Literal[1]\" is not assignable to \"str\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

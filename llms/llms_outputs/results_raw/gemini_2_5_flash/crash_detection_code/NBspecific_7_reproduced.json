@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The column '%percent emission' does not exist in the DataFrame 'df'. The previous cells do not create or modify a column with this name, which will cause a KeyError when sorting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column '%percent emission' does not exist in the DataFrame 'df'. The previous cells do not create or modify a column with this name, which will cause a KeyError when sorting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column '%percent emission' does not exist in the DataFrame 'df'. The previous cells do not create or modify a column with this name, which will cause a KeyError when sorting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column '%percent emission' does not exist in the DataFrame 'df'. The previous cells do not create or modify a column with this name, which will cause a KeyError when sorting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column '%percent emission' does not exist in the DataFrame 'df'. The previous cells do not create or modify a column with this name, which will cause a KeyError when sorting.",
+    "detection": true
+  }
+]

@@ -1,0 +1,93 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+
+## Cell 2:
+
+df=pd.read_csv("data/Methane_final.csv")
+
+## Cell 3:
+
+df.reason=df.reason.astype('category')
+df.type=df.type.astype('category')
+df.region=df.region.astype('category')
+
+## Cell 4:
+
+df.drop(columns=['Unnamed: 0'],inplace=True)
+
+## Cell 5:
+
+df.emissions=df.emissions.apply(lambda x:round(x,2))
+
+## Cell 6:
+
+df.baseYear=df.baseYear.replace("2019-2021",2020)
+
+# Current relevent runtime information:
+{'__method__df_groupby': {'type': "<class 'method'>"},
+ 'df': {'execution_cell_source': {'cellno': 1, 'lineno': 1},
+        'has_nan': False,
+        'per_column': {'baseYear': {'dtype': 'object',
+                                    'num_unique': 2,
+                                    'type': 'categorical',
+                                    'unique_values': [2020, '2022']},
+                       'country': {'dtype': 'object',
+                                   'example_values': ['Cameroon',
+                                                      'Romania',
+                                                      'Senegal',
+                                                      'Russia',
+                                                      'Tanzania'],
+                                   'num_unique': 105,
+                                   'type': 'categorical'},
+                       'emissions': {'dtype': 'float64',
+                                     'num_unique': 1281,
+                                     'type': 'continuous',
+                                     'value_range': (0.0, 141953.77)},
+                       'notes': {'dtype': 'object',
+                                 'num_unique': 3,
+                                 'type': 'categorical',
+                                 'unique_values': ['Average based on Uni...',
+                                                   'Estimates from end-u...',
+                                                   'Not available']},
+                       'reason': {'dtype': 'category',
+                                  'num_unique': 4,
+                                  'type': 'categorical',
+                                  'unique_values': ['All',
+                                                    'Fugitive',
+                                                    'Vented',
+                                                    'Flared']},
+                       'region': {'dtype': 'category',
+                                  'example_values': ['Other',
+                                                     'Asia Pacific',
+                                                     'World',
+                                                     'Africa',
+                                                     'Central and South Am...'],
+                                  'num_unique': 9,
+                                  'type': 'categorical'},
+                       'segment': {'dtype': 'object',
+                                   'example_values': ['Coking coal',
+                                                      'Other from coal',
+                                                      'Total',
+                                                      'Steam coal',
+                                                      'Gas pipelines and '
+                                                      'LN...'],
+                                   'num_unique': 12,
+                                   'type': 'categorical'},
+                       'type': {'dtype': 'category',
+                                'num_unique': 4,
+                                'type': 'categorical',
+                                'unique_values': ['Agriculture',
+                                                  'Energy',
+                                                  'Other',
+                                                  'Waste']}},
+        'shape': (1548, 8),
+        'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+df6=df.groupby('region').get_group('Asia Pacific').sort_values(by='%percent emission')

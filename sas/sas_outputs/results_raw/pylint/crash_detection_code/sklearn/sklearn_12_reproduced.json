@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "116: feature_importance = model.feature_importances_",
+    "message": "Instance of 'SVC' has no 'feature_importances_' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  }
+]

@@ -1,0 +1,143 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data_small'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+
+
+train_labels_df = pd.read_csv('data_small/trainLabels.csv')
+train_labels_df
+
+## Cell 3:
+
+
+
+from sklearn.preprocessing import OneHotEncoder
+from PIL import Image
+def load_data(folder_path, labels_df=None):
+    images = []
+    labels = []
+    img_ids = []
+    files = os.listdir(folder_path)
+    sorted_files = sorted(files, key=lambda x: int(os.path.splitext(x)[0]))
+    for filename in sorted_files:
+        img_path = os.path.join(folder_path, filename)
+        img = Image.open(img_path)
+        images.append(np.array(img))
+        img_id = int(filename.split('.')[0])
+        img_ids.append(img_id)
+        if labels_df is not None:
+            img_id = int(filename.split('.')[0])
+            label = labels_df[labels_df['id'] == img_id]['label'].values[0]
+            labels.append(label)
+    return np.array(images), labels
+
+X_train, y_train = load_data("data_small/train", train_labels_df)
+X_test, _ = load_data("data_small/test")
+
+
+X_train = X_train / 255.0
+X_test = X_test / 255.0
+
+
+encoder = OneHotEncoder(sparse=False)
+y_train_encoded = encoder.fit_transform(np.array(y_train).reshape(-1, 1))
+
+## Cell 4:
+
+
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class MLP(nn.Module):
+    def __init__(self):
+        super(MLP, self).__init__()
+        self.fc1 = nn.Linear(32*32*3, 512)
+        self.fc2 = nn.Linear(512, 256)
+        self.fc3 = nn.Linear(256, 128)
+        self.fc4 = nn.Linear(128, 10)
+
+    def forward(self, x):
+        x = x.view(-1, 32*32*3)
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
+        x = self.fc4(x)
+        return F.softmax(x, dim=1)
+
+model = MLP()
+print(model)
+
+## Cell 5:
+
+
+import matplotlib.pyplot as plt
+from IPython import display
+
+
+plt.figure(figsize=(10, 5))
+plt.title('Training Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.grid(True)
+
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+
+X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
+y_train_tensor = torch.tensor(np.argmax(y_train_encoded, axis=1), dtype=torch.long)
+
+
+loss_values = []
+num_epochs = 20
+for epoch in range(num_epochs):
+    optimizer.zero_grad()
+    outputs = model(X_train_tensor)
+    loss = criterion(outputs, y_train_tensor)
+    loss.backward()
+    optimizer.step()
+
+    loss_values.append(loss.item())
+
+
+    display.clear_output(wait=True)
+    plt.plot(loss_values, label='Training Loss')
+    plt.legend()
+    plt.grid(True)
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.title('Training Loss over Time')
+    plt.pause(0.05)
+
+    print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}")
+
+
+# Annotated Target Code:
+X_test: np.ndarray
+
+
+X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
+predictions = model(X_test_tensor)
+_, predicted_labels = torch.max(predictions, 1)

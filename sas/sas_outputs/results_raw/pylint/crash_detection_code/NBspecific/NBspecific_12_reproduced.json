@@ -1,0 +1,44 @@
+[
+  {
+    "code_line": "102: fig, axs = plt.subplots(6, 3, figsize=(7, 17))",
+    "message": "Undefined variable 'plt'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "103: for col,ax in zip(numvars,axs.ravel()):",
+    "message": "Undefined variable 'numvars'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "105:         sns.histplot(ax = ax, data = pp.train[col],bins=100)",
+    "message": "Undefined variable 'sns'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "106:         plt.xlabel(col)",
+    "message": "Undefined variable 'plt'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "112:         plt.xlabel(col)",
+    "message": "Undefined variable 'plt'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "114: plt.tight_layout()",
+    "message": "Undefined variable 'plt'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

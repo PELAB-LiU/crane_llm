@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The code computes lags based on residuals length; if len(residuals) is very small (<=2), max_pacf_lags becomes negative, which will cause plot_pacf to error. Without exact length, cannot be certain it will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals is a valid pandas Series; max_acf_lags and max_pacf_lags are computed from its length and will be >=0 when length>=2. plot_acf/pacf accept these, and matplotlib is imported.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals is a pandas Series, and max_acf_lags/min pacf lags are computed safely; plotting functions accept these. No undefined variables or invalid arguments detected.",
+    "detection": false
+  },
+  {
+    "reasoning": "If residuals length is very small, computed lags can be negative (e.g., len(residuals)//2 - 1), and plot_acf/plot_pacf will error on non-positive lags.",
+    "detection": true
+  },
+  {
+    "reasoning": "If residuals has length 0 or 1, max_acf_lags becomes negative and plot_acf/plot_pacf will error; otherwise it runs. Length is not provided, so not certain it will crash.",
+    "detection": false
+  }
+]

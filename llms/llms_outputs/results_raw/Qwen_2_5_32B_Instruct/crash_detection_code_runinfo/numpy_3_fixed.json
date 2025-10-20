@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The code attempts to create histograms for multiple columns in the DataFrame. If any of the columns in 'cols' are not present in the DataFrame or if 'STATUS' groups do not contain 'PAID' or 'DEFAULT', it will crash. However, based on the provided information, all necessary columns and groups are present.",
+    "detection": false
+  },
+  {
+    "reasoning": "The code attempts to create histograms for multiple columns in the DataFrame. If any of the columns in 'cols' are not present in the DataFrame or if 'STATUS' groups do not contain 'PAID' or 'DEFAULT', it will crash. However, based on the provided information, all necessary columns and groups are present.",
+    "detection": false
+  },
+  {
+    "reasoning": "The code attempts to create histograms for multiple columns in the DataFrame. If any of the columns in 'cols' are not present in the DataFrame or if 'STATUS' groups do not contain 'PAID' or 'DEFAULT', it will crash. However, based on the provided information, all necessary columns and groups are present.",
+    "detection": false
+  },
+  {
+    "reasoning": "The code attempts to create histograms for multiple columns in the DataFrame. If any of the columns in 'cols' are not present in the DataFrame or if 'STATUS' groups do not contain 'PAID' or 'DEFAULT', it will crash. However, based on the provided information, all necessary columns and groups are present.",
+    "detection": false
+  },
+  {
+    "reasoning": "The code attempts to create histograms for multiple columns in the DataFrame. If any of the columns in 'cols' are not present in the DataFrame or if 'STATUS' groups do not contain 'PAID' or 'DEFAULT', it will crash. However, based on the provided information, all necessary columns and groups are present.",
+    "detection": false
+  }
+]

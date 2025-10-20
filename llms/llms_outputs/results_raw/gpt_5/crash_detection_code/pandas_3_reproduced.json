@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "procData joins on incorrect keys: it first joins name_count on 'RescuerID' (a label encoder), causing all-NaN join and later drops 'RescuerID' after transforming it; also 'SinNombre' uses .str on possibly NaN without fillna and equality on Series missing parentheses. However, main crash is trying to join name_count (indexed by Name values) on 'RescuerID' which likely doesn't match, but not a crash. The real crash: LabelEncoder.transform expects all labels seen in fit; test has unseen RescuerID causing ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "procData joins name_count on 'RescuerID', but name_count was computed from train['Name'], so the join key doesn't exist; this will raise a KeyError. Also, LabelEncoder.transform on unseen test RescuerID will error.",
+    "detection": true
+  },
+  {
+    "reasoning": "procData joins name_count on RescuerID first (mismatched keys) causing all NaN, then applies LabelEncoder.transform to data['RescuerID'] which contains unseen labels from test, raising a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "procData joins name_count on RescuerID and Name, but name_count index is names; the first join uses on='RescuerID' which mismatches the index and yields all NaN without crashing. LabelEncoder.transform on test may see unseen labels and raise ValueError, but scikit-learn’s LabelEncoder.transform does raise only if unseen; however we can’t be certain unseen IDs exist.",
+    "detection": false
+  },
+  {
+    "reasoning": "procData joins name_count on 'RescuerID' but name_count was computed from train['Name'], so the join key likely mismatches and produces NaNs but not an error. LabelEncoder.transform on unseen test 'RescuerID' may raise ValueError, but RescuerID was fit on train and applied to test; transform will error on unknown labels.",
+    "detection": true
+  }
+]

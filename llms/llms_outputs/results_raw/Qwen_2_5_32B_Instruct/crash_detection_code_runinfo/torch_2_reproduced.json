@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the `inference` function expects a model to perform inference. This will lead to a crash because `quantized_vit` is `None`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the `inference` function expects a model to perform inference. This will lead to a crash because `quantized_vit` is `None`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the `inference` function expects a model to perform inference. This will lead to an error because `quantized_vit` is `None`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the `inference` function expects a model to perform inference. This will lead to an error because `quantized_vit` is `None`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the `inference` function expects a model to perform inference. This will lead to a crash because `quantized_vit` is `None`.",
+    "detection": true
+  }
+]

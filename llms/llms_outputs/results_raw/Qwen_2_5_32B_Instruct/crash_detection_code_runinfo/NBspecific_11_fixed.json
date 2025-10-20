@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The variable `adv` is a numpy array with shape (224, 224, 3) and dtype float32, which is a valid input for `plt.imshow`. There are no indications that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The variable `adv` is a numpy array with shape (224, 224, 3) and dtype float32, which is a valid input for `plt.imshow`. There are no indications that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The variable `adv` is a numpy array with shape (224, 224, 3) and dtype float32, which is a valid input for `plt.imshow`. There are no indications that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The variable `adv` is a numpy array with shape (224, 224, 3) and dtype float32, which is a valid input for `plt.imshow`. There are no indications that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The variable `adv` is a numpy array with shape (224, 224, 3) and dtype float32, which is a valid input for `plt.imshow`. There are no indications that this will cause a crash.",
+    "detection": false
+  }
+]

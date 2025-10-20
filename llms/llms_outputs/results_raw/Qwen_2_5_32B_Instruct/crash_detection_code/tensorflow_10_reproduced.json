@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train_data` is a pandas Series of sentences, not tokenized inputs expected by the BERT model. The model expects inputs in a specific format (e.g., input_ids, attention_mask), which are not provided here.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_data` is a pandas Series of sentences, not tokenized inputs expected by the BERT model. The model expects inputs in a specific format (e.g., input_ids, attention_mask), which are not provided here.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_data` is a pandas Series of sentences, not tokenized inputs expected by the BERT model. The model expects inputs in a specific format (e.g., input_ids, attention_mask), which are not provided here.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_data` is a pandas Series of sentences, not tokenized inputs expected by the BERT model. The model expects inputs in a specific format (e.g., input_ids, attention_mask), which are not provided here.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_data` is a pandas Series of sentences, not tokenized inputs expected by the BERT model. The model expects inputs in a specific format (e.g., input_ids, attention_mask), which are not provided here.",
+    "detection": true
+  }
+]

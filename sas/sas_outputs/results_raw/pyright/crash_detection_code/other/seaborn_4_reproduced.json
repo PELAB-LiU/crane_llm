@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "25:     sns.boxplot(y=col, data=df, ax=ax[index])",
+    "message": "Argument of type \"Hashable\" cannot be assigned to parameter \"y\" of type \"ColumnName | _Vector | None\" in function \"boxplot\"\n\u00a0\u00a0Type \"Hashable\" is not assignable to type \"ColumnName | _Vector | None\"\n\u00a0\u00a0\u00a0\u00a0\"Hashable\" is not assignable to \"str\"\n\u00a0\u00a0\u00a0\u00a0\"Hashable\" is not assignable to \"bytes\"\n\u00a0\u00a0\u00a0\u00a0\"Hashable\" is not assignable to \"date\"\n\u00a0\u00a0\u00a0\u00a0\"Hashable\" is not assignable to \"datetime\"\n\u00a0\u00a0\u00a0\u00a0\"Hashable\" is not assignable to \"timedelta\"\n\u00a0\u00a0\u00a0\u00a0\"Hashable\" is not assignable to \"bool\"\n\u00a0\u00a0\u00a0\u00a0\"Hashable\" is not assignable to \"complex\"\n  ...",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

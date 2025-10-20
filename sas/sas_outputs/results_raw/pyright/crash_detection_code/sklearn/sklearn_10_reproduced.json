@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "121: test_preds /= n_splits",
+    "message": "Operator \"/=\" not supported for types \"Any | None\" and \"Literal[10]\"\n\u00a0\u00a0Operator \"/\" not supported for types \"None\" and \"Literal[10]\"",
+    "rule": "reportOperatorIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

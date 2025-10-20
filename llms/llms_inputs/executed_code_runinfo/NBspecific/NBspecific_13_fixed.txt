@@ -1,0 +1,108 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+from matplotlib import pyplot as plt
+
+## Cell 2:
+
+df = pd.read_csv("data/heart.csv")
+
+## Cell 3:
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+df=pd.read_csv("data/heart.csv")
+
+y = df['output']
+X = df.drop(['output'], axis=1)
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+
+model = DecisionTreeClassifier()
+
+
+model.fit(X_train, y_train)
+
+
+y_hat = model.predict(X_test)
+
+
+accuracy = accuracy_score(y_test, y_hat)
+print("Accuracy:", accuracy)
+
+# Current relevent runtime information:
+{'DecisionTreeClassifier': {'type': "<class 'abc.ABCMeta'>"},
+ 'X': {'execution_cell_source': {'cellno': 37, 'lineno': 8},
+       'has_nan': False,
+       'per_column': {'age': {'num_unique': 41,
+                              'type': 'continuous',
+                              'value_range': (29, 77)},
+                      'caa': {'num_unique': 5,
+                              'type': 'categorical_numeric',
+                              'value_range': (0, 4)},
+                      'chol': {'num_unique': 152,
+                               'type': 'continuous',
+                               'value_range': (126, 564)},
+                      'cp': {'num_unique': 4,
+                             'type': 'categorical_numeric',
+                             'value_range': (0, 3)},
+                      'exng': {'num_unique': 2,
+                               'type': 'binary',
+                               'value_range': (0, 1)},
+                      'fbs': {'num_unique': 2,
+                              'type': 'binary',
+                              'value_range': (0, 1)},
+                      'oldpeak': {'num_unique': 40,
+                                  'type': 'continuous',
+                                  'value_range': (0.0, 6.2)},
+                      'restecg': {'num_unique': 3,
+                                  'type': 'categorical_numeric',
+                                  'value_range': (0, 2)},
+                      'sex': {'num_unique': 2,
+                              'type': 'binary',
+                              'value_range': (0, 1)},
+                      'slp': {'num_unique': 3,
+                              'type': 'categorical_numeric',
+                              'value_range': (0, 2)},
+                      'thalachh': {'num_unique': 91,
+                                   'type': 'continuous',
+                                   'value_range': (71, 202)},
+                      'thall': {'num_unique': 4,
+                                'type': 'categorical_numeric',
+                                'value_range': (0, 3)},
+                      'trtbps': {'num_unique': 49,
+                                 'type': 'continuous',
+                                 'value_range': (94, 200)}},
+       'shape': (303, 13),
+       'type': 'pandas.core.frame.DataFrame'},
+ '__method__model_fit': {'type': "<class 'method'>"},
+ '__method__model_predict': {'type': "<class 'method'>"},
+ 'accuracy_score': {'type': "<class 'function'>"},
+ 'model': {'class_name': 'DecisionTreeClassifier',
+           'execution_cell_source': {'cellno': 37, 'lineno': 14},
+           'fitted_attributes': {'n_features_in_': 13, 'n_outputs_': 1},
+           'is_fitted': True,
+           'module': 'sklearn.tree._classes',
+           'type': "<class 'sklearn.tree._classes.DecisionTreeClassifier'>"},
+ 'y': {'execution_cell_source': {'cellno': 37, 'lineno': 7},
+       'type': "<class 'pandas.core.series.Series'>",
+       'value_info': {'unique_values': [0, 1], 'value_type': 'binary'}},
+ 'y_hat': {'dtype': 'int64',
+           'execution_cell_source': {'cellno': 37, 'lineno': 20},
+           'has_nan': False,
+           'shape': (76,),
+           'type': 'numpy.ndarray',
+           'value_info': {'unique_values': [0, 1], 'value_type': 'binary'},
+           'value_range': (0, 1)}}
+# Target Cell:
+
+from sklearn.tree import DecisionTreeClassifier
+model = DecisionTreeClassifier()
+model .fit(X,y)
+y_hat = model.predict(X)
+print ( accuracy_score(y_hat,y))

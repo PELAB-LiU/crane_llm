@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The variable `yFit` was predicted on `X_train` and has a shape of (272,), while `y_test` has a shape of (68,). Attempting to perform element-wise operations like `y_test - yFit` will result in a ValueError due to incompatible shapes.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `yFit` was predicted on `X_train` and has a shape of (272,), while `y_test` has a shape of (68,). Attempting to perform element-wise operations between arrays of different shapes will result in a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `yFit` was predicted on `X_train` and has a shape of (272,), while `y_test` has a shape of (68,). Attempting to perform element-wise operations like `y_test - yFit` will result in a ValueError due to incompatible shapes.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `yFit` was predicted on `X_train` and has a shape of (272,), while `y_test` has a shape of (68,). Attempting to perform element-wise operations like `y_test - yFit` will result in a ValueError due to incompatible shapes.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'yFit' was predicted on 'X_train' and has a shape of (272,), while 'y_test' has a shape of (68,). Attempting to perform element-wise operations between arrays of different shapes will result in a ValueError.",
+    "detection": true
+  }
+]

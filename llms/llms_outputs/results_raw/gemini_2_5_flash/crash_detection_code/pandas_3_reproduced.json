@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'RescuerID' column is dropped within the 'procData' function, but the function attempts to use it again in the line 'data = data.join(name_count, on =\"RescuerID\")' after it has already been dropped, which will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'RescuerID' column is dropped within the 'procData' function, but the function attempts to use it again in the line 'data = data.join(name_count, on =\"RescuerID\")' after it has already been dropped, which will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'RescuerID' column is dropped within the 'procData' function, but the function attempts to use it again in the line 'data = data.join(name_count, on =\"RescuerID\")' after it has already been dropped, which will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'RescuerID' column is dropped within the 'procData' function, but the function attempts to use it again in the line 'data = data.join(name_count, on =\"RescuerID\")' after it has already been dropped, which will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'RescuerID' column is dropped within the 'procData' function, but the function attempts to use it again in the line 'data = data.join(name_count, on =\"RescuerID\")' after it has already been dropped, which will cause a KeyError.",
+    "detection": true
+  }
+]

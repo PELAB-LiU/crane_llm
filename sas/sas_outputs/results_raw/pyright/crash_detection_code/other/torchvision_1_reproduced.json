@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "99:     range(len(transformed)),",
+    "message": "Argument of type \"range\" cannot be assigned to parameter \"dataset\" of type \"Dataset[T@random_split]\" in function \"random_split\"\n\u00a0\u00a0\"range\" is not assignable to \"Dataset[T@random_split]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

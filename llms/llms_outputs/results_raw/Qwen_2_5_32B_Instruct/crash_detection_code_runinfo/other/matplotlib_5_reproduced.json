@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The plt.zlabel function does not exist in matplotlib, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The plt.zlabel function does not exist in matplotlib, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The plt.zlabel function does not exist in matplotlib, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The plt.zlabel function does not exist in matplotlib, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The plt.zlabel function does not exist in matplotlib, which will cause a crash.",
+    "detection": true
+  }
+]

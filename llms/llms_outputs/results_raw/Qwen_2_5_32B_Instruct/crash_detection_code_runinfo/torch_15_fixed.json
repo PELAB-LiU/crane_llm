@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell contains a typo in the variable names 'sekil' and 'netice', which are not defined in the current context. The correct variable names should be 'inputs' and 'labels'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell contains a typo in the variable names 'sekil' and 'netice', which are not defined in the current runtime context. The correct variable names should be 'inputs' and 'labels'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell contains a typo in the variable names 'sekil' and 'netice', which are not defined in the current context. The correct variable names should be 'inputs' and 'labels'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell contains a typo in the variable names 'sekil' and 'netice', which are not defined in the current context. The correct variable names should be 'inputs' and 'labels'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell contains a typo in the variable names 'sekil' and 'netice', which are not defined in the current context. The correct variable names should be 'inputs' and 'labels'.",
+    "detection": true
+  }
+]

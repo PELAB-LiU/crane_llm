@@ -1,0 +1,79 @@
+[
+  {
+    "code_line": "115:     inputs = Input(input_shape)",
+    "message": "\"Input\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "116:     base_model = EfficientNetB1(input_shape=input_shape, include_top=False, classes=5)",
+    "message": "\"EfficientNetB1\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "120:     x = GlobalAveragePooling2D()(x)",
+    "message": "\"GlobalAveragePooling2D\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "123:     x = Dense(56, activation='relu')(x)",
+    "message": "\"Dense\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "124:     x = Dropout(0.1)(x)",
+    "message": "\"Dropout\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "126:     outputs = Dense(5, activation='sigmoid')(x)",
+    "message": "\"Dense\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "128:     model = Model(inputs, outputs)",
+    "message": "\"Model\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "146: model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=metrics)",
+    "message": "\"Adam\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "153:     EarlyStopping(monitor='val_loss', mode='min', patience=15, verbose=1),",
+    "message": "\"EarlyStopping\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "154:     ReduceLROnPlateau(monitor='val_loss', mode='min', factor=0.1, patience=5, min_lr=0.000001, verbose=1),",
+    "message": "\"ReduceLROnPlateau\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "155:     ModelCheckpoint(monitor='val_loss', mode='min', filepath=checkpoint_path, verbose=1, save_best_only=True, save_weights_only=False)",
+    "message": "\"ModelCheckpoint\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "X_train contains object dtype columns (e.g., street/statezip), which LinearRegression cannot handle without encoding; fitting will raise a ValueError about non-numeric data.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train contains object dtypes (e.g., street/statezip), which LinearRegression cannot handle directly without encoding; fit will raise a ValueError about non-numeric data.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train includes object dtype columns (e.g., street/statezip), which LinearRegression cannot handle without encoding; this will raise a ValueError during fit. ",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train contains object dtype columns (e.g., street/statezip) which LinearRegression cannot handle without encoding, so fit will raise a ValueError about non-numeric data.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train contains object dtypes (e.g., 'street', 'statezip', 'country') which LinearRegression cannot handle without encoding, so fitting will raise a ValueError.",
+    "detection": true
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "69: with np.printoptions(threshold=np.inf):",
+    "message": "Argument of type \"float\" cannot be assigned to parameter \"threshold\" of type \"int | None\" in function \"printoptions\"\n\u00a0\u00a0Type \"float\" is not assignable to type \"int | None\"\n\u00a0\u00a0\u00a0\u00a0\"float\" is not assignable to \"None\"\n\u00a0\u00a0\u00a0\u00a0\"float\" is not assignable to \"int\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

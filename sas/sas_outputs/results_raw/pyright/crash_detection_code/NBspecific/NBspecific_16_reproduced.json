@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "33: skin_df.head()",
+    "message": "\"skin_df\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

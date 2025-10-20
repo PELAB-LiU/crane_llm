@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "procData calls .str methods on the Name column without handling None first; if Name contains nulls (has_nan is true), operations like .str.lower() will raise an error. Therefore, executing will likely crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "procData drops Name, RescuerID, and Description columns which exist; operations use pandas methods compatible with current data and fitted LabelEncoder. No definite errors apparent.",
+    "detection": false
+  },
+  {
+    "reasoning": "procData drops the Description column after using it; both train and test have that column, and other referenced columns exist. LabelEncoder.transform handles unseen labels; subsequent fillna and operations are valid. Unlikely to crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "procData uses LabelEncoder.transform on RescuerID strings (fitted), computes features, and drops existing columns; operations match available columns in train/test. No obvious type or missing-column errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "procData transforms RescuerID using a fitted LabelEncoder; unseen labels in test may raise ValueError because LabelEncoder.transform cannot handle unknowns. Therefore executing on test is likely to crash.",
+    "detection": true
+  }
+]

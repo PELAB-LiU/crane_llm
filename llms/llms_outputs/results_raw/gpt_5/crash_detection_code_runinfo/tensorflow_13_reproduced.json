@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "pad_sequences expects a 2D-like sequence, but tokenize_text returns a 1D list of ids; also the list elements have varying lengths and maxlen is passed to np.array instead of pad_sequences, causing shape/value errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "pad_sequences expects a 2D list/array of sequences, but tokenize_text returns a 1D list of IDs and the code passes it directly, causing shape/ValueError. Also pad_sequences returns an array already; wrapping with np.array and the list comprehension likely results in ragged shapes.",
+    "detection": true
+  },
+  {
+    "reasoning": "pad_sequences expects a 2D array-like of sequences, but tokenize_text returns a 1D list of ids; also the comprehension passes a 1D list directly causing shape mismatch. Additionally, pad_sequences arguments are reversed: maxlen should be passed to pad_sequences, not to np.array.",
+    "detection": true
+  },
+  {
+    "reasoning": "pad_sequences expects a 2D sequence input, but tokenize_text returns a 1D list of IDs; calling pad_sequences(tokenize_text(i)) without wrapping in a list will raise a ValueError about shape. Also, np.array(...) use is fine but inner call fails.",
+    "detection": true
+  },
+  {
+    "reasoning": "pad_sequences expects a 2D list/array of sequences, but tokenize_text returns a 1D list of IDs; also pad_sequences should be called with sequences then padded, not wrapped by np.array first. This will raise a ValueError about shape or input format.",
+    "detection": true
+  }
+]

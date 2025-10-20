@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'RescuerID' column is dropped within the 'procData' function, but the function attempts to fill NaN values in 'RescuerID' after it has already been dropped, which will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `procData` function is called twice, once for `train` and once for `test`. The function drops the 'RescuerID' column. In the second call for `test`, 'RescuerID' will already be dropped from the `test` DataFrame by the first call, leading to a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `procData` function is called twice, once for `train` and once for `test`. The function drops the 'RescuerID' column. In the second call for `test`, 'RescuerID' will already be dropped from the `test` DataFrame by the first call, leading to a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `procData` function is called twice, once for `train` and once for `test`. The function drops the 'RescuerID' column. In the second call for `test`, 'RescuerID' will already be dropped from the `test` DataFrame by the first call, leading to a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'RescuerID' column is dropped within the 'procData' function, but the function attempts to fill NaN values in 'RescuerID' after it has already been dropped, which will cause a KeyError.",
+    "detection": true
+  }
+]

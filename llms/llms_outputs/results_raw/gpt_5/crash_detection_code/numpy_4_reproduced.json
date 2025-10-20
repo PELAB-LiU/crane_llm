@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "valid_dataset yields binary labels as scalars, not one-hot; using argmax on y and model outputs (sigmoid) will error or produce wrong shapes. Also y is a NumPy array, not a tensor, so y.numpy() will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "valid_dataset yields binary labels (float) since class_mode='binary'; using argmax on y and predictions (sigmoid) is invalid. model.predict returns shape (batch,1) and y is shape (batch,), causing errors; np.argmax on 1D y will fail. Likely ValueError/AttributeError (y has no .numpy()).",
+    "detection": true
+  },
+  {
+    "reasoning": "valid_dataset yields binary labels as scalars, not one-hot tensors; using y.numpy() and argmax on 1D arrays will error. Also Keras Sequence iterates indefinitely without stopping condition, causing infinite loop.",
+    "detection": true
+  },
+  {
+    "reasoning": "valid_dataset yields binary labels as floats (class_mode='binary'), but the code applies argmax on y and y.numpy(), which will fail since y is a NumPy array, not a tensor. Also argmax on 1D binary labels is incorrect.",
+    "detection": true
+  },
+  {
+    "reasoning": "valid_dataset was created with class_mode='binary', so y batches are 1D float labels; applying y.numpy() and argmax will fail (EagerTensor not available) and argmax on 1D binary is incorrect. Also iterating over the generator without break will loop indefinitely.",
+    "detection": true
+  }
+]

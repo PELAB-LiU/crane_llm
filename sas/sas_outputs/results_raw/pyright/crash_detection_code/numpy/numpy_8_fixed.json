@@ -1,0 +1,86 @@
+[
+  {
+    "code_line": "310: over_sampler = RandomOverSampler(sampling_strategy=0.5, random_state=42)",
+    "message": "Argument of type \"float\" cannot be assigned to parameter \"sampling_strategy\" of type \"str\" in function \"__init__\"\n\u00a0\u00a0\"float\" is not assignable to \"str\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "311: under_sampler = RandomUnderSampler(sampling_strategy=0.5, random_state=42)",
+    "message": "Argument of type \"float\" cannot be assigned to parameter \"sampling_strategy\" of type \"str\" in function \"__init__\"\n\u00a0\u00a0\"float\" is not assignable to \"str\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "398: creator.create(\"Individual\", gp.PrimitiveTree, fitness=creator.FitnessMax)",
+    "message": "\"FitnessMax\" is not a known attribute of module \"deap.creator\"",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "405: toolbox.register(\"individual\", tools.initIterate, creator.Individual, toolbox.expr)",
+    "message": "\"Individual\" is not a known attribute of module \"deap.creator\"",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "405: toolbox.register(\"individual\", tools.initIterate, creator.Individual, toolbox.expr)",
+    "message": "Cannot access attribute \"expr\" for class \"Toolbox\"\n\u00a0\u00a0Attribute \"expr\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "406: toolbox.register(\"population\", tools.initRepeat, list, toolbox.individual)",
+    "message": "Cannot access attribute \"individual\" for class \"Toolbox\"\n\u00a0\u00a0Attribute \"individual\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "410: toolbox.register(\"mutate\", gp.mutUniform, expr=toolbox.expr, pset=pset)",
+    "message": "Cannot access attribute \"expr\" for class \"Toolbox\"\n\u00a0\u00a0Attribute \"expr\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "424: population = toolbox.population(n=pop_size)",
+    "message": "Cannot access attribute \"population\" for class \"Toolbox\"\n\u00a0\u00a0Attribute \"population\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "434:     offspring = toolbox.select(population, len(population))",
+    "message": "Cannot access attribute \"select\" for class \"Toolbox\"\n\u00a0\u00a0Attribute \"select\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "437:     offspring = list(map(toolbox.clone, offspring))",
+    "message": "Cannot access attribute \"clone\" for class \"Toolbox\"\n\u00a0\u00a0Attribute \"clone\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "442:             toolbox.mate(child1, child2)",
+    "message": "Cannot access attribute \"mate\" for class \"Toolbox\"\n\u00a0\u00a0Attribute \"mate\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "448:             toolbox.mutate(mutant)",
+    "message": "Cannot access attribute \"mutate\" for class \"Toolbox\"\n\u00a0\u00a0Attribute \"mutate\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

@@ -1,0 +1,142 @@
+[
+  {
+    "code_line": "49: sentences = dataset['train']['sentence']",
+    "message": "\"__getitem__\" method not defined on type \"IterableDataset\"",
+    "rule": "reportIndexIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "49: sentences = dataset['train']['sentence']",
+    "message": "No overloads for \"__getitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "49: sentences = dataset['train']['sentence']",
+    "message": "Argument of type \"Literal['sentence']\" cannot be assigned to parameter \"s\" of type \"slice[Any, Any, Any]\" in function \"__getitem__\"\n\u00a0\u00a0\"Literal['sentence']\" is not assignable to \"slice[Any, Any, Any]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "50: testsent = dataset['test']['sentence']",
+    "message": "\"__getitem__\" method not defined on type \"IterableDataset\"",
+    "rule": "reportIndexIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "50: testsent = dataset['test']['sentence']",
+    "message": "No overloads for \"__getitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "50: testsent = dataset['test']['sentence']",
+    "message": "Argument of type \"Literal['sentence']\" cannot be assigned to parameter \"s\" of type \"slice[Any, Any, Any]\" in function \"__getitem__\"\n\u00a0\u00a0\"Literal['sentence']\" is not assignable to \"slice[Any, Any, Any]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "56: stop_words = set(stopwords.words('english'))",
+    "message": "Cannot access attribute \"words\" for class \"object\"\n\u00a0\u00a0Attribute \"words\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "220:         encoding = torch.sum(encoding,axis = 1)",
+    "message": "No overloads for \"sum\" match the provided arguments\n\u00a0\u00a0Argument types: (Any, Literal[1])",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "269: ylb =[0 if x<0.5 else 1 for x in dataset['train']['label']]",
+    "message": "\"__getitem__\" method not defined on type \"IterableDataset\"",
+    "rule": "reportIndexIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "269: ylb =[0 if x<0.5 else 1 for x in dataset['train']['label']]",
+    "message": "No overloads for \"__getitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "269: ylb =[0 if x<0.5 else 1 for x in dataset['train']['label']]",
+    "message": "Argument of type \"Literal['label']\" cannot be assigned to parameter \"s\" of type \"slice[Any, Any, Any]\" in function \"__getitem__\"\n\u00a0\u00a0\"Literal['label']\" is not assignable to \"slice[Any, Any, Any]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "270: yl = dataset['train']['label']",
+    "message": "\"__getitem__\" method not defined on type \"IterableDataset\"",
+    "rule": "reportIndexIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "270: yl = dataset['train']['label']",
+    "message": "No overloads for \"__getitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "270: yl = dataset['train']['label']",
+    "message": "Argument of type \"Literal['label']\" cannot be assigned to parameter \"s\" of type \"slice[Any, Any, Any]\" in function \"__getitem__\"\n\u00a0\u00a0\"Literal['label']\" is not assignable to \"slice[Any, Any, Any]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "272: ytb = [0 if x<0.5 else 1 for x in dataset['test']['label']]",
+    "message": "\"__getitem__\" method not defined on type \"IterableDataset\"",
+    "rule": "reportIndexIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "272: ytb = [0 if x<0.5 else 1 for x in dataset['test']['label']]",
+    "message": "No overloads for \"__getitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "272: ytb = [0 if x<0.5 else 1 for x in dataset['test']['label']]",
+    "message": "Argument of type \"Literal['label']\" cannot be assigned to parameter \"s\" of type \"slice[Any, Any, Any]\" in function \"__getitem__\"\n\u00a0\u00a0\"Literal['label']\" is not assignable to \"slice[Any, Any, Any]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "273: yt = dataset['test']['label']",
+    "message": "\"__getitem__\" method not defined on type \"IterableDataset\"",
+    "rule": "reportIndexIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "273: yt = dataset['test']['label']",
+    "message": "No overloads for \"__getitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "273: yt = dataset['test']['label']",
+    "message": "Argument of type \"Literal['label']\" cannot be assigned to parameter \"s\" of type \"slice[Any, Any, Any]\" in function \"__getitem__\"\n\u00a0\u00a0\"Literal['label']\" is not assignable to \"slice[Any, Any, Any]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

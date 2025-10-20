@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "28: train_houseprice=X_train.join(Y_train)",
+    "message": "Cannot access attribute \"join\" for class \"ndarray[Unknown, Unknown]\"\n\u00a0\u00a0Attribute \"join\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

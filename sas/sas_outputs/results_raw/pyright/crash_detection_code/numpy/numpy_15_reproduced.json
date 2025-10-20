@@ -1,0 +1,86 @@
+[
+  {
+    "code_line": "60: y_tr_arr= y_train.values",
+    "message": "Cannot access attribute \"values\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"values\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "61: y_ts_arr = y_test.values",
+    "message": "Cannot access attribute \"values\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"values\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "78: def model_optimize(w, b, X, Y):",
+    "message": "Function declaration \"model_optimize\" is obscured by a declaration of the same name",
+    "rule": "reportRedeclaration",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "138:     grads = {\"dw\": dw, \"db\": db}",
+    "message": "\"dw\" is possibly unbound",
+    "rule": "reportPossiblyUnboundVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "138:     grads = {\"dw\": dw, \"db\": db}",
+    "message": "\"db\" is possibly unbound",
+    "rule": "reportPossiblyUnboundVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "163:     gradient = {\"dw\": dw, \"db\": db}",
+    "message": "\"dw\" is possibly unbound",
+    "rule": "reportPossiblyUnboundVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "163:     gradient = {\"dw\": dw, \"db\": db}",
+    "message": "\"db\" is possibly unbound",
+    "rule": "reportPossiblyUnboundVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "179: n_features = X_tr_arr.shape[1]",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "190: final_train_pred = sigmoid_activation(np.dot(w,X_tr_arr.T)+b)",
+    "message": "Cannot access attribute \"T\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"T\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "191: final_test_pred = sigmoid_activation(np.dot(w,X_ts_arr.T)+b)",
+    "message": "Cannot access attribute \"T\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"T\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "193: m_tr =  X_tr_arr.shape[0]",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "194: m_ts =  X_ts_arr.shape[0]",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

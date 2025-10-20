@@ -1,0 +1,23 @@
+[
+  {
+    "code_line": "137:         print(len(gpus), \"Physical GPUs,\", len(logical_gpus), \"Logical GPUs\")",
+    "message": "\"logical_gpus\" is possibly unbound",
+    "rule": "reportPossiblyUnboundVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "223: plt.plot(history.history['accuracy'],label='Train Accuracy')",
+    "message": "\"history\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "224: plt.plot(history.history['val_accuracy'],label='Validation Accuracy')",
+    "message": "\"history\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

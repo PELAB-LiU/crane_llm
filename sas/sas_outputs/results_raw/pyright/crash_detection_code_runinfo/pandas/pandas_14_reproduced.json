@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "76: fig.tight_layout()",
+    "message": "Cannot access attribute \"tight_layout\" for class \"FigureBase\"\n\u00a0\u00a0Attribute \"tight_layout\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "149: quantized_vit = model_quantization(model=model, save=True)",
+    "message": "Assigning result of a function call, where the function has no return",
+    "symbol": "assignment-from-no-return",
+    "type": "error",
+    "source": "pylint"
+  }
+]

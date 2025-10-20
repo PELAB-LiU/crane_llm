@@ -1,0 +1,32 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+## Cell 2:
+
+df = pd.read_csv("data/SalaryData_Test(1).csv")
+
+## Cell 3:
+
+x = df.workclass.values.reshape(-1,1)
+y = df.Salary.values.reshape(-1,1)
+
+# Current relevent runtime information:
+{'x': {'dtype': 'object',
+       'execution_cell_source': {'cellno': 7, 'lineno': 1},
+       'shape': (15060, 1),
+       'type': 'numpy.ndarray'},
+ 'y': {'dtype': 'object',
+       'execution_cell_source': {'cellno': 7, 'lineno': 2},
+       'shape': (15060, 1),
+       'type': 'numpy.ndarray'}}
+# Target Cell:
+
+from sklearn.linear_model import LinearRegression
+
+linear_reg = LinearRegression()
+linear_reg.fit(x,y)

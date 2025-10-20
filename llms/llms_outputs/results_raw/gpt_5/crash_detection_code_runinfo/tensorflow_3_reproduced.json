@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Keras models are loaded using tf.keras.models.load_model, not a load method on the model. Calling model.load('train.h5') will raise an AttributeError since Sequential has no 'load' method.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras Sequential models use model.load_weights or tf.keras.models.load_model; there is no model.load method, so calling model.load(\"train.h5\") will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras models use model.load_model(...) or tf.keras.models.load_model(...); Sequential has no method named load, so calling model.load('train.h5') will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras models are loaded with tf.keras.models.load_model('path'), not via model.load. Sequential has no method 'load', so calling model.load('train.h5') will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras models are loaded with tf.keras.models.load_model or model.load_weights; Sequential has no load method. Calling model.load(\"train.h5\") will raise an AttributeError.",
+    "detection": true
+  }
+]

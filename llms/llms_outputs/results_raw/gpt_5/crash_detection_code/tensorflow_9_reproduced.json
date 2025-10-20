@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "plot_model expects a Keras Model; bert_model is a PyTorch transformers.BertModel, so TensorFlow’s plot_model will not accept it.",
+    "detection": true
+  },
+  {
+    "reasoning": "tf.keras.utils.plot_model expects a Keras model; bert_model is a PyTorch transformers BertModel, so plotting will fail due to incompatible object type.",
+    "detection": true
+  },
+  {
+    "reasoning": "tf.keras.utils.plot_model expects a Keras model or a model with Keras-style graph; bert_model is a PyTorch transformers.BertModel, so plotting will fail due to incompatible object type.",
+    "detection": true
+  },
+  {
+    "reasoning": "plot_model expects a Keras Model, but bert_model is a PyTorch transformers.BertModel, so TensorFlow cannot plot it.",
+    "detection": true
+  },
+  {
+    "reasoning": "tf.keras.utils.plot_model expects a Keras Model; bert_model is a PyTorch transformers model, so plotting will fail due to incompatible type.",
+    "detection": true
+  }
+]

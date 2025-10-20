@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "225:         print(traceback.format_exc())",
+    "message": "Class 'traceback' has no 'format_exc' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "225:         print(traceback.format_exc())",
+    "message": "Undefined variable 'traceback'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

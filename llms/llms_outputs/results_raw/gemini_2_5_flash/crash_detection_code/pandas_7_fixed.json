@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'released' column contains string values that are split by '-', converted to float, and then to Int64. If any value in 'released' is not a string or cannot be split/converted, it will raise an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains string values that are split by '-', converted to float, and then to Int64. This process is robust and should not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains string values that are split by '-', converted to float, and then to Int64. This process is robust and should not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column is converted to string, then split by '-', and the first part is converted to float and then to Int64. This process is robust and should not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column is converted to string, then split by '-', and the first part is converted to float and then to Int64. This process is robust and should not cause a crash.",
+    "detection": false
+  }
+]

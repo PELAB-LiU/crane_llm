@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `test_generator.classes` attribute returns the integer labels for each sample, which are not one-hot encoded. The `y_pred` are one-hot encoded probabilities, so comparing them directly will lead to incorrect results for metrics. The `y_true_classes` should be derived from `test_generator.classes` directly, which is already an array of integer labels.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `test_generator.classes` attribute returns the integer labels for each sample, which are not one-hot encoded. The `y_pred` are one-hot encoded probabilities, so comparing them directly will lead to incorrect results or errors if used in metrics that expect one-hot vs integer labels.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `test_generator.classes` attribute returns the integer labels for each sample, which are not one-hot encoded. The `y_pred` are one-hot encoded probabilities, so comparing them directly will lead to incorrect results for metrics. The `y_true_classes` should be derived from `test_generator.classes` directly, which is already an array of integer labels.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `test_generator.classes` attribute returns the integer labels for each sample, which are not one-hot encoded. The `y_pred` are one-hot encoded probabilities, so comparing them directly will lead to incorrect results for metrics. The `y_true_classes` should be derived from `test_generator.classes` directly, which is already an array of integer labels.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `test_generator.classes` attribute returns the integer labels for each sample, which are not one-hot encoded. The `y_pred` are one-hot encoded probabilities, so comparing them directly will lead to incorrect results or errors if used in metrics that expect one-hot vs integer labels.",
+    "detection": false
+  }
+]

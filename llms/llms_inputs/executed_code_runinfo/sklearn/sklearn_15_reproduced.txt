@@ -1,0 +1,74 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn import metrics
+from sklearn.preprocessing import StandardScaler
+
+## Cell 2:
+
+
+data = pd.read_csv('data/data.csv')
+
+## Cell 3:
+
+data = data.drop(['Date', 'Location', 'Evaporation', 'Sunshine', 'Cloud9am', 'Cloud3pm'], axis=1)
+
+## Cell 4:
+
+for column in data.columns:
+    if np.issubdtype(data[column].dtype, np.number):
+        data[column].fillna(data[column].median(), inplace=True)
+    else:
+        data[column].fillna(data[column].mode()[0], inplace=True)
+
+## Cell 5:
+
+categorical_columns = ['WindGustDir', 'WindDir9am', 'WindDir3pm', 'RainToday']
+data = pd.get_dummies(data, columns=categorical_columns, drop_first=True)
+
+## Cell 6:
+
+X = data.drop('RainTomorrow', axis=1)
+y = data['RainTomorrow']
+
+## Cell 7:
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Current relevent runtime information:
+{'LogisticRegression': {'type': "<class 'type'>"},
+ 'StandardScaler': {'type': "<class 'type'>"},
+ 'X_test': {'dtypes': ['int64', 'float64', 'bool'],
+            'has_nan': False,
+            'shape': (7377, 60),
+            'type': 'pandas.core.frame.DataFrame'},
+ 'X_train': {'dtypes': ['int64', 'float64', 'bool'],
+             'has_nan': False,
+             'shape': (29504, 60),
+             'type': 'pandas.core.frame.DataFrame'},
+ 'y_test': {'type': "<class 'pandas.core.series.Series'>",
+            'value_info': {'num_unique': 2,
+                           'unique_values': ['No', 'Yes'],
+                           'value_type': 'categorical or object'}},
+ 'y_train': {'type': "<class 'pandas.core.series.Series'>",
+             'value_info': {'num_unique': 2,
+                            'unique_values': ['No', 'Yes'],
+                            'value_type': 'categorical or object'}}}
+# Target Cell:
+
+logreg = LogisticRegression(max_iter=1000)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+y_train = scaler.fit_transform(y_train)
+y_test = scaler.transform(y_test)
+
+logreg.fit(X_train, y_train)

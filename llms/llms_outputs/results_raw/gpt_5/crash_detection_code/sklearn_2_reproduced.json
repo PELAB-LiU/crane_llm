@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "DTRmodel was never fitted; only best_estimator from GridSearchCV was trained. Predicting with unfitted DTRmodel will raise a NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel was defined but not refit on full training; also dft_encoded’s columns likely don’t match X used to fit best_estimator. Using DTRmodel.predict on unseen-structured features without fitting will raise NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel was not fit; grid_search.fit trained best_estimator, and predictions used best_estimator earlier. Calling predict on the unfitted DTRmodel will raise a NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel was never refit after GridSearchCV; predictions were made with best_estimator. DTRmodel remains unfitted, so calling predict will raise NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel was never refit on the full training data after GridSearchCV; best_estimator_ was used for predictions. DTRmodel remains unfitted, so calling predict will raise NotFittedError.",
+    "detection": true
+  }
+]

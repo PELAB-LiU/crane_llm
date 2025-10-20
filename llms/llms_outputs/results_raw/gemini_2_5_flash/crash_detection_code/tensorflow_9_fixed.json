@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `torchinfo` library and its `summary` function are not imported in any of the executed cells. Therefore, calling `summary(bert_model)` will result in a `NameError`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `torchinfo` library and its `summary` function are not imported in any of the executed cells. Therefore, calling `summary(bert_model)` will result in a `NameError`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `torchinfo` library and its `summary` function are not imported in any of the executed cells. Therefore, calling `summary(bert_model)` will result in a `NameError`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `torchinfo` library and its `summary` function are not imported in any of the executed cells. Therefore, calling `summary(bert_model)` will result in a `NameError`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `torchinfo` library and its `summary` function are not imported in any of the executed cells. Therefore, calling `summary(bert_model)` will result in a `NameError`.",
+    "detection": true
+  }
+]

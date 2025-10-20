@@ -1,0 +1,257 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+from sklearn.model_selection import KFold
+from sklearn import linear_model
+from sklearn.metrics import make_scorer
+
+from sklearn import svm
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+from sklearn import neighbors
+from math import sqrt
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+## Cell 2:
+
+
+df = pd.read_csv('data/measures_v2.csv',
+                 usecols=[0,1,2,3,4,5,6,7,8,9,10,11])
+df.head(10)
+
+## Cell 3:
+
+X=df.drop("motor_speed", axis=1)
+y=df["motor_speed"]
+
+## Cell 4:
+
+from sklearn.model_selection import train_test_split,cross_val_score,cross_val_predict
+
+X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.2, random_state=42)
+
+training=df.copy()
+
+## Cell 5:
+
+from sklearn.model_selection import GridSearchCV
+from sklearn.tree import DecisionTreeRegressor,DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.ensemble import BaggingRegressor
+from sklearn.ensemble import RandomForestRegressor
+
+from warnings import filterwarnings
+filterwarnings('ignore')
+
+## Cell 6:
+
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import r2_score,mean_squared_error
+
+## Cell 7:
+
+from xgboost import XGBRegressor,XGBModel
+from sklearn.model_selection import train_test_split,cross_val_score,cross_validate,KFold
+
+## Cell 8:
+
+params = {}
+params['tree_method'] = 'gpu_hist'
+params['predictor'] = 'gpu_predictor'
+params['n_jobs'] = 4
+
+model = XGBRegressor()
+model.fit(X_train,y_train)
+y_pred = model.predict(X_test)
+
+# Current relevent runtime information:
+{'KFold': {'type': "<class 'abc.ABCMeta'>"},
+ 'XGBRegressor': {'type': "<class 'type'>"},
+ 'X_test': {'has_nan': False,
+            'per_column': {'ambient': {'num_unique': 253362,
+                                       'type': 'continuous',
+                                       'value_range': (9.934282613632895,
+                                                       30.714204788208008)},
+                           'coolant': {'num_unique': 250504,
+                                       'type': 'continuous',
+                                       'value_range': (11.996709014379816,
+                                                       93.74124326514097)},
+                           'i_d': {'num_unique': 227648,
+                                   'type': 'continuous',
+                                   'value_range': (-277.91314697265625,
+                                                   0.0518967024981975)},
+                           'i_q': {'num_unique': 222469,
+                                   'type': 'continuous',
+                                   'value_range': (-293.4097655231569,
+                                                   301.7074584960937)},
+                           'pm': {'num_unique': 265589,
+                                  'type': 'continuous',
+                                  'value_range': (20.894161224365234,
+                                                  113.60015869140624)},
+                           'stator_tooth': {'num_unique': 249998,
+                                            'type': 'continuous',
+                                            'value_range': (18.161975860595703,
+                                                            111.93974934363084)},
+                           'stator_winding': {'num_unique': 257940,
+                                              'type': 'continuous',
+                                              'value_range': (18.58688735961914,
+                                                              141.1876220703125)},
+                           'stator_yoke': {'num_unique': 253018,
+                                           'type': 'continuous',
+                                           'value_range': (18.108741760253903,
+                                                           101.03536130623289)},
+                           'torque': {'num_unique': 238602,
+                                      'type': 'continuous',
+                                      'value_range': (-246.46666318909087,
+                                                      261.0057067871094)},
+                           'u_d': {'num_unique': 264585,
+                                   'type': 'continuous',
+                                   'value_range': (-131.42750549316406,
+                                                   131.39837646484375)},
+                           'u_q': {'num_unique': 262799,
+                                   'type': 'continuous',
+                                   'value_range': (-25.2351131439209,
+                                                   133.0369935103849)}},
+            'shape': (266164, 11),
+            'type': 'pandas.core.frame.DataFrame'},
+ 'X_train': {'has_nan': False,
+             'per_column': {'ambient': {'num_unique': 967163,
+                                        'type': 'continuous',
+                                        'value_range': (8.78347834400473,
+                                                        30.69053840637207)},
+                            'coolant': {'num_unique': 911743,
+                                        'type': 'continuous',
+                                        'value_range': (10.623751273643387,
+                                                        101.59851208096164)},
+                            'i_d': {'num_unique': 847143,
+                                    'type': 'continuous',
+                                    'value_range': (-278.0036315917969,
+                                                    0.0266837440431118)},
+                            'i_q': {'num_unique': 829276,
+                                    'type': 'continuous',
+                                    'value_range': (-293.426792941564,
+                                                    301.7078552246094)},
+                            'pm': {'num_unique': 1055800,
+                                   'type': 'continuous',
+                                   'value_range': (20.856956481933597,
+                                                   113.60662841796876)},
+                            'stator_tooth': {'num_unique': 987059,
+                                             'type': 'continuous',
+                                             'value_range': (18.133975982666016,
+                                                             111.94642341392526)},
+                            'stator_winding': {'num_unique': 1014648,
+                                               'type': 'continuous',
+                                               'value_range': (18.5858154296875,
+                                                               141.36288452148438)},
+                            'stator_yoke': {'num_unique': 988334,
+                                            'type': 'continuous',
+                                            'value_range': (18.07668876647949,
+                                                            101.14796436478986)},
+                            'torque': {'num_unique': 931302,
+                                       'type': 'continuous',
+                                       'value_range': (-246.45107026356425,
+                                                       260.9996643066406)},
+                            'u_d': {'num_unique': 1041683,
+                                    'type': 'continuous',
+                                    'value_range': (-131.53041076660156,
+                                                    131.46978759765625)},
+                            'u_q': {'num_unique': 1024310,
+                                    'type': 'continuous',
+                                    'value_range': (-25.290929794311523,
+                                                    133.0312677370447)}},
+             'shape': (1064652, 11),
+             'type': 'pandas.core.frame.DataFrame'},
+ '__method__X_train_iloc': {'type': '<class '
+                                    "'pandas.core.indexing._iLocIndexer'>"},
+ '__method__model_fit': {'type': "<class 'method'>"},
+ '__method__model_predict': {'type': "<class 'method'>"},
+ '__method__np_array': {'type': "<class 'builtin_function_or_method'>"},
+ '__method__np_mean': {'type': "<class 'numpy._ArrayFunctionDispatcher'>"},
+ '__method__np_sqrt': {'type': "<class 'numpy.ufunc'>"},
+ '__method__y_train_iloc': {'type': '<class '
+                                    "'pandas.core.indexing._iLocIndexer'>"},
+ 'mean_squared_error': {'type': "<class 'function'>"},
+ 'model': {'execution_cell_source': {'cellno': 58, 'lineno': 6},
+           'type': "<class 'xgboost.sklearn.XGBRegressor'>"},
+ 'np': {'type': "<class 'module'>"},
+ 'params': {'execution_cell_source': {'cellno': 58, 'lineno': 1},
+            'length': 3,
+            'preview': [{'key': 'tree_method',
+                         'key_type': "<class 'str'>",
+                         'value_repr': "'gpu_hist'",
+                         'value_type': "<class 'str'>"},
+                        {'key': 'predictor',
+                         'key_type': "<class 'str'>",
+                         'value_repr': "'gpu_predictor'",
+                         'value_type': "<class 'str'>"},
+                        {'key': 'n_jobs',
+                         'key_type': "<class 'str'>",
+                         'value_repr': '4',
+                         'value_type': "<class 'int'>"}],
+            'type': "<class 'dict'>"},
+ 'y_train': {'dtype': 'float64',
+             'has_nan': False,
+             'length': 1064652,
+             'type': 'pandas.core.series.Series',
+             'value_info': {'value_range': (-275.54914411131955,
+                                            6000.01513671875),
+                            'value_type': 'continuous'}}}
+# Target Cell:
+
+params = {}
+params['tree_method'] = 'hist'
+params['predictor'] = 'predictor'
+params['n_jobs'] = 4
+
+
+
+n_splits = 10
+test_preds = None
+kf_rmse = []
+for fold, (train_idx, valid_idx) in enumerate(KFold(n_splits=n_splits, shuffle=True).split(X_train,y_train)):
+
+
+    X_train_fold, y_train_fold = X_train.iloc[train_idx], y_train.iloc[train_idx]
+    X_valid_fold, y_valid_fold = X_train.iloc[valid_idx], y_train.iloc[valid_idx]
+
+
+    model = XGBRegressor(**params)
+    model.fit(X_train_fold, y_train_fold,
+            eval_set=[(X_valid_fold, y_valid_fold)],
+            eval_metric='rmse', verbose=False)
+
+
+    valid_pred = model.predict(X_valid_fold)
+
+
+    rmse = np.sqrt(mean_squared_error(y_valid_fold, valid_pred))
+
+    print(f'Fold {fold+1}/{n_splits} RMSE: {rmse:.4f}')
+    kf_rmse.append(rmse)
+
+
+    if test_preds is None:
+        test_preds = model.predict(X_test)
+    else:
+
+        test_preds += model.predict(X_test)
+
+test_preds /= n_splits
+print(f'Average KFold RMSE: {np.mean(np.array(kf_rmse)):.5f}')

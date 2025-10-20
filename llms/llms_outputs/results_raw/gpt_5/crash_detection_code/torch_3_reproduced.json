@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "labels shape is [1,3] but model output logits likely have shape [1, num_choices=3, 2] after classifier; also NLLLoss expects log-probabilities (log_softmax) not sigmoid and class indices of shape [batch_size] or [batch_size, num_choices]? Mismatch will raise error.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels shape is [1,3] while model's NLLLoss expects class indices (1D) and logits are after sigmoid (not log-softmax), causing shape/type mismatch and invalid loss input.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels shape is [1,3] while the model’s NLLLoss expects class indices of shape [batch] with logits of shape [batch,num_choice]; also logits are passed through Sigmoid and NLLLoss expects log-probabilities, causing shape/type mismatch errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model's forward uses NLLLoss on sigmoid outputs (not log-probabilities) and expects labels shaped to match view(-1, num_choice). Provided target has shape [1,3], which will mismatch expected [1] and also NLLLoss input is invalid.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels shape is [1,3] but NLLLoss expects class indices (Long) of shape [batch] or [batch,1]; also logits come from Sigmoid and not log-probabilities required by NLLLoss, causing a runtime error.",
+    "detection": true
+  }
+]

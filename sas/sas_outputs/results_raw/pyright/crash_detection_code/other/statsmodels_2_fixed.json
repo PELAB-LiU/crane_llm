@@ -1,0 +1,37 @@
+[
+  {
+    "code_line": "64: train_subset.index.freq = 'D'",
+    "message": "Cannot assign to attribute \"freq\" for class \"Index[Unknown]\"\n\u00a0\u00a0Attribute \"freq\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "101: y_pred = results.predict(start=pd.Timestamp(pred_start_date), end=pd.Timestamp(pred_end_date), exog=exog_val, dynamic=False)",
+    "message": "Cannot access attribute \"predict\" for class \"tuple[NDArray[Unknown] | NDArray[floating[Any]] | NDArray[floating[_64Bit]], NDArray[Any] | Unbound]\"\n\u00a0\u00a0Attribute \"predict\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "101: y_pred = results.predict(start=pd.Timestamp(pred_start_date), end=pd.Timestamp(pred_end_date), exog=exog_val, dynamic=False)",
+    "message": "Cannot access attribute \"predict\" for class \"NDArray[Unknown]\"\n\u00a0\u00a0Attribute \"predict\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "101: y_pred = results.predict(start=pd.Timestamp(pred_start_date), end=pd.Timestamp(pred_end_date), exog=exog_val, dynamic=False)",
+    "message": "Cannot access attribute \"predict\" for class \"NDArray[floating[Any]]\"\n\u00a0\u00a0Attribute \"predict\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "101: y_pred = results.predict(start=pd.Timestamp(pred_start_date), end=pd.Timestamp(pred_end_date), exog=exog_val, dynamic=False)",
+    "message": "Cannot access attribute \"predict\" for class \"NDArray[floating[_64Bit]]\"\n\u00a0\u00a0Attribute \"predict\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

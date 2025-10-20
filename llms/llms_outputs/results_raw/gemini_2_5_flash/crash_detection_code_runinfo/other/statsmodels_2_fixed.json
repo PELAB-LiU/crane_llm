@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `residuals` Series has 92 data points. The `max_pacf_lags` calculation `len(residuals) // 2 - 1` results in 45. This value is valid for `plot_pacf`.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `residuals` Series has 92 data points. The `max_pacf_lags` calculation `len(residuals) // 2 - 1` results in 45. This value is valid for `plot_pacf`.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `residuals` Series has 92 data points. The `max_pacf_lags` calculation `len(residuals) // 2 - 1` results in 45. This value is valid for the `plot_pacf` function, which requires `lags` to be less than `nobs / 2` where `nobs` is the number of observations.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `residuals` Series has 92 data points. The `max_pacf_lags` calculation `len(residuals) // 2 - 1` results in 45. This value is valid for the `plot_pacf` function, which requires `lags` to be less than `nobs / 2` where `nobs` is the number of observations.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `residuals` Series has 92 data points. The `max_pacf_lags` calculation `len(residuals) // 2 - 1` results in 45. This value is valid for the `plot_pacf` function, which requires `lags` to be less than `nobs / 2` where `nobs` is the number of observations.",
+    "detection": false
+  }
+]

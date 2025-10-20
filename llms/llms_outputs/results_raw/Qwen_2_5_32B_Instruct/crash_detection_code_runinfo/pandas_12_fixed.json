@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to group by 'kmeans_cluster' and aggregate on specific numeric columns. However, the list of numeric columns is dynamically generated and the specific columns selected for aggregation might not exist, leading to a potential KeyError.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to group by 'kmeans_cluster' and aggregate on specific numeric columns. However, the list of numeric columns is dynamically generated and the specific columns selected for aggregation might not exist, leading to a potential KeyError.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to group by 'kmeans_cluster' and aggregate on specific numeric columns. However, the list of numeric columns is dynamically generated and the specific columns selected for aggregation might not exist, leading to a potential KeyError.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to group by 'kmeans_cluster' and aggregate on specific numeric columns. However, the list of numeric columns is dynamically generated and the specific columns selected for aggregation might not exist, leading to a potential KeyError.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to group by 'kmeans_cluster' and aggregate on specific numeric columns. However, the list of numeric columns is dynamically generated and the specific columns selected for aggregation might not exist, leading to a potential KeyError.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.x and will cause an AttributeError. The correct method to use for binary classification is `(model.predict(x) >= 0.5).astype(int)`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.x and will cause an AttributeError. The correct method to use for binary classification is `(model.predict(x) >= 0.5).astype(int)`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.x and will cause an AttributeError. The correct method to use for binary classification is `(model.predict(x) >= 0.5).astype(int)`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.x and will cause an AttributeError. The correct method to use for binary classification is `(model.predict(x) >= 0.5).astype(int)`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.x and will cause an AttributeError. The correct method to use for binary classification is `(model.predict(x) >= 0.5).astype(int)`.",
+    "detection": true
+  }
+]

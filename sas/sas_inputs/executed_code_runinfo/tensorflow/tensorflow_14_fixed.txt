@@ -1,0 +1,128 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras.models import Sequential,Model
+from tensorflow.keras.layers import ZeroPadding2D,Convolution2D,MaxPooling2D
+from tensorflow.keras.layers import Dense,Dropout,Softmax,Flatten,Activation,BatchNormalization
+from tensorflow.keras.preprocessing.image import load_img,img_to_array
+from tensorflow.keras.applications.imagenet_utils import preprocess_input
+import tensorflow.keras.backend as K
+
+## Cell 2:
+
+
+model = Sequential()
+model.add(ZeroPadding2D((1,1),input_shape=(224,224, 3)))
+model.add(Convolution2D(64, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(64, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2,2), strides=(2,2)))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(128, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(128, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2,2), strides=(2,2)))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(256, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(256, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(256, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2,2), strides=(2,2)))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(512, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(512, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(512, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2,2), strides=(2,2)))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(512, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(512, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(512, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2,2), strides=(2,2)))
+model.add(Convolution2D(4096, (7, 7), activation='relu'))
+model.add(Dropout(0.5))
+model.add(Convolution2D(4096, (1, 1), activation='relu'))
+model.add(Dropout(0.5))
+model.add(Convolution2D(2622, (1, 1)))
+model.add(Flatten())
+model.add(Activation('softmax'))
+
+
+model.load_weights('data/vgg_face_weights.h5')
+
+## Cell 3:
+
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.applications import VGG16
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+# Annotated Target Code:
+
+
+
+main_data_directory = 'data/train-data-imgs'
+
+
+input_size = (224, 224)
+
+
+train_datagen = ImageDataGenerator(
+    rescale=1.0/255,
+    rotation_range=20,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    horizontal_flip=True,
+    zoom_range=0.2
+)
+
+train_generator = train_datagen.flow_from_directory(
+    main_data_directory,
+    target_size=input_size,
+    batch_size=32,
+    class_mode='categorical',
+    shuffle=True
+)
+
+
+base_model = VGG16(weights='imagenet', include_top=False,classes=7)
+
+
+for layer in base_model.layers:
+    layer.trainable = False
+
+
+
+from tensorflow.keras.layers import GlobalAveragePooling2D
+x = base_model.output
+x = GlobalAveragePooling2D()(x)
+x = Dense(256, activation='relu')(x)
+x = Dense(7, activation='softmax')(x)
+base_model = Model(inputs=base_model.input, outputs=x)
+
+
+
+base_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+
+
+
+
+base_model.load_weights('data/vgg_face_weights.h5', by_name=True, skip_mismatch=True)
+
+
+base_model.fit(
+    train_generator,
+    steps_per_epoch=len(train_generator),
+    epochs=1,
+)
+
+
+base_model.save('data/updated_vgg_face_weights.h5')

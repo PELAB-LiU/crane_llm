@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "76:     return \" \".join([ps.stem(word) for word in text])",
+    "message": "Cannot access attribute \"stem\" for class \"object\"\n\u00a0\u00a0Attribute \"stem\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "89: tf_idf.toarray()",
+    "message": "\"tf_idf\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

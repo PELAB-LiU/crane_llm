@@ -1,0 +1,65 @@
+[
+  {
+    "code_line": "75: module = module()",
+    "message": "Type \"module\" is not assignable to declared type \"type[module]\"\n\u00a0\u00a0Type \"module\" is not assignable to type \"type[module]\"",
+    "rule": "reportAssignmentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "77:     module = module.cuda()",
+    "message": "Argument missing for parameter \"self\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "86: optimizer = torch.optim.Adam(module.parameters(),lr = learning_rate)",
+    "message": "Argument missing for parameter \"self\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "96:     module.train()",
+    "message": "Argument missing for parameter \"self\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "102:         outputs = module(imgs)",
+    "message": "Expected 0 positional arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "113:     module.eval()",
+    "message": "Argument missing for parameter \"self\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "122:             outputs = module(imgs)",
+    "message": "Expected 0 positional arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "134: train_data=torchvision.datasets.ImageFolder(root = train_data_path,transform=transforms)",
+    "message": "Argument of type \"Module(\"torchvision.transforms\")\" cannot be assigned to parameter \"transform\" of type \"((...) -> Unknown) | None\" in function \"__init__\"\n\u00a0\u00a0Type \"Module(\"torchvision.transforms\")\" is not assignable to type \"((...) -> Unknown) | None\"\n\u00a0\u00a0\u00a0\u00a0Type \"Module(\"torchvision.transforms\")\" is not assignable to type \"(...) -> Unknown\"\n\u00a0\u00a0\u00a0\u00a0Type is not assignable to \"None\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "141:     outputs = module(imgs)",
+    "message": "Expected 0 positional arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

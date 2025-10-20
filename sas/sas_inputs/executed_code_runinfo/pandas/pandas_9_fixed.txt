@@ -1,0 +1,33 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+df = pd.read_csv("data/IMDb_All_Genres_etf_clean1.csv")
+
+# Annotated Target Code:
+df: pd.DataFrame
+
+
+
+
+clean_df = df[(df["Total_Gross"]!="$0.00M") & (df["Total_Gross"]!="Gross Unkown")].copy()
+clean_df = clean_df[clean_df['Censor']!="(Banned)"]

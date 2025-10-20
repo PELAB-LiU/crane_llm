@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'released' column contains string values representing dates. The target cell attempts to convert these strings to integers by splitting them at '-' and taking the first part, then casting to float and then to Int64. This operation is valid and will not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains string values representing dates. The target cell attempts to convert these strings to integers by splitting them at '-' and taking the first part, then casting to float and then to Int64. This operation is valid and will not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains string values representing dates. The target cell attempts to convert these strings to integers by splitting them at '-' and taking the first part (year), then casting to float and finally to Int64. This operation is valid and will not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains string values representing dates. The target cell attempts to convert these strings to integers by splitting them at '-' and taking the first part, then casting to float and then to Int64. This operation is valid and will not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains string values representing dates. The target cell attempts to convert these strings to integers by splitting them at '-' and taking the first part (year), then casting to float and finally to Int64. This operation is valid and will not crash.",
+    "detection": false
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "40: dev_train['SeriousDlqin2yrs'].value_counts().plot.pie(explode=[0,0.1],autopct=\"%1.1f%%\",ax=axes[0])",
+    "message": "No overloads for \"pie\" match the provided arguments\n\u00a0\u00a0Argument types: (list[Unknown], Literal['%1.1f%%'], Any | Unknown)",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

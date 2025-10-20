@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The Keras Conv2D layers expect channels_last input (32,32,3), but the code later moves axes to channels_first for train/val/test before calling model.fit, causing a shape mismatch error. Also, evaluate/predict use test_images defined in __main__ scope, which may be undefined inside functions.",
+    "detection": true
+  },
+  {
+    "reasoning": "The code uses variables test_images and test_labels in evaluate() and predict() without defining them in that scope; also it incorrectly changes data format by moving channels to first axis, which mismatches Keras' default channels-last Conv2D input, likely causing shape errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras Conv2D expects channels_last by default, but the code moves axes to channels_first only in the else branch (when building a new model). If a saved model is loaded, data remains channels_last, avoiding mismatch. However, when building a new model it also sets input_shape=(32,32,3) while data is converted to channels_first later, causing shape mismatch at fit time.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras Conv2D expects channels_last by default; code converts images to channels_last, but then moves axes back to channels_first only inside the else (new model) branch, while input_shape is channels_last. This channel ordering mismatch will cause shape errors during model.fit/evaluate.",
+    "detection": true
+  },
+  {
+    "reasoning": "The Keras model expects NHWC input shape (32,32,3), but before training the code moves axes to NCHW (channels first) only in the else block, causing a shape mismatch with Conv2D data_format default. This will likely raise an error during model.fit.",
+    "detection": true
+  }
+]

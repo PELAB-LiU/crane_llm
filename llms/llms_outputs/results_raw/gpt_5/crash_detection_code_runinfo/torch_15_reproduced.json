@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model outputs have shape [batch,1] with float; labels are integer tensors of shape [] per sample collated to shape [batch]; BCELoss expects targets of same shape and float, so dtype/shape mismatch will raise an error. Also no device move may cause device mismatch if CUDA is used, but primary crash is target dtype.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs have shape [batch,1] with float in [0,1], but labels are shape [] (scalars) and integer tensors; BCELoss expects matching float shapes. Also model and data are on CPU/GPU mismatch as device not set; main issue is label shape/type mismatch causing runtime error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model outputs shape [batch,1] floats in [0,1], but labels are scalar tensors of dtype long; BCELoss expects float targets of same shape, causing a dtype/shape mismatch. Also no device move may cause CUDA mismatch if used later.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs have shape [batch,1] with sigmoid; labels are scalar tensors stacked to shape [batch], causing BCELoss size mismatch. Additionally, data and model are on CPU but test code used device; here no device move, but main crash is BCELoss expecting same shape.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model outputs shape [batch,1] with float sigmoid, but labels are scalars (shape []) and not float; BCELoss expects matching float shapes. Also tensors are on CPU but device logic was only in test; this will raise a size/dtype mismatch error.",
+    "detection": true
+  }
+]

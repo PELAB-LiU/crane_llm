@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model expects input shape (100,100,3) but train_images has shape (56,100,100) grayscale without channel; also loss uses from_logits=True with softmax; the shape mismatch will crash immediately.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects input shape (100,100,3) but train_images are grayscale with shape (56, 100, 100). Also loss uses from_logits=True with a softmax output, causing a mismatch. The input shape mismatch will crash immediately.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects input shape (100,100,3) but train_images have shape (56, 100, 100) with no channel dimension; also loss uses from_logits=True with softmax outputs, causing a mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects input shape (100,100,3) but train_images are grayscale with shape (56, 100, 100); also loss uses from_logits=True with softmax outputs. The mismatched input rank will cause a shape error on fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects input shape (100,100,3) but train_images has shape (56,100,100) with single channel; also loss set with from_logits=True while final activation is softmax. The mismatched input shape will cause an error on fit.",
+    "detection": true
+  }
+]

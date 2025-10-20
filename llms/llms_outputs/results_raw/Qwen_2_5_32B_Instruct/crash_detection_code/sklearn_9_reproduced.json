@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to use the 'elasticnet' penalty with the 'liblinear' solver, which is not supported. The 'liblinear' solver only supports 'l1' and 'l2' penalties.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use the 'elasticnet' penalty with the 'liblinear' solver, which is not supported. The 'liblinear' solver only supports 'l1' and 'l2' penalties.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use the 'elasticnet' penalty with the 'liblinear' solver, which is not supported. The 'liblinear' solver only supports 'l1' and 'l2' penalties.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use the 'elasticnet' penalty with the 'liblinear' solver, which is not supported. The 'liblinear' solver only supports 'l1' and 'l2' penalties.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use the 'elasticnet' penalty with the 'liblinear' solver, which is not supported. The 'liblinear' solver only supports 'l1' and 'l2' penalties.",
+    "detection": true
+  }
+]

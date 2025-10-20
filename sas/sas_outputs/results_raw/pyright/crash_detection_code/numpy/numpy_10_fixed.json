@@ -1,0 +1,23 @@
+[
+  {
+    "code_line": "181: model.class_to_idx = train_ds.class_to_idx",
+    "message": "Argument of type \"Dict[str, int]\" cannot be assigned to parameter \"value\" of type \"Tensor | Module\" in function \"__setattr__\"\n\u00a0\u00a0Type \"Dict[str, int]\" is not assignable to type \"Tensor | Module\"\n\u00a0\u00a0\u00a0\u00a0\"Dict[str, int]\" is not assignable to \"Tensor\"\n\u00a0\u00a0\u00a0\u00a0\"Dict[str, int]\" is not assignable to \"Module\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "254:     ax.imshow(image)",
+    "message": "Cannot access attribute \"imshow\" for class \"ndarray[Any, dtype[Any]]\"\n\u00a0\u00a0Attribute \"imshow\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "280:     img_tensor = img_tensor.unsqueeze_(0).to(device)",
+    "message": "Cannot access attribute \"unsqueeze_\" for class \"ImageFile\"\n\u00a0\u00a0Attribute \"unsqueeze_\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

@@ -1,0 +1,60 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import seaborn as sns
+from matplotlib import pyplot as plt
+
+from sklearn.metrics import *
+from sklearn.model_selection import *
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+
+## Cell 2:
+
+df = pd.read_csv("data/penguins.csv")
+
+## Cell 3:
+
+df=df.dropna()
+
+## Cell 4:
+
+df["sex"] = df["sex"].map({"male" : 0,"female" : 1})
+
+# Current relevent runtime information:
+{'__method__sns_violinplot': {'type': "<class 'function'>"},
+ 'df': {'execution_cell_source': {'cellno': 4, 'lineno': 1},
+        'has_nan': False,
+        'per_column': {'bill_depth_mm': {'num_unique': 79,
+                                         'type': 'continuous',
+                                         'value_range': (13.1, 21.5)},
+                       'bill_length_mm': {'num_unique': 163,
+                                          'type': 'continuous',
+                                          'value_range': (32.1, 59.6)},
+                       'body_mass_g': {'num_unique': 93,
+                                       'type': 'continuous',
+                                       'value_range': (2700.0, 6300.0)},
+                       'flipper_length_mm': {'num_unique': 54,
+                                             'type': 'continuous',
+                                             'value_range': (172.0, 231.0)},
+                       'island': {'num_unique': 3,
+                                  'type': 'categorical',
+                                  'unique_values': ['Torgersen',
+                                                    'Biscoe',
+                                                    'Dream']},
+                       'sex': {'num_unique': 2,
+                               'type': 'binary',
+                               'value_range': (0, 1)},
+                       'species': {'num_unique': 3,
+                                   'type': 'categorical',
+                                   'unique_values': ['Adelie',
+                                                     'Gentoo',
+                                                     'Chinstrap']}},
+        'shape': (333, 7),
+        'type': 'pandas.core.frame.DataFrame'},
+ 'sns': {'type': "<class 'module'>"}}
+# Target Cell:
+
+sns.violinplot(df, x='species')

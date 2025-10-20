@@ -1,0 +1,21 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np;
+import pandas as pd;
+import seaborn as sn;
+import matplotlib.pyplot as plt;
+
+## Cell 2:
+
+df = pd.read_csv('data/googleplaystore.csv');
+
+## Cell 3:
+
+
+df.drop([10472],inplace = True);
+
+# Target Cell:
+
+
+df.drop([10472],inplace = True);

@@ -1,0 +1,69 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+## Cell 2:
+
+file_path = 'data/diabetes.csv'
+data = pd.read_csv(file_path)
+X = data[['Glucose','BloodPressure','Insulin']].values
+
+## Cell 3:
+
+K = 3
+
+## Cell 4:
+
+kmeans = KMeans(n_clusters = K)
+kmeans.fit(X)
+
+## Cell 5:
+
+labels = kmeans.labels_
+
+## Cell 6:
+
+centriods = kmeans.cluster_centers_
+
+# Current relevent runtime information:
+{'X': {'dtype': 'int64',
+       'execution_cell_source': {'cellno': 1, 'lineno': 3},
+       'has_nan': False,
+       'shape': (768, 3),
+       'type': 'numpy.ndarray',
+       'value_range': (0, 846)},
+ '__method__plt_scatter': {'type': "<class 'function'>"},
+ '__method__plt_show': {'type': "<class 'function'>"},
+ '__method__plt_title': {'type': "<class 'function'>"},
+ '__method__plt_xlabel': {'type': "<class 'function'>"},
+ '__method__plt_ylabel': {'type': "<class 'function'>"},
+ 'centriods': {'dtype': 'float64',
+               'execution_cell_source': {'cellno': 5, 'lineno': 1},
+               'has_nan': False,
+               'shape': (3, 3),
+               'type': 'numpy.ndarray',
+               'value_range': (14.400000000000048, 441.2894736842106)},
+ 'labels': {'dtype': 'int32',
+            'execution_cell_source': {'cellno': 4, 'lineno': 1},
+            'has_nan': False,
+            'shape': (768,),
+            'type': 'numpy.ndarray',
+            'value_info': {'num_unique': 3,
+                           'unique_values': [0, 1, 2],
+                           'value_type': 'categorical numeric(no more than 10 '
+                                         'unique values)'},
+            'value_range': (0, 2)},
+ 'plt': {'type': "<class 'module'>"}}
+# Target Cell:
+
+plt.scatter(X[:,0], X[:,1], X[:,2], c = labels, cmap = 'viridis')
+plt.scatter(centriods[:,0], centriods[:,1], centriods[:,2], marker = 'X', s = 200, c = 'red')
+plt.title("K-Means Clustering")
+plt.xlabel("Gluscose")
+plt.ylabel("BloodPressure")
+plt.zlabel("Insulin")
+plt.show()

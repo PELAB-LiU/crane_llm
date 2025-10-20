@@ -1,0 +1,58 @@
+[
+  {
+    "code_line": "99:     x_train[column] = x_train[column].astype('float').astype('int')",
+    "message": "No overloads for \"__setitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "99:     x_train[column] = x_train[column].astype('float').astype('int')",
+    "message": "Argument of type \"str\" cannot be assigned to parameter \"key\" of type \"slice[Any, Any, Any]\" in function \"__setitem__\"\n\u00a0\u00a0\"str\" is not assignable to \"slice[Any, Any, Any]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "99:     x_train[column] = x_train[column].astype('float').astype('int')",
+    "message": "No overloads for \"__getitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "99:     x_train[column] = x_train[column].astype('float').astype('int')",
+    "message": "Argument of type \"str\" cannot be assigned to parameter \"s\" of type \"slice[Any, Any, Any]\" in function \"__getitem__\"\n\u00a0\u00a0\"str\" is not assignable to \"slice[Any, Any, Any]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "100:     x_test[column] = x_test[column].astype('float').astype('int')",
+    "message": "No overloads for \"__setitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "100:     x_test[column] = x_test[column].astype('float').astype('int')",
+    "message": "Argument of type \"str\" cannot be assigned to parameter \"key\" of type \"slice[Any, Any, Any]\" in function \"__setitem__\"\n\u00a0\u00a0\"str\" is not assignable to \"slice[Any, Any, Any]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "100:     x_test[column] = x_test[column].astype('float').astype('int')",
+    "message": "No overloads for \"__getitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "100:     x_test[column] = x_test[column].astype('float').astype('int')",
+    "message": "Argument of type \"str\" cannot be assigned to parameter \"s\" of type \"slice[Any, Any, Any]\" in function \"__getitem__\"\n\u00a0\u00a0\"str\" is not assignable to \"slice[Any, Any, Any]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

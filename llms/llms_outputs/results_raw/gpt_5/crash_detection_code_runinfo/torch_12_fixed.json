@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT2; attention_mask uses tokenizer.pad_token_id causing .ne(None) type error or mask of wrong dtype, likely crashing. Everything else is defined.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT2 by default; attention_mask uses tokenizer.pad_token_id causing a NoneType error in tensor comparison.",
+    "detection": true
+  },
+  {
+    "reasoning": "attention_mask compares to tokenizer.pad_token_id, but for GPT2Tokenizer pad_token was set to eos_token; decode skip_special_tokens removes eos which may be okay. The main risk is CUDA/missing torch, but not certain. Code should run on CPU with small batch.",
+    "detection": false
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None, so attention_mask=input_ids.ne(tokenizer.pad_token_id) compares to None and will error; also GPT2Tokenizer vs earlier AutoTokenizer may mismatch but main crash is NoneType. Setting pad_token before encoding doesn’t set pad_token_id.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT2 unless set; attention_mask uses tokenizer.pad_token_id causing comparison with None and a runtime error. Also GPT2Tokenizer vs GPT2TokenizerFast mismatch with previous tokenizer but not fatal.",
+    "detection": true
+  }
+]

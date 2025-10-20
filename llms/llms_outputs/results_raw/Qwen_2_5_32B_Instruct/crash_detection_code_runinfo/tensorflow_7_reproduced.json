@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The input tensors in `train_input` have a shape of (8, 172), but the model expects inputs of shape (8, 50). This mismatch in input shape will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The input tensors in `train_input` have a shape of (8, 172), but the model expects inputs of shape (8, 50). This mismatch in input shape will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The input tensors in `train_input` have a shape of (8, 172), but the model expects inputs of shape (8, 50). This mismatch in input shape will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The input tensors in `train_input` have a shape of (8, 172), but the model expects inputs of shape (8, 50). This mismatch in input shape will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The input tensors in `train_input` have a shape of (8, 172), but the model expects inputs of shape (8, 50). This mismatch in input shape will cause a crash.",
+    "detection": true
+  }
+]

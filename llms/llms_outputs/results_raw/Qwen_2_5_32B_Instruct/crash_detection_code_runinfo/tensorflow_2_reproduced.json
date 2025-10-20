@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model is defined with an input shape of (100, 100, 3), but the generators provide images with a shape of (223, 223, 3). This mismatch will cause a crash during model fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is defined with an input shape of (100, 100, 3), but the generators provide images with a shape of (223, 223, 3). This mismatch will cause a crash during model fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is defined with an input shape of (100, 100, 3), but the generators provide images with a shape of (223, 223, 3). This mismatch will cause a crash during model fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is defined with an input shape of (100, 100, 3), but the generators provide images with a shape of (223, 223, 3). This mismatch will cause a crash during model fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is defined with an input shape of (100, 100, 3), but the generators provide images with a shape of (223, 223, 3). This mismatch will cause a crash during model fitting.",
+    "detection": true
+  }
+]

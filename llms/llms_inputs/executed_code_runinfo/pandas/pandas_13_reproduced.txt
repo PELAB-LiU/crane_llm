@@ -1,0 +1,578 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import warnings
+warnings.filterwarnings('ignore')
+
+
+
+import os
+
+import pickle
+from sklearn_pandas import DataFrameMapper
+from sklearn.preprocessing import OneHotEncoder,MinMaxScaler,StandardScaler,LabelEncoder
+from sklearn.model_selection import train_test_split,GridSearchCV
+from sklearn.ensemble import GradientBoostingRegressor,RandomForestRegressor
+from sklearn.metrics import mean_absolute_error,mean_squared_error,r2_score
+
+import matplotlib.pyplot as plt
+
+## Cell 2:
+
+df = pd.read_csv('data/car data.csv')
+df.head()
+
+## Cell 3:
+
+
+df.drop_duplicates(inplace = True)
+df.duplicated().sum()
+
+## Cell 4:
+
+
+dfm = DataFrameMapper([(['Year'],StandardScaler()),
+                       (['Selling_Price'],None),
+                       (['Driven_kms'],MinMaxScaler()),
+                       ('Owner',None),
+                       (['Car_Name'],OneHotEncoder()),
+                       (['Fuel_Type'],OneHotEncoder()),
+                       (['Selling_type'],OneHotEncoder()),
+                       (['Transmission'],OneHotEncoder()),
+                       (['Present_Price'],MinMaxScaler())
+                      ],df_out=True)
+transformed = dfm.fit_transform(df)
+
+## Cell 5:
+
+
+
+dfm2 = DataFrameMapper([(['Year'],None),
+                        (['Selling_Price'],None),
+                        (['Driven_kms'],None),
+                        ('Owner',None),
+                        (['Car_Name'],LabelEncoder()),
+                        (['Fuel_Type'],LabelEncoder()),
+                        (['Selling_type'],LabelEncoder()),
+                        (['Transmission'],LabelEncoder()),
+                        (['Present_Price'],None)
+                       ],df_out=True)
+transformed2 = dfm2.fit_transform(df)
+
+## Cell 6:
+
+
+X = transformed.loc[:,~transformed.columns.isin(['Selling_Price'])]
+y = transformed.loc[:,'Selling_Price']
+
+
+def changename(name):
+    for i in range(len(df[name].unique())):
+        s = name + '_' + str(i)
+        X.columns = [col.replace(s, name + '_' + df[name].unique()[i]) for col in X.columns]
+
+changename('Selling_type')
+changename('Transmission')
+changename('Fuel_Type')
+changename('Car_Name')
+
+X.columns.tolist()
+
+## Cell 7:
+
+
+X_ = transformed2.loc[:,~transformed2.columns.isin(['Selling_Price'])]
+y_ = transformed2.loc[:,'Selling_Price']
+
+## Cell 8:
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=20)
+
+X_2_train, X_2_test, y_2_train, y_2_test = train_test_split(X_, y_, test_size=0.1, random_state=20)
+
+## Cell 9:
+
+
+gbr = GradientBoostingRegressor(random_state=20)
+gbr.fit(X_train,y_train)
+gbr_y_predict = gbr.predict(X_test)
+
+## Cell 10:
+
+gbr2 = GradientBoostingRegressor(random_state=20)
+gbr2.fit(X_2_train,y_2_train)
+gbr2_y_predict = gbr2.predict(X_2_test)
+
+## Cell 11:
+
+gbr_gs = GradientBoostingRegressor(loss='squared_error', n_estimators=133,random_state=20)
+gbr_gs.fit(X_2_train,y_2_train)
+gbr_gs_y_predict = gbr_gs.predict(X_2_test)
+gbr_gs.score(X_2_test,y_2_test)
+
+## Cell 12:
+
+
+rfr = RandomForestRegressor(random_state=20)
+rfr.fit(X_train,y_train)
+rfr_y_predict = rfr.predict(X_test)
+
+## Cell 13:
+
+rfr2 = RandomForestRegressor(random_state=20)
+rfr2.fit(X_2_train,y_2_train)
+rfr2_y_predict = rfr2.predict(X_2_test)
+
+## Cell 14:
+
+rfr_gs = RandomForestRegressor(criterion = 'friedman_mse',
+                               n_estimators = 136,
+                               random_state=20)
+rfr_gs.fit(X_2_train,y_2_train)
+rfr_gs_y_predict = rfr_gs.predict(X_2_test)
+
+# Current relevent runtime information:
+{'X_2_train': {'has_nan': False,
+               'per_column': {'Car_Name': {'num_unique': 97,
+                                           'type': 'continuous',
+                                           'value_range': (0, 97)},
+                              'Driven_kms': {'num_unique': 194,
+                                             'type': 'continuous',
+                                             'value_range': (1000, 500000)},
+                              'Fuel_Type': {'num_unique': 3,
+                                            'type': 'categorical_numeric',
+                                            'value_range': (0, 2)},
+                              'Owner': {'num_unique': 3,
+                                        'type': 'categorical_numeric',
+                                        'value_range': (0, 3)},
+                              'Present_Price': {'num_unique': 145,
+                                                'type': 'continuous',
+                                                'value_range': (0.32, 92.6)},
+                              'Selling_type': {'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0, 1)},
+                              'Transmission': {'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0, 1)},
+                              'Year': {'num_unique': 16,
+                                       'type': 'continuous',
+                                       'value_range': (2003, 2018)}},
+               'shape': (269, 8),
+               'type': 'pandas.core.frame.DataFrame'},
+ 'X_train': {'has_nan': False,
+             'per_column': {'Car_Name_alto 800': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_alto 8000': {'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                            'Car_Name_alto 8001': {'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                            'Car_Name_alto 8002': {'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                            'Car_Name_alto 8003': {'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                            'Car_Name_alto 8004': {'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                            'Car_Name_alto 8005': {'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                            'Car_Name_alto 8006': {'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                            'Car_Name_alto 8007': {'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                            'Car_Name_alto 8008': {'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                            'Car_Name_alto 8009': {'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                            'Car_Name_ciaz': {'num_unique': 2,
+                                              'type': 'binary',
+                                              'value_range': (0.0, 1.0)},
+                            'Car_Name_ciaz0': {'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0.0, 1.0)},
+                            'Car_Name_ciaz1': {'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0.0, 1.0)},
+                            'Car_Name_ciaz2': {'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0.0, 1.0)},
+                            'Car_Name_ciaz3': {'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0.0, 1.0)},
+                            'Car_Name_ciaz4': {'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0.0, 1.0)},
+                            'Car_Name_ciaz5': {'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0.0, 1.0)},
+                            'Car_Name_ciaz6': {'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0.0, 1.0)},
+                            'Car_Name_ciaz7': {'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0.0, 1.0)},
+                            'Car_Name_ciaz8': {'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0.0, 1.0)},
+                            'Car_Name_ciaz9': {'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0.0, 1.0)},
+                            'Car_Name_dzire': {'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0.0, 1.0)},
+                            'Car_Name_dzire0': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_dzire1': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_dzire2': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_dzire3': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_dzire4': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_dzire5': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_dzire6': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_dzire7': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_ertiga': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_ertiga0': {'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0.0, 1.0)},
+                            'Car_Name_ertiga1': {'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0.0, 1.0)},
+                            'Car_Name_ertiga2': {'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0.0, 1.0)},
+                            'Car_Name_ertiga3': {'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0.0, 1.0)},
+                            'Car_Name_ertiga4': {'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0.0, 1.0)},
+                            'Car_Name_ertiga5': {'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0.0, 1.0)},
+                            'Car_Name_ertiga6': {'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0.0, 1.0)},
+                            'Car_Name_ertiga7': {'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0.0, 1.0)},
+                            'Car_Name_ertiga8': {'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0.0, 1.0)},
+                            'Car_Name_ertiga9': {'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0.0, 1.0)},
+                            'Car_Name_ritz': {'num_unique': 2,
+                                              'type': 'binary',
+                                              'value_range': (0.0, 1.0)},
+                            'Car_Name_s cross': {'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0.0, 1.0)},
+                            'Car_Name_s cross0': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_s cross1': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_s cross2': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_s cross3': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_s cross4': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_s cross5': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_s cross6': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_s cross7': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_s cross8': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_s cross9': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_swift': {'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0.0, 1.0)},
+                            'Car_Name_swift0': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_swift1': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_swift2': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_swift3': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_swift4': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_swift5': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_swift6': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_swift7': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_swift8': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_swift9': {'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0.0, 1.0)},
+                            'Car_Name_sx4': {'num_unique': 2,
+                                             'type': 'binary',
+                                             'value_range': (0.0, 1.0)},
+                            'Car_Name_sx40': {'num_unique': 2,
+                                              'type': 'binary',
+                                              'value_range': (0.0, 1.0)},
+                            'Car_Name_sx41': {'num_unique': 2,
+                                              'type': 'binary',
+                                              'value_range': (0.0, 1.0)},
+                            'Car_Name_sx42': {'num_unique': 2,
+                                              'type': 'binary',
+                                              'value_range': (0.0, 1.0)},
+                            'Car_Name_sx43': {'num_unique': 1,
+                                              'type': 'continuous',
+                                              'value_range': (0.0, 0.0)},
+                            'Car_Name_sx44': {'num_unique': 2,
+                                              'type': 'binary',
+                                              'value_range': (0.0, 1.0)},
+                            'Car_Name_sx45': {'num_unique': 2,
+                                              'type': 'binary',
+                                              'value_range': (0.0, 1.0)},
+                            'Car_Name_sx46': {'num_unique': 2,
+                                              'type': 'binary',
+                                              'value_range': (0.0, 1.0)},
+                            'Car_Name_sx47': {'num_unique': 2,
+                                              'type': 'binary',
+                                              'value_range': (0.0, 1.0)},
+                            'Car_Name_sx48': {'num_unique': 2,
+                                              'type': 'binary',
+                                              'value_range': (0.0, 1.0)},
+                            'Car_Name_sx49': {'num_unique': 2,
+                                              'type': 'binary',
+                                              'value_range': (0.0, 1.0)},
+                            'Car_Name_vitara brezza': {'num_unique': 2,
+                                                       'type': 'binary',
+                                                       'value_range': (0.0,
+                                                                       1.0)},
+                            'Car_Name_vitara brezza0': {'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (0.0,
+                                                                        1.0)},
+                            'Car_Name_vitara brezza1': {'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (0.0,
+                                                                        1.0)},
+                            'Car_Name_vitara brezza2': {'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (0.0,
+                                                                        1.0)},
+                            'Car_Name_vitara brezza3': {'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (0.0,
+                                                                        1.0)},
+                            'Car_Name_vitara brezza4': {'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (0.0,
+                                                                        1.0)},
+                            'Car_Name_vitara brezza5': {'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (0.0,
+                                                                        1.0)},
+                            'Car_Name_vitara brezza6': {'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (0.0,
+                                                                        1.0)},
+                            'Car_Name_vitara brezza7': {'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (0.0,
+                                                                        1.0)},
+                            'Car_Name_vitara brezza8': {'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (0.0,
+                                                                        1.0)},
+                            'Car_Name_vitara brezza9': {'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (0.0,
+                                                                        1.0)},
+                            'Car_Name_wagon r': {'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0.0, 1.0)},
+                            'Car_Name_wagon r0': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_wagon r1': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_wagon r2': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_wagon r3': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_wagon r4': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_wagon r5': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_wagon r6': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_wagon r7': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_wagon r8': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Car_Name_wagon r9': {'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                            'Driven_kms': {'num_unique': 194,
+                                           'type': 'continuous',
+                                           'value_range': (0.001001001001001001,
+                                                           0.9999999999999999)},
+                            'Fuel_Type_CNG': {'num_unique': 2,
+                                              'type': 'binary',
+                                              'value_range': (0.0, 1.0)},
+                            'Fuel_Type_Diesel': {'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0.0, 1.0)},
+                            'Fuel_Type_Petrol': {'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0.0, 1.0)},
+                            'Owner': {'num_unique': 3,
+                                      'type': 'categorical_numeric',
+                                      'value_range': (0, 3)},
+                            'Present_Price': {'num_unique': 145,
+                                              'type': 'continuous',
+                                              'value_range': (0.0, 1.0)},
+                            'Selling_type_Dealer': {'num_unique': 2,
+                                                    'type': 'binary',
+                                                    'value_range': (0.0, 1.0)},
+                            'Selling_type_Individual': {'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (0.0,
+                                                                        1.0)},
+                            'Transmission_Automatic': {'num_unique': 2,
+                                                       'type': 'binary',
+                                                       'value_range': (0.0,
+                                                                       1.0)},
+                            'Transmission_Manual': {'num_unique': 2,
+                                                    'type': 'binary',
+                                                    'value_range': (0.0, 1.0)},
+                            'Year': {'num_unique': 16,
+                                     'type': 'continuous',
+                                     'value_range': (-3.6705785271649853,
+                                                     1.516108522089928)}},
+             'shape': (269, 109),
+             'type': 'pandas.core.frame.DataFrame'},
+ '__method__X_2_train_columns': {'type': '<class '
+                                         "'pandas.core.indexes.base.Index'>"},
+ '__method__X_train_columns': {'type': '<class '
+                                       "'pandas.core.indexes.base.Index'>"},
+ '__method__np_array': {'type': "<class 'builtin_function_or_method'>"},
+ '__method__pd_DataFrame': {'type': "<class 'type'>"},
+ 'gbr': {'class_name': 'GradientBoostingRegressor',
+         'execution_cell_source': {'cellno': 18, 'lineno': 2},
+         'fitted_attributes': {'n_features_in_': 109, 'n_outputs_': None},
+         'is_fitted': True,
+         'module': 'sklearn.ensemble._gb',
+         'type': "<class 'sklearn.ensemble._gb.GradientBoostingRegressor'>"},
+ 'gbr2': {'class_name': 'GradientBoostingRegressor',
+          'execution_cell_source': {'cellno': 20, 'lineno': 1},
+          'fitted_attributes': {'n_features_in_': 8, 'n_outputs_': None},
+          'is_fitted': True,
+          'module': 'sklearn.ensemble._gb',
+          'type': "<class 'sklearn.ensemble._gb.GradientBoostingRegressor'>"},
+ 'gbr_gs': {'class_name': 'GradientBoostingRegressor',
+            'execution_cell_source': {'cellno': 21, 'lineno': 1},
+            'fitted_attributes': {'n_features_in_': 8, 'n_outputs_': None},
+            'is_fitted': True,
+            'module': 'sklearn.ensemble._gb',
+            'type': "<class 'sklearn.ensemble._gb.GradientBoostingRegressor'>"},
+ 'np': {'type': "<class 'module'>"},
+ 'pd': {'type': "<class 'module'>"},
+ 'rfr': {'class_name': 'RandomForestRegressor',
+         'execution_cell_source': {'cellno': 22, 'lineno': 2},
+         'fitted_attributes': {'n_features_in_': 109, 'n_outputs_': 1},
+         'is_fitted': True,
+         'module': 'sklearn.ensemble._forest',
+         'type': "<class 'sklearn.ensemble._forest.RandomForestRegressor'>"},
+ 'rfr2': {'class_name': 'RandomForestRegressor',
+          'execution_cell_source': {'cellno': 23, 'lineno': 1},
+          'fitted_attributes': {'n_features_in_': 8, 'n_outputs_': 1},
+          'is_fitted': True,
+          'module': 'sklearn.ensemble._forest',
+          'type': "<class 'sklearn.ensemble._forest.RandomForestRegressor'>"},
+ 'rfr_gs': {'class_name': 'RandomForestRegressor',
+            'execution_cell_source': {'cellno': 25, 'lineno': 1},
+            'fitted_attributes': {'n_features_in_': 8, 'n_outputs_': 1},
+            'is_fitted': True,
+            'module': 'sklearn.ensemble._forest',
+            'type': "<class 'sklearn.ensemble._forest.RandomForestRegressor'>"}}
+# Target Cell:
+
+
+model_dict = {'X_train': [gbr, gbr_gs, rfr, rfr_gs],
+              'X_2_train': [gbr2, rfr2]}
+
+for key in model_dict:
+    f_list = []
+    for model in model_dict[key]:
+        feature_importance = model.feature_importances_
+        f_list.append(feature_importance)
+
+    fearture_names = X_train.columns.tolist() if key == 'X_train' else X_2_train.columns.tolist()
+    f_index = ['gbr', 'gbr_gs', 'rfr', 'rfr_gs'] if key == 'X_train' else ['gbr2','rfr2']
+
+    feature_df = pd.DataFrame(np.array(f_list), columns=fearture_names, index=f_index)
+    display(feature_df)

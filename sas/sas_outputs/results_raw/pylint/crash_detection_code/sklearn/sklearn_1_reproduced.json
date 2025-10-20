@@ -1,0 +1,23 @@
+[
+  {
+    "code_line": "250: class_weights = compute_class_weight('balanced', np.unique(train_dataset.labels), train_dataset.labels)",
+    "message": "Too many positional arguments for function call",
+    "symbol": "too-many-function-args",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "250: class_weights = compute_class_weight('balanced', np.unique(train_dataset.labels), train_dataset.labels)",
+    "message": "Missing mandatory keyword argument 'classes' in function call",
+    "symbol": "missing-kwoa",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "250: class_weights = compute_class_weight('balanced', np.unique(train_dataset.labels), train_dataset.labels)",
+    "message": "Missing mandatory keyword argument 'y' in function call",
+    "symbol": "missing-kwoa",
+    "type": "error",
+    "source": "pylint"
+  }
+]

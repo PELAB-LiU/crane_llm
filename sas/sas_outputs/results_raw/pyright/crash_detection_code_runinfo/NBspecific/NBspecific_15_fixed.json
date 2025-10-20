@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "41:         tar_images.append(img)",
+    "message": "Cannot access attribute \"append\" for class \"ndarray[Unknown, Unknown]\"\n\u00a0\u00a0Attribute \"append\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "53:         src_images.append(img)",
+    "message": "Cannot access attribute \"append\" for class \"ndarray[Unknown, Unknown]\"\n\u00a0\u00a0Attribute \"append\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

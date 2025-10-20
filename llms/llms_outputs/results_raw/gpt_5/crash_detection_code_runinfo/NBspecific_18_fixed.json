@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "mean_absolute_error expects y_true and y_pred with matching lengths, which they have, and types are compatible. No NaNs are present.",
+    "detection": false
+  },
+  {
+    "reasoning": "mean_absolute_error requires y_test and y_pred to be same-length arrays; both exist and y_pred has no NaNs. y_test corresponds to the held-out split, so lengths should match.",
+    "detection": false
+  },
+  {
+    "reasoning": "y_test and y_pred are aligned arrays of numeric values with matching lengths, and mean_absolute_error accepts these types. No NaNs reported in y_pred.",
+    "detection": false
+  },
+  {
+    "reasoning": "mean_absolute_error expects y_true and y_pred with matching lengths; y_test and y_pred come from the same split and have matching size. Both are numeric with no NaNs in y_pred.",
+    "detection": false
+  },
+  {
+    "reasoning": "mean_absolute_error expects equal-length true and predicted arrays of numeric types; y_test is a pandas Series and y_pred is a numeric numpy array of matching length, so it should run without error.",
+    "detection": false
+  }
+]

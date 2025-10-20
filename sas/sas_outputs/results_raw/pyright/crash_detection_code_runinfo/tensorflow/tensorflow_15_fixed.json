@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "120: results = model.evaluate(test_ds, verbose=0)",
+    "message": "Argument of type \"Literal[0]\" cannot be assigned to parameter \"verbose\" of type \"str\" in function \"evaluate\"\n\u00a0\u00a0\"Literal[0]\" is not assignable to \"str\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "139: for x, y in test_ds:",
+    "message": "\"None\" is not iterable\n\u00a0\u00a0\"__iter__\" method not defined",
+    "rule": "reportGeneralTypeIssues",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

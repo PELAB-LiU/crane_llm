@@ -1,0 +1,23 @@
+[
+  {
+    "code_line": "109: print('Number of   training samples : {}'.format(train_images.shape[0]))",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "110: print('Number of validation samples : {}'.format(val_images.shape[0]))",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "111: print('Number of       test samples : {}'.format(test_images.shape[0]))",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to filter the DataFrame based on string conditions for 'Total_Gross' and 'Censor' columns. However, the condition `df['Total_Gross']!='$0.00M'` uses an invalid syntax for pandas filtering, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to filter the DataFrame based on string conditions for 'Total_Gross' and 'Censor' columns. However, the condition `df['Total_Gross']!='$0.00M'` uses an invalid syntax for pandas filtering, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to filter the DataFrame based on string conditions for 'Total_Gross' and 'Censor' columns. However, the condition `df['Total_Gross']!='$0.00M'` uses an invalid syntax for pandas filtering, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to filter the DataFrame based on string conditions for 'Total_Gross' and 'Censor' columns. However, the condition `df['Total_Gross']!='$0.00M'` uses an invalid syntax for pandas filtering, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to filter the DataFrame based on string conditions for 'Total_Gross' and 'Censor' columns. However, the condition `df['Total_Gross']!='$0.00M'` uses an invalid syntax for pandas filtering, which will cause a crash.",
+    "detection": true
+  }
+]

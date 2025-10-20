@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model.predict_classes is removed in recent Keras/TensorFlow and will raise AttributeError. Also labels from test_ds are binary scalars, so argmax on 1D will error.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes is removed in recent Keras/TensorFlow and will raise an AttributeError. Also y is binary labels (label_mode='binary'), so argmax on 1D labels would error.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes is removed in recent Keras; also labels from test_ds are binary (label_mode='binary'), so argmax on 1D y will error. Likely AttributeError or shape mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes is removed in modern Keras, causing an AttributeError. Also y is binary labels (not one-hot), so argmax will fail. Therefore the cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes is removed in recent Keras, and labels are binary while y from image_dataset has shape (batch_size, 1), making argmax invalid. This will raise errors.",
+    "detection": true
+  }
+]

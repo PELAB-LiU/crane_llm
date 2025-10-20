@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train_test_split was used on two arrays of images as X and y, producing y as an array of images, not labels; CrossEntropyLoss expects class indices, causing shape/type mismatch during loss computation. Also, DataLoader will return numpy arrays, not torch tensors.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_loader yields numpy arrays, but the model expects torch tensors; also labels are arrays of images rather than class indices due to incorrect train_test_split usage. This will cause type/shape errors when computing loss.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_model expects DataLoader yielding (inputs, labels) where labels are class indices, but X_train/X_test and y_train/y_test come from train_test_split on two image arrays, not labels; also tensors are not converted and autocast uses CUDA on CPU, causing runtime error.",
+    "detection": true
+  },
+  {
+    "reasoning": "DataLoaders yield numpy arrays, not torch tensors; model expects float tensor of shape [B,C,H,W]. Also labels are arrays of images, not class IDs, so loss will error. Thus forward/loss will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_loader yields numpy arrays of images without labels as integers; y arrays are images not labels, causing shape/type mismatch for CrossEntropyLoss expecting class indices. Also model expects torch tensors of shape [N,C,H,W], but receives numpy arrays; no tensor conversion in Dataset. Likely crash on model(inputs) due to wrong type.",
+    "detection": true
+  }
+]

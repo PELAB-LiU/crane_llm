@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "61:     return round(acc*100,3)",
+    "message": "No overloads for \"round\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "61:     return round(acc*100,3)",
+    "message": "Argument of type \"Unknown | Any | matrix[Any, Any] | NDArray[signedinteger[Any]]\" cannot be assigned to parameter \"number\" of type \"_SupportsRound2[_T@round]\" in function \"round\"\n\u00a0\u00a0Type \"Unknown | Any | matrix[Any, Any] | NDArray[signedinteger[Any]]\" is not assignable to type \"_SupportsRound2[_T@round]\"\n\u00a0\u00a0\u00a0\u00a0\"ndarray[Any, dtype[signedinteger[Any]]]\" is incompatible with protocol \"_SupportsRound2[_T@round]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__round__\" is not present",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

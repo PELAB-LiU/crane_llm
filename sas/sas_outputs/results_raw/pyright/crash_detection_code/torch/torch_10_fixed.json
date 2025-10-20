@@ -1,0 +1,58 @@
+[
+  {
+    "code_line": "75: module = module()",
+    "message": "Type \"module\" is not assignable to declared type \"type[module]\"\n\u00a0\u00a0Type \"module\" is not assignable to type \"type[module]\"",
+    "rule": "reportAssignmentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "77:     module = module.cuda()",
+    "message": "Argument missing for parameter \"self\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "86: optimizer = torch.optim.Adam(module.parameters(),lr = learning_rate)",
+    "message": "Argument missing for parameter \"self\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "96:     module.train()",
+    "message": "Argument missing for parameter \"self\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "102:         outputs = module(imgs)",
+    "message": "Expected 0 positional arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "113:     module.eval()",
+    "message": "Argument missing for parameter \"self\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "122:             outputs = module(imgs)",
+    "message": "Expected 0 positional arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "149:     outputs = module(imgs)",
+    "message": "Expected 0 positional arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

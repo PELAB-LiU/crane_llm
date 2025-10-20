@@ -1,0 +1,23 @@
+[
+  {
+    "code_line": "117:             ('cat_encoding',OneHotEncoder(sparse=False,drop='if_binary',handle_unknown='ignore'))",
+    "message": "Argument of type \"Literal[False]\" cannot be assigned to parameter \"sparse\" of type \"str\" in function \"__init__\"\n\u00a0\u00a0\"Literal[False]\" is not assignable to \"str\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "177:         train_sizes, train_scores, test_scores = learning_curve(",
+    "message": "Expression with type \"tuple[NDArray[Unknown], Any | ndarray[Any, dtype[Unknown]] | Unknown, Any | ndarray[Any, dtype[Unknown]] | Unknown, Any | ndarray[Any, dtype[Unknown]] | Unknown, Any | ndarray[Any, dtype[Unknown]] | Unknown] | tuple[NDArray[Unknown], Any | ndarray[Any, dtype[Unknown]] | Unknown, Any | ndarray[Any, dtype[Unknown]] | Unknown]\" cannot be assigned to target tuple\n\u00a0\u00a0Type \"tuple[NDArray[Unknown], Any | ndarray[Any, dtype[Unknown]] | Unknown, Any | ndarray[Any, dtype[Unknown]] | Unknown, Any | ndarray[Any, dtype[Unknown]] | Unknown, Any | ndarray[Any, dtype[Unknown]] | Unknown]\" is incompatible with target tuple\n\u00a0\u00a0\u00a0\u00a0Tuple size mismatch; expected 3 but received 5",
+    "rule": "reportAssignmentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "225:         print(traceback.format_exc())",
+    "message": "\"traceback\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'yFit' variable was calculated using 'X_train' in Cell 6, but it is being used with 'y_test' in the target cell, which will cause a dimension mismatch and lead to an error when calculating SSE, SSR, and plotting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'yFit' variable was calculated using 'X_train' in Cell 6, but it is being used with 'y_test' in the target cell, which will cause a dimension mismatch and lead to an error when calculating SSE, SSR, and plotting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'yFit' variable was calculated using 'X_train' in a previous cell, but it is being used with 'y_test' in the target cell, which will lead to a dimension mismatch and a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'yFit' variable was calculated using 'X_train' and 'y_train' in Cell 6, but it is being used with 'y_test' in the target cell, which will lead to a dimension mismatch and a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'yFit' variable was calculated using 'X_train' and 'y_train' in Cell 6, but the target cell attempts to use it with 'y_test' which has a different length, leading to a dimension mismatch error when calculating SSE and plotting.",
+    "detection": true
+  }
+]

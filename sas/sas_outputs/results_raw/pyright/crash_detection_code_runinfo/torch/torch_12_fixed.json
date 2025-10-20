@@ -1,0 +1,30 @@
+[
+  {
+    "code_line": "83:             input_ids,",
+    "message": "Argument of type \"List[int] | Unknown\" cannot be assigned to parameter \"inputs\" of type \"Tensor | None\" in function \"generate\"\n\u00a0\u00a0Type \"List[int] | Unknown\" is not assignable to type \"Tensor | None\"\n\u00a0\u00a0\u00a0\u00a0Type \"List[int]\" is not assignable to type \"Tensor | None\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"List[int]\" is not assignable to \"Tensor\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"List[int]\" is not assignable to \"None\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "84:             max_length=input_ids.size(1) + 50,",
+    "message": "Cannot access attribute \"size\" for class \"List[int]\"\n\u00a0\u00a0Attribute \"size\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "87:             attention_mask=input_ids.ne(tokenizer.pad_token_id)",
+    "message": "Cannot access attribute \"ne\" for class \"List[int]\"\n\u00a0\u00a0Attribute \"ne\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "91:     padded_output = output[:, input_ids.size(1):]",
+    "message": "Cannot access attribute \"size\" for class \"List[int]\"\n\u00a0\u00a0Attribute \"size\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

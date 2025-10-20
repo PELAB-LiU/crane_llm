@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "161:     display(feature_df)",
+    "message": "Undefined variable 'display'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

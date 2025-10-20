@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The LabelEncoder is applied to 'df.workclass.values' and 'df.Salary.values', which are object type arrays. This will convert them to numerical labels. The LinearRegression model can then be fit with these numerical inputs without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The LabelEncoder is applied to 'df.workclass.values' and 'df.Salary.values', which are object type arrays. This will convert them to numerical labels. The LinearRegression model can then be fit with these numerical inputs without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The LabelEncoder is applied to 'df.workclass.values' and 'df.Salary.values', which are object type arrays. This will convert them to numerical labels. The LinearRegression model can then be fit with these numerical inputs without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The LabelEncoder is applied to 'df.workclass.values' and 'df.Salary.values', which are object type arrays. This will convert them to numerical labels. The LinearRegression model can then be fit with these numerical inputs without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The LabelEncoder is applied to 'df.workclass.values' and 'df.Salary.values', which are object type arrays. This will convert them to numerical labels. The LinearRegression model can then be fit with these numerical inputs without crashing.",
+    "detection": false
+  }
+]

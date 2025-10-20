@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "38: labels = sns.barplot(df_train.labels.value_counts().index,df_train.labels.value_counts())",
+    "message": "Expected 1 positional argument",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

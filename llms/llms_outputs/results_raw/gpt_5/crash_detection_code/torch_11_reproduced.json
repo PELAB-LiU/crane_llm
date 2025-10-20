@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train expects batches of (cx, cy) where cy matches model outputs, but st_train yields labels as integers, causing shape/type mismatch when computing (cy - outputs) and subsequent loss/backward.",
+    "detection": true
+  },
+  {
+    "reasoning": "train expects batches of (cx, cy) where cy matches model output shape, but st_train yields labels as scalars (0/1) causing a shape mismatch when computing (cy - outputs)**2.",
+    "detection": true
+  },
+  {
+    "reasoning": "train expects batches of (cx, cy) tensors, but st_train yields lists of tensors and integer labels; inside train it unpacks (cx, cy) and performs tensor ops like cx.shape and cy - outputs, causing attribute errors or type mismatch. Likely crash on cy - outputs.",
+    "detection": true
+  },
+  {
+    "reasoning": "train expects each batch as (cx, cy) tensors, but st_train yields sequences of differing lengths without padding or collation, causing DataLoader to fail stacking into tensors. Additionally, model output shape (batch,2) mismatches cy being scalar labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "train() expects batches of (cx, cy) where cy is a tensor matching model outputs, but st_train yields (X, labels) with labels as ints; loss computes (cy - outputs)**2 causing dtype/shape mismatch. Also model outputs shape [batch,2] while labels scalar per sample.",
+    "detection": true
+  }
+]

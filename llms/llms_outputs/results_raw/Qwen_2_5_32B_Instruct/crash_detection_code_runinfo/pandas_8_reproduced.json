@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'MSRP' column contains string values with dollar signs and spaces, which will cause an error when attempting to convert to numeric without proper handling.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'MSRP' column contains string values with dollar signs and spaces, which will cause an error when attempting to convert to numeric without proper handling.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'MSRP' column contains string values with dollar signs and spaces, which will cause an error when attempting to convert to numeric without proper handling.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'MSRP' column contains string values with dollar signs and spaces, which will cause an error when attempting to convert to numeric without proper handling.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'MSRP' column contains string values with dollar signs and spaces, which will cause an error when attempting to convert to numeric without proper handling.",
+    "detection": true
+  }
+]

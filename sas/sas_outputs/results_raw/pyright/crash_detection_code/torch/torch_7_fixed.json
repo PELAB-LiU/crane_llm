@@ -1,0 +1,23 @@
+[
+  {
+    "code_line": "146:         return outputs",
+    "message": "Type \"Tensor\" is not assignable to return type \"List[Tensor]\"\n\u00a0\u00a0\"Tensor\" is not assignable to \"List[Tensor]\"",
+    "rule": "reportReturnType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "216: display(dog_image)",
+    "message": "\"display\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "234: torch_img = torch.unsqueeze(torch_img, 0)",
+    "message": "Argument of type \"ImageFile | Unknown\" cannot be assigned to parameter \"input\" of type \"Tensor\" in function \"unsqueeze\"\n\u00a0\u00a0Type \"ImageFile | Unknown\" is not assignable to type \"Tensor\"\n\u00a0\u00a0\u00a0\u00a0\"ImageFile\" is not assignable to \"Tensor\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "code_line": "165: y_pred = best_estimator.predict(w)",
+    "message": "Cannot access attribute \"predict\" for class \"frozenset[Unknown]\"\n\u00a0\u00a0Attribute \"predict\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "165: y_pred = best_estimator.predict(w)",
+    "message": "Cannot access attribute \"predict\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"predict\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "165: y_pred = best_estimator.predict(w)",
+    "message": "Cannot access attribute \"predict\" for class \"set[Unknown]\"\n\u00a0\u00a0Attribute \"predict\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "165: y_pred = best_estimator.predict(w)",
+    "message": "Cannot access attribute \"predict\" for class \"tuple[Unknown, ...]\"\n\u00a0\u00a0Attribute \"predict\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

@@ -1,0 +1,86 @@
+[
+  {
+    "code_line": "71:   cls = [tokenizer.convert_tokens_to_ids(['[CLS]'])]*sentence1.shape[0]",
+    "message": "Operator \"*\" not supported for types \"list[Unknown]\" and \"TensorShape | Unknown | Dimension | None\"\n\u00a0\u00a0Operator \"*\" not supported for types \"list[Unknown]\" and \"TensorShape\"\n\u00a0\u00a0Operator \"*\" not supported for types \"list[Unknown]\" and \"None\"",
+    "rule": "reportOperatorIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "71:   cls = [tokenizer.convert_tokens_to_ids(['[CLS]'])]*sentence1.shape[0]",
+    "message": "Cannot access attribute \"shape\" for class \"Operation\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "80:       [type_cls, type_s1, type_s2], axis=-1).to_tensor()",
+    "message": "Cannot access attribute \"to_tensor\" for class \"defaultdict[Unknown, Unknown]\"\n\u00a0\u00a0Attribute \"to_tensor\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "80:       [type_cls, type_s1, type_s2], axis=-1).to_tensor()",
+    "message": "Cannot access attribute \"to_tensor\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"to_tensor\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "80:       [type_cls, type_s1, type_s2], axis=-1).to_tensor()",
+    "message": "\"to_tensor\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "80:       [type_cls, type_s1, type_s2], axis=-1).to_tensor()",
+    "message": "Cannot access attribute \"to_tensor\" for class \"object\"\n\u00a0\u00a0Attribute \"to_tensor\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "83:       'input_word_ids': input_word_ids.to_tensor(),",
+    "message": "Cannot access attribute \"to_tensor\" for class \"defaultdict[Unknown, Unknown]\"\n\u00a0\u00a0Attribute \"to_tensor\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "83:       'input_word_ids': input_word_ids.to_tensor(),",
+    "message": "Cannot access attribute \"to_tensor\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"to_tensor\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "83:       'input_word_ids': input_word_ids.to_tensor(),",
+    "message": "\"to_tensor\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "83:       'input_word_ids': input_word_ids.to_tensor(),",
+    "message": "Cannot access attribute \"to_tensor\" for class \"object\"\n\u00a0\u00a0Attribute \"to_tensor\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "105:     embedding = bert_encoder([input_word_ids, input_mask, input_type_ids])[0]",
+    "message": "Object of type \"tuple[Unknown, dict[str, Unknown]]\" is not callable\n\u00a0\u00a0Attribute \"__call__\" is unknown",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "105:     embedding = bert_encoder([input_word_ids, input_mask, input_type_ids])[0]",
+    "message": "Object of type \"tuple[TFBertModel, dict[str, Unknown]]\" is not callable\n\u00a0\u00a0Attribute \"__call__\" is unknown",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

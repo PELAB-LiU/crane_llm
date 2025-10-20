@@ -1,0 +1,241 @@
+# Executed Cells:
+## Cell 1:
+
+from sklearn.metrics import r2_score,mean_squared_error
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+import seaborn as sns
+from math import sqrt
+import numpy as np
+import pandas as pd
+import warnings
+warnings.filterwarnings('ignore')
+
+## Cell 2:
+
+train_raw = pd.read_csv('data/train.csv')
+test_raw = pd.read_csv('data/test.csv')
+meal = pd.read_csv('data/meal_info.csv')
+centerinfo = pd.read_csv('data/fulfilment_center_info.csv')
+
+## Cell 3:
+
+train = pd.merge(train_raw, meal, on="meal_id", how="left")
+df = pd.merge(train, centerinfo, on="center_id", how="left")
+print("Shape of train data : ", df.shape)
+df.head()
+
+## Cell 4:
+
+test_raw = pd.merge(test_raw, meal, on="meal_id", how="left")
+dft = pd.merge(test_raw, centerinfo, on="center_id", how="left")
+print("Shape of train data : ", dft.shape)
+dft.head()
+
+## Cell 5:
+
+col_names=['center_id','meal_id','category','cuisine','city_code','region_code','center_type','emailer_for_promotion','homepage_featured', 'week']
+dft[col_names] = dft[col_names].astype('category')
+
+## Cell 6:
+
+col_names=['center_id','meal_id','category','cuisine','city_code','region_code','center_type','emailer_for_promotion','homepage_featured', 'week']
+df[col_names] = df[col_names].astype('category')
+
+print("Train Datatype\n",df.dtypes)
+
+## Cell 7:
+
+df = df[df['num_orders'] <= 20000];
+df=df.drop("id",  axis=1)
+
+## Cell 8:
+
+if 'id' in df.columns:
+    df = df.drop('id', axis=1)
+df.head()
+
+## Cell 9:
+
+df['new_discount_rate'] = (df['base_price'] - df['checkout_price']) / df['base_price']
+df.head()
+
+## Cell 10:
+
+df=df.drop("checkout_price",axis=1)
+
+## Cell 11:
+
+
+weekly_cuisine_category = df.groupby(['week', 'cuisine'])['category'].nunique().reset_index()
+weekly_cuisine_category.rename(columns={'category': 'weekly_cuisine_cat'}, inplace=True)
+
+
+df = df.merge(weekly_cuisine_category, on=['week', 'cuisine'], how='left')
+df.head()
+
+## Cell 12:
+
+
+cat_cuisine_price = df.groupby(['category', 'cuisine'])['base_price'].nunique().reset_index()
+cat_cuisine_price.rename(columns={'base_price': 'cat_cuisine_price'}, inplace=True)
+
+
+df = df.merge(cat_cuisine_price, on=['category', 'cuisine'], how='left')
+df.head()
+
+## Cell 13:
+
+df['week'] = df['week'].astype(int)
+
+## Cell 14:
+
+df_train=df[df.week<=119]
+
+## Cell 15:
+
+df_test=df[df.week>119]
+
+## Cell 16:
+
+df_train=df_train.drop("week",axis=1)
+df_test=df_test.drop("week",axis=1)
+
+## Cell 17:
+
+b=list(df_train.columns)
+
+## Cell 18:
+
+df_encoded = pd.get_dummies(df_train[b], drop_first=True)
+
+df_encoded.head()
+
+## Cell 19:
+
+df_test_encoded=pd.get_dummies(df_test[b], drop_first=True)
+df_test_encoded.head()
+
+## Cell 20:
+
+X = df_encoded.drop("num_orders", axis=1)
+y = df_encoded["num_orders"]
+
+## Cell 21:
+
+w=df_test_encoded.drop("num_orders", axis=1)
+z=df_test_encoded["num_orders"]
+
+## Cell 22:
+
+from sklearn.preprocessing import StandardScaler
+
+## Cell 23:
+
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import r2_score, mean_squared_error
+from math import sqrt
+
+
+param_grid = {
+    'max_depth': [10, 15, 20],
+    'min_samples_split': [2, 5],
+    'min_samples_leaf': [1, 2]
+}
+
+
+DTRmodel = DecisionTreeRegressor(random_state=0)
+
+
+grid_search = GridSearchCV(estimator=DTRmodel, param_grid=param_grid,
+                           cv=5, scoring='neg_mean_squared_error', n_jobs=-1)
+
+
+grid_search.fit(X, y)
+
+
+best_params = grid_search.best_params_
+best_estimator = grid_search.best_estimator_
+
+
+y_pred = best_estimator.predict(w)
+
+
+r2 = r2_score(z, y_pred)
+mse = mean_squared_error(z, y_pred)
+rmse = sqrt(mse)
+
+
+print("En iyi parametreler:", best_params)
+print("R2 score:", r2)
+print("MSE score:", mse)
+print("RMSE:", rmse)
+
+## Cell 24:
+
+
+
+dft['new_discount_rate'] = (dft['base_price'] - dft['checkout_price']) / dft['base_price']
+
+## Cell 25:
+
+dft=dft.drop("checkout_price",axis=1)
+
+## Cell 26:
+
+
+weekly_cuisine_category = dft.groupby(['week', 'cuisine'])['category'].nunique().reset_index()
+weekly_cuisine_category.rename(columns={'category': 'weekly_cuisine_cat'}, inplace=True)
+
+
+dft = dft.merge(weekly_cuisine_category, on=['week', 'cuisine'], how='left')
+dft.head()
+
+## Cell 27:
+
+
+cat_cuisine_price = dft.groupby(['category', 'cuisine'])['base_price'].nunique().reset_index()
+cat_cuisine_price.rename(columns={'base_price': 'cat_cuisine_price'}, inplace=True)
+
+
+dft = dft.merge(cat_cuisine_price, on=['category', 'cuisine'], how='left')
+dft.head()
+
+## Cell 28:
+
+dft=dft.drop("id",axis=1)
+
+
+## Cell 29:
+
+dft=dft.drop('week',axis=1)
+
+## Cell 30:
+
+c = list(dft.columns)
+c
+
+## Cell 31:
+
+dft_encoded = pd.get_dummies(dft[c], drop_first=True)
+dft_encoded.head()
+
+# Current relevent runtime information:
+{'DTRmodel': {'class_name': 'DecisionTreeRegressor',
+              'execution_cell_source': {'cellno': 64, 'lineno': 14},
+              'is_fitted': False,
+              'module': 'sklearn.tree._classes',
+              'type': "<class 'sklearn.tree._classes.DecisionTreeRegressor'>"},
+ '__method__DTRmodel_predict': {'type': "<class 'method'>"},
+ 'dft_encoded': {'dtypes': ['float64', 'int64', 'bool'],
+                 'execution_cell_source': {'cellno': 73, 'lineno': 1},
+                 'has_nan': False,
+                 'shape': (32573, 208),
+                 'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+final_pred = DTRmodel.predict(dft_encoded)

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "accuracy_score expects (y_true, y_pred). Passing (val_predictions, y) reverses them but won’t crash since both are same length arrays of integers. It will compute accuracy incorrectly but still run.",
+    "detection": false
+  },
+  {
+    "reasoning": "accuracy_score expects (y_true, y_pred). Here arguments are (val_predictions, y) with mismatched lengths (59381 vs. 59381? y length equals x rows; val_predictions from RF.predict(x) also same length, but y_true should be y and y_pred val_predictions; order swap won't crash. Both series/arrays same length, so it runs.",
+    "detection": false
+  },
+  {
+    "reasoning": "accuracy_score expects (y_true, y_pred); the arguments are reversed but types/shapes match, so it will run without error and compute an incorrect metric. No crash expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "accuracy_score expects (y_true, y_pred); passing (val_predictions, y) reverses them but won’t crash since shapes match. Both arrays align in length and type.",
+    "detection": false
+  },
+  {
+    "reasoning": "accuracy_score expects (y_true, y_pred), but the arguments are reversed; however, sklearn will still compute accuracy since lengths match, so it won't crash. Shapes align and types are valid.",
+    "detection": false
+  }
+]

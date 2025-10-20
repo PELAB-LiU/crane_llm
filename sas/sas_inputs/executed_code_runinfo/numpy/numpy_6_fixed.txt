@@ -1,0 +1,87 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from tqdm import tqdm
+from tensorflow.keras.preprocessing import image
+from sklearn.preprocessing import label_binarize
+from sklearn.model_selection import train_test_split
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPool2D, Dropout
+from keras.optimizers import Adam
+
+## Cell 2:
+
+import tensorflow as tf
+from keras.applications.resnet_v2 import ResNet50V2
+from tensorflow import keras
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import seaborn as sns
+import matplotlib.pyplot as plt
+import cv2
+
+## Cell 3:
+
+import os
+from tensorflow.keras.preprocessing.image import load_img
+
+## Cell 4:
+
+labels_all = pd.read_csv('data_small/New folder/labels.csv')
+print(labels_all.shape)
+labels_all.head()
+
+## Cell 5:
+
+CLASS_NAME = ['scottish_deerhound', 'maltese_dog', 'afghan_hound', 'entlebucher', 'bernese_mountain_dog']
+labels = labels_all[(labels_all['breed'].isin(CLASS_NAME))]
+labels = labels.reset_index()
+labels.head()
+
+## Cell 6:
+
+train_path = 'data_small/New folder/train'
+
+
+
+train_labels = pd.read_csv('data_small/New folder/labels.csv')
+
+# Annotated Target Code:
+CLASS_NAME: list
+labels: pd.DataFrame
+
+
+
+
+X_data = []
+ids = []
+valid_indices = []
+
+
+Y_data = label_binarize(labels['breed'], classes = CLASS_NAME)
+
+
+for i in tqdm(range(len(labels))):
+    try:
+        img = image.load_img(f'data_small/New folder/train/{labels["id"][i]}.jpg', target_size=(224, 224))
+    except FileNotFoundError:
+        continue
+    img = image.img_to_array(img)
+
+
+    x = np.expand_dims(img.copy(), axis=0)
+
+
+    X_data.append(x / 255.0)
+    ids.append(labels.iloc[i]['id'])
+    valid_indices.append(i)
+
+X_data = np.array(X_data)
+Y_data = Y_data[valid_indices]
+
+
+print('\nTrain Images shape: ',X_data.shape,' size: {:,}'.format(X_data.size))
+print('One-hot encoded output shape: ',Y_data.shape,' size: {:,}'.format(Y_data.size))

@@ -1,0 +1,225 @@
+# Executed Cells:
+## Cell 1:
+
+import torch
+import torchvision
+from torchvision import datasets,transforms
+from torch.autograd import Variable
+
+import torch.utils.data.dataloader as Data
+import torch.nn as nn
+from torchvision import models
+import numpy as np
+import matplotlib.pyplot as plt
+import cv2
+
+## Cell 2:
+
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+## Cell 3:
+
+image_path="data/cow.jpeg"
+orig = cv2.imread(image_path)[..., ::-1]
+orig = cv2.resize(orig, (224, 224))
+img = orig.copy().astype(np.float32)
+
+mean = [0.485, 0.456, 0.406]
+std = [0.229, 0.224, 0.225]
+img /= 255.0
+img = (img - mean) / std
+img = img.transpose(2, 0, 1)
+
+img=np.expand_dims(img, axis=0)
+print(img.shape)
+
+## Cell 4:
+
+
+model = models.alexnet(pretrained=True).to(device).eval()
+
+## Cell 5:
+
+
+max_iterations=100
+
+learning_rate=0.01
+
+binary_search_steps=2
+
+initial_const=1e2
+confidence=initial_const
+
+
+k=40
+
+
+boxmin = -3.0
+boxmax = 3.0
+
+
+num_labels=1000
+
+## Cell 6:
+
+
+target_label=288
+tlab=Variable(torch.from_numpy(np.eye(num_labels)[target_label]).to(device).float())
+
+## Cell 7:
+
+shape = [1,3,224,224]
+
+## Cell 8:
+
+
+lower_bound = 0
+c=initial_const
+upper_bound = 1e10
+
+
+o_bestl2 = 1e10
+o_bestscore = -1
+o_bestattack = [np.zeros(shape)]
+
+## Cell 9:
+
+
+boxmul = (boxmax - boxmin) / 2.
+boxplus = (boxmin + boxmax) / 2.
+
+for outer_step in range(binary_search_steps):
+    print("o_bestl2={} confidence={}".format(o_bestl2,confidence)  )
+
+
+    timg = Variable(torch.from_numpy(np.arctanh((img - boxplus) / boxmul * 0.999999)).to(device).float())
+    modifier=Variable(torch.zeros_like(timg).to(device).float())
+
+
+
+    modifier.requires_grad = True
+
+
+
+    optimizer = torch.optim.Adam([modifier],lr=learning_rate)
+
+    for iteration in range(1,max_iterations+1):
+        optimizer.zero_grad()
+
+
+        newimg = torch.tanh(modifier + timg) * boxmul + boxplus
+
+        output=model(newimg)
+
+
+
+
+
+
+        loss2=torch.dist(newimg,(torch.tanh(timg) * boxmul + boxplus),p=2)
+
+
+        real=torch.max(output*tlab)
+        other=torch.max((1-tlab)*output)
+        loss1=other-real+k
+        loss1=torch.clamp(loss1,min=0)
+
+        loss1=confidence*loss1
+
+        loss=loss1+loss2
+
+
+        loss.backward(retain_graph=True)
+
+        optimizer.step()
+
+        l2=loss2
+
+        sc=output.data.cpu().numpy()
+
+
+        if iteration%(max_iterations//10) == 0:
+            print("iteration={} loss={} loss1={} loss2={}".format(iteration,loss,loss1,loss2))
+
+        if (l2 < o_bestl2) and (np.argmax(sc) == target_label  ):
+            print("attack success l2={} target_label={}".format(l2,target_label))
+            o_bestl2 = l2
+            o_bestscore = np.argmax(sc)
+            o_bestattack = newimg.data.cpu().numpy()
+
+    confidence_old=-1
+
+    if (o_bestscore == target_label) and o_bestscore != -1:
+
+        upper_bound = min(upper_bound,confidence)
+        if upper_bound < 1e9:
+                print()
+                confidence_old=confidence
+                confidence = (lower_bound + upper_bound)/2
+    else:
+        lower_bound = max(lower_bound,confidence)
+        confidence_old=confidence
+        if upper_bound < 1e9:
+                confidence = (lower_bound + upper_bound)/2
+        else:
+                confidence *= 10
+
+    print("outer_step={} confidence {}->{}".format(outer_step,confidence_old,confidence))
+
+## Cell 10:
+
+
+def show_images_diff(original_img,original_label,adversarial_img,adversarial_label):
+    plt.figure()
+
+    plt.subplot(131)
+    plt.title('Original')
+    plt.imshow(original_img)
+    plt.axis('off')
+
+    plt.subplot(132)
+    plt.title('Adversarial')
+    plt.imshow(adversarial_img)
+    plt.axis('off')
+
+    plt.subplot(133)
+    plt.title('Adversarial-Original')
+    difference = adversarial_img - original_img
+
+    l0=np.where(difference!=0)[0].shape[0]
+    l2=np.linalg.norm(difference)
+
+    print("l0={} l2={}".format(l0,l2))
+
+
+    difference=difference / abs(difference).max()/2.0+0.5
+
+    plt.imshow(difference,cmap=plt.cm.gray)
+    plt.axis('off')
+    plt.tight_layout()
+    plt.show()
+
+## Cell 11:
+
+adv=o_bestattack[0]
+print(adv.shape)
+
+## Cell 12:
+
+
+adv = adv.transpose(1, 2, 0)
+print(adv.shape)
+
+# Current relevent runtime information:
+{'__method__plt_imshow': {'type': "<class 'function'>"},
+ 'adv': {'dtype': 'float32',
+         'execution_cell_source': {'cellno': 17, 'lineno': 2},
+         'has_nan': False,
+         'shape': (224, 224, 3),
+         'type': 'numpy.ndarray',
+         'value_range': (-2.118278, 2.4734893)},
+ 'plt': {'type': "<class 'module'>"}}
+# Target Cell:
+
+plt.imshow(adv)

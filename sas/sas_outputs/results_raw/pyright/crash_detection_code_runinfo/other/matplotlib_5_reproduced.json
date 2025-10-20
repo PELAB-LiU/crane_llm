@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "39: plt.scatter(centriods[:,0], centriods[:,1], centriods[:,2], marker = 'X', s = 200, c = 'red')",
+    "message": "Parameter \"s\" is already assigned",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "43: plt.zlabel(\"Insulin\")",
+    "message": "\"zlabel\" is not a known attribute of module \"matplotlib.pyplot\"",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

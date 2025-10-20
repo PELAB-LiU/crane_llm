@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The variable 'history' has not been created or assigned in prior cells, so accessing history.history will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variable 'history' is not defined before plotting, so accessing history.history will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'history' has not been created or assigned; attempting to access history.history will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variable 'history' has not been created or assigned in prior cells, so accessing history.history will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variable 'history' is not defined before plotting its contents, so accessing history.history will raise a NameError.",
+    "detection": true
+  }
+]

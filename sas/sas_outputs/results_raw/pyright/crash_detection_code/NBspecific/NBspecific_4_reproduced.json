@@ -1,0 +1,93 @@
+[
+  {
+    "code_line": "5: sns.set_context('talk', font_scale=.9)",
+    "message": "\"sns\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "9: sns.countplot(data=dataset, x='Sex', hue='Risk')",
+    "message": "\"sns\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "9: sns.countplot(data=dataset, x='Sex', hue='Risk')",
+    "message": "\"dataset\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "10: plt.show()",
+    "message": "\"plt\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "13: sns.catplot(data=dataset, x='Sex', y='Age', kind='box')",
+    "message": "\"sns\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "13: sns.catplot(data=dataset, x='Sex', y='Age', kind='box')",
+    "message": "\"dataset\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "14: plt.show()",
+    "message": "\"plt\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "17: sns.violinplot(data=dataset, x='Sex', y='Age', hue='Risk', split=True)",
+    "message": "\"sns\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "17: sns.violinplot(data=dataset, x='Sex', y='Age', hue='Risk', split=True)",
+    "message": "\"dataset\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "18: plt.show()",
+    "message": "\"plt\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "21: sns.displot(data=dataset, row='Sex', y='Purpose', col='Risk')",
+    "message": "\"sns\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "21: sns.displot(data=dataset, row='Sex', y='Purpose', col='Risk')",
+    "message": "\"dataset\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "22: plt.show()",
+    "message": "\"plt\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

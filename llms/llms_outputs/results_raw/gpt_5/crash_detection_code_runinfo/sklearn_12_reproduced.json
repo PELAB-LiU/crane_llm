@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The current model is an SVC, which does not have feature_importances_. Accessing model.feature_importances_ will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "model is an sklearn SVC, which has no attribute feature_importances_. Accessing model.feature_importances_ will raise AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "model is an SVC, which does not have feature_importances_. Accessing model.feature_importances_ will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "model is an SVC, which does not have feature_importances_. Accessing model.feature_importances_ will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The current model is an SVC, which does not have the attribute feature_importances_; accessing it will raise an AttributeError.",
+    "detection": true
+  }
+]

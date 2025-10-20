@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "46: train_df = pd.get_dummies(train_df, columns=categorical_cols_train)",
+    "message": "Argument of type \"Index[str]\" cannot be assigned to parameter \"columns\" of type \"list[HashableT2@get_dummies] | None\" in function \"get_dummies\"\n\u00a0\u00a0Type \"Index[str]\" is not assignable to type \"list[HashableT2@get_dummies] | None\"\n\u00a0\u00a0\u00a0\u00a0\"Index[str]\" is not assignable to \"list[HashableT2@get_dummies]\"\n\u00a0\u00a0\u00a0\u00a0\"Index[str]\" is not assignable to \"None\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "47: test_df = pd.get_dummies(test_df, columns=categorical_cols_test)",
+    "message": "Argument of type \"Index[str]\" cannot be assigned to parameter \"columns\" of type \"list[HashableT2@get_dummies] | None\" in function \"get_dummies\"\n\u00a0\u00a0Type \"Index[str]\" is not assignable to type \"list[HashableT2@get_dummies] | None\"\n\u00a0\u00a0\u00a0\u00a0\"Index[str]\" is not assignable to \"list[HashableT2@get_dummies]\"\n\u00a0\u00a0\u00a0\u00a0\"Index[str]\" is not assignable to \"None\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model was trained on train_ds columns after several drops; test_ds underwent similar but independent drops/encodings, which can yield a mismatched feature set/order. If shapes differ, predict will raise an error, but this is not certain.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model expects same features as during training, but columns dropped/encoded independently on test set may differ from training set, causing shape mismatch. Also test_ds_ids length must match predictions; likely but not guaranteed.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model expects same features as training (X_train columns). After dropping columns with >1 nulls separately in train/test, their columns likely differ, causing a shape/feature mismatch in FReg.predict(test_ds).",
+    "detection": true
+  },
+  {
+    "reasoning": "Model is trained and fitted; test_ds was processed similarly and only columns with >1 nulls were dropped. However, train and test may now have mismatched columns after independent dropping, causing predict to fail due to feature mismatch.",
+    "detection": false
+  },
+  {
+    "reasoning": "test_ds may have a different set/order of columns than the training data X due to dropped columns and separate LabelEncoder fitting, causing RandomForestRegressor.predict to error on mismatched features.",
+    "detection": true
+  }
+]

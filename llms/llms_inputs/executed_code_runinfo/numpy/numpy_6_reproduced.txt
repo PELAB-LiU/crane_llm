@@ -1,0 +1,132 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from tqdm import tqdm
+from tensorflow.keras.preprocessing import image
+from sklearn.preprocessing import label_binarize
+from sklearn.model_selection import train_test_split
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPool2D, Dropout
+from keras.optimizers import Adam
+
+## Cell 2:
+
+import tensorflow as tf
+from keras.applications.resnet_v2 import ResNet50V2
+from tensorflow import keras
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import seaborn as sns
+import matplotlib.pyplot as plt
+import cv2
+
+## Cell 3:
+
+import os
+from tensorflow.keras.preprocessing.image import load_img
+
+## Cell 4:
+
+labels_all = pd.read_csv('data_small/New folder/labels.csv')
+print(labels_all.shape)
+labels_all.head()
+
+## Cell 5:
+
+CLASS_NAME = ['scottish_deerhound', 'maltese_dog', 'afghan_hound', 'entlebucher', 'bernese_mountain_dog']
+labels = labels_all[(labels_all['breed'].isin(CLASS_NAME))]
+labels = labels.reset_index()
+labels.head()
+
+## Cell 6:
+
+train_path = 'data_small/New folder/train'
+
+
+
+train_labels = pd.read_csv('data_small/New folder/labels.csv')
+
+# Current relevent runtime information:
+{'CLASS_NAME': {'execution_cell_source': {'cellno': 5, 'lineno': 1},
+                'length': 5,
+                'type': "<class 'list'>",
+                'value_info': {'num_unique': 5,
+                               'unique_values': ['scottish_deerhound',
+                                                 'maltese_dog',
+                                                 'afghan_hound',
+                                                 'entlebucher',
+                                                 'bernese_mountain_dog'],
+                               'value_type': 'categorical or object'}},
+ '__method__image_img_to_array': {'type': "<class 'function'>"},
+ '__method__image_load_img': {'type': "<class 'function'>"},
+ '__method__np_expand_dims': {'type': '<class '
+                                      "'numpy._ArrayFunctionDispatcher'>"},
+ '__method__np_zeros': {'type': "<class 'builtin_function_or_method'>"},
+ 'image': {'type': "<class 'module'>"},
+ 'label_binarize': {'type': "<class 'function'>"},
+ 'labels': {'execution_cell_source': {'cellno': 5, 'lineno': 3},
+            'has_nan': False,
+            'per_column': {'breed': {'num_unique': 5,
+                                     'type': 'categorical',
+                                     'unique_values': ['scottish_deerhound',
+                                                       'maltese_dog',
+                                                       'entlebucher',
+                                                       'bernese_mountain_dog',
+                                                       'afghan_hound']},
+                           'id': {'example_values': ['0042188c895a2f14ef64...',
+                                                     '00693b8bc2470375cc74...',
+                                                     '01e787576c003930f96c...',
+                                                     '01ee3c7ff9bcaba98741...',
+                                                     '021b5a49189665c0442c...'],
+                                  'num_unique': 588,
+                                  'type': 'categorical'},
+                           'index': {'num_unique': 588,
+                                     'type': 'continuous',
+                                     'value_range': (9, 10204)}},
+            'shape': (588, 3),
+            'type': 'pandas.core.frame.DataFrame'},
+ 'np': {'type': "<class 'module'>"},
+ 'tqdm': {'type': "<class 'type'>"},
+ 'train_labels': {'execution_cell_source': {'cellno': 6, 'lineno': 5},
+                  'has_nan': False,
+                  'per_column': {'breed': {'example_values': ['boston_bull',
+                                                              'dingo',
+                                                              'pekinese',
+                                                              'bluetick',
+                                                              'golden_retriever'],
+                                           'num_unique': 120,
+                                           'type': 'categorical'},
+                                 'id': {'example_values': ['000bec180eb18c7604dc...',
+                                                           '001513dfcb2ffafc82cc...',
+                                                           '001cdf01b096e06d78e9...',
+                                                           '00214f311d5d2247d5df...',
+                                                           '0021f9ceb3235effd7fc...'],
+                                        'num_unique': 10222,
+                                        'type': 'categorical'}},
+                  'shape': (10222, 2),
+                  'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+X_data = np.zeros((len(labels), 224, 224, 3), dtype='float32')
+
+Y_data = label_binarize(labels['breed'], classes = CLASS_NAME)
+
+
+for i in tqdm(range(len(labels))):
+    try:
+        img = image.load_img(f'data_small/New folder/train/{labels["id"][i]}.jpg', target_size=(224, 224))
+    except FileNotFoundError:
+        continue
+    img = image.img_to_array(img)
+
+
+    x = np.expand_dims(img.copy(), axis=0)
+    X_data[i] = x / 255.0
+X_data['id'] = train_labels['id']
+
+
+print('\nTrain Images shape: ',X_data.shape,' size: {:,}'.format(X_data.size))
+print('One-hot encoded output shape: ',Y_data.shape,' size: {:,}'.format(Y_data.size))

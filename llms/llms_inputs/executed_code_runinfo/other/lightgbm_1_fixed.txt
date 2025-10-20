@@ -1,0 +1,259 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+
+## Cell 2:
+
+class conf:
+    index = 'Id'
+    target = 'quality'
+    random = 2023
+
+    load_original = True
+    only_positive = False
+
+    include_optuna = False
+
+    include_lgbm = False
+    include_catboost = False
+    include_lgbm_regression = True
+    n_trials = 10
+
+np.random.seed(conf.random)
+
+## Cell 3:
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+from pandas.plotting import scatter_matrix
+
+## Cell 4:
+
+train_full = pd.read_csv("data/train.csv", index_col=conf.index)
+test_full = pd.read_csv("data/test.csv", index_col=conf.index)
+train = train_full.copy()
+test = test_full.copy()
+if conf.load_original:
+    print("Load external data...")
+    original = pd.read_csv('data/WineQT.csv', index_col=conf.index)
+    if conf.only_positive:
+        train = pd.concat([original[original[conf.target] == 1], train_full], ignore_index=True)
+    else:
+        train = pd.concat([original, train_full])
+
+train.info()
+
+## Cell 5:
+
+train = train.reset_index()
+train = train.drop(columns=['Id'])
+
+## Cell 6:
+
+from sklearn.feature_selection import mutual_info_classif
+
+## Cell 7:
+
+train2 = train.copy()
+test2 = test.copy()
+
+## Cell 8:
+
+def fe(df):
+    df['alcohol_density'] = df['alcohol']  * df['density']
+    df['alcohol_to_density'] = df['alcohol'] / df['density']
+    df['sulphate/density'] = df['sulphates']  / df['density']
+
+## Cell 9:
+
+fe(train2)
+fe(test2)
+
+## Cell 10:
+
+features1 = train2[train2.quality==3].columns.to_list()[0:11]
+features2 = train2[train2.quality==3].columns.to_list()[12:15]
+features = features1 + features2
+
+## Cell 11:
+
+
+train2 = train2.drop(columns=['residual sugar', 'chlorides', 'free sulfur dioxide', 'pH'])
+test2 = test2.drop(columns=['residual sugar', 'chlorides', 'free sulfur dioxide', 'pH'])
+
+## Cell 12:
+
+features = test2.columns.to_list()
+
+## Cell 13:
+
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+train2_scaled = scaler.fit_transform(train2[features])
+df_train2_scaled = pd.DataFrame (train2_scaled, columns=features)
+train2 = pd.concat([df_train2_scaled, train2.quality], axis=1)
+
+## Cell 14:
+
+from sklearn.manifold import TSNE
+
+## Cell 15:
+
+
+tsne_model = TSNE(perplexity=25, n_components=2, init='pca', n_iter=250, random_state=23)
+df_tsne = tsne_model.fit_transform(train2[features])
+
+df_tsne_te = tsne_model.fit_transform(test2[features])
+df_TSNE_te = pd.DataFrame(df_tsne_te, columns=['tsne1', 'tsne2'])
+df_TSNE_te['Id'] = test.index
+df_TSNE_te = df_TSNE_te.set_index('Id')
+
+## Cell 16:
+
+df_tmp = pd.DataFrame(df_tsne, columns=['tsne1', 'tsne2'])
+df_TSNE = pd.concat([df_tmp,train[conf.target]], axis=1)
+
+df_TSNE = df_TSNE[(df_TSNE.quality == 4) | (df_TSNE.quality == 7)]
+
+groups = df_TSNE.groupby(conf.target)
+
+
+fig, ax = plt.subplots(figsize=(12, 12))
+ax.margins(0.05)
+for name, group in groups:
+    ax.plot(group.tsne1, group.tsne2, marker='o', linestyle='', ms=12, label=name)
+ax.legend()
+
+
+
+plt.show()
+
+## Cell 17:
+
+df_tmp = train2.drop(columns=['quality'])
+train3 = pd.concat([df_tmp, df_TSNE], axis=1)
+test3 = pd.concat([test2, df_TSNE_te], axis=1)
+
+## Cell 18:
+
+from sklearn.metrics import cohen_kappa_score
+from sklearn.model_selection import StratifiedKFold
+
+from lightgbm.sklearn import LGBMClassifier
+from catboost import CatBoostClassifier
+
+from lightgbm import LGBMRegressor
+import scipy as sp
+from functools import partial
+
+import optuna
+import warnings
+warnings.filterwarnings('ignore')
+
+## Cell 19:
+
+y = train3[conf.target]
+X = train3.drop([conf.target], axis=1)
+
+## Cell 20:
+
+scores =[]
+
+def find_out_params_model(trial):
+    random_state = trial.suggest_int('random_state', 1000, 2000)
+    n_splits = trial.suggest_int('n_splits', 8, 20)
+    cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=conf.random)
+    my_model = LGBMClassifier(
+        random_state = random_state
+    )
+    for fold, (train_idx, valid_idx) in enumerate(cv.split(X, y)):
+
+        X_train, X_valid = X.iloc[train_idx], X.iloc[valid_idx]
+        y_train , y_valid = y.iloc[train_idx] , y.iloc[valid_idx]
+        my_model.fit(
+            X_train, y_train,
+            eval_set= [(X_valid,y_valid)],
+
+
+
+        )
+
+        preds_valid = my_model.predict(X_valid)
+        score = cohen_kappa_score(y_valid,  preds_valid, weights = "quadratic")
+        scores.append(score)
+    return np.mean(scores)
+
+# Current relevent runtime information:
+{'X': {'execution_cell_source': {'cellno': 22, 'lineno': 2},
+       'has_nan': True,
+       'per_column': {'alcohol': {'num_unique': 62,
+                                  'type': 'continuous',
+                                  'value_range': (-1.9320196068407074,
+                                                  4.270538147467629)},
+                      'alcohol_density': {'num_unique': 2081,
+                                          'type': 'continuous',
+                                          'value_range': (-1.9254928199323986,
+                                                          4.3185716256593984)},
+                      'alcohol_to_density': {'num_unique': 2081,
+                                             'type': 'continuous',
+                                             'value_range': (-1.948862279527816,
+                                                             4.221839757582523)},
+                      'citric acid': {'num_unique': 77,
+                                      'type': 'continuous',
+                                      'value_range': (-1.3920015497287388,
+                                                      3.836380459878206)},
+                      'density': {'num_unique': 397,
+                                  'type': 'continuous',
+                                  'value_range': (-3.582306024531145,
+                                                  3.731016448558668)},
+                      'fixed acidity': {'num_unique': 92,
+                                        'type': 'continuous',
+                                        'value_range': (-2.1775183549862023,
+                                                        4.39132565393391)},
+                      'sulphate/density': {'num_unique': 2293,
+                                           'type': 'continuous',
+                                           'value_range': (-2.1095714222566038,
+                                                           8.95622862627403)},
+                      'sulphates': {'num_unique': 89,
+                                    'type': 'continuous',
+                                    'value_range': (-2.107419078096098,
+                                                    8.988881175678841)},
+                      'total sulfur dioxide': {'num_unique': 138,
+                                               'type': 'continuous',
+                                               'value_range': (-1.2771200662263864,
+                                                               7.318033032782096)},
+                      'tsne1': {'num_unique': 554,
+                                'type': 'continuous',
+                                'value_range': (-1.2744272, 1.3948542)},
+                      'tsne2': {'num_unique': 554,
+                                'type': 'continuous',
+                                'value_range': (-0.9854552, 1.1115463)},
+                      'volatile acidity': {'num_unique': 136,
+                                           'type': 'continuous',
+                                           'value_range': (-2.3306972777159434,
+                                                           5.990448600865194)}},
+       'shape': (3199, 12),
+       'type': 'pandas.core.frame.DataFrame'},
+ '__method__optuna_create_study': {'type': "<class 'function'>"},
+ '__method__y_isna': {'type': "<class 'method'>"},
+ 'find_out_params_model': {'execution_cell_source': {'cellno': 24, 'lineno': 3},
+                           'type': "<class 'function'>"},
+ 'optuna': {'type': "<class 'module'>"},
+ 'y': {'execution_cell_source': {'cellno': 22, 'lineno': 1},
+       'type': "<class 'pandas.core.series.Series'>",
+       'value_info': {'value_range': (4.0, 7.0), 'value_type': 'continuous'}}}
+# Target Cell:
+
+
+
+mask = ~y.isna()
+
+
+y = y[mask]
+X = X[mask]
+
+
+study = optuna.create_study(direction="maximize")
+study.optimize(find_out_params_model, n_trials=2)

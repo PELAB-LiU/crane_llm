@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "43: df['mean_word_length'] = df['text'].apply(lambda x: np.mean([len(w) for w in str(x).split()]))",
+    "message": "No overloads for \"apply\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "43: df['mean_word_length'] = df['text'].apply(lambda x: np.mean([len(w) for w in str(x).split()]))",
+    "message": "Argument of type \"(x: Unknown) -> floating[Any]\" cannot be assigned to parameter \"func\" of type \"(...) -> Series[Unknown]\" in function \"apply\"\n\u00a0\u00a0Type \"(x: Unknown) -> floating[Any]\" is not assignable to type \"(...) -> Series[Unknown]\"\n\u00a0\u00a0\u00a0\u00a0Function return type \"floating[Any]\" is incompatible with type \"Series[Unknown]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"floating[Any]\" is not assignable to \"Series[Unknown]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

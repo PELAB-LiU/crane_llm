@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "50: random_img = np.random.randint(0 , len(src_images))",
+    "message": "Undefined variable 'src_images'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "52: src_img = np.reshape(src_images[random_img] , (256 , 256 ,3))",
+    "message": "Undefined variable 'src_images'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

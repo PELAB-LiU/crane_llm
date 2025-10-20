@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "95: test_ds = test_ds[X_train.columns]",
+    "message": "Cannot access attribute \"columns\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"columns\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

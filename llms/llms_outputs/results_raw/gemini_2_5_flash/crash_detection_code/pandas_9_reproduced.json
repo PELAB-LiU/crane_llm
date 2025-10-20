@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Total Gross (millions)' column contains string values like '$0.00M' and 'Gross Unkown'. The target cell correctly filters these string values, so no crash is expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Total Gross (millions)' column contains string values like '$0.00M' and 'Gross Unkown'. The target cell correctly filters these string values, so no crash is expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Total Gross (millions)' column is likely a string type due to the '$' and 'M' characters, and the comparison with '$0.00M' and 'Gross Unkown' suggests it's being treated as such. The 'Censor' column is also being compared to a string '(Banned)'. There are no obvious operations that would cause a crash based on the provided executed cells.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Total Gross (millions)' column is likely a string type due to the '$' and 'M' characters, and the comparison with '$0.00M' and 'Gross Unkown' suggests it's being treated as such. The 'Censor' column is also being compared to a string '(Banned)'. There are no obvious operations that would cause a crash based on the provided executed cells.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Total Gross (millions)' column is likely a string type due to the '$' and 'M' characters, and the comparison with '$0.00M' and 'Gross Unkown' suggests it's being treated as such. The 'Censor' column is also being compared to a string '(Banned)'. There are no obvious operations that would cause a crash based on the provided executed cells.",
+    "detection": false
+  }
+]

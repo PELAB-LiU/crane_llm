@@ -1,0 +1,107 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+import numpy as np
+import pandas as pd
+
+## Cell 2:
+
+
+
+df=pd.read_csv('data/data.csv')
+
+## Cell 3:
+
+
+
+from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+
+## Cell 4:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+categorical_columns = ['street', 'city', 'statezip', 'country']
+df = pd.get_dummies(df, columns=categorical_columns, drop_first=True)
+
+## Cell 5:
+
+
+
+
+
+
+
+
+
+
+
+X = df.drop(columns=['date','price'])
+y = df['price']
+
+## Cell 6:
+
+
+
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test=train_test_split(X,y,train_size=0.8,random_state=2529)
+
+# Annotated Target Code:
+
+X_train: pd.DataFrame
+model: LinearRegression
+y_train: pd.Series
+
+
+
+model.fit(X_train,y_train)

@@ -1,0 +1,37 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix,auc,roc_auc_score
+from sklearn.metrics import recall_score, precision_score, accuracy_score, f1_score
+
+df = pd.read_csv("data/creditcard.csv.zip")
+
+
+print(df.shape)
+
+print("First 5 lines:")
+print(df.head(5))
+
+print("describe: ")
+print(df.describe())
+
+print("info: ")
+print(df.info())
+
+"""Since all variables are of float and int type, so this data is easy to handle for modeling"""
+
+## Cell 2:
+
+df = df.drop(['Time'],axis=1)
+
+# Annotated Target Code:
+df: pd.DataFrame
+
+
+
+from sklearn.preprocessing import StandardScaler
+df['scaled_Amount'] = StandardScaler().fit_transform(df['Amount'].values.reshape(-1,1))
+df = df.drop(['Amount'],axis=1)

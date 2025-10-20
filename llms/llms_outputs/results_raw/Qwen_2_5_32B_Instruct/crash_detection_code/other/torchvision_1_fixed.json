@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell uses a different model instance (resnet_model) than the one defined in the executed cells (model). The resnet_model is not adapted to the number of classes in the dataset, which will likely cause a mismatch in the output size and lead to a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell uses a different model instance (resnet_model) than the one defined in the executed cells (model). The resnet_model is not adapted to the number of classes in the dataset, which will likely cause a mismatch in the output size and lead to a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell uses a different model instance (resnet_model) than the one defined in the executed cells (model). The resnet_model is not adapted to the number of classes in the dataset, which will likely cause a mismatch in the output size and lead to a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell uses a different model instance (resnet_model) than the one defined in the executed cells (model). The resnet_model is not adapted to the number of classes in the dataset, which will likely cause a mismatch in the output size and lead to a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell uses a different model instance (resnet_model) than the one defined in the executed cells (model). The resnet_model is not adapted to the number of classes in the dataset, which will likely cause a mismatch in the output size and lead to a crash.",
+    "detection": true
+  }
+]

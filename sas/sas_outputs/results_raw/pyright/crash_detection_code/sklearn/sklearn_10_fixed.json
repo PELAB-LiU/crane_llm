@@ -1,0 +1,37 @@
+[
+  {
+    "code_line": "99:     X_train_fold, y_train_fold = X_train.iloc[train_idx], y_train.iloc[train_idx]",
+    "message": "Cannot access attribute \"iloc\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"iloc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "99:     X_train_fold, y_train_fold = X_train.iloc[train_idx], y_train.iloc[train_idx]",
+    "message": "Cannot access attribute \"iloc\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"iloc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "100:     X_valid_fold, y_valid_fold = X_train.iloc[valid_idx], y_train.iloc[valid_idx]",
+    "message": "Cannot access attribute \"iloc\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"iloc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "100:     X_valid_fold, y_valid_fold = X_train.iloc[valid_idx], y_train.iloc[valid_idx]",
+    "message": "Cannot access attribute \"iloc\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"iloc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "124: test_preds /= n_splits",
+    "message": "Operator \"/=\" not supported for types \"Any | None\" and \"Literal[10]\"\n\u00a0\u00a0Operator \"/\" not supported for types \"None\" and \"Literal[10]\"",
+    "rule": "reportOperatorIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

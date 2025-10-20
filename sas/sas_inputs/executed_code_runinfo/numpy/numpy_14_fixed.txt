@@ -1,0 +1,231 @@
+# Executed Cells:
+## Cell 1:
+
+import os
+import tensorflow as tf
+from tensorflow.keras.applications.vgg19 import VGG19
+from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
+from tensorflow.keras.applications.vgg19 import preprocess_input as vgg19_preprocess_input
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input as mobilenetv2_preprocess_input
+from tensorflow.keras.layers import GlobalAveragePooling2D
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Dense, Dropout, Flatten, Input, Average, concatenate
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from keras.optimizers import Adam
+from keras.callbacks import EarlyStopping, ModelCheckpoint
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay, roc_curve, auc
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, matthews_corrcoef
+
+## Cell 2:
+
+np.random.seed(123)
+
+## Cell 3:
+
+data_dir = 'data_small/CovidDataset_70_30'
+
+## Cell 4:
+
+batch_size = 32
+input_shape = (224, 224, 3)
+num_classes = 2
+
+## Cell 5:
+
+train_datagen = ImageDataGenerator(rescale=1./255, shear_range=0.2, zoom_range=0.2, horizontal_flip=True)
+test_datagen = ImageDataGenerator(rescale=1./255)
+validation_datagen = ImageDataGenerator(rescale=1./255)
+
+
+train_generator = train_datagen.flow_from_directory(
+        os.path.join(data_dir, 'Train'),
+        target_size=input_shape[:2],
+        batch_size=batch_size,
+        class_mode='categorical')
+
+test_generator = test_datagen.flow_from_directory(
+        os.path.join(data_dir, 'Test'),
+        target_size=input_shape[:2],
+        batch_size=batch_size,
+        class_mode='categorical')
+
+validation_generator = validation_datagen.flow_from_directory(
+        os.path.join(data_dir, 'Validation'),
+        target_size=input_shape[:2],
+        batch_size=batch_size,
+        class_mode='categorical')
+
+## Cell 6:
+
+vgg19 = VGG19(weights='imagenet', include_top=False, input_shape=input_shape)
+
+modelV19 = Sequential()
+modelV19.add(vgg19)
+modelV19.add(Flatten())
+modelV19.add(Dense(500, activation='relu'))
+modelV19.add(Dropout(0.5))
+modelV19.add(Dense(300, activation='relu'))
+modelV19.add(Dropout(0.5))
+modelV19.add(Dense(num_classes, activation='softmax'))
+
+for layer in vgg19.layers:
+    layer.trainable = False
+
+
+## Cell 7:
+
+mobilenetv2 = MobileNetV2(weights='imagenet', include_top=False, input_shape=input_shape)
+
+modelM2 = Sequential()
+modelM2.add(mobilenetv2)
+modelM2.add(Flatten())
+modelM2.add(Dense(500, activation='relu'))
+modelM2.add(Dropout(0.5))
+modelM2.add(Dense(300, activation='relu'))
+modelM2.add(Dropout(0.5))
+modelM2.add(Dense(num_classes, activation='softmax'))
+
+for layer in mobilenetv2.layers:
+    layer.trainable = False
+
+
+
+## Cell 8:
+
+opt = Adam(learning_rate=0.0001, beta_1=0.9)
+opt2 = Adam(learning_rate=0.0001, beta_1=0.9)
+modelV19.compile(
+    loss='binary_crossentropy',
+    optimizer=opt,
+    metrics=['accuracy'])
+
+modelM2.compile(
+    loss='binary_crossentropy',
+    optimizer=opt2,
+    metrics=['accuracy'])
+
+early_stop = EarlyStopping(monitor='val_loss', patience=10)
+filepath_weights_V19 = "data_small/best_weights_V19-{epoch:02d}-{val_accuracy:.4f}.keras"
+filepath_weights_M2 = "data_small/best_weights_M2-{epoch:02d}-{val_accuracy:.4f}.keras"
+checkpoint_V19 = ModelCheckpoint(filepath_weights_V19, monitor='val_accuracy', mode='max', verbose=1, save_best_only=True)
+checkpoint_M2 = ModelCheckpoint(filepath_weights_M2, monitor='val_accuracy', mode='max', verbose=1, save_best_only=True)
+
+## Cell 9:
+
+
+
+history_V19 = modelV19.fit(train_generator, epochs=1, validation_data=validation_generator, callbacks=[early_stop, checkpoint_V19])
+
+## Cell 10:
+
+
+history_M2 = modelM2.fit(train_generator, epochs=1, validation_data=validation_generator, callbacks=[early_stop, checkpoint_M2])
+
+## Cell 11:
+
+from tensorflow.keras.models import Model, load_model
+from tensorflow.keras.layers import Input, Average
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+models = [modelV19, modelM2]
+
+
+model_input = Input(shape=(224, 224, 3))
+model_outputs = [model(model_input) for model in models]
+
+ensemble_output = Average()(model_outputs)
+
+
+ensemble_model = Model(
+    inputs = model_input,
+    outputs = ensemble_output,
+    name = "Ensemble"
+)
+
+
+
+## Cell 12:
+
+opt3 = Adam(learning_rate=0.0001, beta_1=0.9)
+
+ensemble_model.compile(
+    loss='binary_crossentropy',
+    optimizer=opt3,
+    metrics=['accuracy'])
+
+filepath_weights_ensemble = "data_small/best_weights_ensemble-{epoch:02d}-{val_accuracy:.4f}.keras"
+checkpoint_ensemble = ModelCheckpoint(filepath_weights_ensemble, monitor='val_accuracy', mode='max', verbose=1, save_best_only=True)
+
+## Cell 13:
+
+
+history_ensemble = ensemble_model.fit(train_generator, epochs=1, validation_data=validation_generator, callbacks=[early_stop, checkpoint_ensemble])
+
+## Cell 14:
+
+
+
+
+ensemble_model.evaluate(test_generator)
+
+## Cell 15:
+
+y_pred = ensemble_model.predict(test_generator)
+print("One-hot encoded predicted labels:")
+print(y_pred)
+y_pred_classes = np.argmax(y_pred, axis=1)
+print(y_pred_classes)
+
+# Annotated Target Code:
+import keras
+
+ensemble_model: keras.Model
+test_generator: tf.keras.utils.Sequence
+y_pred: np.ndarray
+
+
+
+
+
+
+
+
+
+y_pred = ensemble_model.predict(test_generator)
+y_pred_classes = np.argmax(y_pred, axis=1)
+
+
+y_true_onehot = test_generator.classes
+
+
+
+y_true_classes = y_true_onehot

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Installs in Google Play Store dataset often contains non-numeric characters (e.g., '1,000,000+', 'Free'), so direct astype('int') will fail despite dropna.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column in Google Play Store datasets typically contains non-numeric characters like '+' and ',', which will cause int conversion to fail without prior cleaning.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Installs' in Google Play Store datasets typically contains strings with commas and '+' signs (e.g., '1,000,000+'), which cannot be directly cast to int without cleaning. This will likely raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column in Google Play Store datasets often contains non-numeric characters like '+' and ',' which will cause int conversion to fail. Without prior cleaning, astype('int') will likely raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column in Google Play store datasets often contains non-numeric characters like '+' and ',', causing int conversion to fail. Without prior cleaning, astype('int') will likely raise a ValueError.",
+    "detection": true
+  }
+]

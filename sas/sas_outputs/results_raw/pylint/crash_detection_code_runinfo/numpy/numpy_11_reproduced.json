@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "66:             GENERATE_SQUARE),Image.LANCZOS)",
+    "message": "Module 'PIL.Image' has no 'LANCZOS' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  }
+]

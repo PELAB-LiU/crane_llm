@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "117:     sns.barplot(col,df)",
+    "message": "Too many positional arguments for function call",
+    "symbol": "too-many-function-args",
+    "type": "error",
+    "source": "pylint"
+  }
+]

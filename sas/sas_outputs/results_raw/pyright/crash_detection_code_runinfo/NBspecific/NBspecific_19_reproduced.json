@@ -1,0 +1,37 @@
+[
+  {
+    "code_line": "6: X_test_tensor = torch.tensor(X_test, dtype=torch.float32)",
+    "message": "\"torch\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "6: X_test_tensor = torch.tensor(X_test, dtype=torch.float32)",
+    "message": "\"X_test\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "6: X_test_tensor = torch.tensor(X_test, dtype=torch.float32)",
+    "message": "\"torch\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "7: predictions = model(X_test_tensor)",
+    "message": "\"model\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "8: _, predicted_labels = torch.max(predictions, 1)",
+    "message": "\"torch\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

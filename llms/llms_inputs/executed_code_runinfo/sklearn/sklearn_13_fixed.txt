@@ -1,0 +1,55 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+## Cell 2:
+
+df = pd.read_csv("data/SalaryData_Test(1).csv")
+
+## Cell 3:
+
+x = df.workclass.values.reshape(-1,1)
+y = df.Salary.values.reshape(-1,1)
+
+# Current relevent runtime information:
+{'__method__df_Salary': {'type': "<class 'pandas.core.series.Series'>",
+                         'value_info': {'num_unique': 2,
+                                        'unique_values': [' <=50K', ' >50K'],
+                                        'value_type': 'categorical or object'}},
+ '__method__df_workclass': {'type': "<class 'pandas.core.series.Series'>",
+                            'value_info': {'num_unique': 7,
+                                           'value_type': 'categorical or '
+                                                         'object'}},
+ 'df': {'dtypes': ['int64', 'object'],
+        'execution_cell_source': {'cellno': 1, 'lineno': 1},
+        'has_nan': False,
+        'shape': (15060, 14),
+        'type': 'pandas.core.frame.DataFrame'},
+ 'x': {'dtype': 'object',
+       'execution_cell_source': {'cellno': 7, 'lineno': 1},
+       'shape': (15060, 1),
+       'type': 'numpy.ndarray'},
+ 'y': {'dtype': 'object',
+       'execution_cell_source': {'cellno': 7, 'lineno': 2},
+       'shape': (15060, 1),
+       'type': 'numpy.ndarray'}}
+# Target Cell:
+
+from sklearn.linear_model import LinearRegression
+
+
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+
+label_encoder = LabelEncoder()
+x_encoded = label_encoder.fit_transform(df.workclass.values)
+x = x_encoded.reshape(-1,1)
+y_encoded = label_encoder.fit_transform(df.Salary.values)
+y = y_encoded.reshape(-1,1)
+
+
+linear_reg = LinearRegression()
+linear_reg.fit(x,y)

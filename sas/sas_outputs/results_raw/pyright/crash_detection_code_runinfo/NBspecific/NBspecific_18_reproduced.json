@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "120: mae = mean_absolute_error(y_test, y_pred)",
+    "message": "\"y_pred\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

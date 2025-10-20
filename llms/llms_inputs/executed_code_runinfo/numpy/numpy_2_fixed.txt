@@ -1,0 +1,79 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+## Cell 2:
+
+houseprice=pd.read_csv('data/data.csv')
+
+## Cell 3:
+
+X=houseprice.drop(['price','date','city','street','statezip','condition'],axis=1)
+Y=houseprice['price']
+
+## Cell 4:
+
+from sklearn.model_selection import train_test_split
+X_train,X_test,Y_train,Y_test=train_test_split(X.values,Y.values,test_size=0.2)
+
+# Current relevent runtime information:
+{'X': {'execution_cell_source': {'cellno': 9, 'lineno': 1},
+       'has_nan': False,
+       'per_column': {'bathrooms': {'num_unique': 26,
+                                    'type': 'continuous',
+                                    'value_range': (0.0, 8.0)},
+                      'bedrooms': {'num_unique': 10,
+                                   'type': 'continuous',
+                                   'value_range': (0.0, 9.0)},
+                      'country': {'num_unique': 1,
+                                  'type': 'categorical',
+                                  'unique_values': ['USA']},
+                      'floors': {'num_unique': 6,
+                                 'type': 'continuous',
+                                 'value_range': (1.0, 3.5)},
+                      'sqft_above': {'num_unique': 511,
+                                     'type': 'continuous',
+                                     'value_range': (370, 9410)},
+                      'sqft_basement': {'num_unique': 207,
+                                        'type': 'continuous',
+                                        'value_range': (0, 4820)},
+                      'sqft_living': {'num_unique': 566,
+                                      'type': 'continuous',
+                                      'value_range': (370, 13540)},
+                      'sqft_lot': {'num_unique': 3113,
+                                   'type': 'continuous',
+                                   'value_range': (638, 1074218)},
+                      'view': {'num_unique': 5,
+                               'type': 'categorical_numeric',
+                               'value_range': (0, 4)},
+                      'waterfront': {'num_unique': 2,
+                                     'type': 'binary',
+                                     'value_range': (0, 1)},
+                      'yr_built': {'num_unique': 115,
+                                   'type': 'continuous',
+                                   'value_range': (1900, 2014)},
+                      'yr_renovated': {'num_unique': 60,
+                                       'type': 'continuous',
+                                       'value_range': (0, 2014)}},
+       'shape': (4600, 12),
+       'type': 'pandas.core.frame.DataFrame'},
+ 'X_train': {'dtype': 'object', 'shape': (3680, 12), 'type': 'numpy.ndarray'},
+ 'Y_train': {'dtype': 'float64',
+             'has_nan': False,
+             'shape': (3680,),
+             'type': 'numpy.ndarray',
+             'value_info': {'value_range': (0.0, 26590000.0),
+                            'value_type': 'continuous'},
+             'value_range': (0.0, 26590000.0)},
+ '__method__X_columns': {'type': "<class 'pandas.core.indexes.base.Index'>"},
+ '__method__pd_DataFrame': {'type': "<class 'type'>"},
+ 'pd': {'type': "<class 'module'>"}}
+# Target Cell:
+
+
+
+train_houseprice=pd.DataFrame(X_train, columns = X.columns).join(pd.DataFrame(Y_train, columns = ["price"]))

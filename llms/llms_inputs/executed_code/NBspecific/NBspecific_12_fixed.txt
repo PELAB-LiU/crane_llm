@@ -1,0 +1,133 @@
+# Executed Cells:
+## Cell 1:
+
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+
+## Cell 2:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 3:
+
+class DataLoader:
+
+
+
+
+
+    def __init__(self):
+        self.train = pd.read_csv("data/playground-series-s3e24/train.csv.zip",index_col = 'id')
+        self.test = pd.read_csv( "data/playground-series-s3e24/test.csv.zip",index_col = 'id')
+        self.original = pd.read_csv("data/smoker-status-prediction-using-biosignals/train_dataset.csv.zip")
+
+    def _classifydataset(self)->None:
+        self.train["Source"] = 1
+        self.test["Source"] = 1
+        self.original["Source"] = 0
+    """
+    As we can see from the description all
+    values should be numeric in nature but cols
+    'uniq_Op','uniq_Opnd','total_Op','total_Opnd','branchCount' are object type
+    we will replace all non numeric values with np.nan
+    """
+
+
+
+
+
+
+
+
+
+
+
+
+    def join(self)-> pd.DataFrame:
+        self.df = pd.concat([self.train,self.original],axis = 0,ignore_index = True)
+        self.df = self.df.drop_duplicates()
+        self.df.index = np.arange(len(self.df))
+        self.df.index.name = 'id'
+        return self.df
+
+    def variables(self):
+        self.numvars = [i for i in pp.train.columns if pp.train[i].nunique() > 10]
+        self.catvars = list(set(self.train.columns) - set(self.numvars))
+        return (self.numvars, self.catvars)
+
+    def execute(self):
+        self. _classifydataset()
+
+        self.join()
+        return self
+
+    def information(self,type):
+        if type == 'train':
+            return summary(self.train)
+        elif type == 'test':
+            return summary(self.test)
+        elif type == 'original':
+            return summary(self.df)
+        else:
+            return -1
+
+
+def summary(df: pd.DataFrame)-> pd.DataFrame:
+    summary = pd.DataFrame(df.dtypes,columns=['dtype'])
+    summary["#Missing"] = df.isna().sum().values
+    summary["%Missing"] = summary["#Missing"]/len(df) * 100
+    summary["nuniques"] = df.nunique().values
+    summary["type"] = df.dtypes
+    return summary
+
+## Cell 4:
+
+pp = DataLoader()
+pp.execute()
+pp.train.head()
+
+## Cell 5:
+
+num,cat = pp.variables()
+
+# Target Cell:
+
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+
+fig, axs = plt.subplots(6, 3, figsize=(7, 17))
+
+
+
+for col,ax in zip(num,axs.ravel()):
+    if pp.train[col].dtype == float or pp.train[col].dtype == int:
+        sns.histplot(ax = ax, data = pp.train[col], bins=100)
+        plt.xlabel(col)
+
+        ax.tick_params(axis='x', labelsize=8)
+        ax.set(xlim = (0,None),ylim = (0,None))
+    else:
+        vc = pp.train[col].value_counts()
+        ax.bar(vc.index,vc.values)
+        plt.xlabel(col)
+fig.suptitle('Feature distributions', y=1.02, fontsize=20)
+plt.tight_layout()

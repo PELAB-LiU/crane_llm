@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "61: docs = np.array([np.array(pad_sequences(tokenize_text(i)), maxlen=max_length) for i in docs])",
+    "message": "Unexpected keyword argument 'maxlen' in function call",
+    "symbol": "unexpected-keyword-arg",
+    "type": "error",
+    "source": "pylint"
+  }
+]

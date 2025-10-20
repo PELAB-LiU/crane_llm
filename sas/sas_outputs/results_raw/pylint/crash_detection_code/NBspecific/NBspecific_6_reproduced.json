@@ -1,0 +1,23 @@
+[
+  {
+    "code_line": "112:       dataX = np.array(dataX).reshape(-1,self.window_size,self.number_features)",
+    "message": "Too many positional arguments for method call",
+    "symbol": "too-many-function-args",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "223: plt.plot(history.history['accuracy'],label='Train Accuracy')",
+    "message": "Undefined variable 'history'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "224: plt.plot(history.history['val_accuracy'],label='Validation Accuracy')",
+    "message": "Undefined variable 'history'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

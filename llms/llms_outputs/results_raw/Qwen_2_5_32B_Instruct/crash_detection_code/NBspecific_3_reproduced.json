@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to calculate F-statistics and plot the results, but `yFit` is computed from `X_train` and not `X_test`. This mismatch will cause the calculation of SSR, SSE, and Fstats to be incorrect and likely result in a crash due to shape mismatches or undefined behavior.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to calculate F-statistics and plot the results, but `yFit` is computed from `X_train` and not `X_test`. This mismatch will cause the calculation of SSR, SSE, and Fstats to be incorrect and likely result in a crash due to shape mismatches or undefined behavior.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to calculate F-statistics and plot the results, but `yFit` is computed from `X_train` and not `X_test`. This mismatch will cause the calculation of SSR, SSE, and Fstats to be incorrect and likely result in a crash due to shape mismatches or undefined behavior.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to calculate F-statistics and plot the results. However, `yFit` is computed from `X_train` and `y_train`, not `X_test` and `y_test`. This mismatch will cause the F-statistics calculation to be incorrect and likely result in a crash due to shape mismatches when plotting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to calculate F-statistics and plot the results. However, `yFit` is computed from `X_train` and `y_train`, not `X_test` and `y_test`. This mismatch will cause the F-statistics calculation to be incorrect and likely result in a crash due to shape mismatches when plotting.",
+    "detection": true
+  }
+]

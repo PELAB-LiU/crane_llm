@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "91: data1.cat.rename_categories(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], inplace=True)",
+    "message": "Cannot access attribute \"cat\" for class \"Categorical\"\n\u00a0\u00a0Attribute \"cat\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "94: average_duration = data1.groupby('DayOfWeek')['Duration'].mean()",
+    "message": "Cannot access attribute \"groupby\" for class \"Categorical\"\n\u00a0\u00a0Attribute \"groupby\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

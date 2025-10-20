@@ -1,0 +1,23 @@
+[
+  {
+    "code_line": "102:         outputs = module(imgs)",
+    "message": "Expected 0 positional arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "122:             outputs = module(imgs)",
+    "message": "Expected 0 positional arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "159:     outputs = module(imgs)",
+    "message": "Expected 0 positional arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

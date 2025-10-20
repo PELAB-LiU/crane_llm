@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, leading to `quantized_vit` being `None`. The `inference` function is then called with the original model, which should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, leading to `quantized_vit` being `None`. The `inference` function is then called with the original model, which should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, leading to `quantized_vit` being `None`. The `inference` function is then called with the original model, which should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, leading to `quantized_vit` being `None`. The `inference` function is then called with the original model, which should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, leading to `quantized_vit` being `None`. The `inference` function is then called with the original model, which should not crash.",
+    "detection": false
+  }
+]

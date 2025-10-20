@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "35: plt.scatter(centriods[:,0], centriods[:,1], centriods[:,2], marker = 'X', s = 200, c = 'red')",
+    "message": "Argument 's' passed by position and keyword in function call",
+    "symbol": "redundant-keyword-arg",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "39: plt.zlabel(\"Insulin\")",
+    "message": "Module 'matplotlib.pyplot' has no 'zlabel' member; maybe 'clabel'?",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  }
+]

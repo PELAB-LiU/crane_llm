@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "All variables used exist with compatible shapes (y_test and yFit both length 68; X_test shape (68,6)). Denominator n-m-1 = 61 > 0, so F-stat and p-value computations are valid; plotting functions are available.",
+    "detection": false
+  },
+  {
+    "reasoning": "y_test and yFit are both length 68, X_test has shape (68, 6), so computations and F-test denominators (n-m-1 = 61) are valid and nonzero; required modules and methods exist.",
+    "detection": false
+  },
+  {
+    "reasoning": "All required variables exist with compatible shapes (X_test: 68x6, y_test and yFit: length 68). Denominators n-m-1 = 61 > 0, so F-stat computation is valid; plotting functions are available.",
+    "detection": false
+  },
+  {
+    "reasoning": "All arrays have compatible shapes (n=68, m=6), no NaNs, and denominators n-m-1=61>0; required modules and functions exist. The computations and plotting should execute without errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "All required variables exist with compatible shapes (X_test: 68x6, y_test and yFit: length 68). No NaNs; degrees of freedom n-m-1 = 61 > 0, so F-statistic and plotting should execute without errors.",
+    "detection": false
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "251: class_weights = compute_class_weight('balanced', np.unique(train_dataset.labels), train_dataset.labels)",
+    "message": "Expected 1 positional argument",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

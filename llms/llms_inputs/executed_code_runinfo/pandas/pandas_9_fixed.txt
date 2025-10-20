@@ -1,0 +1,98 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+df = pd.read_csv("data/IMDb_All_Genres_etf_clean1.csv")
+
+# Current relevent runtime information:
+{'df': {'execution_cell_source': {'cellno': 1, 'lineno': 1},
+        'has_nan': False,
+        'per_column': {'Actors': {'example_values': ['Rishab Shetty, Sapth...',
+                                                     'Christian Bale, Heat...',
+                                                     'Elijah Wood, Viggo M...',
+                                                     'Leonardo DiCaprio, J...',
+                                                     'Elijah Wood, Ian McK...'],
+                                  'num_unique': 5511,
+                                  'type': 'categorical'},
+                       'Censor': {'example_values': ['UA',
+                                                     'U',
+                                                     'A',
+                                                     'Not Rated',
+                                                     'R'],
+                                  'num_unique': 25,
+                                  'type': 'categorical'},
+                       'Director': {'example_values': ['Rishab Shetty',
+                                                       'Christopher Nolan',
+                                                       'Peter Jackson',
+                                                       'Directors:Lana '
+                                                       'Wacho...',
+                                                       'Irvin Kershner'],
+                                    'num_unique': 2320,
+                                    'type': 'categorical'},
+                       'Movie_Title': {'example_values': ['Kantara',
+                                                          'The Dark Knight',
+                                                          'The Lord of the '
+                                                          'Ring...',
+                                                          'Inception',
+                                                          'The Lord of the '
+                                                          'Ring...'],
+                                       'num_unique': 5453,
+                                       'type': 'categorical'},
+                       'Rating': {'num_unique': 74,
+                                  'type': 'continuous',
+                                  'value_range': (1.0, 9.3)},
+                       'Runtime(Mins)': {'num_unique': 156,
+                                         'type': 'continuous',
+                                         'value_range': (45, 321)},
+                       'Total_Gross': {'example_values': ['Gross Unkown',
+                                                          '$534.86M',
+                                                          '$377.85M',
+                                                          '$292.58M',
+                                                          '$342.55M'],
+                                       'num_unique': 3501,
+                                       'type': 'categorical'},
+                       'Year': {'num_unique': 99,
+                                'type': 'continuous',
+                                'value_range': (1920, 2022)},
+                       'main_genre': {'example_values': ['Action',
+                                                         'Animation',
+                                                         'Biography',
+                                                         'Adventure',
+                                                         'Western'],
+                                      'num_unique': 13,
+                                      'type': 'categorical'},
+                       'side_genre': {'example_values': [' Adventure,  Drama',
+                                                         ' Crime,  Drama',
+                                                         ' Adventure,  Sci-Fi',
+                                                         ' Sci-Fi',
+                                                         ' Adventure,  '
+                                                         'Fantasy'],
+                                      'num_unique': 144,
+                                      'type': 'categorical'}},
+        'shape': (5562, 10),
+        'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+
+
+clean_df = df[(df["Total_Gross"]!="$0.00M") & (df["Total_Gross"]!="Gross Unkown")].copy()
+clean_df = clean_df[clean_df['Censor']!="(Banned)"]

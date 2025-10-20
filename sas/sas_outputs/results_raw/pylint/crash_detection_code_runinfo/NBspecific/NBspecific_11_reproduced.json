@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "198:     plt.imshow(difference,cmap=plt.cm.gray)",
+    "message": "Module 'matplotlib.cm' has no 'gray' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  }
+]

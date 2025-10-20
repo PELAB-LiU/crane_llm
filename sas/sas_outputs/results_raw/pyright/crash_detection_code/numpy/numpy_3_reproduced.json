@@ -1,0 +1,30 @@
+[
+  {
+    "code_line": "11: hv.extension('bokeh', 'matplotlib', logo=False)",
+    "message": "Expected 0 positional arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "47:     freq, edges = np.histogram(df[col].values)",
+    "message": "Argument of type \"ArrayLike\" cannot be assigned to parameter \"a\" of type \"ArrayLike\" in function \"histogram\"\n\u00a0\u00a0Type \"pandas._typing.ArrayLike\" is not assignable to type \"numpy._typing._array_like.ArrayLike\"\n\u00a0\u00a0\u00a0\u00a0Type \"ExtensionArray\" is not assignable to type \"ArrayLike\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"ExtensionArray\" is incompatible with protocol \"_SupportsArray[dtype[Any]]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__array__\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"ExtensionArray\" is incompatible with protocol \"_NestedSequence[_SupportsArray[dtype[Any]]]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__reversed__\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"count\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"index\" is not present\n  ...",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "50:     freq, edges = np.histogram(g.get_group('PAID')[col].values, bins=edges)",
+    "message": "Argument of type \"ArrayLike\" cannot be assigned to parameter \"a\" of type \"ArrayLike\" in function \"histogram\"\n\u00a0\u00a0Type \"pandas._typing.ArrayLike\" is not assignable to type \"numpy._typing._array_like.ArrayLike\"\n\u00a0\u00a0\u00a0\u00a0Type \"ExtensionArray\" is not assignable to type \"ArrayLike\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"ExtensionArray\" is incompatible with protocol \"_SupportsArray[dtype[Any]]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__array__\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"ExtensionArray\" is incompatible with protocol \"_NestedSequence[_SupportsArray[dtype[Any]]]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__reversed__\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"count\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"index\" is not present\n  ...",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "53:     freq, edges = np.histogram(g.get_group('DEFAULT')[col].values, bins=edges)",
+    "message": "Argument of type \"ArrayLike\" cannot be assigned to parameter \"a\" of type \"ArrayLike\" in function \"histogram\"\n\u00a0\u00a0Type \"pandas._typing.ArrayLike\" is not assignable to type \"numpy._typing._array_like.ArrayLike\"\n\u00a0\u00a0\u00a0\u00a0Type \"ExtensionArray\" is not assignable to type \"ArrayLike\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"ExtensionArray\" is incompatible with protocol \"_SupportsArray[dtype[Any]]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__array__\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"ExtensionArray\" is incompatible with protocol \"_NestedSequence[_SupportsArray[dtype[Any]]]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__reversed__\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"count\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"index\" is not present\n  ...",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

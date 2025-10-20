@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "58: g = sns.countplot(Y_train)",
+    "message": "Argument of type \"Series[Unknown]\" cannot be assigned to parameter \"data\" of type \"DataSource | _DataSourceWideForm\" in function \"countplot\"\n\u00a0\u00a0Type \"Series[Unknown]\" is not assignable to type \"DataSource | _DataSourceWideForm\"\n\u00a0\u00a0\u00a0\u00a0\"Series[Unknown]\" is not assignable to \"DataFrame\"\n\u00a0\u00a0\u00a0\u00a0\"Series[Unknown]\" is incompatible with protocol \"SupportsDataFrame\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__dataframe__\" is not present\n\u00a0\u00a0\u00a0\u00a0\"Series[Unknown]\" is not assignable to \"Mapping[Any, Incomplete]\"\n\u00a0\u00a0\u00a0\u00a0\"Series[Unknown]\" is not assignable to \"None\"\n\u00a0\u00a0\u00a0\u00a0\"Series[Unknown]\" is not assignable to \"Mapping[Any, _Vector]\"\n\u00a0\u00a0\u00a0\u00a0\"Series[Unknown]\" is not assignable to \"Sequence[_Vector]\"\n  ...",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "239:                               verbose = 2, steps_per_epoch=X_train.shape[0] // batch_size",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

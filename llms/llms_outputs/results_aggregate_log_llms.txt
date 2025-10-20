@@ -1,0 +1,20 @@
+Difference at row 27, col 'gemini_2_5_flash_crash_detection_code': ['wrong', 'wrong', 'correct', 'wrong', 'wrong']
+Difference at row 50, col 'gemini_2_5_flash_crash_detection_code': ['reasoning wrong', 'reasoning wrong', 'reasoning wrong', 'reasoning wrong', 'wrong']
+Difference at row 26, col 'Qwen_2_5_32B_Instruct_crash_detection_code': ['correct', 'correct', 'correct', 'partially correct', 'correct']
+Difference at row 148, col 'Qwen_2_5_32B_Instruct_crash_detection_code_runinfo': ['reasoning wrong', 'partially correct', 'reasoning wrong', 'reasoning wrong', 'reasoning wrong']
+Difference at row 26, col 'gpt_5_crash_detection_code': ['wrong', 'partially correct', 'wrong', 'wrong', 'wrong']
+Difference at row 33, col 'gpt_5_crash_detection_code': ['partially correct', 'partially correct', 'partially correct', 'wrong', 'partially correct']
+Difference at row 24, col 'gpt_5_crash_detection_code_runinfo': ['wrong', 'wrong', 'wrong', 'partially correct', 'wrong']
+Difference at row 39, col 'gpt_5_crash_detection_code_runinfo': ['wrong', 'wrong', 'wrong', 'wrong', 'partially correct']
+Difference at row 184, col 'gpt_5_crash_detection_code_runinfo': ['partially correct', 'correct', 'correct', 'correct', 'partially correct']
+Total cells processed: 1332
+Cells with different values: 9
+
+Saved aggregated results to llms/llms_outputs/results_parsed_reversed_summary_llms.xlsx
+Difference at row 168, col 'gemini_2_5_flash_crash_detection_code': ['correct', 'wrong', 'correct', 'correct', 'correct']
+Difference at row 44, col 'Qwen_2_5_32B_Instruct_crash_detection_code': ['wrong', 'correct', 'wrong', 'correct', 'correct']
+Difference at row 75, col 'Qwen_2_5_32B_Instruct_crash_detection_code_runinfo': ['wrong', 'wrong', 'wrong', 'correct', 'correct']
+Difference at row 150, col 'gpt_5_crash_detection_code': ['correct', 'partially correct', 'partially correct', 'partially correct', 'partially correct']
+Difference at row 113, col 'gpt_5_crash_detection_code_runinfo': ['wrong', 'wrong', 'wrong', 'partially correct', 'wrong']
+Total cells processed: 1332
+Cells with different values: 5

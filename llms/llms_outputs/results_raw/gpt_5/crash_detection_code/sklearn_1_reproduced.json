@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model.compile does not accept class_weight; that argument belongs to model.fit. The compile call with class_weight will raise a TypeError for unexpected keyword argument.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.compile does not accept class_weight; it is for model.fit. compute_class_weight usage is fine, but passing class_weight to compile will raise a TypeError for unexpected keyword.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.compile does not accept class_weight; it belongs to model.fit. Passing class_weight to compile will raise an unexpected keyword argument error.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.compile does not accept class_weight; that argument belongs to model.fit. Passing class_weight to compile will raise an unexpected keyword argument error.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.compile does not accept class_weight; it should be passed to model.fit. compute_class_weight usage is fine, but providing class_weight in compile will raise an unexpected argument error.",
+    "detection": true
+  }
+]

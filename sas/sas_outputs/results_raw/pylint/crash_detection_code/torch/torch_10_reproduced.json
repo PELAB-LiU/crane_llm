@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "36:         super(module,self).__init__()",
+    "message": "Bad first argument 'module' given to super()",
+    "symbol": "bad-super-call",
+    "type": "error",
+    "source": "pylint"
+  }
+]

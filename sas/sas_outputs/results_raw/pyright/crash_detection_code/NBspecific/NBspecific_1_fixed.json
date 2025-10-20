@@ -1,0 +1,37 @@
+[
+  {
+    "code_line": "78:     return \" \".join([ps.stem(word) for word in text.split()])",
+    "message": "Cannot access attribute \"stem\" for class \"object\"\n\u00a0\u00a0Attribute \"stem\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "98: tf_idf.toarray()",
+    "message": "Cannot access attribute \"toarray\" for class \"tuple[Unknown, Unbound | NDArray[Any] | float | generic | bool | int | complex | str | bytes | memoryview[int] | ndarray[Unknown, Unknown] | None]\"\n\u00a0\u00a0Attribute \"toarray\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "98: tf_idf.toarray()",
+    "message": "Cannot access attribute \"toarray\" for class \"NDArray[floating[_64Bit]]\"\n\u00a0\u00a0Attribute \"toarray\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "98: tf_idf.toarray()",
+    "message": "Cannot access attribute \"toarray\" for class \"NDArray[Unknown]\"\n\u00a0\u00a0Attribute \"toarray\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "98: tf_idf.toarray()",
+    "message": "Cannot access attribute \"toarray\" for class \"tuple[Unknown, Unknown | NDArray[floating[_64Bit]] | Any | NDArray[Unknown]]\"\n\u00a0\u00a0Attribute \"toarray\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

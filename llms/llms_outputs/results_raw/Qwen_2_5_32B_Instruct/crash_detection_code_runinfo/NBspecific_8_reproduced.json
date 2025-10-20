@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to add a 'scaled_Amount' column and drop the 'Amount' column, but the 'Amount' column has already been dropped in a previous cell, which will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to add a 'scaled_Amount' column and drop the 'Amount' column, but the 'Amount' column has already been dropped in a previous cell, which will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to add a 'scaled_Amount' column and drop the 'Amount' column, but the 'Amount' column has already been dropped in a previous cell, which will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to add a 'scaled_Amount' column and drop the 'Amount' column, but the 'Amount' column has already been dropped in a previous cell, which will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to add a 'scaled_Amount' column and drop the 'Amount' column, but the 'Amount' column has already been dropped in a previous cell, which will cause a KeyError.",
+    "detection": true
+  }
+]

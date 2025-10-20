@@ -1,0 +1,89 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+import warnings
+%matplotlib inline
+warnings.filterwarnings('ignore')
+
+## Cell 2:
+
+df = pd.read_csv('data/ParisHousing_synthetic.csv')
+df.head()
+
+# Current relevent runtime information:
+{'__method__df_items': {'type': "<class 'method'>"},
+ '__method__plt_subplots': {'type': "<class 'function'>"},
+ '__method__plt_tight_layout': {'type': "<class 'function'>"},
+ '__method__sns_boxplot': {'type': "<class 'function'>"},
+ 'df': {'execution_cell_source': {'cellno': 1, 'lineno': 1},
+        'has_nan': False,
+        'per_column': {'attic': {'num_unique': 6291,
+                                 'type': 'continuous',
+                                 'value_range': (1, 10000)},
+                       'basement': {'num_unique': 6298,
+                                    'type': 'continuous',
+                                    'value_range': (0, 10000)},
+                       'cityCode': {'num_unique': 9499,
+                                    'type': 'continuous',
+                                    'value_range': (10, 99953)},
+                       'cityPartRange': {'num_unique': 10,
+                                         'type': 'categorical_numeric',
+                                         'value_range': (1, 10)},
+                       'floors': {'num_unique': 100,
+                                  'type': 'continuous',
+                                  'value_range': (1, 100)},
+                       'garage': {'num_unique': 901,
+                                  'type': 'continuous',
+                                  'value_range': (100, 1000)},
+                       'hasGuestRoom': {'num_unique': 11,
+                                        'type': 'continuous',
+                                        'value_range': (0, 10)},
+                       'hasPool': {'num_unique': 2,
+                                   'type': 'binary',
+                                   'value_range': (0, 1)},
+                       'hasStorageRoom': {'num_unique': 2,
+                                          'type': 'binary',
+                                          'value_range': (0, 1)},
+                       'hasStormProtector': {'num_unique': 2,
+                                             'type': 'binary',
+                                             'value_range': (0, 1)},
+                       'hasYard': {'num_unique': 2,
+                                   'type': 'binary',
+                                   'value_range': (0, 1)},
+                       'isNewBuilt': {'num_unique': 2,
+                                      'type': 'binary',
+                                      'value_range': (0, 1)},
+                       'made': {'num_unique': 32,
+                                'type': 'continuous',
+                                'value_range': (1990, 2021)},
+                       'numPrevOwners': {'num_unique': 10,
+                                         'type': 'categorical_numeric',
+                                         'value_range': (1, 10)},
+                       'numberOfRooms': {'num_unique': 100,
+                                         'type': 'continuous',
+                                         'value_range': (1, 100)},
+                       'price': {'num_unique': 10000,
+                                 'type': 'continuous',
+                                 'value_range': (10492.69, 10006748.34)},
+                       'squareMeters': {'num_unique': 9491,
+                                        'type': 'continuous',
+                                        'value_range': (104, 99989)}},
+        'shape': (10000, 17),
+        'type': 'pandas.core.frame.DataFrame'},
+ 'plt': {'type': "<class 'module'>"},
+ 'sns': {'type': "<class 'module'>"}}
+# Target Cell:
+
+
+fig, ax = plt.subplots(ncols=7, nrows=2, figsize=(20, 10))
+index = 0
+ax = ax.flatten()
+
+for col, value in df.items():
+    sns.boxplot(y=col, data=df, ax=ax[index])
+    index += 1
+plt.tight_layout(pad=0.5, w_pad=0.7, h_pad=5.0)

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `compute_class_weight` function expects a 1D array for `y`, but `train_dataset.labels` is likely a 2D one-hot encoded array, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `compute_class_weight` function expects a 1D array for `y`, but `train_dataset.labels` is likely a 2D one-hot encoded array, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `compute_class_weight` function expects a 1D array for `y`, but `train_dataset.labels` is likely a 2D one-hot encoded array, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `compute_class_weight` function expects a 1D array for `y`, but `train_dataset.labels` is likely a 2D one-hot encoded array, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `compute_class_weight` function expects a 1D array for `y`, but `train_dataset.labels` is likely a 2D one-hot encoded array, which will cause a ValueError.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `sns.barplot` function expects x and y arguments or a DataFrame with x and y columns. Providing only a Series (df[col]) to `sns.barplot` will cause a TypeError because it cannot infer the y-axis values.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sns.barplot` function expects x and y arguments or a DataFrame with x and y columns. Providing only a Series (df[col]) to `sns.barplot` will cause a TypeError because it cannot infer the y-axis values.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sns.barplot` function expects `x` and `y` arguments or a `data` argument with `x` and `y`. Calling it with a single Series `df[col]` will raise a TypeError because it cannot infer how to plot a bar chart from a single numerical series without a categorical axis or counts.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sns.barplot` function expects x and y arguments or a DataFrame with x and y columns. Providing only a Series (df[col]) to `sns.barplot` will cause a TypeError because it cannot infer the y-axis values.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sns.barplot` function expects x and y arguments or a DataFrame with x and y columns. Providing only a Series (df[col]) to `sns.barplot` will cause a TypeError because it cannot infer the y-axis values.",
+    "detection": true
+  }
+]

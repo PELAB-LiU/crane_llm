@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "90: tf_idf.toarray()",
+    "message": "Undefined variable 'tf_idf'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

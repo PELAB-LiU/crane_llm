@@ -1,0 +1,150 @@
+# Executed Cells:
+## Cell 1:
+
+import warnings
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+import seaborn as sns
+
+
+import plotly.express as px
+
+import scipy
+from mpl_toolkits.mplot3d import Axes3D
+from yellowbrick.cluster import KElbowVisualizer
+
+
+
+from warnings import filterwarnings
+filterwarnings('ignore')
+
+## Cell 2:
+
+df=pd.read_csv('data/3711.csv');df
+
+# Current relevent runtime information:
+{'__method__df_columns': {'type': "<class 'pandas.core.indexes.base.Index'>"},
+ '__method__plt_subplots': {'type': "<class 'function'>"},
+ '__method__sns_boxplot': {'type': "<class 'function'>"},
+ '__method__sns_set_style': {'type': "<class 'function'>"},
+ 'df': {'execution_cell_source': {'cellno': 5, 'lineno': 1},
+        'has_nan': False,
+        'per_column': {'askPri1': {'num_unique': 19,
+                                   'type': 'continuous',
+                                   'value_range': (93.4, 95.2)},
+                       'askPri2': {'num_unique': 19,
+                                   'type': 'continuous',
+                                   'value_range': (93.5, 95.3)},
+                       'askPri3': {'num_unique': 20,
+                                   'type': 'continuous',
+                                   'value_range': (93.6, 95.5)},
+                       'askPri4': {'num_unique': 20,
+                                   'type': 'continuous',
+                                   'value_range': (93.7, 95.6)},
+                       'askPri5': {'num_unique': 20,
+                                   'type': 'continuous',
+                                   'value_range': (93.8, 95.8)},
+                       'askQty1': {'num_unique': 227,
+                                   'type': 'continuous',
+                                   'value_range': (1, 296)},
+                       'askQty2': {'num_unique': 162,
+                                   'type': 'continuous',
+                                   'value_range': (1, 196)},
+                       'askQty3': {'num_unique': 163,
+                                   'type': 'continuous',
+                                   'value_range': (1, 196)},
+                       'askQty4': {'num_unique': 155,
+                                   'type': 'continuous',
+                                   'value_range': (3, 179)},
+                       'askQty5': {'num_unique': 143,
+                                   'type': 'continuous',
+                                   'value_range': (1, 183)},
+                       'bidPri1': {'num_unique': 19,
+                                   'type': 'continuous',
+                                   'value_range': (93.3, 95.1)},
+                       'bidPri2': {'num_unique': 19,
+                                   'type': 'continuous',
+                                   'value_range': (93.2, 95.0)},
+                       'bidPri3': {'num_unique': 19,
+                                   'type': 'continuous',
+                                   'value_range': (93.1, 94.9)},
+                       'bidPri4': {'num_unique': 19,
+                                   'type': 'continuous',
+                                   'value_range': (93.0, 94.8)},
+                       'bidPri5': {'num_unique': 19,
+                                   'type': 'continuous',
+                                   'value_range': (92.9, 94.7)},
+                       'bidQty1': {'num_unique': 221,
+                                   'type': 'continuous',
+                                   'value_range': (1, 1141)},
+                       'bidQty2': {'num_unique': 227,
+                                   'type': 'continuous',
+                                   'value_range': (1, 1124)},
+                       'bidQty3': {'num_unique': 213,
+                                   'type': 'continuous',
+                                   'value_range': (3, 343)},
+                       'bidQty4': {'num_unique': 236,
+                                   'type': 'continuous',
+                                   'value_range': (3, 336)},
+                       'bidQty5': {'num_unique': 269,
+                                   'type': 'continuous',
+                                   'value_range': (5, 403)},
+                       'dnPri': {'num_unique': 1,
+                                 'type': 'continuous',
+                                 'value_range': (86.3, 86.3)},
+                       'highPri': {'num_unique': 7,
+                                   'type': 'continuous',
+                                   'value_range': (94.6, 95.2)},
+                       'label': {'num_unique': 3,
+                                 'type': 'continuous',
+                                 'value_range': (0.0, 2.0)},
+                       'lowPri': {'num_unique': 14,
+                                  'type': 'continuous',
+                                  'value_range': (93.3, 94.6)},
+                       'matchDate': {'num_unique': 1,
+                                     'type': 'categorical_numeric',
+                                     'value_range': (20221220, 20221220)},
+                       'matchPri': {'num_unique': 20,
+                                    'type': 'continuous',
+                                    'value_range': (93.3, 95.2)},
+                       'matchQty': {'num_unique': 68,
+                                    'type': 'continuous',
+                                    'value_range': (1, 216)},
+                       'matchTime': {'num_unique': 5601,
+                                     'type': 'continuous',
+                                     'value_range': (90003845, 132458352)},
+                       'openPri': {'num_unique': 1,
+                                   'type': 'continuous',
+                                   'value_range': (94.6, 94.6)},
+                       'refPri': {'num_unique': 1,
+                                  'type': 'continuous',
+                                  'value_range': (95.8, 95.8)},
+                       'symbol': {'num_unique': 1,
+                                  'type': 'categorical_numeric',
+                                  'value_range': (3711, 3711)},
+                       'tolMatchQty': {'num_unique': 5601,
+                                       'type': 'continuous',
+                                       'value_range': (216, 15246)},
+                       'upPri': {'num_unique': 1,
+                                 'type': 'categorical_numeric',
+                                 'value_range': (105, 105)}},
+        'shape': (5601, 33),
+        'type': 'pandas.core.frame.DataFrame'},
+ 'plt': {'type': "<class 'module'>"},
+ 'sns': {'type': "<class 'module'>"}}
+# Target Cell:
+
+sns.set_style('darkgrid')
+fig, ax = plt.subplots(6, 1, figsize=(5, 20))
+
+for i, col in enumerate(list(df.columns.values)):
+
+    if i >= len(ax):
+        break
+
+    axes_box  = ax[i]
+    sns.boxplot(data=df, x=col, ax=axes_box,color='#a5c687')
+    ax[i].set_title(col,fontsize=15,color='magenta')

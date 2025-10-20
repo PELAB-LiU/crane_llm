@@ -1,0 +1,40 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+## Cell 2:
+
+data = pd.read_csv('data/yahoo_stock.csv', parse_dates = ['Date'], index_col = 'Date')
+
+## Cell 3:
+
+data=data.dropna()
+
+## Cell 4:
+
+data.drop(data.tail(1).index,inplace=True)
+
+## Cell 5:
+
+from statsmodels.tsa.seasonal import seasonal_decompose
+def decompose(data, column_name):
+    multiplicative_model = seasonal_decompose(data[column_name], model='multiplicative', extrapolate_trend = 'freq')
+
+    additive_model = seasonal_decompose(data[column_name], model = 'additive', extrapolate_trend='freq')
+    plt.rcParams.update({'figure.figsize': (20, 10)})
+    multiplicative_model.plot().suptitle('Multiplicative Decompose', fontsize=30)
+    additive_model.plot().suptitle('Additive Decompose', fontsize=30)
+    plt.show()
+    return multiplicative_model, additive_model
+
+## Cell 6:
+
+
+multiplicative_model, additive_model = decompose(data, 'Open')
+
+# Target Cell:
+
+multiplicative_model

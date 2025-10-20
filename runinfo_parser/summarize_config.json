@@ -1,0 +1,30 @@
+{
+  "enabled_rules": [
+    "summarize_callable",
+    "summarize_collection",
+    "summarize_primitive",
+    "summarize_value_range",
+    "summarize_dict",
+
+    "summarize_pandas_series",
+    "summarize_numpy_array",
+    "summarize_dataframe",
+
+    "summarize_tf_dataset",
+    "summarize_directory_iterator",
+    "summarize_dataframe_iterator",
+
+    "summarize_torch_tensor",
+    "summarize_pytorch_dataloader",
+    "summarize_pytorch_subset",
+
+    "summarize_label_encoder",
+    "summarize_sklearn_model"
+  ],
+  "other":{
+    "summarize_callable_signature": false,
+    "summarize_callable_doc": false,
+    "summarize_callable_sourcecode": false,
+    "summarize_dataframe_per_column": true
+  }
+}

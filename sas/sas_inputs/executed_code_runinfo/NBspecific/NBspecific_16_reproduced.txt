@@ -1,0 +1,34 @@
+# Executed Cells:
+## Cell 1:
+
+import os
+import math
+import random
+import warnings
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import tensorflow as tf
+
+import numpy as np
+import pandas as pd
+
+## Cell 2:
+
+HEIGHT = 224
+WIDTH = 224
+CHANNELS = 3
+
+INPUT_SHAPE = (HEIGHT, WIDTH, CHANNELS)
+LEARNING_RATE = 0.00001
+
+EPOCHS = 3
+BATCH_SIZE = 32
+
+DROPOUT = 0.5
+
+# Annotated Target Code:
+
+
+skin_df.head()

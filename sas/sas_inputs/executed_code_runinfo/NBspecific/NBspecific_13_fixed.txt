@@ -1,0 +1,51 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+from matplotlib import pyplot as plt
+
+## Cell 2:
+
+df = pd.read_csv("data/heart.csv")
+
+## Cell 3:
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+df=pd.read_csv("data/heart.csv")
+
+y = df['output']
+X = df.drop(['output'], axis=1)
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+
+model = DecisionTreeClassifier()
+
+
+model.fit(X_train, y_train)
+
+
+y_hat = model.predict(X_test)
+
+
+accuracy = accuracy_score(y_test, y_hat)
+print("Accuracy:", accuracy)
+
+# Annotated Target Code:
+import numpy
+
+X: pd.DataFrame
+model: DecisionTreeClassifier
+y: pd.Series
+y_hat: numpy.ndarray
+
+
+from sklearn.tree import DecisionTreeClassifier
+model = DecisionTreeClassifier()
+model .fit(X,y)
+y_hat = model.predict(X)
+print ( accuracy_score(y_hat,y))

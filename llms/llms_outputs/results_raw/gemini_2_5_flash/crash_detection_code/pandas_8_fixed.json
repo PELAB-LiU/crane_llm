@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'MSRP' column is expected to contain string values that can be cleaned by removing '$' and ',' characters and then converted to float and Int64. Based on the previous cells, there is no indication that 'MSRP' is missing or in an unexpected format that would cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column is expected to contain string values with '$' and ',' that need to be removed before converting to float and then to Int64. Based on the previous cells, there is no indication that 'MSRP' is missing or in an unexpected format that would cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column is expected to contain string values with '$' and ',' that need to be removed before converting to float and then to Int64. Based on the previous cells, there is no indication that 'MSRP' is missing or in an unexpected format that would cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column is expected to contain string values that can be cleaned by removing '$' and ',' characters and then converted to float and Int64. Based on the previous cells, there is no indication that 'MSRP' is missing or in an unexpected format that would cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column is expected to contain string values with '$' and ',' that need to be removed before converting to float and then to Int64. Based on the previous cells, there is no indication that 'MSRP' is missing or in an unexpected format that would cause a crash.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The function `row2image` attempts to access an emotion index that does not exist in the `emotion_map` dictionary, which only contains keys from 0 to 6. The loop in the plot generation tries to access index 7, which will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` attempts to access an emotion index that does not exist in the `emotion_map` dictionary, which only contains keys from 0 to 6. The loop in the plot generation tries to access index 7, which will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` attempts to access an emotion index that does not exist in the `emotion_map` dictionary, which only contains keys from 0 to 6. The loop in the plot generation tries to access index 7, which will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` attempts to access an emotion index that does not exist in the `emotion_map` dictionary, which only contains keys from 0 to 6. The loop in the plot generation tries to access index 7, which will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` attempts to access an emotion index that does not exist in the `emotion_map` dictionary, which only contains keys from 0 to 6. The loop in the plot generation tries to access index 7, which will result in a KeyError.",
+    "detection": true
+  }
+]

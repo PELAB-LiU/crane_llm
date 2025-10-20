@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "26: poly_X = poly.fit_transform(X)",
+    "message": "Undefined variable 'X'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "28: X.shape, poly_X.shape",
+    "message": "Undefined variable 'X'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

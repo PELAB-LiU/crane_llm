@@ -1,0 +1,110 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np;
+import pandas as pd;
+import seaborn as sn;
+import matplotlib.pyplot as plt;
+
+## Cell 2:
+
+df = pd.read_csv('data/googleplaystore.csv');
+
+## Cell 3:
+
+
+df.drop([10472],inplace = True);
+
+# Current relevent runtime information:
+{'__method__df_drop': {'type': "<class 'method'>"},
+ 'df': {'execution_cell_source': {'cellno': 1, 'lineno': 1},
+        'has_nan': True,
+        'per_column': {'Android Ver': {'example_values': ['4.0.3 and up',
+                                                          '4.2 and up',
+                                                          '4.4 and up',
+                                                          '2.3 and up',
+                                                          '3.0 and up'],
+                                       'num_unique': 33,
+                                       'type': 'categorical'},
+                       'App': {'example_values': ['Photo Editor & Candy...',
+                                                  'Coloring book moana',
+                                                  'U Launcher Lite – FR...',
+                                                  'Sketch - Draw & Pain...',
+                                                  'Pixel Draw - Number ...'],
+                               'num_unique': 9659,
+                               'type': 'categorical'},
+                       'Category': {'example_values': ['ART_AND_DESIGN',
+                                                       'AUTO_AND_VEHICLES',
+                                                       'BEAUTY',
+                                                       'BOOKS_AND_REFERENCE',
+                                                       'BUSINESS'],
+                                    'num_unique': 33,
+                                    'type': 'categorical'},
+                       'Content Rating': {'example_values': ['Everyone',
+                                                             'Teen',
+                                                             'Everyone 10+',
+                                                             'Mature 17+',
+                                                             'Adults only 18+'],
+                                          'num_unique': 6,
+                                          'type': 'categorical'},
+                       'Current Ver': {'example_values': ['1.0.0',
+                                                          '2.0.0',
+                                                          '1.2.4',
+                                                          'Varies with device',
+                                                          '1.1'],
+                                       'num_unique': 2831,
+                                       'type': 'categorical'},
+                       'Genres': {'example_values': ['Art & Design',
+                                                     'Art & Design;Pretend...',
+                                                     'Art & Design;Creativ...',
+                                                     'Art & Design;Action ...',
+                                                     'Auto & Vehicles'],
+                                  'num_unique': 119,
+                                  'type': 'categorical'},
+                       'Installs': {'example_values': ['10,000+',
+                                                       '500,000+',
+                                                       '5,000,000+',
+                                                       '50,000,000+',
+                                                       '100,000+'],
+                                    'num_unique': 21,
+                                    'type': 'categorical'},
+                       'Last Updated': {'example_values': ['January 7, 2018',
+                                                           'January 15, 2018',
+                                                           'August 1, 2018',
+                                                           'June 8, 2018',
+                                                           'June 20, 2018'],
+                                        'num_unique': 1377,
+                                        'type': 'categorical'},
+                       'Price': {'example_values': ['0',
+                                                    '$4.99',
+                                                    '$3.99',
+                                                    '$6.99',
+                                                    '$1.49'],
+                                 'num_unique': 92,
+                                 'type': 'categorical'},
+                       'Rating': {'num_unique': 39,
+                                  'type': 'continuous',
+                                  'value_range': (1.0, 5.0)},
+                       'Reviews': {'example_values': ['159',
+                                                      '967',
+                                                      '87510',
+                                                      '215644',
+                                                      '167'],
+                                   'num_unique': 6001,
+                                   'type': 'categorical'},
+                       'Size': {'example_values': ['19M',
+                                                   '14M',
+                                                   '8.7M',
+                                                   '25M',
+                                                   '2.8M'],
+                                'num_unique': 461,
+                                'type': 'categorical'},
+                       'Type': {'num_unique': 2,
+                                'type': 'categorical',
+                                'unique_values': ['Free', 'Paid']}},
+        'shape': (10840, 13),
+        'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+
+df.drop([10472],inplace = True);

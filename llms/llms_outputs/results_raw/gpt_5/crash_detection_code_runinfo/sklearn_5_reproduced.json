@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "metrics.ConfusionMatrixDisplay expects display_labels length to match number of classes (3), but [False, True] has length 2, causing a ValueError. Also, overwriting confusion_matrix with an array shadows the function but is not the crash source.",
+    "detection": true
+  },
+  {
+    "reasoning": "metrics.ConfusionMatrixDisplay expects display_labels matching the 3 classes, but [False, True] has length 2, causing a ValueError. Also confusion_matrix variable shadows the function but is used as array, which is fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "metrics.ConfusionMatrixDisplay is given binary labels [False, True] but y_test/y_pred have three string classes; this label mismatch will raise an error when plotting. Also overwriting confusion_matrix with an array may shadow the function but not crash. Overall likely to error due to labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "metrics.confusion_matrix works with string labels, but ConfusionMatrixDisplay with display_labels=[False, True] mismatches the 3-class confusion matrix (expects 2 labels). This raises a ValueError about label size mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "metrics.ConfusionMatrixDisplay requires labels matching classes, but [False, True] mismatches the 3-class string labels; however it will infer labels from confusion_matrix and still plot without error. Variable name shadowing confusion_matrix is fine here.",
+    "detection": false
+  }
+]

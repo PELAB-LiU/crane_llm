@@ -1,0 +1,93 @@
+[
+  {
+    "code_line": "300:             generated_images = self.generator([noise, input_labels], training=True)",
+    "message": "Object of type \"None\" cannot be called",
+    "rule": "reportOptionalCall",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "303:             real_outputs = self.discriminator(input_images, training=True)",
+    "message": "Object of type \"None\" cannot be called",
+    "rule": "reportOptionalCall",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "304:             generated_outputs = self.discriminator(generated_images, training=True)",
+    "message": "Object of type \"None\" cannot be called",
+    "rule": "reportOptionalCall",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "311:         self.generator_gradients = gen_tape.gradient(generator_loss, self.generator.trainable_variables)",
+    "message": "\"trainable_variables\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "312:         self.discriminator_gradients = disc_tape.gradient(discriminator_loss,self.discriminator.trainable_variables)",
+    "message": "\"trainable_variables\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "315:         self.generator_optimizer.apply_gradients(zip(self.generator_gradients, self.generator.trainable_variables))",
+    "message": "Argument of type \"Unknown | defaultdict[Unknown, Unknown] | Any | list[Unknown] | None\" cannot be assigned to parameter \"iter1\" of type \"Iterable[_T1@__new__]\" in function \"__new__\"\n\u00a0\u00a0Type \"Unknown | defaultdict[Unknown, Unknown] | Any | list[Unknown] | None\" is not assignable to type \"Iterable[Unknown]\"\n\u00a0\u00a0\u00a0\u00a0\"None\" is incompatible with protocol \"Iterable[Unknown]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__iter__\" is not present",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "315:         self.generator_optimizer.apply_gradients(zip(self.generator_gradients, self.generator.trainable_variables))",
+    "message": "Argument of type \"Unknown | defaultdict[Unknown, Unknown] | Any | list[Unknown] | None\" cannot be assigned to parameter \"iter1\" of type \"Iterable[_T1@__new__]\" in function \"__new__\"\n\u00a0\u00a0Type \"Unknown | defaultdict[Unknown, Unknown] | Any | list[Unknown] | None\" is not assignable to type \"Iterable[_T1@__new__]\"\n\u00a0\u00a0\u00a0\u00a0\"None\" is incompatible with protocol \"Iterable[_T1@__new__]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__iter__\" is not present",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "315:         self.generator_optimizer.apply_gradients(zip(self.generator_gradients, self.generator.trainable_variables))",
+    "message": "\"trainable_variables\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "316:         self.discriminator_optimizer.apply_gradients(zip(self.discriminator_gradients, self.discriminator.trainable_variables))",
+    "message": "Argument of type \"Unknown | defaultdict[Unknown, Unknown] | Any | list[Unknown] | None\" cannot be assigned to parameter \"iter1\" of type \"Iterable[_T1@__new__]\" in function \"__new__\"\n\u00a0\u00a0Type \"Unknown | defaultdict[Unknown, Unknown] | Any | list[Unknown] | None\" is not assignable to type \"Iterable[Unknown]\"\n\u00a0\u00a0\u00a0\u00a0\"None\" is incompatible with protocol \"Iterable[Unknown]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__iter__\" is not present",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "316:         self.discriminator_optimizer.apply_gradients(zip(self.discriminator_gradients, self.discriminator.trainable_variables))",
+    "message": "Argument of type \"Unknown | defaultdict[Unknown, Unknown] | Any | list[Unknown] | None\" cannot be assigned to parameter \"iter1\" of type \"Iterable[_T1@__new__]\" in function \"__new__\"\n\u00a0\u00a0Type \"Unknown | defaultdict[Unknown, Unknown] | Any | list[Unknown] | None\" is not assignable to type \"Iterable[_T1@__new__]\"\n\u00a0\u00a0\u00a0\u00a0\"None\" is incompatible with protocol \"Iterable[_T1@__new__]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__iter__\" is not present",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "316:         self.discriminator_optimizer.apply_gradients(zip(self.discriminator_gradients, self.discriminator.trainable_variables))",
+    "message": "\"trainable_variables\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "353:         self.generator.save_weights(f\"{self.checkpoint_prefix}_generator_{checkpoint_name}.weights.h5\")",
+    "message": "\"save_weights\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "354:         self.discriminator.save_weights(f\"{self.checkpoint_prefix}_discriminator_{checkpoint_name}.weights.h5\")",
+    "message": "\"save_weights\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

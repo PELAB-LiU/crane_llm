@@ -1,0 +1,220 @@
+# Executed Cells:
+## Cell 1:
+
+INPUT_DIR = 'data'
+!ls {INPUT_DIR}
+
+## Cell 2:
+
+import numpy as np
+import pandas as pd
+
+rating_df = pd.read_csv(INPUT_DIR + '/rating_complete.csv',
+                        low_memory=False,
+                        usecols=["user_id", "anime_id", "rating"]
+                        )
+rating_df.head(4)
+
+## Cell 3:
+
+n_ratings = rating_df['user_id'].value_counts()
+rating_df = rating_df[rating_df['user_id'].isin(n_ratings[n_ratings >= 400].index)].copy()
+len(rating_df)
+
+## Cell 4:
+
+
+min_rating = min(rating_df['rating'])
+max_rating = max(rating_df['rating'])
+rating_df['rating'] = rating_df["rating"].apply(lambda x: (x - min_rating) / (max_rating - min_rating)).values.astype(np.float64)
+
+AvgRating = np.mean(rating_df['rating'])
+print('Avg', AvgRating)
+
+## Cell 5:
+
+
+
+user_ids = rating_df["user_id"].unique().tolist()
+anime_ids = rating_df["anime_id"].unique().tolist()
+
+user2user_encoded = {x: i for i, x in enumerate(user_ids)}
+anime2anime_encoded = {x: i for i, x in enumerate(anime_ids)}
+
+user_encoded2user = {i: x for i, x in enumerate(user_ids)}
+anime_encoded2anime = {i: x for i, x in enumerate(anime_ids)}
+
+rating_df["user"] = rating_df["user_id"].map(user2user_encoded)
+rating_df["anime"] = rating_df["anime_id"].map(anime2anime_encoded)
+
+
+n_users = rating_df["user"].nunique()
+n_animes = rating_df["anime"].nunique()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Cell 6:
+
+
+rating_df = rating_df.sample(frac=1, random_state=73)
+
+rating_df= rating_df.head(1000)
+
+X = rating_df[['user', 'anime']].values
+y = rating_df["rating"]
+
+## Cell 7:
+
+rating_df.shape[0]
+
+## Cell 8:
+
+
+
+
+
+from sklearn.model_selection import train_test_split
+
+
+limit_rows = 1000
+
+
+test_set_size = int(0.2 * rating_df.shape[0])
+train_indices = rating_df.shape[0] - test_set_size
+
+
+
+
+
+
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+
+print('> Train set ratings: {}'.format(len(y_train)))
+print('> Test set ratings: {}'.format(len(y_test)))
+print(len(X_train))
+print(len(X_test))
+
+## Cell 9:
+
+X_train_array = [X_train[:, 0], X_train[:, 1]]
+X_test_array = [X_test[:, 0], X_test[:, 1]]
+
+## Cell 10:
+
+import tensorflow as tf
+from tensorflow.keras import layers
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
+
+## Cell 11:
+
+
+from tensorflow.keras.layers import Add, Activation, Lambda, BatchNormalization, Concatenate, Dropout, Input, Embedding, Dot, Reshape, Dense, Flatten
+
+def RecommenderNet():
+    embedding_size = 128
+
+    user = Input(name = 'user', shape = [1])
+    user_embedding = Embedding(name = 'user_embedding',
+                       input_dim = n_users,
+                       output_dim = embedding_size)(user)
+
+    anime = Input(name = 'anime', shape = [1])
+    anime_embedding = Embedding(name = 'anime_embedding',
+                       input_dim = n_animes,
+                       output_dim = embedding_size)(anime)
+
+
+    x = Dot(name = 'dot_product', normalize = True, axes = 2)([user_embedding, anime_embedding])
+    x = Flatten()(x)
+
+    x = Dense(1, kernel_initializer='he_normal')(x)
+    x = BatchNormalization()(x)
+    x = Activation("sigmoid")(x)
+
+    model = Model(inputs=[user, anime], outputs=x)
+    model.compile(loss='binary_crossentropy', metrics=["mae", "mse"], optimizer='adam')
+
+    return model
+
+model = RecommenderNet()
+
+model.summary()
+
+## Cell 12:
+
+
+from tensorflow.keras.callbacks import Callback, ModelCheckpoint, LearningRateScheduler, TensorBoard, EarlyStopping, ReduceLROnPlateau
+
+start_lr = 0.00001
+min_lr = 0.00001
+max_lr = 0.00005
+batch_size = 100
+
+
+
+
+
+rampup_epochs = 5
+sustain_epochs = 0
+exp_decay = .8
+
+def lrfn(epoch):
+    if epoch < rampup_epochs:
+        return (max_lr - start_lr)/rampup_epochs * epoch + start_lr
+    elif epoch < rampup_epochs + sustain_epochs:
+        return max_lr
+    else:
+        return (max_lr - min_lr) * exp_decay**(epoch-rampup_epochs-sustain_epochs) + min_lr
+
+
+lr_callback = LearningRateScheduler(lambda epoch: lrfn(epoch), verbose=0)
+
+checkpoint_filepath = 'weights.weights.h5'
+
+model_checkpoints = ModelCheckpoint(filepath=checkpoint_filepath,
+                                        save_weights_only=True,
+                                        monitor='val_loss',
+                                        mode='min',
+                                        save_best_only=True)
+
+early_stopping = EarlyStopping(patience = 3, monitor='val_loss',
+                               mode='min', restore_best_weights=True)
+
+my_callbacks = [
+    model_checkpoints,
+    lr_callback,
+    early_stopping,
+]
+
+# Target Cell:
+
+
+history = model.fit(
+    x=X_train_array,
+    y=y_train,
+    batch_size=batch_size,
+    epochs=5,
+    verbose=1,
+    validation_data=(X_test_array, y_test),
+    callbacks=my_callbacks
+)

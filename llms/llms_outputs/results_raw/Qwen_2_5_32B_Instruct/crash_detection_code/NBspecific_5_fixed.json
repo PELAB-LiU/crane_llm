@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The column 'num_outbound_cmds' is being dropped from the DataFrame and also removed from the list of numeric columns. If 'num_outbound_cmds' does not exist in the DataFrame or the list, this will cause an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' is being dropped from the DataFrame and also removed from the list of numeric columns. If 'num_outbound_cmds' does not exist in the DataFrame or the list, this will cause an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' is being dropped from the DataFrame and also removed from the list of numeric columns. If 'num_outbound_cmds' does not exist in the DataFrame or the list, this will cause an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' is being dropped from the DataFrame and also removed from the list of numeric columns. If 'num_outbound_cmds' does not exist in the DataFrame or the list, this will cause an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' is being dropped from the DataFrame and also removed from the list of numeric columns. If 'num_outbound_cmds' does not exist in the DataFrame or the list, this will cause an error.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model` variable is overwritten multiple times in the executed cells, and the last model defined is `svm.SVC`, which does not have a `feature_importances_` attribute. This will cause an error when trying to access `feature_importances_`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model` variable is overwritten multiple times in the executed cells, and the last model defined is `svm.SVC`, which does not have a `feature_importances_` attribute. This will cause an error when trying to access `feature_importances_`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model` variable is overwritten multiple times in the executed cells, and the last model defined is `svm.SVC`, which does not have a `feature_importances_` attribute. This will cause an error when trying to access `feature_importances_`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `model` is overwritten multiple times in the executed cells, and the last model defined is `svm.SVC`, which does not have a `feature_importances_` attribute. This will cause an error when trying to access `model.feature_importances_`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model` variable is overwritten multiple times in the executed cells, and the last model defined is `svm.SVC`, which does not have a `feature_importances_` attribute. This will cause an error when trying to access `feature_importances_`.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `bert_model` is a PyTorch model, not a Keras model. `tf.keras.utils.plot_model` expects a Keras model and will raise an error when given a PyTorch model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is a PyTorch model, not a Keras model. `tf.keras.utils.plot_model` expects a Keras model and will raise an error when given a PyTorch model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is a PyTorch model, not a Keras model. `tf.keras.utils.plot_model` expects a Keras model and will raise an error when given a PyTorch model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is a PyTorch model, not a Keras model. `tf.keras.utils.plot_model` expects a Keras model and will raise an error when given a PyTorch model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is a PyTorch model, not a Keras model. `tf.keras.utils.plot_model` expects a Keras model and will raise an error when given a PyTorch model.",
+    "detection": true
+  }
+]

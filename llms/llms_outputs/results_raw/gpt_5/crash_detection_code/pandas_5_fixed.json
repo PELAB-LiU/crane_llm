@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "After get_dummies and renaming, cat_feat columns like Gender, Driving_License, Previously_Insured, Vehicle_Age_lt_1_Year, Vehicle_Age_gt_2_Years, Vehicle_Damage_Yes are present and already castable to numeric; Region_Code and Policy_Sales_Channel likely were one-hot encoded to multiple columns, so the original names no longer exist in x_train/x_test, causing a KeyError when accessing them.",
+    "detection": true
+  },
+  {
+    "reasoning": "cat_feat includes columns like Gender and Vehicle_Damage_Yes, but after get_dummies with drop_first and renaming, these exact column names may not exist in x_train/x_test, causing a KeyError when accessing x_train[column]. Not certain without schema, so cannot guarantee crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "cat_feat includes columns that were converted to string in train/test, but after train_test_split, x_train/x_test are from 'train' where those columns exist. However, get_dummies replaced categorical columns like 'Region_Code' and 'Policy_Sales_Channel' with dummy columns, so the original names likely no longer exist in x_train/x_test, causing KeyError when accessing x_train[column].",
+    "detection": true
+  },
+  {
+    "reasoning": "After get_dummies, columns like 'Gender', 'Region_Code', 'Policy_Sales_Channel' likely no longer exist with those exact names in x_train/x_test, so accessing them will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "cat_feat includes columns that were converted to strings, but x_train/x_test were created after dropping Response and may not include all those columns (e.g., some may be absent due to get_dummies naming). Attempting to access a missing column will raise a KeyError.",
+    "detection": true
+  }
+]

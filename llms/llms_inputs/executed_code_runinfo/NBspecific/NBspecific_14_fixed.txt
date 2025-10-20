@@ -1,0 +1,170 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+
+train_data = pd.read_csv("data/train.csv")
+train_data.head()
+
+## Cell 3:
+
+
+test_data = pd.read_csv("data/test.csv")
+test_data.head()
+
+# Current relevent runtime information:
+{'__method__pd_DataFrame': {'type': "<class 'type'>"},
+ '__method__pd_get_dummies': {'type': "<class 'function'>"},
+ '__method__test_data_PassengerId': {'type': '<class '
+                                             "'pandas.core.series.Series'>",
+                                     'value_info': {'value_range': (892, 1309),
+                                                    'value_type': 'continuous'}},
+ 'pd': {'type': "<class 'module'>"},
+ 'test_data': {'execution_cell_source': {'cellno': 2, 'lineno': 2},
+               'has_nan': True,
+               'per_column': {'Age': {'num_unique': 79,
+                                      'type': 'continuous',
+                                      'value_range': (0.17, 76.0)},
+                              'Cabin': {'example_values': ['B45',
+                                                           'E31',
+                                                           'B57 B59 B63 B66',
+                                                           'B36',
+                                                           'A21'],
+                                        'num_unique': 76,
+                                        'type': 'categorical'},
+                              'Embarked': {'num_unique': 3,
+                                           'type': 'categorical',
+                                           'unique_values': ['Q', 'S', 'C']},
+                              'Fare': {'num_unique': 169,
+                                       'type': 'continuous',
+                                       'value_range': (0.0, 512.3292)},
+                              'Name': {'example_values': ['Kelly, Mr. James',
+                                                          'Wilkes, Mrs. James '
+                                                          '(...',
+                                                          'Myles, Mr. Thomas '
+                                                          'Fr...',
+                                                          'Wirz, Mr. Albert',
+                                                          'Hirvonen, Mrs. '
+                                                          'Alexa...'],
+                                       'num_unique': 418,
+                                       'type': 'categorical'},
+                              'Parch': {'num_unique': 8,
+                                        'type': 'categorical_numeric',
+                                        'value_range': (0, 9)},
+                              'PassengerId': {'num_unique': 418,
+                                              'type': 'continuous',
+                                              'value_range': (892, 1309)},
+                              'Pclass': {'num_unique': 3,
+                                         'type': 'categorical_numeric',
+                                         'value_range': (1, 3)},
+                              'Sex': {'num_unique': 2,
+                                      'type': 'categorical',
+                                      'unique_values': ['male', 'female']},
+                              'SibSp': {'num_unique': 7,
+                                        'type': 'categorical_numeric',
+                                        'value_range': (0, 8)},
+                              'Ticket': {'example_values': ['330911',
+                                                            '363272',
+                                                            '240276',
+                                                            '315154',
+                                                            '3101298'],
+                                         'num_unique': 363,
+                                         'type': 'categorical'}},
+               'shape': (418, 11),
+               'type': 'pandas.core.frame.DataFrame'},
+ 'train_data': {'execution_cell_source': {'cellno': 1, 'lineno': 2},
+                'has_nan': True,
+                'per_column': {'Age': {'num_unique': 88,
+                                       'type': 'continuous',
+                                       'value_range': (0.42, 80.0)},
+                               'Cabin': {'example_values': ['C85',
+                                                            'C123',
+                                                            'E46',
+                                                            'G6',
+                                                            'C103'],
+                                         'num_unique': 147,
+                                         'type': 'categorical'},
+                               'Embarked': {'num_unique': 3,
+                                            'type': 'categorical',
+                                            'unique_values': ['S', 'C', 'Q']},
+                               'Fare': {'num_unique': 248,
+                                        'type': 'continuous',
+                                        'value_range': (0.0, 512.3292)},
+                               'Name': {'example_values': ['Braund, Mr. Owen '
+                                                           'Har...',
+                                                           'Cumings, Mrs. John '
+                                                           'B...',
+                                                           'Heikkinen, Miss. '
+                                                           'Lai...',
+                                                           'Futrelle, Mrs. '
+                                                           'Jacqu...',
+                                                           'Allen, Mr. William '
+                                                           'H...'],
+                                        'num_unique': 891,
+                                        'type': 'categorical'},
+                               'Parch': {'num_unique': 7,
+                                         'type': 'categorical_numeric',
+                                         'value_range': (0, 6)},
+                               'PassengerId': {'num_unique': 891,
+                                               'type': 'continuous',
+                                               'value_range': (1, 891)},
+                               'Pclass': {'num_unique': 3,
+                                          'type': 'categorical_numeric',
+                                          'value_range': (1, 3)},
+                               'Sex': {'num_unique': 2,
+                                       'type': 'categorical',
+                                       'unique_values': ['male', 'female']},
+                               'SibSp': {'num_unique': 7,
+                                         'type': 'categorical_numeric',
+                                         'value_range': (0, 8)},
+                               'Survived': {'num_unique': 2,
+                                            'type': 'binary',
+                                            'value_range': (0, 1)},
+                               'Ticket': {'example_values': ['A/5 21171',
+                                                             'PC 17599',
+                                                             'STON/O2. 3101282',
+                                                             '113803',
+                                                             '373450'],
+                                          'num_unique': 681,
+                                          'type': 'categorical'}},
+                'shape': (891, 12),
+                'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+from sklearn.ensemble import RandomForestClassifier
+
+y = train_data["Survived"]
+
+features = ["Pclass", "Sex", "SibSp", "Parch", "Fare"]
+X = pd.get_dummies(train_data[features])
+X_test = pd.get_dummies(test_data[features])
+
+
+X_test.fillna(0, inplace=True)
+
+model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=1)
+model.fit(X, y)
+predictions = model.predict(X_test)
+
+output = pd.DataFrame({'PassengerId': test_data.PassengerId, 'Survived': predictions})
+
+print("Your submission was successfully saved!")

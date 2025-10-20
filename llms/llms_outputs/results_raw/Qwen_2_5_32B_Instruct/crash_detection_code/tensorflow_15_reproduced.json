@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The cell attempts to use `model.predict_classes`, which does not exist in TensorFlow 2.x as the API has changed. The method `predict` should be used instead.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to use `model.predict_classes`, which does not exist in TensorFlow 2.x as the API has changed. The method `predict` should be used instead.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to use `model.predict_classes`, which does not exist in TensorFlow 2.x as the API has changed. The method `predict` should be used instead.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to use `model.predict_classes`, which does not exist in TensorFlow 2.x as the API has changed. The method `predict` should be used instead.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to use `model.predict_classes`, which does not exist in TensorFlow 2.x as the API has changed. The method `predict` should be used instead.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'DTRmodel' has not been fitted yet, so calling 'predict' on it will raise a NotFittedError. The model was initialized but not trained.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'DTRmodel' has not been fitted yet, so calling 'predict' on it will raise a NotFittedError. The model was initialized but not trained.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'DTRmodel' has not been fitted yet, so calling 'predict' on it will raise an error. The model was initialized but not trained with data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'DTRmodel' has not been fitted yet, so calling 'predict' on it will raise a NotFittedError. The model was initialized but not trained.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted, so calling predict on it will raise a NotFittedError. The model was initialized but not trained in the provided executed cells.",
+    "detection": true
+  }
+]

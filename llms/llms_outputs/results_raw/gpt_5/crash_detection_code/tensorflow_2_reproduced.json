@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model expects input_shape (100,100,3) but generators produce (223,223,3), causing shape mismatch error on fit/evaluate.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input_shape (100,100,3) but the generators produce images of size (223,223,3), causing a shape mismatch when training begins.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input_shape (100, 100, 3) but the generators produce images resized to (223, 223, 3), causing a shape mismatch on fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input_shape (100,100,3) but the generators produce images of size (223,223,3), causing a shape mismatch error on fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input_shape (100,100,3) but the generators produce (223,223,3); Keras will raise a shape mismatch error when fitting.",
+    "detection": true
+  }
+]

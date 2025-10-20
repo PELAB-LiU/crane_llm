@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' columns were already dropped in a previous cell due to high missing values. Attempting to drop them again will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' columns were already dropped in a previous cell due to high missing values. Attempting to drop them again will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' columns were already dropped in Cell 3 due to high missing values. Attempting to drop them again will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' columns were already dropped in a previous cell due to having a high number of missing values. Attempting to drop them again will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' columns were already dropped in Cell 3 due to high missing values. Attempting to drop them again will cause a KeyError.",
+    "detection": true
+  }
+]

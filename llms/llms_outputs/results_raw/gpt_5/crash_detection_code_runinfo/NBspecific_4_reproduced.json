@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "sns, plt, and dataset are not defined since no prior cells ran; calling these will raise NameError. Also some seaborn calls may require specific versions, but the undefined names are sufficient to cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "Seaborn (sns), matplotlib.pyplot (plt), and the variable 'dataset' are not defined since no prior cells ran. This will raise NameError(s).",
+    "detection": true
+  },
+  {
+    "reasoning": "sns, plt, and dataset are not defined, so calling these functions will raise NameError. Additionally, seaborn may not be imported.",
+    "detection": true
+  },
+  {
+    "reasoning": "Imports like seaborn (sns), matplotlib.pyplot (plt), and the variable 'dataset' are not defined, so NameError is certain. Also some Seaborn functions may require specific versions, but undefined names alone will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variables like sns, plt, and dataset are not defined/imported, so NameError is likely. Also some Seaborn functions/parameters may require specific versions.",
+    "detection": true
+  }
+]

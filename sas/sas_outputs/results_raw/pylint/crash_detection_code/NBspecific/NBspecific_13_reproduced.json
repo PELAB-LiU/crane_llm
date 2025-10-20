@@ -1,0 +1,37 @@
+[
+  {
+    "code_line": "15: model .fit(X,y)",
+    "message": "Undefined variable 'X'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "15: model .fit(X,y)",
+    "message": "Undefined variable 'y'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "16: y_hat = model.predict(X)",
+    "message": "Undefined variable 'X'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "17: print ( accuracy_score(y_hat,y))",
+    "message": "Undefined variable 'accuracy_score'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "17: print ( accuracy_score(y_hat,y))",
+    "message": "Undefined variable 'y'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

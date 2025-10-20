@@ -1,0 +1,44 @@
+[
+  {
+    "code_line": "83: up_sampled = pd.concat([data[data['target']==1], ben_upsampled])",
+    "message": "No overloads for \"concat\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "83: up_sampled = pd.concat([data[data['target']==1], ben_upsampled])",
+    "message": "Argument of type \"list[DataFrame | Unknown | list[Unknown] | list[Unknown | list[Unknown]] | None]\" cannot be assigned to parameter \"objs\" of type \"Iterable[Series[Any] | DataFrame | None] | Mapping[HashableT1@concat, Series[Any] | DataFrame | None]\" in function \"concat\"\n\u00a0\u00a0Type \"Unknown | list[Unknown] | list[Unknown | list[Unknown]] | None\" is not assignable to type \"Series[Any] | DataFrame | None\"\n\u00a0\u00a0\u00a0\u00a0Type \"list[Unknown | list[Unknown]]\" is not assignable to type \"Series[Any] | DataFrame | None\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"list[Unknown | list[Unknown]]\" is not assignable to \"Series[Any]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"list[Unknown | list[Unknown]]\" is not assignable to \"DataFrame\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"list[Unknown | list[Unknown]]\" is not assignable to \"None\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "108: print(X_train.shape)",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "109: print(X_test.shape)",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "110: print(X_val.shape)",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "267:                     verbose=1)",
+    "message": "Argument of type \"Literal[1]\" cannot be assigned to parameter \"verbose\" of type \"str\" in function \"fit\"\n\u00a0\u00a0\"Literal[1]\" is not assignable to \"str\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

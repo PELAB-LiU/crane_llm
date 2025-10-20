@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model expects input_word_ids, input_mask, and input_type_ids as separate inputs, but train_input is a dictionary containing all three. The model.fit method will not correctly unpack this dictionary into the expected separate arguments.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input_word_ids, input_mask, and input_type_ids as separate arguments, but train_input is a dictionary containing these. The fit method will not correctly unpack the dictionary into the expected arguments.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input_word_ids, input_mask, and input_type_ids as separate arguments, but train_input is a dictionary containing these. The fit method will not correctly unpack the dictionary into the expected arguments.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input_word_ids, input_mask, and input_type_ids as separate arguments, but train_input is a dictionary containing these. The fit method will not correctly unpack the dictionary into the expected arguments.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input_word_ids, input_mask, and input_type_ids as separate inputs, but train_input is a dictionary containing all three. The model.fit method will not correctly unpack this dictionary into the expected separate arguments.",
+    "detection": true
+  }
+]

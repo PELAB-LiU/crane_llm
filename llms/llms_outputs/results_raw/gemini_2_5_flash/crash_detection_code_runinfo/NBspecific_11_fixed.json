@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `plt.imshow` function expects image data to be in the range [0, 1] for float types or [0, 255] for integer types. The `adv` array, which is a float array, has values outside this expected range, specifically from -2.118 to 2.473. This will cause `matplotlib` to clip the values and display a warning, but not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `plt.imshow` function expects image data to be in the range [0, 1] for float types or [0, 255] for integer types. The `adv` array, which is a float array, has values outside this expected range, specifically from -2.118 to 2.473. This will cause `matplotlib` to clip the values and display a warning, but not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `plt.imshow` function expects image data to be in the range [0, 1] for float types or [0, 255] for integer types. The `adv` array, which is of float type, has values outside this expected range, specifically from -2.118 to 2.473. This will cause `imshow` to clip the values, leading to an incorrect or distorted image display, but not a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `plt.imshow` function expects image data to be in the range [0, 1] for float types or [0, 255] for integer types. The `adv` array, which is of float type, has values outside this expected range, specifically from -2.118 to 2.473. This will cause `imshow` to clip the values, leading to an incorrect or distorted image display, but not a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `plt.imshow` function expects image data in the range [0, 1] for float types or [0, 255] for integer types. The `adv` array, which is of float type, has values outside this expected range, specifically from -2.118278 to 2.4734893. This will cause `imshow` to clip the values, leading to an incorrect visualization, but not a crash.",
+    "detection": false
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "86:       for img, probability, ax in zip( images_arr, probabilities, axes):",
+    "message": "Argument of type \"Literal[True]\" cannot be assigned to parameter \"iter2\" of type \"Iterable[_T2@__new__]\" in function \"__new__\"\n\u00a0\u00a0\"Literal[True]\" is incompatible with protocol \"Iterable[_T2@__new__]\"\n\u00a0\u00a0\u00a0\u00a0\"__iter__\" is not present",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

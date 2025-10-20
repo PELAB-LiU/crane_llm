@@ -1,0 +1,128 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from scipy.stats import pearsonr
+from sklearn.metrics import mean_squared_error
+from math import sqrt
+
+## Cell 2:
+
+game_df = pd.read_csv('data/game_info.csv')
+game_df.head(5)
+
+## Cell 3:
+
+import pandas as pd
+
+
+game_df['genres'] = game_df['genres'].fillna(game_df['genres'].mode()[0])
+
+
+game_df['genres'].isnull().sum()
+
+## Cell 4:
+
+game_df = game_df.drop(['website', 'tba', 'publishers', 'platforms', 'slug','updated'], axis=1)
+game_df.head(5)
+
+# Current relevent runtime information:
+{'game_df': {'execution_cell_source': {'cellno': 4, 'lineno': 1},
+             'has_nan': True,
+             'per_column': {'achievements_count': {'num_unique': 556,
+                                                   'type': 'continuous',
+                                                   'value_range': (0, 12322)},
+                            'added_status_beaten': {'num_unique': 634,
+                                                    'type': 'continuous',
+                                                    'value_range': (0, 3533)},
+                            'added_status_dropped': {'num_unique': 368,
+                                                     'type': 'continuous',
+                                                     'value_range': (0, 1092)},
+                            'added_status_owned': {'num_unique': 1861,
+                                                   'type': 'continuous',
+                                                   'value_range': (0, 8298)},
+                            'added_status_playing': {'num_unique': 188,
+                                                     'type': 'continuous',
+                                                     'value_range': (0, 644)},
+                            'added_status_toplay': {'num_unique': 294,
+                                                    'type': 'continuous',
+                                                    'value_range': (0, 2325)},
+                            'added_status_yet': {'num_unique': 343,
+                                                 'type': 'continuous',
+                                                 'value_range': (0, 635)},
+                            'developers': {'example_values': ['West Coast '
+                                                              'Software',
+                                                              'Soma Games',
+                                                              'Prettygreat Pty',
+                                                              'Oasis '
+                                                              'Games||Geronim...',
+                                                              'Viking Tao'],
+                                           'num_unique': 213723,
+                                           'type': 'categorical'},
+                            'esrb_rating': {'example_values': ['Everyone 10+',
+                                                               'Everyone',
+                                                               'Teen',
+                                                               'Mature',
+                                                               'Adults Only'],
+                                            'num_unique': 6,
+                                            'type': 'categorical'},
+                            'game_series_count': {'num_unique': 25,
+                                                  'type': 'continuous',
+                                                  'value_range': (0, 28)},
+                            'genres': {'example_values': ['Adventure||Puzzle',
+                                                          'Simulation||Indie',
+                                                          'Adventure||Arcade',
+                                                          'Action||Indie',
+                                                          'RPG||Strategy||Massi...'],
+                                       'num_unique': 1968,
+                                       'type': 'categorical'},
+                            'id': {'num_unique': 474417,
+                                   'type': 'continuous',
+                                   'value_range': (1, 525551)},
+                            'metacritic': {'num_unique': 78,
+                                           'type': 'continuous',
+                                           'value_range': (15.0, 99.0)},
+                            'name': {'example_values': ['D/Generation HD',
+                                                        'G Prime Into The '
+                                                        'Rai...',
+                                                        'Land Sliders',
+                                                        'Pixel Gear',
+                                                        'Gods and Idols'],
+                                     'num_unique': 474414,
+                                     'type': 'categorical'},
+                            'playtime': {'num_unique': 137,
+                                         'type': 'continuous',
+                                         'value_range': (0, 1600)},
+                            'rating': {'num_unique': 351,
+                                       'type': 'continuous',
+                                       'value_range': (0.0, 5.0)},
+                            'rating_top': {'num_unique': 5,
+                                           'type': 'categorical_numeric',
+                                           'value_range': (0, 5)},
+                            'ratings_count': {'num_unique': 789,
+                                              'type': 'continuous',
+                                              'value_range': (0, 4289)},
+                            'released': {'example_values': ['2015-10-23',
+                                                            '2016-01-06',
+                                                            '2015-09-24',
+                                                            '2016-10-20',
+                                                            '2016-12-12'],
+                                         'num_unique': 8631,
+                                         'type': 'categorical'},
+                            'reviews_count': {'num_unique': 790,
+                                              'type': 'continuous',
+                                              'value_range': (0, 4334)},
+                            'suggestions_count': {'num_unique': 881,
+                                                  'type': 'continuous',
+                                                  'value_range': (0, 1839)}},
+             'shape': (474417, 21),
+             'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+game_df['released'] = game_df['released'].apply(lambda x: str(x).split('-')[0]).astype('int')

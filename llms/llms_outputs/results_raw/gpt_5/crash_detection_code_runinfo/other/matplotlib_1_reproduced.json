@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train_labels[i] is a 1-element array (shape (1,)), so class_names[train_labels[i]] will raise an IndexError/TypeError since list indices must be integers, not arrays. Need train_labels[i][0] or train_labels[i].item().",
+    "detection": true
+  },
+  {
+    "reasoning": "train_images exists and is uint8; plotting is fine. However, train_labels[i] is a 1-element array, so using it as list index will raise TypeError; needs int via train_labels[i,0] or int(train_labels[i]).",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels[i] is a 1-element array (shape (1,)), so class_names[train_labels[i]] will raise a TypeError because list indices must be integers, not numpy arrays.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels[i] is a 1-element array, not an int; using it to index class_names will raise a TypeError. Need train_labels[i][0] or int(train_labels[i]).",
+    "detection": true
+  },
+  {
+    "reasoning": "train_images indexing and imshow are fine, but train_labels[i] has shape (1,) and is a numpy array; using it as a list index in class_names will raise a TypeError. Need train_labels[i][0] or int(train_labels[i]).",
+    "detection": true
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "137:         print(len(gpus), \"Physical GPUs,\", len(logical_gpus), \"Logical GPUs\")",
+    "message": "\"logical_gpus\" is possibly unbound",
+    "rule": "reportPossiblyUnboundVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "175:         my_model.fit(",
+    "message": "Unexpected keyword argument 'early_stopping_rounds' in method call",
+    "symbol": "unexpected-keyword-arg",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "175:         my_model.fit(",
+    "message": "Unexpected keyword argument 'verbose' in method call",
+    "symbol": "unexpected-keyword-arg",
+    "type": "error",
+    "source": "pylint"
+  }
+]

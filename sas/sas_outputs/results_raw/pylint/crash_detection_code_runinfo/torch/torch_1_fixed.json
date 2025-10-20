@@ -1,0 +1,23 @@
+[
+  {
+    "code_line": "81:         image1_path=os.path.join(self.train_dir,self.train_df.iat[index,0])",
+    "message": "Undefined variable 'os'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "82:         image2_path=os.path.join(self.train_dir,self.train_df.iat[index,1])",
+    "message": "Undefined variable 'os'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "92:         return img0, img1 , th.from_numpy(np.array([int(self.train_df.iat[index,2])],dtype=np.float32))",
+    "message": "Undefined variable 'th'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "112:       dataX = np.array(dataX).reshape(-1,self.window_size,self.number_features)",
+    "message": "Too many positional arguments for method call",
+    "symbol": "too-many-function-args",
+    "type": "error",
+    "source": "pylint"
+  }
+]

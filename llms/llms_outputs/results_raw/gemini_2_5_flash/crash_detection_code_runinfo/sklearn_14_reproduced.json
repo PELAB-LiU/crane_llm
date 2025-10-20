@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type, which cannot be directly used by the LinearRegression model's fit method without proper encoding or conversion to numerical types.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type, which cannot be directly used by the LinearRegression model's fit method without proper encoding or conversion to numerical types.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type, which cannot be directly used by the LinearRegression model's fit method without proper encoding or conversion to numerical types.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type, which cannot be directly used by the LinearRegression model's fit method without proper encoding or conversion to numerical types.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type, which cannot be directly used by the LinearRegression model's fit method without proper encoding or conversion to numerical types.",
+    "detection": true
+  }
+]

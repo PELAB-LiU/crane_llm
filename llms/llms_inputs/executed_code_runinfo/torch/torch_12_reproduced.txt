@@ -1,0 +1,138 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import plotly.graph_objs as go
+import plotly.offline as py
+import plotly.express as px
+
+
+import warnings
+warnings.filterwarnings('ignore')
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+
+
+from transformers import AutoTokenizer
+
+df = pd.read_csv('data/train.csv')
+
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
+
+
+df.drop_duplicates(inplace=True)
+df.dropna(subset=['output', 'instruction'], inplace=True)
+
+
+df['instruction_tokens'] = df['instruction'].apply(lambda x: len(tokenizer.tokenize(x)))
+df['output_tokens'] = df['output'].apply(lambda x: len(tokenizer.tokenize(x)))
+
+
+print(df.head())
+
+# Current relevent runtime information:
+{'__method__df_iterrows': {'type': "<class 'method'>"},
+ '__method__tokenizer_decode': {'type': "<class 'method'>"},
+ '__method__tokenizer_encode': {'type': "<class 'method'>"},
+ '__method__tokenizer_eos_token_id': {'type': "<class 'int'>", 'value': 50256},
+ '__method__tokenizer_pad_token_id': {'type': "<class 'NoneType'>"},
+ 'df': {'execution_cell_source': {'cellno': 10, 'lineno': 5},
+        'has_nan': True,
+        'per_column': {'data_source': {'example_values': ['MATH/PRM-800K',
+                                                          'ARB',
+                                                          'scienceqa',
+                                                          'scibench',
+                                                          'theoremqa'],
+                                       'num_unique': 10,
+                                       'type': 'categorical'},
+                       'input': {'example_values': ['Choose A, B, C or D ...',
+                                                    'During peer review, ...',
+                                                    'Organisms that carry...',
+                                                    'All organisms have p...',
+                                                    'When you review a fe...'],
+                                 'num_unique': 6,
+                                 'type': 'categorical'},
+                       'instruction': {'example_values': ['A board game '
+                                                          'spinner...',
+                                                          "My school's math "
+                                                          'clu...',
+                                                          'How many 4-letter '
+                                                          'wo...',
+                                                          'Melinda will roll '
+                                                          'tw...',
+                                                          'Let $p$ be the '
+                                                          'proba...'],
+                                       'num_unique': 24926,
+                                       'type': 'categorical'},
+                       'instruction_tokens': {'num_unique': 1011,
+                                              'type': 'continuous',
+                                              'value_range': (4, 2281)},
+                       'output': {'example_values': ['To find the probabil...',
+                                                     'I need to choose 6 p...',
+                                                     'First we count the n...',
+                                                     'She can do this if a...',
+                                                     'Think of the problem...'],
+                                  'num_unique': 19530,
+                                  'type': 'categorical'},
+                       'output_tokens': {'num_unique': 1338,
+                                         'type': 'continuous',
+                                         'value_range': (1, 5217)}},
+        'shape': (24926, 6),
+        'type': 'pandas.core.frame.DataFrame'},
+ 'tokenizer': {'execution_cell_source': {'cellno': 10, 'lineno': 7},
+               'type': '<class '
+                       "'transformers.models.gpt2.tokenization_gpt2_fast.GPT2TokenizerFast'>"}}
+# Target Cell:
+
+import pandas as pd
+import torch
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
+
+
+model_name = "gpt2"
+model = GPT2LMHeadModel.from_pretrained(model_name)
+tokenizer = GPT2Tokenizer.from_pretrained(model_name)
+
+
+
+generated_responses = []
+
+for index, row in df.iterrows():
+    prompt = row['instruction']
+    input_ids = tokenizer.encode(prompt, return_tensors="pt")
+
+
+    with torch.no_grad():
+        output = model.generate(
+            input_ids,
+            max_length=input_ids.size(1) + 50,
+            num_return_sequences=1,
+            pad_token_id=tokenizer.eos_token_id,
+            attention_mask=input_ids.ne(tokenizer.pad_token_id)
+        )
+
+
+    padded_output = output[:, input_ids.size(1):]
+
+    response = tokenizer.decode(padded_output[0], skip_special_tokens=True)
+    generated_responses.append(response)

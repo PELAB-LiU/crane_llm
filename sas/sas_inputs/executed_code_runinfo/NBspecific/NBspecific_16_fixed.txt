@@ -1,0 +1,61 @@
+# Executed Cells:
+## Cell 1:
+
+import os
+import math
+import random
+import warnings
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import tensorflow as tf
+
+import numpy as np
+import pandas as pd
+
+## Cell 2:
+
+HEIGHT = 224
+WIDTH = 224
+CHANNELS = 3
+
+INPUT_SHAPE = (HEIGHT, WIDTH, CHANNELS)
+LEARNING_RATE = 0.00001
+
+EPOCHS = 3
+BATCH_SIZE = 32
+
+DROPOUT = 0.5
+
+## Cell 3:
+
+
+base_skin_dir = os.path.join('data_small', 'skin-cancer-mnist-ham10000')
+skin_df = pd.read_csv(os.path.join(base_skin_dir, 'HAM10000_metadata.csv'))
+
+from glob import glob
+imageid_path_dict = {os.path.splitext(os.path.basename(x))[0]: x
+                     for x in glob(os.path.join(base_skin_dir, '*', '*.jpg'))}
+
+lesion_type_dict = {
+    'nv': 'Melanocytic nevi',
+    'mel': 'Melanoma',
+    'bkl': 'Benign keratosis-like lesions ',
+    'bcc': 'Basal cell carcinoma',
+    'akiec': 'Actinic keratoses',
+    'vasc': 'Vascular lesions',
+    'df': 'Dermatofibroma'
+}
+skin_df['path'] = skin_df['image_id'].map(imageid_path_dict.get)
+skin_df['cell_type'] = skin_df['dx'].map(lesion_type_dict.get)
+skin_df['cell_type_idx'] = pd.Categorical(skin_df['cell_type']).codes
+
+skin_df['age'].fillna((skin_df['age'].mean()), inplace=True)
+skin_df.head()
+
+# Annotated Target Code:
+skin_df: pd.DataFrame
+
+
+skin_df.head()

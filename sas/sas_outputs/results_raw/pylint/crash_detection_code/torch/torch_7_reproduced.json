@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "214: display(dog_image)",
+    "message": "Undefined variable 'display'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "code_line": "48: classifier.fit(X_train, y_train)",
+    "message": "\"X_train\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "48: classifier.fit(X_train, y_train)",
+    "message": "\"y_train\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "49: y_hat = classifier.predict(X_test)",
+    "message": "\"X_test\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "50: accuracy_score(y_test, y_hat)",
+    "message": "\"y_test\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

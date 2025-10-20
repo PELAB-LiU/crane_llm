@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to fit the model using data from `train_hg`, but `train_hg` does not contain the keys 'input_ids' and 'label'. The processed data does not include these fields, leading to a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to fit the model using data from `train_hg`, but `train_hg` does not contain the keys 'input_ids' and 'label'. The processed data does not include these fields, leading to a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to fit the model using data from `train_hg`, but `train_hg` does not contain the keys 'input_ids' and 'label'. The processed data does not include these fields, leading to a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to fit the model using data from `train_hg`, but `train_hg` does not contain the keys 'input_ids' and 'label'. The processed data does not include these fields, leading to a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to fit the model using data from `train_hg`, but `train_hg` does not contain the keys 'input_ids' and 'label'. The processed data does not include these fields, leading to a KeyError.",
+    "detection": true
+  }
+]

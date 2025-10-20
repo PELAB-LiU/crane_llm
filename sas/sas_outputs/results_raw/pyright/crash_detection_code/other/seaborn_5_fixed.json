@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "41: for item in labels.get_xticklabels():",
+    "message": "Object of type \"_axis_method_wrapper\" is not callable\n\u00a0\u00a0Attribute \"__call__\" is unknown",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

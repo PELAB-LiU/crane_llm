@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "48: class_names = train_ds.class_names",
+    "message": "Cannot access attribute \"class_names\" for class \"DatasetV2\"\n\u00a0\u00a0Attribute \"class_names\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "60: for images, labels in train_ds.take(1):",
+    "message": "\"None\" is not iterable\n\u00a0\u00a0\"__iter__\" method not defined",
+    "rule": "reportGeneralTypeIssues",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

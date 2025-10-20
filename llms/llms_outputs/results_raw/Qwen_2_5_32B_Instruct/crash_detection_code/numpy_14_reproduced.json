@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The cell attempts to access `test_generator.classes`, which does not exist. The `classes` attribute is not a valid attribute for `ImageDataGenerator.flow_from_directory` object.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to access `test_generator.classes`, which does not exist. The `classes` attribute is not a valid attribute for `ImageDataGenerator.flow_from_directory` object.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to access `test_generator.classes`, which does not exist. The `classes` attribute is not a valid attribute for `ImageDataGenerator.flow_from_directory` object.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to access `test_generator.classes`, which does not exist. The `classes` attribute is not a valid attribute for `ImageDataGenerator.flow_from_directory` object.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to access `test_generator.classes`, which does not exist. The `classes` attribute is not a valid attribute for `ImageDataGenerator.flow_from_directory` object.",
+    "detection": true
+  }
+]

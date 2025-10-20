@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "107:     image = tf.image.decode_jpeg(image_data, channels=3)",
+    "message": "No parameter named \"channels\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "192:     n = [int(re.compile(r\"-([0-9]*)\\.\").search(filename).group(1)) for filename in filenames]",
+    "message": "\"group\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

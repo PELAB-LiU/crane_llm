@@ -1,0 +1,72 @@
+[
+  {
+    "code_line": "388: creator.create(\"Individual\", gp.PrimitiveTree, fitness=creator.FitnessMax)",
+    "message": "Module 'deap.creator' has no 'FitnessMax' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "395: toolbox.register(\"individual\", tools.initIterate, creator.Individual, toolbox.expr)",
+    "message": "Module 'deap.creator' has no 'Individual' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "395: toolbox.register(\"individual\", tools.initIterate, creator.Individual, toolbox.expr)",
+    "message": "Instance of 'Toolbox' has no 'expr' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "396: toolbox.register(\"population\", tools.initRepeat, list, toolbox.individual)",
+    "message": "Instance of 'Toolbox' has no 'individual' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "400: toolbox.register(\"mutate\", gp.mutUniform, expr=toolbox.expr, pset=pset)",
+    "message": "Instance of 'Toolbox' has no 'expr' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "414: population = toolbox.population(n=pop_size)",
+    "message": "Instance of 'Toolbox' has no 'population' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "424:     offspring = toolbox.select(population, len(population))",
+    "message": "Instance of 'Toolbox' has no 'select' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "427:     offspring = list(map(toolbox.clone, offspring))",
+    "message": "Instance of 'Toolbox' has no 'clone' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "432:             toolbox.mate(child1, child2)",
+    "message": "Instance of 'Toolbox' has no 'mate' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "438:             toolbox.mutate(mutant)",
+    "message": "Instance of 'Toolbox' has no 'mutate' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  }
+]

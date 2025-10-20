@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model input expects shape (75, 75, 3) but X_train/X_test have shape (75, 75, 1), causing a shape mismatch error when fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects input shape (75,75,3) but X_train has shape (75,75,1), causing a shape mismatch error when fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model input expects shape (75,75,3) but X_train has shape (75,75,1); channel mismatch will raise an error when fitting. Also batch_size=64 exceeds samples but is allowed; main issue is input channels.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model input expects shape (75,75,3) but X_train has shape (75,75,1); this channel mismatch will raise an error when fitting. Also batch_size 64 exceeds dataset size but is allowed.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model input expects 3 channels (Input(shape=(75, 75, 3))) but X_train/X_test have shape (.., 75, 75, 1). Batch size 64 is fine; main error is channel mismatch causing shape incompatibility.",
+    "detection": true
+  }
+]

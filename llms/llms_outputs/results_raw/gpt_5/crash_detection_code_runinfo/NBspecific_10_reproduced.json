@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train is a NumPy ndarray after scaling, not a DataFrame/Series with 'ActivePower' column; indexing with ['ActivePower'] will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "train is a numpy.ndarray after scaling, not a DataFrame with 'ActivePower' column; indexing with ['ActivePower'] will raise a TypeError. Also plot_acf/pacf/adfuller are imported here but check_stationarity was defined earlier expecting them available, which is fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "train is a NumPy array after scaling and not a DataFrame; indexing with ['ActivePower'] will raise a TypeError. Also, check_stationarity expects a 1D series but would receive an invalid argument.",
+    "detection": true
+  },
+  {
+    "reasoning": "train is a NumPy ndarray after scaling, not a DataFrame with 'ActivePower' column, so train['ActivePower'] will raise an IndexError/TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "train is a numpy ndarray after scaling, not a DataFrame, so indexing with ['ActivePower'] will raise a TypeError.",
+    "detection": true
+  }
+]

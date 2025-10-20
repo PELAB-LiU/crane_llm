@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model is a LinearRegression instance and the X_train DataFrame contains an 'object' dtype column ('street'), which is not suitable for fitting a linear regression model. This will likely cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is a LinearRegression instance and the X_train DataFrame contains an 'object' dtype column ('street'), which is not suitable for fitting a linear regression model. This will likely cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is a LinearRegression instance and the X_train DataFrame contains an 'object' dtype column ('street'), which is not suitable for fitting a linear regression model. This will likely cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is a LinearRegression instance and the X_train DataFrame contains an 'object' dtype column ('street'), which is not suitable for fitting a linear regression model. This will likely cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is a LinearRegression instance and the X_train DataFrame contains an 'object' dtype column ('street'), which is not suitable for fitting a linear regression model. This will likely cause a crash.",
+    "detection": true
+  }
+]

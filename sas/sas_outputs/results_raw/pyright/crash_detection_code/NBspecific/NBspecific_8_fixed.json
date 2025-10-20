@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "34: df['scaled_Amount'] = StandardScaler().fit_transform(df['Amount'].values.reshape(-1,1))",
+    "message": "Cannot access attribute \"reshape\" for class \"ExtensionArray\"\n\u00a0\u00a0Attribute \"reshape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

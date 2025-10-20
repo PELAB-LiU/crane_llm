@@ -1,0 +1,37 @@
+[
+  {
+    "code_line": "84:         scripted_quantized_model.save(\"vit_scripted_quantized.pt\")",
+    "message": "Argument missing for parameter \"_extra_files\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "84:         scripted_quantized_model.save(\"vit_scripted_quantized.pt\")",
+    "message": "Cannot access attribute \"save\" for class \"RecursiveScriptClass\"\n\u00a0\u00a0Attribute \"save\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "84:         scripted_quantized_model.save(\"vit_scripted_quantized.pt\")",
+    "message": "Cannot access attribute \"save\" for class \"ScriptDict[Unknown, Unknown]\"\n\u00a0\u00a0Attribute \"save\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "84:         scripted_quantized_model.save(\"vit_scripted_quantized.pt\")",
+    "message": "Cannot access attribute \"save\" for class \"ScriptList[Unknown]\"\n\u00a0\u00a0Attribute \"save\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "84:         scripted_quantized_model.save(\"vit_scripted_quantized.pt\")",
+    "message": "Cannot access attribute \"save\" for class \"type[Enum]\"\n\u00a0\u00a0Attribute \"save\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

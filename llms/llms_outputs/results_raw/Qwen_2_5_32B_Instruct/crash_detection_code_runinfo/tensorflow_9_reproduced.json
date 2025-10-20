@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `bert_model` is an instance of a PyTorch model, not a TensorFlow model. The `tf.keras.utils.plot_model` function expects a TensorFlow model, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is an instance of a PyTorch model, not a TensorFlow model. The `tf.keras.utils.plot_model` function expects a TensorFlow model, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is an instance of a PyTorch model, not a TensorFlow model. The `tf.keras.utils.plot_model` function expects a TensorFlow model, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is an instance of a PyTorch model, not a TensorFlow model. The `tf.keras.utils.plot_model` function expects a TensorFlow model, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is an instance of a PyTorch model, not a TensorFlow model. The `tf.keras.utils.plot_model` function expects a TensorFlow model, which will cause a crash.",
+    "detection": true
+  }
+]

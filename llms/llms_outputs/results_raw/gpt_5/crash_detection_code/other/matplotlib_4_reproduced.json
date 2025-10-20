@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "labels[i] is a one-hot vector; indexing class_names with it will error. Need to use labels[i].numpy().argmax() or tf.argmax.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels is a one-hot tensor; using it as an index into class_names (labels[i]) will raise a TypeError. Need tf.argmax or similar to get integer index.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels is a one-hot encoded tensor because label_mode='categorical'; indexing class_names with labels[i] (a vector) will error. Need argmax/int index.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels is a one-hot tensor; indexing class_names with labels[i] (a tensor) is invalid. Need argmax to get class index.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels is a one-hot tensor; indexing class_names with labels[i] (a tensor) will error. Need argmax to get class index.",
+    "detection": true
+  }
+]

@@ -1,0 +1,452 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import chi2_contingency
+
+## Cell 2:
+
+app_train = pd.read_csv('data/application_train.csv.zip')
+app_test=pd.read_csv('data/application_test.csv.zip')
+
+## Cell 3:
+
+app_train.replace({'XNA': np.nan, 'XNP': np.nan, 'Unknown': np.nan}, inplace = True)
+app_test.replace({'XNA': np.nan, 'XNP': np.nan, 'Unknown': np.nan}, inplace = True)
+
+## Cell 4:
+
+app_test.drop(app_train.columns[app_train.isnull().mean()>0.4],axis=1, inplace=True)
+
+## Cell 5:
+
+app_train.drop(app_train.columns[app_train.isnull().mean()>0.4],axis=1, inplace=True)
+
+## Cell 6:
+
+
+Cat_columns_lower_percentage_nan  = [i for i in app_train.columns[(((app_train.isnull().sum() / app_train.shape[0]) * 100) > 0)
+                                                                  & (((app_train.isnull().sum() / app_train.shape[0]) * 100) < 14)]
+                                     if app_train[i].dtype == 'O']
+
+
+num_columns_lower_percentage_nan  = [i for i in app_train.columns[(((app_train.isnull().sum() / app_train.shape[0]) * 100) > 0)
+                                                                  & (((app_train.isnull().sum() / app_train.shape[0]) * 100) < 14)]
+                                     if app_train[i].dtype != 'O']
+
+## Cell 7:
+
+for i in Cat_columns_lower_percentage_nan:
+    app_test[i].fillna(app_train[i].mode()[0], inplace=True)
+    app_train[i].fillna(app_train[i].mode()[0], inplace=True)
+
+## Cell 8:
+
+col_mod_transfrom = [i for i in num_columns_lower_percentage_nan if i not in ['EXT_SOURCE_2', 'AMT_ANNUITY','AMT_GOODS_PRICE']]
+col_mean_transform = ['EXT_SOURCE_2', 'AMT_ANNUITY']
+
+## Cell 9:
+
+for i in col_mod_transfrom:
+    app_test[i].fillna(app_train[i].mode()[0], inplace=True)
+    app_train[i].fillna(app_train[i].mode()[0], inplace=True)
+for i in col_mean_transform:
+    app_test[i].fillna(app_train[i].mean(), inplace=True)
+    app_train[i].fillna(app_train[i].mean(), inplace=True)
+
+## Cell 10:
+
+app_train['AMT_GOODS_PRICE'].fillna(app_train['AMT_GOODS_PRICE'].median(),inplace = True)
+
+## Cell 11:
+
+all_numerical_cols = list(app_train.select_dtypes(exclude='object').columns)
+
+cont_cols = [col for col in all_numerical_cols if col != "TARGET" and col[:5]!='FLAG_']
+
+## Cell 12:
+
+proper_days_empolyed_df = app_train
+proper_days_empolyed_df['YEARS_EMPLOYED'] = proper_days_empolyed_df['DAYS_EMPLOYED']/-365.25
+
+## Cell 13:
+
+app_train['DAYS_EMPLOYED'].replace({365243:np.nan},inplace=True)
+app_test['DAYS_EMPLOYED'].replace({365243:np.nan},inplace=True)
+
+## Cell 14:
+
+proper_days_empolyed_df = app_train
+proper_days_empolyed_df['YEARS_EMPLOYED'] = proper_days_empolyed_df['DAYS_EMPLOYED']/-365.25
+
+## Cell 15:
+
+app_train = app_train[app_train['AMT_INCOME_TOTAL'] != 117000000.0]
+
+## Cell 16:
+
+cat_col = app_train.select_dtypes('object')
+cat_col.describe()
+
+## Cell 17:
+
+app_train['OCCUPATION_TYPE'][app_train['NAME_EDUCATION_TYPE']=='Secondary / secondary special'] = app_train['OCCUPATION_TYPE'][app_train['NAME_EDUCATION_TYPE']=='Secondary / secondary special'].fillna('Laborers')
+app_train['OCCUPATION_TYPE'][app_train['NAME_EDUCATION_TYPE']=='Higher education'] =  app_train['OCCUPATION_TYPE'][app_train['NAME_EDUCATION_TYPE']=='Higher education'].fillna('Core staff')
+app_train['OCCUPATION_TYPE'][app_train['NAME_EDUCATION_TYPE']=='Incomplete higher'] = app_train['OCCUPATION_TYPE'][app_train['NAME_EDUCATION_TYPE']=='Incomplete higher'].fillna('Laborers')
+app_train['OCCUPATION_TYPE'][app_train['NAME_EDUCATION_TYPE']=='Lower secondary'] = app_train['OCCUPATION_TYPE'][app_train['NAME_EDUCATION_TYPE']=='Lower secondary'].fillna('Laborers')
+app_train['OCCUPATION_TYPE'][app_train['NAME_EDUCATION_TYPE']=='Academic degree'] = app_train['OCCUPATION_TYPE'][app_train['NAME_EDUCATION_TYPE']=='Academic degree'].fillna('Managers')
+
+app_test['OCCUPATION_TYPE'][app_test['NAME_EDUCATION_TYPE']=='Secondary / secondary special'] = app_test['OCCUPATION_TYPE'][app_test['NAME_EDUCATION_TYPE']=='Secondary / secondary special'].fillna('Laborers')
+app_test['OCCUPATION_TYPE'][app_test['NAME_EDUCATION_TYPE']=='Higher education'] =  app_test['OCCUPATION_TYPE'][app_test['NAME_EDUCATION_TYPE']=='Higher education'].fillna('Core staff')
+app_test['OCCUPATION_TYPE'][app_test['NAME_EDUCATION_TYPE']=='Incomplete higher'] = app_test['OCCUPATION_TYPE'][app_test['NAME_EDUCATION_TYPE']=='Incomplete higher'].fillna('Laborers')
+app_test['OCCUPATION_TYPE'][app_test['NAME_EDUCATION_TYPE']=='Lower secondary'] = app_test['OCCUPATION_TYPE'][app_test['NAME_EDUCATION_TYPE']=='Lower secondary'].fillna('Laborers')
+app_test['OCCUPATION_TYPE'][app_test['NAME_EDUCATION_TYPE']=='Academic degree'] = app_test['OCCUPATION_TYPE'][app_test['NAME_EDUCATION_TYPE']=='Academic degree'].fillna('Managers')
+
+## Cell 18:
+
+app_train['ORGANIZATION_TYPE'][(app_train['OCCUPATION_TYPE'] == 'Accountants') |
+                               (app_train['OCCUPATION_TYPE'] == 'Cleaning staff') |
+                               (app_train['OCCUPATION_TYPE'] == 'Cooking staff') |
+                               (app_train['OCCUPATION_TYPE'] == 'Core staff')|
+                               (app_train['OCCUPATION_TYPE'] == 'Drivers')|
+                               (app_train['OCCUPATION_TYPE'] == 'HR staff')|
+                               (app_train['OCCUPATION_TYPE'] == 'High skill tech staff')|
+                               (app_train['OCCUPATION_TYPE'] == 'IT staff')|
+                               (app_train['OCCUPATION_TYPE'] == 'Laborers')|
+                               (app_train['OCCUPATION_TYPE'] == 'Low-skill Laborers')|
+                               (app_train['OCCUPATION_TYPE'] == 'Managers')] = app_train['ORGANIZATION_TYPE'][(app_train['OCCUPATION_TYPE'] == 'Accountants') |
+                               (app_train['OCCUPATION_TYPE'] == 'Cleaning staff') |
+                                                                                                             (app_train['OCCUPATION_TYPE'] == 'Cooking staff') |
+                                                                                                             (app_train['OCCUPATION_TYPE'] == 'Core staff')|
+                                                                                                             (app_train['OCCUPATION_TYPE'] == 'Drivers')|
+                                                                                                             (app_train['OCCUPATION_TYPE'] == 'HR staff')|
+                                                                                                             (app_train['OCCUPATION_TYPE'] == 'High skill tech staff')|
+                                                                                                             (app_train['OCCUPATION_TYPE'] == 'IT staff')|
+                                                                                                             (app_train['OCCUPATION_TYPE'] == 'Laborers')|
+                                                                                                             (app_train['OCCUPATION_TYPE'] == 'Low-skill Laborers')|
+                                                                                                              (app_train['OCCUPATION_TYPE'] == 'Managers')].fillna('Business Entity Type 3')
+
+app_test['ORGANIZATION_TYPE'][(app_test['OCCUPATION_TYPE'] == 'Accountants') |
+                               (app_test['OCCUPATION_TYPE'] == 'Cleaning staff') |
+                               (app_test['OCCUPATION_TYPE'] == 'Cooking staff') |
+                               (app_test['OCCUPATION_TYPE'] == 'Core staff')|
+                               (app_test['OCCUPATION_TYPE'] == 'Drivers')|
+                               (app_test['OCCUPATION_TYPE'] == 'HR staff')|
+                               (app_test['OCCUPATION_TYPE'] == 'High skill tech staff')|
+                              (app_test['OCCUPATION_TYPE'] == 'IT staff')|
+                               (app_test['OCCUPATION_TYPE'] == 'Laborers')|
+                               (app_test['OCCUPATION_TYPE'] == 'Low-skill Laborers')|
+                               (app_test['OCCUPATION_TYPE'] == 'Managers')] = app_test['ORGANIZATION_TYPE'][(app_train['OCCUPATION_TYPE'] == 'Accountants') |
+                                                                                                            (app_test['OCCUPATION_TYPE'] == 'Cleaning staff') |
+                                                                                                            (app_test['OCCUPATION_TYPE'] == 'Cooking staff') |
+                                                                                                            (app_test['OCCUPATION_TYPE'] == 'Core staff')|
+                                                                                                            (app_test['OCCUPATION_TYPE'] == 'Drivers')|
+                                                                                                            (app_test['OCCUPATION_TYPE'] == 'HR staff')|
+                                                                                                            (app_test['OCCUPATION_TYPE'] == 'High skill tech staff')|
+                                                                                                            (app_test['OCCUPATION_TYPE'] == 'IT staff')|
+                                                                                                            (app_test['OCCUPATION_TYPE'] == 'Laborers')|
+                                                                                                            (app_test['OCCUPATION_TYPE'] == 'Low-skill Laborers')|
+                                                                                                            (app_test['OCCUPATION_TYPE'] == 'Managers')].fillna('Business Entity Type 3')
+
+
+app_train['ORGANIZATION_TYPE'][(app_train['OCCUPATION_TYPE'] == 'Medicine staff')|
+                              (app_train['OCCUPATION_TYPE'] == 'Secretaries')] = app_train['ORGANIZATION_TYPE'][(app_train['OCCUPATION_TYPE'] == 'Medicine staff')|
+                                                                                                                  (app_train['OCCUPATION_TYPE'] == 'Secretaries')].fillna('Medicine')
+app_test['ORGANIZATION_TYPE'][(app_test['OCCUPATION_TYPE'] == 'Medicine staff')|
+                              (app_test['OCCUPATION_TYPE'] == 'Secretaries')] = app_test['ORGANIZATION_TYPE'][(app_test['OCCUPATION_TYPE'] == 'Medicine staff')|
+                                                                                                                  (app_test['OCCUPATION_TYPE'] == 'Secretaries')].fillna('Medicine')
+app_train['ORGANIZATION_TYPE'][(app_train['OCCUPATION_TYPE'] == 'Private service staff')|
+                               (app_train['OCCUPATION_TYPE'] == 'Realty agents')|
+                               (app_train['OCCUPATION_TYPE'] == 'Sales staff')] = app_train['ORGANIZATION_TYPE'][(app_train['OCCUPATION_TYPE'] == 'Private service staff')|
+                             (app_train['OCCUPATION_TYPE'] == 'Realty agents')|
+                                                                                                                 (app_train['OCCUPATION_TYPE'] == 'Sales staff')].fillna('Self-employed')
+app_test['ORGANIZATION_TYPE'][(app_test['OCCUPATION_TYPE'] == 'Private service staff')|
+                               (app_test['OCCUPATION_TYPE'] == 'Realty agents')|
+                               (app_test['OCCUPATION_TYPE'] == 'Sales staff')] = app_test['ORGANIZATION_TYPE'][(app_test['OCCUPATION_TYPE'] == 'Private service staff')|
+                                                                                                                 (app_test['OCCUPATION_TYPE'] == 'Realty agents')|
+                                                                                                                 (app_test['OCCUPATION_TYPE'] == 'Sales staff')].fillna('Self-employed')
+
+app_train['ORGANIZATION_TYPE'][(app_train['OCCUPATION_TYPE'] == 'Security staff')] = app_train['ORGANIZATION_TYPE'][(app_train['OCCUPATION_TYPE'] == 'Security staff')].fillna('Security')
+app_test['ORGANIZATION_TYPE'][(app_test['OCCUPATION_TYPE'] == 'Security staff')] = app_test['ORGANIZATION_TYPE'][(app_test['OCCUPATION_TYPE'] == 'Security staff')].fillna('Security')
+
+## Cell 19:
+
+app_test['ORGANIZATION_TYPE'] = app_test['ORGANIZATION_TYPE'].fillna(app_test['ORGANIZATION_TYPE'].mode()[0])
+
+## Cell 20:
+
+app_test['EXT_SOURCE_3'] = app_test['EXT_SOURCE_3'].fillna(app_train.groupby(['OCCUPATION_TYPE'])['EXT_SOURCE_3'].transform('mean'))
+app_train['EXT_SOURCE_3'] = app_train['EXT_SOURCE_3'].fillna(app_train.groupby(['OCCUPATION_TYPE'])['EXT_SOURCE_3'].transform('mean'))
+
+## Cell 21:
+
+app_test['DAYS_EMPLOYED'] = app_test['DAYS_EMPLOYED'].fillna(app_train.groupby(['OCCUPATION_TYPE'])['DAYS_EMPLOYED'].transform('mean'))
+app_train['DAYS_EMPLOYED'] = app_train['DAYS_EMPLOYED'].fillna(app_train.groupby(['OCCUPATION_TYPE'])['DAYS_EMPLOYED'].transform('mean'))
+
+## Cell 22:
+
+proper_days_empolyed_df = app_train
+proper_days_empolyed_df['YEARS_EMPLOYED'] = proper_days_empolyed_df['DAYS_EMPLOYED']/-365.25
+
+## Cell 23:
+
+app_test['NAME_TYPE_SUITE'].replace({'Other_A':'Other','Other_B':'Other','Group of people':'Other'},inplace=True)
+app_train['NAME_TYPE_SUITE'].replace({'Other_A':'Other','Other_B':'Other','Group of people':'Other'},inplace=True)
+
+app_test['NAME_INCOME_TYPE'].replace({'Unemployed':'Other','Student':'Other','Maternity leave':'Other'},inplace=True)
+app_train['NAME_INCOME_TYPE'].replace({'Unemployed':'Other','Student':'Other','Maternity leave':'Other'},inplace=True)
+
+## Cell 24:
+
+others = app_train['ORGANIZATION_TYPE'].value_counts().index[15:]
+label = 'Others'
+app_train['ORGANIZATION_TYPE'] = app_train['ORGANIZATION_TYPE'].replace(others, label)
+app_test['ORGANIZATION_TYPE'] = app_test['ORGANIZATION_TYPE'].replace(others, label)
+
+## Cell 25:
+
+app_train.drop(['YEARS_EMPLOYED'], axis = 1,inplace=True)
+
+## Cell 26:
+
+app_train = app_train.drop(columns=['CNT_FAM_MEMBERS','LIVE_REGION_NOT_WORK_REGION', 'REG_REGION_NOT_WORK_REGION', 'OBS_60_CNT_SOCIAL_CIRCLE'])
+app_test = app_test.drop(columns=['CNT_FAM_MEMBERS','LIVE_REGION_NOT_WORK_REGION', 'REG_REGION_NOT_WORK_REGION', 'OBS_60_CNT_SOCIAL_CIRCLE'])
+
+## Cell 27:
+
+cols_to_remove = ['AMT_CREDIT', 'CNT_FAM_MEMBERS', 'REG_REGION_NOT_WORK_REGION', 'LIVE_REGION_NOT_WORK_REGION', 'OBS_60_CNT_SOCIAL_CIRCLE','SK_ID_CURR']
+cont_cols = list(set(cont_cols) - set(cols_to_remove))
+cont_cols
+
+## Cell 28:
+
+
+
+
+def impute_outliers_IQR(df):
+
+    q1=df.quantile(0.25)
+    q3=df.quantile(0.75)
+
+    IQR=q3-q1
+
+    upper = df[~(df>(q3+1.5*IQR))].max()
+    lower = df[~(df<(q1-1.5*IQR))].min()
+
+    df = np.where(df > upper, df.quantile(0.8), np.where(df < lower, df.quantile(0.2),df))
+
+    return df
+
+## Cell 29:
+
+for i in cont_cols:
+    app_train[i] = impute_outliers_IQR(app_train[i])
+    app_test[i] = impute_outliers_IQR(app_test[i])
+
+## Cell 30:
+
+app_train['LTV'] = app_train['AMT_CREDIT']/app_train['AMT_GOODS_PRICE']
+app_train['DTI'] = app_train['AMT_ANNUITY']/app_train['AMT_INCOME_TOTAL']
+app_train['Employed/Birth'] = app_train['DAYS_EMPLOYED']/app_train['DAYS_BIRTH']
+app_train['Flag_Greater_30'] = (app_train['DAYS_BIRTH']/-365.25).apply(lambda x: 1 if x > 30 else 0)
+app_train['Flag_Employment_Greater_5'] = (app_train['DAYS_EMPLOYED']/-365.25).apply(lambda x: 1 if x > 5 else 0)
+
+app_test['LTV'] = app_test['AMT_CREDIT']/app_test['AMT_GOODS_PRICE']
+app_test['DTI'] = app_test['AMT_ANNUITY']/app_test['AMT_INCOME_TOTAL']
+app_test['Employed/Birth'] = app_test['DAYS_EMPLOYED']/app_test['DAYS_BIRTH']
+app_test['Flag_Greater_30'] = (app_test['DAYS_BIRTH']/-365.25).apply(lambda x: 1 if x > 30 else 0)
+app_test['Flag_Employment_Greater_5'] = (app_test['DAYS_EMPLOYED']/-365.25).apply(lambda x: 1 if x > 5 else 0)
+
+## Cell 31:
+
+
+
+from sklearn.preprocessing import OrdinalEncoder
+from category_encoders import TargetEncoder
+from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV
+
+
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.metrics import roc_auc_score, confusion_matrix
+
+## Cell 32:
+
+enc = TargetEncoder()
+app_train[cat_col.columns] = enc.fit_transform(app_train[cat_col.columns], app_train['TARGET'])
+
+## Cell 33:
+
+app_test[cat_col.columns] = enc.transform(app_test[cat_col.columns])
+
+## Cell 34:
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from imblearn.over_sampling import RandomOverSampler
+from imblearn.under_sampling import RandomUnderSampler
+from imblearn.pipeline import Pipeline
+
+
+y = app_train['TARGET']
+X = app_train.drop(['TARGET', 'SK_ID_CURR'], axis=1)
+
+
+X = pd.get_dummies(X, dummy_na=True)
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+
+over_sampler = RandomOverSampler(sampling_strategy=0.5, random_state=42)
+under_sampler = RandomUnderSampler(sampling_strategy=0.5, random_state=42)
+steps = [('o', over_sampler), ('u', under_sampler)]
+pipeline = Pipeline(steps=steps)
+X_train, y_train = pipeline.fit_resample(X_train, y_train)
+
+
+lr = LogisticRegression(random_state=42, max_iter=1000)
+lr.fit(X_train, y_train)
+
+
+y_pred = lr.predict(X_test)
+score = lr.score(X_test, y_test)
+print(f"Accuracy: {score:.2f}")
+
+
+## Cell 35:
+
+def protected_division(x1, x2):
+    if x2 == 0:
+        return 1
+    else:
+        return x1 / x2
+
+def protected_sqrt(x):
+    if x < 0:
+        return 0
+    else:
+        return np.sqrt(x)
+
+def protected_log(x):
+    if x <= 0:
+        return 0
+    else:
+        return np.log(x)
+
+## Cell 36:
+
+import numpy as np
+import pandas as pd
+from deap import creator, base, tools, gp
+
+pset = gp.PrimitiveSet("MAIN", arity=2)
+pset.addPrimitive(np.add, arity=2)
+pset.addPrimitive(np.subtract, arity=2)
+pset.addPrimitive(np.multiply, arity=2)
+pset.addPrimitive(np.maximum, arity=2)
+pset.addPrimitive(np.minimum, arity=2)
+pset.addPrimitive(protected_division, arity=2)
+pset.addPrimitive(protected_sqrt, arity=1)
+pset.addPrimitive(protected_log, arity=1)
+pset.addPrimitive(np.sin, arity=1)
+pset.addPrimitive(np.cos, arity=1)
+pset.addTerminal(0)
+pset.addTerminal(1)
+
+## Cell 37:
+
+
+def transform_gp_structure(individual, X):
+    expr = gp.compile(individual, pset)
+    return np.array([expr(*row) for row in X])
+
+
+def evaluate_fitness(individual):
+
+    X_train_gp = transform_gp_structure(individual, X_train)
+    rf_model_gp = lr
+    rf_model_gp.fit(X_train_gp, y_train)
+    X_test_gp = transform_gp_structure(individual, X_test)
+    y_pred_gp = rf_model_gp.predict_proba(X_test_gp)[:, 1]
+    auc_gp = roc_auc_score(y_test, y_pred_gp)
+    return auc_gp,
+
+## Cell 38:
+
+
+creator.create("FitnessMax", base.Fitness, weights=(1.0,))
+creator.create("Individual", gp.PrimitiveTree, fitness=creator.FitnessMax)
+
+
+toolbox = base.Toolbox()
+
+
+toolbox.register("expr", gp.genHalfAndHalf, pset=pset, min_=1, max_=3)
+toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.expr)
+toolbox.register("population", tools.initRepeat, list, toolbox.individual)
+
+
+toolbox.register("mate", gp.cxOnePoint)
+toolbox.register("mutate", gp.mutUniform, expr=toolbox.expr, pset=pset)
+toolbox.register("evaluate", evaluate_fitness)
+toolbox.register("select", tools.selTournament, tournsize=3)
+
+# Current relevent runtime information:
+{'__method__toolbox_clone': {'type': "<class 'functools.partial'>"},
+ '__method__toolbox_mate': {'type': "<class 'functools.partial'>"},
+ '__method__toolbox_mutate': {'type': "<class 'functools.partial'>"},
+ '__method__toolbox_population': {'type': "<class 'functools.partial'>"},
+ '__method__toolbox_select': {'type': "<class 'functools.partial'>"},
+ 'evaluate_fitness': {'execution_cell_source': {'cellno': 81, 'lineno': 7},
+                      'type': "<class 'function'>"},
+ 'toolbox': {'execution_cell_source': {'cellno': 80, 'lineno': 6},
+             'type': "<class 'deap.base.Toolbox'>"}}
+# Target Cell:
+
+import random
+crossover_prob = 0.5
+mutation_prob = 0.5
+
+pop_size = 100
+num_generations = 50
+
+
+population = toolbox.population(n=pop_size)
+
+
+for generation in range(num_generations):
+
+    fitnesses = map(evaluate_fitness, population)
+    for individual, fitness in zip(population, fitnesses):
+        individual.fitness.values = fitness
+
+
+    offspring = toolbox.select(population, len(population))
+
+
+    offspring = list(map(toolbox.clone, offspring))
+
+
+    for child1, child2 in zip(offspring[::2], offspring[1::2]):
+        if random.random() < crossover_prob:
+            toolbox.mate(child1, child2)
+            del child1.fitness.values
+            del child2.fitness.values
+
+    for mutant in offspring:
+        if random.random() < mutation_prob:
+            toolbox.mutate(mutant)
+            del mutant.fitness.values
+
+
+    population[:] = offspring

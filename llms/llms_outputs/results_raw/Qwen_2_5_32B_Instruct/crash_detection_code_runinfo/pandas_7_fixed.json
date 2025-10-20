@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'released' column contains date strings that can be split and converted to integers, and there are no indications of potential conversion errors or missing values that would cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains date strings that can be split and converted to integers, and there are no indications of potential conversion errors or missing values that would cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains date strings that can be split and converted to integers, and there are no indications of potential conversion errors or missing values that would cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains date strings that can be split and converted to integers, and there are no indications of potential conversion errors or missing values that would cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains date strings that can be split and converted to integers, and there are no indications of potential conversion errors or missing values that would cause a crash.",
+    "detection": false
+  }
+]

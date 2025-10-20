@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "25:     if np.issubdtype(data[column].dtype, np.number):",
+    "message": "Argument of type \"DtypeObj\" cannot be assigned to parameter \"arg1\" of type \"DTypeLike\" in function \"issubdtype\"\n\u00a0\u00a0Type \"DtypeObj\" is not assignable to type \"DTypeLike\"\n\u00a0\u00a0\u00a0\u00a0Type \"ExtensionDtype\" is not assignable to type \"DTypeLike\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"ExtensionDtype\" is not assignable to \"dtype[Any]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"ExtensionDtype\" is not assignable to \"None\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"ExtensionDtype\" is not assignable to \"type[Any]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"ExtensionDtype\" is incompatible with protocol \"_SupportsDType[dtype[Any]]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"dtype\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"ExtensionDtype\" is not assignable to \"str\"\n  ...",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

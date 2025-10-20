@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "26: PIL.Image.open(str(princess[1]))",
+    "message": "\"Image\" is not a known attribute of module \"PIL\"",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "30: image_height, image_width = PIL.Image.open(str(princess[1])).size",
+    "message": "\"Image\" is not a known attribute of module \"PIL\"",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

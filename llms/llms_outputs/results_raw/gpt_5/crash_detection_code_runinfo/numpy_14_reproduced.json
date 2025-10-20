@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "test_generator.classes is a 1D array of class indices, not one-hot encoded; applying np.argmax to it will raise an error due to axis 1 not existing.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes is a 1D array of class indices, not one-hot; applying np.argmax to it will raise an AxisError. The earlier y_pred is fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes is a 1D array of integer class indices; applying np.argmax to it will raise an error because it is not one-hot encoded. y_true_onehot has shape (6,), so np.argmax expects at least 2D for one-hot.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes is a 1D integer array of class indices, not one-hot; applying np.argmax to it will raise an AxisError. The rest uses existing variables correctly.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes is a 1D integer array of class indices, not one-hot; applying np.argmax to it will raise an axis error. The previous run shows its shape is (6,), so argmax with axis=1 is invalid.",
+    "detection": true
+  }
+]

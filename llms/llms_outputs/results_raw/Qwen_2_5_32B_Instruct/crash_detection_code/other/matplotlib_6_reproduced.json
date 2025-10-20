@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The code attempts to create a boxplot for each column in the dataframe. If the dataframe 'df' contains non-numeric columns, the boxplot will fail, causing a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The code attempts to create a boxplot for each column in the dataframe. If the dataframe 'df' contains non-numeric columns, the boxplot will fail, causing a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The code attempts to create a boxplot for each column in the dataframe. If the dataframe 'df' contains non-numeric columns, it will crash when attempting to plot them. Without knowing the contents of 'df', we cannot be certain it will crash, but there is a risk.",
+    "detection": false
+  },
+  {
+    "reasoning": "The code attempts to create a boxplot for each column in the dataframe. If the dataframe 'df' contains non-numeric columns, it will crash when attempting to plot them. Without knowing the contents of 'df', we cannot be certain it will crash, but there is a risk.",
+    "detection": false
+  },
+  {
+    "reasoning": "The code attempts to create a boxplot for each column in the dataframe. If the dataframe 'df' contains non-numeric columns, it will crash when trying to plot them. Without knowing the contents of 'df', we cannot be certain it will crash.",
+    "detection": false
+  }
+]

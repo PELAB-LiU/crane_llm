@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "StandardScaler requires numeric inputs, but train_df and test_df contain only boolean columns; scikit-learn will cast bools to 0/1 and scale them without error. Shapes are valid and no NaNs.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler requires numeric input, but train_df and test_df contain only boolean columns; scikit-learn will coerce bools to 0/1 and scale them without error. Shapes are consistent and no NaNs present.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler expects numeric input; after get_dummies on all columns including target, train_df and test_df are boolean DataFrames which can be cast to 0/1, so scaler.fit_transform and transform should work without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler expects numeric inputs; after get_dummies over all columns, train_df and test_df are all boolean which can be cast to 0/1, so fit_transform/transform should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler expects numeric input, but both train_df and test_df contain only boolean columns after get_dummies; booleans are castable to numeric, so fit_transform and transform should work. Shapes are consistent and no NaNs.",
+    "detection": false
+  }
+]

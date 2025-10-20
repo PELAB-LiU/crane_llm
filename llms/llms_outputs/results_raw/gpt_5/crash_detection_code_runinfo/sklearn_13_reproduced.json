@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "LinearRegression.fit expects numeric features/targets, but x and y are object dtype (categorical strings). Fitting with non-numeric data will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y are object-typed arrays containing categorical/string labels; LinearRegression.fit expects numeric arrays and will raise a ValueError when trying to convert to float.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y are object dtype arrays with categorical strings; LinearRegression in scikit-learn requires numeric arrays and will raise a ValueError when encountering non-numeric data. Therefore, fitting will fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "LinearRegression.fit expects numeric features; x and y are object dtype arrays of strings (categorical/label), causing a ValueError during fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "LinearRegression.fit expects numeric features; x and y are object dtype (strings/categories), so fitting will raise a ValueError about converting to float.",
+    "detection": true
+  }
+]

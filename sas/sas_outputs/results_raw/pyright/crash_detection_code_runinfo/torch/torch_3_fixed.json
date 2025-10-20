@@ -1,0 +1,23 @@
+[
+  {
+    "code_line": "79: inputs['input_ids'] = inputs['input_ids'].unsqueeze(0)",
+    "message": "Cannot access attribute \"unsqueeze\" for class \"EncodingFast\"\n\u00a0\u00a0Attribute \"unsqueeze\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "80: inputs['token_type_ids'] = inputs['token_type_ids'].unsqueeze(0)",
+    "message": "Cannot access attribute \"unsqueeze\" for class \"EncodingFast\"\n\u00a0\u00a0Attribute \"unsqueeze\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "81: inputs['attention_mask'] = inputs['attention_mask'].unsqueeze(0)",
+    "message": "Cannot access attribute \"unsqueeze\" for class \"EncodingFast\"\n\u00a0\u00a0Attribute \"unsqueeze\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

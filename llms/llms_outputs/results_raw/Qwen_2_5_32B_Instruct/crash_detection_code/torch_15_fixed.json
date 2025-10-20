@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The variable names `sekil` and `netice` in the target cell are not defined in the executed cells. This will cause a NameError when the cell is executed.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable names `sekil` and `netice` in the target cell are not defined in the executed cells. This will cause a NameError when the cell is executed.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable names `sekil` and `netice` in the target cell are not defined in the executed cells. This will cause a NameError when the cell is executed.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable names `sekil` and `netice` in the target cell are not defined in the executed cells. This will cause a NameError when the cell is executed.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable names `sekil` and `netice` in the target cell are not defined in the executed cells. This will cause a NameError when the cell is executed.",
+    "detection": true
+  }
+]

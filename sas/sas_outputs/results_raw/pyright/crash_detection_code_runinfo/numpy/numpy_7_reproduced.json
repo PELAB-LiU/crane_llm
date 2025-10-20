@@ -1,0 +1,135 @@
+[
+  {
+    "code_line": "77:         input_dimension = self.last_input.shape[1]",
+    "message": "\"shape\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "82:         dout = np.zeros(self.last_input.shape)",
+    "message": "\"shape\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "90:                     patch = self.last_input[:, tmp_y:tmp_y + self.size, tmp_x:tmp_x + self.size]",
+    "message": "Object of type \"None\" is not subscriptable",
+    "rule": "reportOptionalSubscript",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "135:         num_channels, orig_dim, *_ = self.last_input.shape",
+    "message": "\"shape\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "138:         dout = np.zeros(self.last_input.shape)",
+    "message": "\"shape\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "145:                     patch = self.last_input[c, tmp_y:tmp_y + self.size, tmp_x:tmp_x + self.size]",
+    "message": "Object of type \"None\" is not subscriptable",
+    "rule": "reportOptionalSubscript",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "191:         self.last_input = np.expand_dims(self.last_input, axis=1)",
+    "message": "No overloads for \"expand_dims\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "191:         self.last_input = np.expand_dims(self.last_input, axis=1)",
+    "message": "Argument of type \"Unknown | None\" cannot be assigned to parameter \"a\" of type \"ArrayLike\" in function \"expand_dims\"\n\u00a0\u00a0Type \"Unknown | None\" is not assignable to type \"ArrayLike\"\n\u00a0\u00a0\u00a0\u00a0Type \"None\" is not assignable to type \"ArrayLike\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"None\" is incompatible with protocol \"_SupportsArray[dtype[Any]]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__array__\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"None\" is incompatible with protocol \"_NestedSequence[_SupportsArray[dtype[Any]]]\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__len__\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__getitem__\" is not present\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__contains__\" is not present\n  ...",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "234:             t_exp = np.exp(self.last_output)",
+    "message": "No overloads for \"__call__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "234:             t_exp = np.exp(self.last_output)",
+    "message": "Argument of type \"Any | Unknown | None\" cannot be assigned to parameter \"__x1\" of type \"_SupportsArrayUFunc\" in function \"__call__\"\n\u00a0\u00a0Type \"Any | Unknown | None\" is not assignable to type \"_SupportsArrayUFunc\"\n\u00a0\u00a0\u00a0\u00a0\"None\" is incompatible with protocol \"_SupportsArrayUFunc\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"__array_ufunc__\" is not present",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "243:             self.weights -= learning_rate * (np.transpose(self.last_input[np.newaxis]) @ dt[np.newaxis])",
+    "message": "Object of type \"None\" is not subscriptable",
+    "rule": "reportOptionalSubscript",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "696:         model.add(Dense(256, name='fullyconnected', activation='relu', kernel_initializer='he_normal', kernel_regularizer=l2(lam)))",
+    "message": "Arguments missing for parameters \"nodes\", \"num_classes\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "696:         model.add(Dense(256, name='fullyconnected', activation='relu', kernel_initializer='he_normal', kernel_regularizer=l2(lam)))",
+    "message": "Parameter \"name\" is already assigned",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "696:         model.add(Dense(256, name='fullyconnected', activation='relu', kernel_initializer='he_normal', kernel_regularizer=l2(lam)))",
+    "message": "No parameter named \"activation\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "696:         model.add(Dense(256, name='fullyconnected', activation='relu', kernel_initializer='he_normal', kernel_regularizer=l2(lam)))",
+    "message": "No parameter named \"kernel_initializer\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "696:         model.add(Dense(256, name='fullyconnected', activation='relu', kernel_initializer='he_normal', kernel_regularizer=l2(lam)))",
+    "message": "No parameter named \"kernel_regularizer\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "697:         model.add(Dense(10, name='dense', activation='softmax'))",
+    "message": "Arguments missing for parameters \"nodes\", \"num_classes\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "697:         model.add(Dense(10, name='dense', activation='softmax'))",
+    "message": "Parameter \"name\" is already assigned",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "697:         model.add(Dense(10, name='dense', activation='softmax'))",
+    "message": "No parameter named \"activation\"",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

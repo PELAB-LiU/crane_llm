@@ -1,0 +1,70 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+%matplotlib inline
+import seaborn as sns
+import matplotlib.pyplot as plt
+import cv2
+import os
+import warnings
+warnings.filterwarnings('ignore')
+import tensorflow as tf
+import random
+import albumentations as A
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.layers import Dense,Activation,Flatten, Conv2D, MaxPooling2D
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.callbacks import ModelCheckpoint,EarlyStopping
+
+## Cell 2:
+
+train_image_path = '../input/plant-pathology-2021-fgvc8/train_images'
+test_image_path = '../input/plant-pathology-2021-fgvc8/test_images'
+train_df_path = 'data/train.csv'
+test_df_path = 'data/sample_submission.csv'
+
+## Cell 3:
+
+df_train = pd.read_csv(train_df_path)
+df_test=pd.read_csv(test_df_path)
+
+# Current relevent runtime information:
+{'__method__df_train_labels': {'type': "<class 'pandas.core.series.Series'>",
+                               'value_info': {'num_unique': 12,
+                                              'value_type': 'categorical or '
+                                                            'object'}},
+ '__method__plt_figure': {'type': "<class 'function'>"},
+ '__method__sns_barplot': {'type': "<class 'function'>"},
+ 'df_train': {'execution_cell_source': {'cellno': 2, 'lineno': 1},
+              'has_nan': False,
+              'per_column': {'image': {'example_values': ['800113bb65efe69e.jpg',
+                                                          '8002cb321f8bfcdf.jpg',
+                                                          '80070f7fb5e2ccaa.jpg',
+                                                          '80077517781fb94f.jpg',
+                                                          '800cbf0ff87721f8.jpg'],
+                                       'num_unique': 18632,
+                                       'type': 'categorical'},
+                             'labels': {'example_values': ['healthy',
+                                                           'scab '
+                                                           'frog_eye_leaf_s...',
+                                                           'scab',
+                                                           'complex',
+                                                           'rust'],
+                                        'num_unique': 12,
+                                        'type': 'categorical'}},
+              'shape': (18632, 2),
+              'type': 'pandas.core.frame.DataFrame'},
+ 'plt': {'type': "<class 'module'>"},
+ 'sns': {'type': "<class 'module'>"}}
+# Target Cell:
+
+plt.figure(figsize=(15,12))
+
+
+
+labels = sns.barplot(x=df_train.labels.value_counts().index, y=df_train.labels.value_counts())
+
+for item in labels.get_xticklabels():
+    item.set_rotation(45)

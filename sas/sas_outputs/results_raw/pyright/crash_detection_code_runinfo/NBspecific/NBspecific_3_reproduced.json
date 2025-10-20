@@ -1,0 +1,37 @@
+[
+  {
+    "code_line": "37:         df.loc[i,'holiday']=1",
+    "message": "No overloads for \"__setitem__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "37:         df.loc[i,'holiday']=1",
+    "message": "Argument of type \"tuple[Hashable, Literal['holiday']]\" cannot be assigned to parameter \"idx\" of type \"tuple[_IndexSliceTuple[Unknown], Hashable]\" in function \"__setitem__\"\n\u00a0\u00a0\"tuple[Hashable, Literal['holiday']]\" is not assignable to \"tuple[_IndexSliceTuple[Unknown], Hashable]\"\n\u00a0\u00a0\u00a0\u00a0Tuple entry 1 is incorrect type\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"Hashable\" is not assignable to \"tuple[Index[Unknown] | Series[bool] | np_ndarray_bool | list[bool] | str | bytes | date | datetime | timedelta | datetime64 | timedelta64 | bool | int | float | Timestamp | Timedelta | complex | list[Unknown] | slice[Any, Any, Any] | tuple[Scalar, ...], ...]\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "90: ax.plot(range(len(y_test)), y_test, 'b-.', label='Sample')",
+    "message": "Cannot access attribute \"plot\" for class \"ndarray[Any, dtype[Any]]\"\n\u00a0\u00a0Attribute \"plot\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "91: ax.plot(range(len(y_test)), yFit, 'r-', label='Fitting')",
+    "message": "Cannot access attribute \"plot\" for class \"ndarray[Any, dtype[Any]]\"\n\u00a0\u00a0Attribute \"plot\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "92: ax.legend(loc='best')",
+    "message": "Cannot access attribute \"legend\" for class \"ndarray[Any, dtype[Any]]\"\n\u00a0\u00a0Attribute \"legend\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

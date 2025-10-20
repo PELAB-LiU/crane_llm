@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model components rely on previously defined classes and variables, and no undefined names or shape mismatches are evident in initialization; forward isn't executed. Potential CUDA presence is handled by to(device).",
+    "detection": false
+  },
+  {
+    "reasoning": "Model construction uses previously defined classes and variables; tensor reshapes and types are consistent, and vocab.label_size exists. No undefined names or obvious shape mismatches at init time.",
+    "detection": false
+  },
+  {
+    "reasoning": "WordLSTMEncoder uses nn.Embedding(vocab.word_size, ...) but nn.Embedding expects integers; vocab.word_size is a method and was passed uncalled, causing a TypeError. Calling vocab.word_size() is required.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model() uses global variables and classes defined earlier and constructs modules without executing a forward pass. No obvious runtime errors in __init__; tensor/device usage is consistent. Execution should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "The code defines modules and constructs Model using previously defined classes and variables; no undefined names or shape mismatches are evident at instantiation time. Forward is not executed yet, so no runtime tensor issues occur now.",
+    "detection": false
+  }
+]

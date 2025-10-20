@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The LabelEncoder `RescuerID` was fitted only on the `train` dataset's 'RescuerID' column. When `procData` is called for the `test` dataset, `RescuerID.transform(data[\"RescuerID\"])` will encounter new, unseen RescuerIDs in the `test` dataset, leading to a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The LabelEncoder `RescuerID` was fitted only on the `train` dataset's 'RescuerID' column. When `procData` is called for the `test` dataset, `RescuerID.transform(data[\"RescuerID\"])` will encounter new, unseen RescuerIDs in the `test` dataset, leading to a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The LabelEncoder `RescuerID` was fitted only on the `train` dataset's 'RescuerID' column. When `procData` is called for the `test` dataset, `RescuerID.transform(data[\"RescuerID\"])` will encounter new, unseen RescuerIDs in the `test` dataset, leading to a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The LabelEncoder `RescuerID` was fitted only on the `train` dataset's 'RescuerID' column. When `procData` is called for the `test` dataset, `RescuerID.transform(data[\"RescuerID\"])` will encounter new, unseen RescuerIDs in the `test` dataset, leading to a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The LabelEncoder `RescuerID` was fitted only on the `train` dataset's 'RescuerID' column. When `procData` is called for the `test` dataset, `RescuerID.transform(data[\"RescuerID\"])` will encounter new, unseen RescuerIDs in the `test` dataset, leading to a ValueError.",
+    "detection": true
+  }
+]

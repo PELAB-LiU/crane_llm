@@ -1,0 +1,30 @@
+[
+  {
+    "code_line": "48: classifier.fit(X_train, y_train)",
+    "message": "Undefined variable 'X_train'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "48: classifier.fit(X_train, y_train)",
+    "message": "Undefined variable 'y_train'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "49: y_hat = classifier.predict(X_test)",
+    "message": "Undefined variable 'X_test'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "50: accuracy_score(y_test, y_hat)",
+    "message": "Undefined variable 'y_test'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

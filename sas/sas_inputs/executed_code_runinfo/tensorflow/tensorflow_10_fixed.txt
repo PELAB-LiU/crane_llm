@@ -1,0 +1,148 @@
+# Executed Cells:
+## Cell 1:
+
+import tensorflow as tf
+from transformers import TFAutoModel
+
+## Cell 2:
+
+import pandas as pd
+import json
+df_psytar = pd.read_csv("data/PsyTAR.csv")
+df_psytar.head(5)
+
+## Cell 3:
+
+
+
+df=df_psytar
+
+## Cell 4:
+
+df_1 = df[df['ADR']==1]
+df_0 = df[df['ADR']==0]
+
+## Cell 5:
+
+df_0 = df_0.sample(df_1.shape[0])
+
+## Cell 6:
+
+df = pd.concat([df_1,df_0])
+
+## Cell 7:
+
+from transformers import AutoTokenizer
+tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+
+## Cell 8:
+
+def process_data(row):
+
+    text = row['sentences']
+    text = str(text)
+    text = ' '.join(text.split())
+
+    encodings = tokenizer(text, padding="max_length", truncation=True, max_length=128)
+
+    label = 0
+    if row['ADR'] == 1:
+        label += 1
+
+    encodings['label'] = label
+    encodings['text'] = text
+
+    return encodings
+
+## Cell 9:
+
+processed_data = []
+
+for i in range(len(df[:1000])):
+    processed_data.append(process_data(df.iloc[i]))
+
+## Cell 10:
+
+train_data = df["sentences"]
+train_labels = df['ADR']
+
+## Cell 11:
+
+from sklearn.model_selection import train_test_split
+
+new_df = pd.DataFrame(processed_data)
+
+train_df, valid_df = train_test_split(
+    new_df,
+    test_size=0.2,
+    random_state=2022
+)
+
+## Cell 12:
+
+import pyarrow as pa
+from datasets import Dataset
+
+train_hg = Dataset(pa.Table.from_pandas(train_df))
+valid_hg = Dataset(pa.Table.from_pandas(valid_df))
+
+## Cell 13:
+
+class HuggingFaceLayer(tf.keras.layers.Layer):
+    def __init__(self, model_name, output_hidden_states=False, trainable=False, **kwargs):
+        super(HuggingFaceLayer, self).__init__(**kwargs)
+        self.model = TFAutoModel.from_pretrained(model_name, output_hidden_states=output_hidden_states)
+        self.trainable = trainable
+
+    def build(self, input_shape):
+        self.model.built = True
+        if not self.trainable:
+            self.model.trainable = False
+        super(HuggingFaceLayer, self).build(input_shape)
+
+    def call(self, inputs, **kwargs):
+        outputs = self.model(inputs, **kwargs)
+
+
+        return outputs.last_hidden_state[:, 0, :]
+
+## Cell 14:
+
+
+
+model_name = 'bert-base-uncased'
+
+
+
+
+
+input_ids = tf.keras.Input(shape=(128,), dtype=tf.int32, name='input_ids')
+attention_mask = tf.keras.Input(shape=(128,), dtype=tf.int32, name='attention_mask')
+
+cls_output = HuggingFaceLayer(model_name)(inputs={'input_ids': input_ids, 'attention_mask': attention_mask})
+
+output = tf.keras.layers.Dense(1, activation='sigmoid')(cls_output)
+
+model = tf.keras.Model(inputs=[input_ids, attention_mask], outputs=output)
+
+# Annotated Target Code:
+import datasets
+import keras
+
+model: keras.Model
+train_hg: datasets.Dataset
+
+
+import numpy as np
+
+
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+
+
+model.fit(
+    x={'input_ids': np.array(train_hg['input_ids']), 'attention_mask': np.array(train_hg['attention_mask'])},
+    y=np.array(train_hg['label']),
+    epochs=2,
+    batch_size=32
+)

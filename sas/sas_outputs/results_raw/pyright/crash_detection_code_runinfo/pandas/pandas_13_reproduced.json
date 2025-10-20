@@ -1,0 +1,177 @@
+[
+  {
+    "code_line": "75: X = transformed.loc[:,~transformed.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"loc\" for class \"NDArray[float64]\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "75: X = transformed.loc[:,~transformed.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"loc\" for class \"csr_matrix\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "75: X = transformed.loc[:,~transformed.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"loc\" for class \"csr_array\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "75: X = transformed.loc[:,~transformed.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"loc\" for class \"NDArray[Unknown]\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "75: X = transformed.loc[:,~transformed.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"columns\" for class \"NDArray[float64]\"\n\u00a0\u00a0Attribute \"columns\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "75: X = transformed.loc[:,~transformed.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"columns\" for class \"csr_matrix\"\n\u00a0\u00a0Attribute \"columns\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "75: X = transformed.loc[:,~transformed.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"columns\" for class \"csr_array\"\n\u00a0\u00a0Attribute \"columns\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "75: X = transformed.loc[:,~transformed.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"columns\" for class \"NDArray[Unknown]\"\n\u00a0\u00a0Attribute \"columns\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "76: y = transformed.loc[:,'Selling_Price']",
+    "message": "Cannot access attribute \"loc\" for class \"NDArray[float64]\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "76: y = transformed.loc[:,'Selling_Price']",
+    "message": "Cannot access attribute \"loc\" for class \"csr_matrix\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "76: y = transformed.loc[:,'Selling_Price']",
+    "message": "Cannot access attribute \"loc\" for class \"csr_array\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "76: y = transformed.loc[:,'Selling_Price']",
+    "message": "Cannot access attribute \"loc\" for class \"NDArray[Unknown]\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "94: X_ = transformed2.loc[:,~transformed2.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"loc\" for class \"NDArray[float64]\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "94: X_ = transformed2.loc[:,~transformed2.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"loc\" for class \"csr_matrix\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "94: X_ = transformed2.loc[:,~transformed2.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"loc\" for class \"csr_array\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "94: X_ = transformed2.loc[:,~transformed2.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"loc\" for class \"NDArray[Unknown]\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "94: X_ = transformed2.loc[:,~transformed2.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"columns\" for class \"NDArray[float64]\"\n\u00a0\u00a0Attribute \"columns\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "94: X_ = transformed2.loc[:,~transformed2.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"columns\" for class \"csr_matrix\"\n\u00a0\u00a0Attribute \"columns\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "94: X_ = transformed2.loc[:,~transformed2.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"columns\" for class \"csr_array\"\n\u00a0\u00a0Attribute \"columns\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "94: X_ = transformed2.loc[:,~transformed2.columns.isin(['Selling_Price'])]",
+    "message": "Cannot access attribute \"columns\" for class \"NDArray[Unknown]\"\n\u00a0\u00a0Attribute \"columns\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "95: y_ = transformed2.loc[:,'Selling_Price']",
+    "message": "Cannot access attribute \"loc\" for class \"NDArray[float64]\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "95: y_ = transformed2.loc[:,'Selling_Price']",
+    "message": "Cannot access attribute \"loc\" for class \"csr_matrix\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "95: y_ = transformed2.loc[:,'Selling_Price']",
+    "message": "Cannot access attribute \"loc\" for class \"csr_array\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "95: y_ = transformed2.loc[:,'Selling_Price']",
+    "message": "Cannot access attribute \"loc\" for class \"NDArray[Unknown]\"\n\u00a0\u00a0Attribute \"loc\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "172:     display(feature_df)",
+    "message": "\"display\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

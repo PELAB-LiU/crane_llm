@@ -1,0 +1,253 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import os
+import numpy as np
+from sklearn.model_selection import KFold
+from sklearn.preprocessing import LabelEncoder
+import sklearn.metrics
+
+train = pd.read_csv('data/train.csv.zip', index_col="PetID")
+test = pd.read_csv('data/test.csv.zip', index_col="PetID")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Cell 2:
+
+name_count = train["Name"].value_counts().rename("name_count")
+
+RescuerID = LabelEncoder().fit(train["RescuerID"].to_list()+test["RescuerID"].to_list())
+
+def procData(data, name_count, RescuerID):
+
+
+
+
+    data["RescuerID"] = RescuerID.transform(data["RescuerID"])
+    data["RescuerID"] = data["RescuerID"].fillna(-1)
+
+
+    data["NameNull"] = data["Name"].isnull()
+    data["NameLen"] = data["Name"].fillna("").str.len()
+    data["SinNombre"] = data["Name"].str.lower().replace(" ", "") == "nonameyet"
+
+
+
+    data["name_count"] = data['Name'].map(name_count)
+    data["name_count"] = data["name_count"].fillna(0)
+
+    data = data.drop(["Name", "RescuerID", "Description"], axis=1)
+    return data
+
+# Current relevent runtime information:
+{'RescuerID': {'class_name': 'LabelEncoder',
+               'classes_dtype': dtype('<U32'),
+               'execution_cell_source': {'cellno': 2, 'lineno': 3},
+               'fitted_attributes': {'n_features_in_': None,
+                                     'n_outputs_': None},
+               'is_fitted': True,
+               'module': 'sklearn.preprocessing._label',
+               'n_classes': 7113,
+               'type': "<class 'sklearn.preprocessing._label.LabelEncoder'>"},
+ 'name_count': {'execution_cell_source': {'cellno': 2, 'lineno': 1},
+                'type': "<class 'pandas.core.series.Series'>",
+                'value_info': {'value_range': (1, 66),
+                               'value_type': 'continuous'}},
+ 'procData': {'execution_cell_source': {'cellno': 2, 'lineno': 5},
+              'type': "<class 'function'>"},
+ 'test': {'execution_cell_source': {'cellno': 1, 'lineno': 9},
+          'has_nan': True,
+          'per_column': {'Age': {'num_unique': 71,
+                                 'type': 'continuous',
+                                 'value_range': (0, 156)},
+                         'Breed1': {'num_unique': 118,
+                                    'type': 'continuous',
+                                    'value_range': (2, 307)},
+                         'Breed2': {'num_unique': 92,
+                                    'type': 'continuous',
+                                    'value_range': (0, 307)},
+                         'Color1': {'num_unique': 7,
+                                    'type': 'categorical_numeric',
+                                    'value_range': (1, 7)},
+                         'Color2': {'num_unique': 7,
+                                    'type': 'categorical_numeric',
+                                    'value_range': (0, 7)},
+                         'Color3': {'num_unique': 6,
+                                    'type': 'categorical_numeric',
+                                    'value_range': (0, 7)},
+                         'Description': {'example_values': ['Dopey Age: 8mths '
+                                                            'old...',
+                                                            'Please note that '
+                                                            'Chi...',
+                                                            'Sticky, named '
+                                                            'such b...',
+                                                            'Dannie and Kass '
+                                                            'are ...',
+                                                            'Extremely cuddly '
+                                                            'cat...'],
+                                         'num_unique': 3723,
+                                         'type': 'categorical'},
+                         'Dewormed': {'num_unique': 3,
+                                      'type': 'categorical_numeric',
+                                      'value_range': (1, 3)},
+                         'Fee': {'num_unique': 41,
+                                 'type': 'continuous',
+                                 'value_range': (0, 1500)},
+                         'FurLength': {'num_unique': 3,
+                                       'type': 'categorical_numeric',
+                                       'value_range': (1, 3)},
+                         'Gender': {'num_unique': 3,
+                                    'type': 'categorical_numeric',
+                                    'value_range': (1, 3)},
+                         'Health': {'num_unique': 3,
+                                    'type': 'categorical_numeric',
+                                    'value_range': (1, 3)},
+                         'MaturitySize': {'num_unique': 4,
+                                          'type': 'categorical_numeric',
+                                          'value_range': (1, 4)},
+                         'Name': {'example_values': ['Dopey & Grey',
+                                                     'Chi Chi',
+                                                     'Sticky',
+                                                     'Dannie & Kass [In Pe...',
+                                                     'Cuddles'],
+                                  'num_unique': 2750,
+                                  'type': 'categorical'},
+                         'PhotoAmt': {'num_unique': 29,
+                                      'type': 'continuous',
+                                      'value_range': (0.0, 30.0)},
+                         'Quantity': {'num_unique': 16,
+                                      'type': 'continuous',
+                                      'value_range': (1, 20)},
+                         'RescuerID': {'example_values': ['2ece3b2573dcdcebd774...',
+                                                          'e59c106e9912fa30c898...',
+                                                          'df3f86a2d783512e0d86...',
+                                                          '6f73a23fdb52bc9a30dc...',
+                                                          'cd5cb3f83ab1387406a1...'],
+                                       'num_unique': 1518,
+                                       'type': 'categorical'},
+                         'State': {'num_unique': 15,
+                                   'type': 'continuous',
+                                   'value_range': (41324, 41415)},
+                         'Sterilized': {'num_unique': 3,
+                                        'type': 'categorical_numeric',
+                                        'value_range': (1, 3)},
+                         'Type': {'num_unique': 2,
+                                  'type': 'categorical_numeric',
+                                  'value_range': (1, 2)},
+                         'Vaccinated': {'num_unique': 3,
+                                        'type': 'categorical_numeric',
+                                        'value_range': (1, 3)},
+                         'VideoAmt': {'num_unique': 8,
+                                      'type': 'categorical_numeric',
+                                      'value_range': (0, 8)}},
+          'shape': (3972, 22),
+          'type': 'pandas.core.frame.DataFrame'},
+ 'train': {'execution_cell_source': {'cellno': 1, 'lineno': 8},
+           'has_nan': True,
+           'per_column': {'AdoptionSpeed': {'num_unique': 5,
+                                            'type': 'categorical_numeric',
+                                            'value_range': (0, 4)},
+                          'Age': {'num_unique': 106,
+                                  'type': 'continuous',
+                                  'value_range': (0, 255)},
+                          'Breed1': {'num_unique': 176,
+                                     'type': 'continuous',
+                                     'value_range': (0, 307)},
+                          'Breed2': {'num_unique': 135,
+                                     'type': 'continuous',
+                                     'value_range': (0, 307)},
+                          'Color1': {'num_unique': 7,
+                                     'type': 'categorical_numeric',
+                                     'value_range': (1, 7)},
+                          'Color2': {'num_unique': 7,
+                                     'type': 'categorical_numeric',
+                                     'value_range': (0, 7)},
+                          'Color3': {'num_unique': 6,
+                                     'type': 'categorical_numeric',
+                                     'value_range': (0, 7)},
+                          'Description': {'example_values': ['Nibble is a 3+ '
+                                                             'month...',
+                                                             'I just found it '
+                                                             'alon...',
+                                                             'Their pregnant '
+                                                             'mothe...',
+                                                             'Good guard dog, '
+                                                             'very...',
+                                                             'This handsome '
+                                                             'yet cu...'],
+                                          'num_unique': 14031,
+                                          'type': 'categorical'},
+                          'Dewormed': {'num_unique': 3,
+                                       'type': 'categorical_numeric',
+                                       'value_range': (1, 3)},
+                          'Fee': {'num_unique': 74,
+                                  'type': 'continuous',
+                                  'value_range': (0, 3000)},
+                          'FurLength': {'num_unique': 3,
+                                        'type': 'categorical_numeric',
+                                        'value_range': (1, 3)},
+                          'Gender': {'num_unique': 3,
+                                     'type': 'categorical_numeric',
+                                     'value_range': (1, 3)},
+                          'Health': {'num_unique': 3,
+                                     'type': 'categorical_numeric',
+                                     'value_range': (1, 3)},
+                          'MaturitySize': {'num_unique': 4,
+                                           'type': 'categorical_numeric',
+                                           'value_range': (1, 4)},
+                          'Name': {'example_values': ['Nibble',
+                                                      'No Name Yet',
+                                                      'Brisco',
+                                                      'Miko',
+                                                      'Hunter'],
+                                   'num_unique': 9059,
+                                   'type': 'categorical'},
+                          'PhotoAmt': {'num_unique': 31,
+                                       'type': 'continuous',
+                                       'value_range': (0.0, 30.0)},
+                          'Quantity': {'num_unique': 19,
+                                       'type': 'continuous',
+                                       'value_range': (1, 20)},
+                          'RescuerID': {'example_values': ['8480853f516546f6cf33...',
+                                                           '3082c7125d8fb66f7dd4...',
+                                                           'fa90fa5b1ee11c869383...',
+                                                           '9238e4f44c71a75282e6...',
+                                                           '95481e953f8aed9ec3d1...'],
+                                        'num_unique': 5595,
+                                        'type': 'categorical'},
+                          'State': {'num_unique': 14,
+                                    'type': 'continuous',
+                                    'value_range': (41324, 41415)},
+                          'Sterilized': {'num_unique': 3,
+                                         'type': 'categorical_numeric',
+                                         'value_range': (1, 3)},
+                          'Type': {'num_unique': 2,
+                                   'type': 'categorical_numeric',
+                                   'value_range': (1, 2)},
+                          'Vaccinated': {'num_unique': 3,
+                                         'type': 'categorical_numeric',
+                                         'value_range': (1, 3)},
+                          'VideoAmt': {'num_unique': 9,
+                                       'type': 'categorical_numeric',
+                                       'value_range': (0, 8)}},
+           'shape': (14993, 23),
+           'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+train = procData(train, name_count, RescuerID)
+test = procData(test, name_count, RescuerID)

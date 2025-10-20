@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "180:         epoch_acc = running_corrects.double() / len(train_loader.dataset)",
+    "message": "Cannot access attribute \"double\" for class \"Literal[0]\"\n\u00a0\u00a0Attribute \"double\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "205:         epoch_acc = running_corrects.double() / len(test_loader.dataset)",
+    "message": "Cannot access attribute \"double\" for class \"Literal[0]\"\n\u00a0\u00a0Attribute \"double\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

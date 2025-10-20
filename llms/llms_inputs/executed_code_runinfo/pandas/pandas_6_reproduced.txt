@@ -1,0 +1,86 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+## Cell 2:
+
+df= pd.read_csv(r'data/Retailsales.csv')
+df=df.drop(columns='Unnamed: 0')
+df.head()
+
+## Cell 3:
+
+df=df.dropna(how='all')
+df
+
+# Current relevent runtime information:
+{'df': {'execution_cell_source': {'cellno': 4, 'lineno': 1},
+        'has_nan': False,
+        'per_column': {'Order Date': {'dtype': 'object',
+                                      'example_values': ['09/07/19 20:47',
+                                                         '12/18/19 19:54',
+                                                         '01/26/19 18:24',
+                                                         '05/16/19 08:25',
+                                                         '12/01/19 16:34'],
+                                      'num_unique': 142396,
+                                      'type': 'categorical'},
+                       'Order ID': {'dtype': 'object',
+                                    'example_values': ['148850',
+                                                       '173699',
+                                                       '287327',
+                                                       '255157',
+                                                       '258734'],
+                                    'num_unique': 178438,
+                                    'type': 'categorical'},
+                       'Price Each': {'dtype': 'object',
+                                      'example_values': ['389.99',
+                                                         '150',
+                                                         '300',
+                                                         '14.95',
+                                                         '2.99'],
+                                      'num_unique': 24,
+                                      'type': 'categorical'},
+                       'Product': {'dtype': 'object',
+                                   'example_values': ['Apple Airpods Headph...',
+                                                      'ThinkPad Laptop',
+                                                      '34in Ultrawide Monit...',
+                                                      'Vareebadd Phone',
+                                                      'Google Phone'],
+                                   'num_unique': 20,
+                                   'type': 'categorical'},
+                       'Purchase Address': {'dtype': 'object',
+                                            'example_values': ['668 Church St, '
+                                                               'San F...',
+                                                               '583 7th St, '
+                                                               'New York...',
+                                                               '520 5th St, '
+                                                               'Los Ange...',
+                                                               '501 Main St, '
+                                                               'Los Ang...',
+                                                               '479 Madison '
+                                                               'St, Aust...'],
+                                            'num_unique': 140788,
+                                            'type': 'categorical'},
+                       'Quantity Ordered': {'dtype': 'object',
+                                            'example_values': ['1',
+                                                               '4',
+                                                               '8',
+                                                               '5',
+                                                               '3'],
+                                            'num_unique': 10,
+                                            'type': 'categorical'}},
+        'shape': (186305, 6),
+        'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+df=df['Order ID'].astype('int')

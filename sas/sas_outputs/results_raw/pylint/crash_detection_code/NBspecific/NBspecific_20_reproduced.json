@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "35: multiplicative_model",
+    "message": "Undefined variable 'multiplicative_model'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'best_estimator' was trained on a dataset (X) that included 'num_orders', but the 'dft_encoded' DataFrame, which is used for prediction, does not contain 'num_orders'. This will cause a mismatch in the number of features, leading to a ValueError during prediction.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'best_estimator' was trained on a dataset (X) that included 'num_orders', but the 'dft_encoded' DataFrame, which is used for prediction, does not contain 'num_orders'. This will cause a mismatch in the number of features, leading to a ValueError during prediction.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'best_estimator' was trained on a dataset (X) that included 'num_orders', but the 'dft_encoded' DataFrame, which is used for prediction, does not contain 'num_orders'. This will cause a mismatch in the number of features, leading to a ValueError during prediction.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'best_estimator' was trained on a dataset (X) that included 'num_orders', but the 'dft_encoded' DataFrame, which is used for prediction, does not contain 'num_orders'. This will cause a mismatch in the number of features, leading to a ValueError during prediction.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'best_estimator' was trained on a dataset (X) that included 'num_orders', but the 'dft_encoded' DataFrame, used for prediction, does not contain 'num_orders'. This will cause a mismatch in the number of features, leading to a ValueError during prediction.",
+    "detection": true
+  }
+]

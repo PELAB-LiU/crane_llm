@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "62: encoder = OneHotEncoder(sparse=False)",
+    "message": "Argument of type \"Literal[False]\" cannot be assigned to parameter \"sparse\" of type \"str\" in function \"__init__\"\n\u00a0\u00a0\"Literal[False]\" is not assignable to \"str\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

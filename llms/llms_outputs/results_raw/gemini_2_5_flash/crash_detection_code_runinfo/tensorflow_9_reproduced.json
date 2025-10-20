@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `tf.keras.utils.plot_model` function expects a Keras model, but `bert_model` is a PyTorch model from the `transformers` library. This type mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `tf.keras.utils.plot_model` function expects a Keras model, but `bert_model` is a PyTorch BertModel, which is incompatible and will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `tf.keras.utils.plot_model` function expects a Keras model, but `bert_model` is a PyTorch BertModel, which is incompatible and will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `tf.keras.utils.plot_model` function expects a Keras model, but `bert_model` is a PyTorch model from the `transformers` library. This type mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `tf.keras.utils.plot_model` function expects a Keras model, but `bert_model` is a PyTorch model from the `transformers` library. This type mismatch will cause a crash.",
+    "detection": true
+  }
+]

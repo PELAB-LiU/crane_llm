@@ -1,0 +1,89 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+import re
+
+## Cell 3:
+
+df = pd.read_csv("data/IMDB Dataset.csv")
+df.head()
+
+## Cell 4:
+
+
+
+
+df['review'] = df['review'].str.lower()
+
+## Cell 5:
+
+
+def remove_html_tags(text):
+    clean = re.compile('<.*?>')
+    return re.sub(clean, '', text)
+
+df['review'] = df['review'].apply(remove_html_tags)
+
+## Cell 6:
+
+
+def remove_urls(text):
+    clean = re.compile(r'http\S+|www.\S+')
+    return re.sub(clean, '', text)
+
+df['review'] = df['review'].apply(remove_urls)
+
+## Cell 7:
+
+import string
+exclude = string.punctuation
+
+
+def remove_punc(text):
+    return text.translate(str.maketrans('','',exclude))
+
+df['review'] = df['review'].apply(remove_punc)
+
+## Cell 8:
+
+from nltk.stem.porter import PorterStemmer
+ps = PorterStemmer()
+
+## Cell 9:
+
+
+def stem_words(text):
+    return " ".join([ps.stem(word) for word in text])
+
+
+
+## Cell 10:
+
+
+df = df.sample(frac=0.1, random_state=42).copy()
+
+df['lemma_review'] = df['review'].apply(stem_words)
+
+# Target Cell:
+
+tf_idf.toarray()

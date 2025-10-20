@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "adv has shape (3,224,224) and float32 range roughly [-2.12, 2.47]; matplotlib imshow accepts 2D or 3D (M,N,3) arrays with floats in [0,1] or [0,255]. Values outside range will be clipped, not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv has shape (3, 224, 224) which is channel-first, but plt.imshow expects (H, W, 3) for RGB; this will display incorrectly but not crash. Data range is float32 with negatives, which matplotlib handles by autoscaling.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv has shape (3,224,224) float32; matplotlib expects (H,W,3) for RGB. Providing (3,224,224) likely displays incorrectly but won’t crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is a float32 numpy array with shape (3, 224, 224) in CHW, but plt.imshow expects HxW or HxWx3; passing CHW likely displays incorrectly but does not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv has shape (3,224,224) and float32 values outside [0,1], but matplotlib can display float arrays; it interprets (M,N,3) or (M,N,4), not (3,H,W). The channel-first shape will cause incorrect display but not a crash.",
+    "detection": false
+  }
+]

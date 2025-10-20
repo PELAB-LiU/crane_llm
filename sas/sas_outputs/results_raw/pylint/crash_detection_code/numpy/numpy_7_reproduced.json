@@ -1,0 +1,51 @@
+[
+  {
+    "code_line": "386:     cv2.imshow('Gray image', image)",
+    "message": "Module 'cv2' has no 'imshow' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "387:     cv2.imwrite(image_name + '.png', image)",
+    "message": "Module 'cv2' has no 'imwrite' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "388:     cv2.waitKey(0)",
+    "message": "Module 'cv2' has no 'waitKey' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "389:     cv2.destroyAllWindows()",
+    "message": "Module 'cv2' has no 'destroyAllWindows' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "606:     scores = model.evaluate(test_images, test_labels, verbose=1)",
+    "message": "Possibly using variable 'test_images' before assignment",
+    "symbol": "possibly-used-before-assignment",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "606:     scores = model.evaluate(test_images, test_labels, verbose=1)",
+    "message": "Possibly using variable 'test_labels' before assignment",
+    "symbol": "possibly-used-before-assignment",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "621:     plot_sample(dataset['test_images'][image_idx], classes[dataset['test_labels'][image_idx]], classes[pred])",
+    "message": "Possibly using variable 'classes' before assignment",
+    "symbol": "possibly-used-before-assignment",
+    "type": "error",
+    "source": "pylint"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'DTRmodel' was initialized but not trained with data. The 'best_estimator' from the GridSearchCV was trained, but 'final_pred' attempts to use the untrained 'DTRmodel' for prediction, which will cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'DTRmodel' was initialized but not trained with data. The 'best_estimator' from the GridSearchCV was trained and should be used for predictions. Attempting to use the untrained 'DTRmodel' will result in an error because it expects to be fitted first.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'DTRmodel' was initialized but not trained with data. The 'best_estimator' from the GridSearchCV was trained and should be used for predictions. Attempting to use the untrained 'DTRmodel' will result in an error because it expects to be fitted first.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `DTRmodel` was initialized but not fitted with data. The `best_estimator` from `GridSearchCV` should be used for prediction, not the unfitted `DTRmodel`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'DTRmodel' was initialized but not trained with data. The 'best_estimator' from GridSearchCV should be used for prediction, not the untraind 'DTRmodel'.",
+    "detection": true
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "code_line": "201:     ax.set_xticks([]); ax.set_yticks([])",
+    "message": "Cannot access attribute \"set_xticks\" for class \"ndarray[Any, dtype[Any]]\"\n\u00a0\u00a0Attribute \"set_xticks\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "201:     ax.set_xticks([]); ax.set_yticks([])",
+    "message": "Cannot access attribute \"set_yticks\" for class \"ndarray[Any, dtype[Any]]\"\n\u00a0\u00a0Attribute \"set_yticks\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "202:     ax.imshow(make_grid(images.detach(), nrow=22).permute(1, 2, 0))",
+    "message": "Cannot access attribute \"imshow\" for class \"ndarray[Any, dtype[Any]]\"\n\u00a0\u00a0Attribute \"imshow\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

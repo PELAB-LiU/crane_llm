@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "259:             cy_onehot = F.one_hot(cy, num_classes=2).float()",
+    "message": "F.one_hot is not callable",
+    "symbol": "not-callable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

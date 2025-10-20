@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT-2, but attention_mask uses input_ids.ne(tokenizer.pad_token_id), causing a TypeError. Also GPT2Tokenizer differs from previously used fast tokenizer, but main crash is None comparison.",
+    "detection": true
+  },
+  {
+    "reasoning": "GPT2Tokenizer has no pad_token_id (None), so attention_mask=input_ids.ne(tokenizer.pad_token_id) will error due to None; also model/tokenizer types differ from earlier AutoTokenizer. This will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT-2, but code uses it in attention_mask (input_ids.ne(None)), which will error; also mixing GPT2Tokenizer with previously used fast tokenizer is fine. This will raise due to None comparison tensor.",
+    "detection": true
+  },
+  {
+    "reasoning": "GPT2Tokenizer has no pad_token_id (None), so attention_mask=input_ids.ne(tokenizer.pad_token_id) compares to None causing a TypeError; also attention_mask length must match inputs. This will likely crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT-2; attention_mask=input_ids.ne(None) will error due to invalid comparison type. Thus model.generate call will crash.",
+    "detection": true
+  }
+]

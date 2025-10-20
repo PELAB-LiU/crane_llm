@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'MSRP' column may contain non-numeric values, which would cause pd.to_numeric to raise an error if it cannot convert all values to numeric types.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column may contain non-numeric values, which would cause pd.to_numeric to raise an error if it cannot convert all values to numeric.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column may contain non-numeric values, which would cause pd.to_numeric to raise an error if it cannot coerce the values to numeric types.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column may contain non-numeric values, which would cause pd.to_numeric to raise an error if it cannot convert all values to numeric types.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column may contain non-numeric values, which would cause pd.to_numeric to raise an error if it cannot convert all values to numeric types.",
+    "detection": false
+  }
+]

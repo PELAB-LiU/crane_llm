@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model_quantization` function returns `None`, but it is assigned to `quantized_vit`. The `inference` function is called with the original model, not the quantized one, but this does not cause a crash. The code should run without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None`, but it is assigned to `quantized_vit`. The `inference` function is called with the original model, not the quantized one, but this does not cause a crash. The code should run without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None`, but it is assigned to `quantized_vit`. This will cause a crash when trying to use `quantized_vit` later.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None`, but it is assigned to `quantized_vit`. This will cause a crash when trying to use `quantized_vit` later.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None`, but it is assigned to `quantized_vit`. The `inference` function is called with the original model, not the quantized one, but this does not cause a crash. The code should run without crashing.",
+    "detection": false
+  }
+]

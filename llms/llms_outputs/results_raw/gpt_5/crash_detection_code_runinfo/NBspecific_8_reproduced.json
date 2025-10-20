@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Column 'Amount' was already dropped and replaced with 'scaled_Amount'; accessing df['Amount'] will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Amount' was dropped and replaced by 'scaled_Amount' in prior cells; attempting to access df['Amount'] will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Amount' was already dropped and replaced by 'scaled_Amount'; accessing df['Amount'] will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Amount' was dropped in Cell 3, so accessing df['Amount'] will raise a KeyError. The cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Amount' was already dropped and replaced with 'scaled_Amount'; attempting to access df['Amount'] will raise a KeyError.",
+    "detection": true
+  }
+]

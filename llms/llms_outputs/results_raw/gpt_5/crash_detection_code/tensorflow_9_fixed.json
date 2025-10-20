@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell imports torchinfo and calls summary on an existing bert_model. If torchinfo is not installed in the environment, the import will fail; otherwise it should work. Installation status is unknown.",
+    "detection": false
+  },
+  {
+    "reasoning": "bert_model is defined, but torchinfo may not be installed; importing summary from torchinfo can raise ModuleNotFoundError. If torchinfo is present, summary(bert_model) should work.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell imports torchinfo and calls summary on an existing bert_model. If torchinfo is not installed, the import will fail; otherwise, summary(bert_model) is valid. Installation state is unknown.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell imports torchinfo and calls summary on an existing bert_model. If torchinfo is not installed in the environment, the import will fail; otherwise it should run. This uncertainty means we cannot be certain it will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "torchinfo.summary requires model input size or example input unless the module defines forward with default sizes; calling summary(bert_model) without input_size or input_data will raise an error.",
+    "detection": true
+  }
+]

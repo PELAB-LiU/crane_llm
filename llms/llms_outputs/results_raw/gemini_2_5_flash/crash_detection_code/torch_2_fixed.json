@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model_quantization` function modifies the model in-place and returns `None` if `save` is `True`. The `inference` function then expects a quantized model, but it will receive `None` for `quantized_vit`, leading to a crash when `model.to(device)` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function modifies the model in-place and returns `None` if `save` is `True`. The `inference` function then expects a quantized model, but it will receive `None` for `quantized_vit`, leading to a crash when `model.to(device)` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function modifies the model in-place and returns `None` if `save` is `True`. The `inference` function then attempts to use this `None` value as a model, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function modifies the model in-place and returns `None` if `save` is `True`. The `inference` function then expects a quantized model, but it will receive `None` for `quantized_vit`, leading to a crash when `model.to(device)` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function modifies the model in-place and returns `None` if `save` is `True`. The `inference` function then expects a quantized model, but it will receive `None` for `quantized_vit`, leading to a crash when `model.to(device)` is called.",
+    "detection": true
+  }
+]

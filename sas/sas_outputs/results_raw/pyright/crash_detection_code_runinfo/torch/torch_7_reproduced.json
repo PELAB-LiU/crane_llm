@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "214: display(dog_image)",
+    "message": "\"display\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

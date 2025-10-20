@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model moves to CUDA if available, but some tensors (embeddings from numpy) default to CPU; forward pass isn't executed now, so no device mismatch occurs during initialization. All referenced variables and classes are defined.",
+    "detection": false
+  },
+  {
+    "reasoning": "All referenced classes and variables (vocab, device, WordLSTMEncoder, Attention, SentEncoder, nn, np) are defined; shapes and methods used are consistent during model init (no forward pass executed).",
+    "detection": false
+  },
+  {
+    "reasoning": "All referenced classes and variables (vocab, device, sizes) are defined; shapes and operations match expected dimensions. No undefined names or obvious type/shape mismatches appear in the constructor or forward definition call.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model depends on previously defined classes and globals, and vocab is available. No undefined variables or type mismatches are evident; shapes align and device is set. Execution should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model relies on vocab.label_size() for output layer size; Vocab builds labels from train_df loaded earlier, and all referenced classes and variables are defined. No obvious shape/type mismatches in forward or init at instantiation time.",
+    "detection": false
+  }
+]

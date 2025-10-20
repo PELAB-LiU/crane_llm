@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "46:         loss.backward()",
+    "message": "Cannot access attribute \"backward\" for class \"int\"\n\u00a0\u00a0Attribute \"backward\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "50:             print('[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, loss.item()))",
+    "message": "Cannot access attribute \"item\" for class \"int\"\n\u00a0\u00a0Attribute \"item\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

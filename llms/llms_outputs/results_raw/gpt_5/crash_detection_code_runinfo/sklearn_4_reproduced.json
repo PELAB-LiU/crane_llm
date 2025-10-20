@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "balanced_accuracy_score expects binary class labels, but preds are continuous floats from a regressor; passing continuous predictions will likely raise a ValueError about binary labels or invalid inputs.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects discrete class labels; preds are continuous floats from a regressor, which will not crash but yield a metric computed on many unique values. No type or shape mismatch, so execution succeeds.",
+    "detection": false
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects binary class labels; preds is continuous floats from a regressor, causing a ValueError due to non-binary predictions.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects discrete class labels; preds is a float array from a regressor, causing a ValueError due to continuous targets. Execution will likely crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects discrete class labels; preds are continuous floats from AdaBoostRegressor, causing a ValueError due to inconsistent input types. Thus the call will likely fail.",
+    "detection": true
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "117:     sns.barplot(col,df)",
+    "message": "Expected 1 positional argument",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

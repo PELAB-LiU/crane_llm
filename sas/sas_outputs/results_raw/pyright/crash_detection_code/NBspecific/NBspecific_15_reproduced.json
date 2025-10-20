@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "48: random_img = np.random.randint(0 , len(src_images))",
+    "message": "\"src_images\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "50: src_img = np.reshape(src_images[random_img] , (256 , 256 ,3))",
+    "message": "\"src_images\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

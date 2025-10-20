@@ -1,0 +1,44 @@
+[
+  {
+    "code_line": "15: x = df.workclass.values.reshape(-1,1)",
+    "message": "Cannot access attribute \"reshape\" for class \"ExtensionArray\"\n\u00a0\u00a0Attribute \"reshape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "16: y = df.Salary.values.reshape(-1,1)",
+    "message": "Cannot access attribute \"reshape\" for class \"ExtensionArray\"\n\u00a0\u00a0Attribute \"reshape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "31: x = x_encoded.reshape(-1,1)",
+    "message": "Cannot access attribute \"reshape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"reshape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "31: x = x_encoded.reshape(-1,1)",
+    "message": "\"reshape\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "33: y = y_encoded.reshape(-1,1)",
+    "message": "Cannot access attribute \"reshape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"reshape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "33: y = y_encoded.reshape(-1,1)",
+    "message": "\"reshape\" is not a known attribute of \"None\"",
+    "rule": "reportOptionalMemberAccess",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "code_line": "167: print(train_data.shape)",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "168: print(test_data.shape)",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "172: print(train_labels.shape)",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "185: train_data = train_data.astype('float32') / 255",
+    "message": "Cannot access attribute \"astype\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"astype\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "186: test_data = test_data.astype('float32') / 255",
+    "message": "Cannot access attribute \"astype\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"astype\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

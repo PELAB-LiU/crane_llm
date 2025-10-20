@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `find_out_params_model` function is designed to work with `LGBMClassifier`, which expects integer labels. However, the `y` target variable, after concatenation with `df_TSNE` in Cell 17, contains `NaN` values and potentially non-integer values, which will cause a crash when `LGBMClassifier` tries to fit the data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `find_out_params_model` function is designed to work with `LGBMClassifier`, which expects integer labels. However, the `y` target variable, after concatenation with `df_TSNE` in Cell 17, contains `NaN` values and potentially non-integer values, which will cause a crash when `LGBMClassifier` tries to fit the data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `find_out_params_model` function is designed to work with `LGBMClassifier`, which expects integer labels. However, the `y` target variable, after concatenation with `df_TSNE` in Cell 17, contains `NaN` values and potentially non-integer values, which will cause a crash when `LGBMClassifier` tries to fit the data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `find_out_params_model` function is designed to work with `LGBMClassifier`, which expects integer labels. However, the `y` target variable, after concatenation with `df_TSNE` in Cell 17, contains `NaN` values and potentially non-integer values, which will cause a crash when `LGBMClassifier` tries to fit the data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'y' Series contains NaN values, which will cause an error when trying to use it with StratifiedKFold in the 'find_out_params_model' function, even after attempting to mask NaNs, because the 'mask' operation is applied to 'y' and 'X' but the 'find_out_params_model' function is called with the potentially still problematic 'y' and 'X' from the global scope.",
+    "detection": true
+  }
+]

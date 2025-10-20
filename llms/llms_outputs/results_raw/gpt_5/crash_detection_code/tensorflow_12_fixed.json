@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model expects input shape (100,100,3) and labels as integers; train/val splits created accordingly. No obvious shape/type mismatch; training should run.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model was compiled with SparseCategoricalCrossentropy(from_logits=True) but the final layer is softmax; however, Keras will still run though metrics may be inconsistent. Shapes of inputs match the model input (100x100x3) and labels are integer arrays. No certain crash is evident.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model expects labels compatible with SparseCategoricalCrossentropy(from_logits=True) but the final layer uses softmax, causing a logits/activation mismatch error during training.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model uses softmax activation but loss is SparseCategoricalCrossentropy(from_logits=True), causing a shape/value error. Also labels may exceed 20 classes for Dense(20).",
+    "detection": true
+  },
+  {
+    "reasoning": "Shapes are consistent and data arrays exist; model is compiled. Although loss uses from_logits=True with a softmax output (a mismatch), Keras will still run without crashing.",
+    "detection": false
+  }
+]

@@ -1,0 +1,189 @@
+# Executed Cells:
+## Cell 1:
+
+import os
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+
+pd.set_option('display.max_columns',200)
+%matplotlib inline
+
+## Cell 2:
+
+
+path="data/For_modeling.csv.zip"
+
+## Cell 3:
+
+data = pd.read_csv(path,
+                  dtype={
+                      'Duration': 'int8',
+                      'Distance': 'int8',
+                      'PLong': 'float32',
+                      'PLatd': 'float32',
+                      'DLong': 'float32',
+                      'Haversine':'float32',
+                      'Pmonth':'int8',
+                      'Pday':'int8',
+                      'Phour':'int8',
+                      'Pmin':'int8',
+                      'PDweek':'int8',
+                      'Dmonth':'int8',
+                      'Dday':'int8',
+                      'Dhour':'int8',
+                      'Dmin':'int8',
+                      'DDweek':'int8',
+                      'Temp':'float32',
+                      'Precip':'float32',
+                      'Wind':'float32',
+                      'Solar':'float32',
+                      'Snow':'float32',
+                      'GroundTemp':'float32',
+                      'Dust':'float32'
+                  },index_col=0
+
+                  ).sample(frac=1)
+
+
+data.head(25)
+
+## Cell 4:
+
+
+data = data.reset_index().drop(columns=['index'])
+data.head(25)
+
+## Cell 5:
+
+
+data= data[data['Haversine']!=0].reset_index().drop(columns=['index'])
+
+
+## Cell 6:
+
+
+
+data["Distance"]=data['Distance'].apply(lambda x:abs(x))
+data[data['Distance']<0].shape
+
+## Cell 7:
+
+
+data = data[data['Distance']!=0].reset_index().drop(columns=['index'])
+data[data['Distance']==0].shape
+
+# Current relevent runtime information:
+{'__method__pd_Categorical': {'type': "<class 'abc.ABCMeta'>"},
+ '__method__plt_plot': {'type': "<class 'function'>"},
+ '__method__plt_show': {'type': "<class 'function'>"},
+ '__method__plt_title': {'type': "<class 'function'>"},
+ '__method__plt_xlabel': {'type': "<class 'function'>"},
+ '__method__plt_xticks': {'type': "<class 'function'>"},
+ '__method__plt_ylabel': {'type': "<class 'function'>"},
+ 'data': {'execution_cell_source': {'cellno': 16, 'lineno': 2},
+          'has_nan': False,
+          'per_column': {'DDweek': {'num_unique': 7,
+                                    'type': 'categorical_numeric',
+                                    'value_range': (0, 6)},
+                         'DLatd': {'num_unique': 1508,
+                                   'type': 'continuous',
+                                   'value_range': (126.798599, 127.180267)},
+                         'DLong': {'num_unique': 1501,
+                                   'type': 'continuous',
+                                   'value_range': (37.43727, 37.68972)},
+                         'Dday': {'num_unique': 31,
+                                  'type': 'continuous',
+                                  'value_range': (1, 31)},
+                         'Dhour': {'num_unique': 24,
+                                   'type': 'continuous',
+                                   'value_range': (0, 23)},
+                         'Distance': {'num_unique': 93,
+                                      'type': 'continuous',
+                                      'value_range': (1, 128)},
+                         'Dmin': {'num_unique': 60,
+                                  'type': 'continuous',
+                                  'value_range': (0, 59)},
+                         'Dmonth': {'num_unique': 12,
+                                    'type': 'continuous',
+                                    'value_range': (1, 12)},
+                         'Duration': {'num_unique': 119,
+                                      'type': 'continuous',
+                                      'value_range': (1, 119)},
+                         'Dust': {'num_unique': 163,
+                                  'type': 'continuous',
+                                  'value_range': (0.0, 304.0)},
+                         'GroundTemp': {'num_unique': 700,
+                                        'type': 'continuous',
+                                        'value_range': (-13.6, 62.2)},
+                         'Haversine': {'num_unique': 237060,
+                                       'type': 'continuous',
+                                       'value_range': (0.02088959, 28.63448)},
+                         'Humid': {'num_unique': 89,
+                                   'type': 'continuous',
+                                   'value_range': (10.0, 98.0)},
+                         'PDweek': {'num_unique': 7,
+                                    'type': 'categorical_numeric',
+                                    'value_range': (0, 6)},
+                         'PLatd': {'num_unique': 1504,
+                                   'type': 'continuous',
+                                   'value_range': (126.7986, 127.18027)},
+                         'PLong': {'num_unique': 1497,
+                                   'type': 'continuous',
+                                   'value_range': (37.43727, 37.68972)},
+                         'Pday': {'num_unique': 31,
+                                  'type': 'continuous',
+                                  'value_range': (1, 31)},
+                         'Phour': {'num_unique': 24,
+                                   'type': 'continuous',
+                                   'value_range': (0, 23)},
+                         'Pmin': {'num_unique': 60,
+                                  'type': 'continuous',
+                                  'value_range': (0, 59)},
+                         'Pmonth': {'num_unique': 12,
+                                    'type': 'continuous',
+                                    'value_range': (1, 12)},
+                         'Precip': {'num_unique': 60,
+                                    'type': 'continuous',
+                                    'value_range': (0.0, 35.0)},
+                         'Snow': {'num_unique': 42,
+                                  'type': 'continuous',
+                                  'value_range': (0.0, 8.8)},
+                         'Solar': {'num_unique': 345,
+                                   'type': 'continuous',
+                                   'value_range': (0.0, 3.52)},
+                         'Temp': {'num_unique': 547,
+                                  'type': 'continuous',
+                                  'value_range': (-17.8, 39.4)},
+                         'Wind': {'num_unique': 65,
+                                  'type': 'continuous',
+                                  'value_range': (0.0, 7.4)}},
+          'shape': (8583860, 25),
+          'type': 'pandas.core.frame.DataFrame'},
+ 'pd': {'type': "<class 'module'>"},
+ 'plt': {'type': "<class 'module'>"}}
+# Target Cell:
+
+
+
+data1= pd.Categorical(data['PDweek'], categories=range(7), ordered=True)
+data1.cat.rename_categories(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], inplace=True)
+
+
+average_duration = data1.groupby('DayOfWeek')['Duration'].mean()
+
+
+plt.plot(average_duration.index, average_duration.values)
+plt.xlabel('Day of Week')
+plt.ylabel('Average Duration')
+plt.title('Average Trip Duration by Day of Week')
+plt.xticks(rotation=45)
+plt.show()

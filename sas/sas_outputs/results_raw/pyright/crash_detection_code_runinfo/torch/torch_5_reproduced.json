@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "264: if __name__ == \"__main__\":",
+    "message": "\"__name__\" is unbound",
+    "rule": "reportUnboundVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

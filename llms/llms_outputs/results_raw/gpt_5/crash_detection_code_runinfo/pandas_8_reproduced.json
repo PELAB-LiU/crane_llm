@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "MSRP column contains currency strings like '$36,945 ' with commas and trailing spaces; pd.to_numeric on such strings without cleaning or errors='coerce' will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "MSRP column contains values like '$36,945 ' with dollar signs, commas, and trailing spaces; pd.to_numeric without errors='coerce' or regex cleaning will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "MSRP contains strings with dollar signs and commas (e.g., '$36,945 '), so pd.to_numeric on these raw strings will raise a ValueError unless cleaned or errors='coerce' is used.",
+    "detection": true
+  },
+  {
+    "reasoning": "MSRP column contains strings with dollar signs and commas (e.g., '$36,945 '), so pd.to_numeric on these raw strings will raise a ValueError unless cleaned or errors='coerce' is used.",
+    "detection": true
+  },
+  {
+    "reasoning": "MSRP column contains currency strings like '$36,945 ' with commas and trailing spaces, which pd.to_numeric cannot parse without cleaning, causing a ValueError.",
+    "detection": true
+  }
+]

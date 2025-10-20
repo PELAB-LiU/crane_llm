@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell imports necessary functions and plots ACF and PACF of the residuals. Given that `residuals` is a valid pandas Series and the plotting functions are correctly used, there is no indication that this cell will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell imports necessary functions and plots ACF and PACF of the residuals. Given that `residuals` is a valid pandas Series and the plotting functions are correctly used, there is no indication that this cell will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell imports necessary functions and plots ACF and PACF of the residuals. Given that `residuals` is a valid pandas Series and the plotting functions are correctly used, there is no indication that this cell will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell imports necessary functions and plots ACF and PACF of the residuals. Given that `residuals` is a valid pandas Series and the plotting functions are correctly used, there is no indication that this cell will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell imports necessary functions and plots ACF and PACF of the residuals. Given that `residuals` is a valid pandas Series and the plotting functions are correctly used, there is no indication that this cell will crash.",
+    "detection": false
+  }
+]

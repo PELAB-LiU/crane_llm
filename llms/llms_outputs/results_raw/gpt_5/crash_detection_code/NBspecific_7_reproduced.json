@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Grouping by 'region' is valid, but the column '%percent emission' may not exist based on prior cells; no evidence it was created. Sorting by a non-existent column would raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The code assumes a column named '%percent emission' exists; there is no prior evidence it does, so sorting by it will likely raise a KeyError. Grouping by 'region' and 'Asia Pacific' may also fail if that group doesn't exist.",
+    "detection": true
+  },
+  {
+    "reasoning": "If the 'region' category does not contain 'Asia Pacific' or the column '%percent emission' does not exist, this will raise a KeyError. Without certainty of these, cannot guarantee a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "If the 'region' category includes 'Asia Pacific' and the column '%percent emission' exists, it will work; otherwise it raises KeyError (missing group or column). This cannot be determined with certainty from prior cells.",
+    "detection": false
+  },
+  {
+    "reasoning": "Grouping by 'region' and selecting 'Asia Pacific' is fine if that group exists, but sorting by '%percent emission' may fail if that column doesn't exist; not enough info to be certain of a crash.",
+    "detection": false
+  }
+]

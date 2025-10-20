@@ -1,0 +1,8 @@
+# Executed Cells:
+No cell has been executed
+# Annotated Target Code:
+
+
+X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
+predictions = model(X_test_tensor)
+_, predicted_labels = torch.max(predictions, 1)

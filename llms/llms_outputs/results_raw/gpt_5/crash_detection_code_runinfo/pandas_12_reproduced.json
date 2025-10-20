@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "agg uses integer keys 1,2,3,4 which are not column names; this will raise a KeyError when grouping df by 'kmeans_cluster'.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg is using integer keys 1,2,3,4 which are not column names; DataFrame columns are strings like 'Calories', etc. This will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg is given integer keys 1,2,3,4 which are not column names; DataFrame columns are strings like 'Calories', so KeyError will occur.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg is given integer keys (1,2,3,4) which are not column names in df; groupby with a dict requires valid column labels, so a KeyError will occur.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg is given integer keys (1,2,3,4) that are not column names; DataFrame columns are strings like 'Calories', so KeyError will occur.",
+    "detection": true
+  }
+]

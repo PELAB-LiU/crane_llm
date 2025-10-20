@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `imshow` function is called without `plt` being imported, which will cause a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `imshow` function is called without `plt` being imported, which will cause a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `imshow` function is called without `plt` being defined, which will cause a NameError. The `plt` module is imported in the target cell, but it is not used to define `plt` before `imshow` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `imshow` function is called without `plt` being imported, which will cause a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `imshow` function is called without `plt` being imported, which will cause a NameError.",
+    "detection": true
+  }
+]

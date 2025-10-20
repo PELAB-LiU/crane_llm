@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model.predict_classes does not exist in current Keras/TensorFlow versions; calling it will raise an AttributeError. Also labels from y (shape (None,1) floats) with argmax axis=-1 yields zeros, but main crash is missing method.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes is removed in modern Keras, and y in test_ds is binary with shape (batch,1), so np.argmax over axis -1 is unnecessary and may mis-handle shapes. The deprecated method call will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes does not exist in current Keras/TensorFlow; additionally labels from test_ds are shape (batch,1) floats, not one-hot, so np.argmax over axis -1 is incorrect. This will raise an AttributeError before that.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes is removed in recent Keras/TensorFlow and will raise an AttributeError. Also labels from y (shape [batch,1] floats) with argmax over last axis will yield zeros but dtype mismatch aside; the primary issue is predict_classes.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes is removed in recent Keras and will raise an AttributeError. Also labels from test_ds are shape (batch,1) binary; using argmax on last axis will return all zeros, mismatching types.",
+    "detection": true
+  }
+]

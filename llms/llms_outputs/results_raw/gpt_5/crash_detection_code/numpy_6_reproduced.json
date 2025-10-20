@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "X_data is a NumPy array; assigning X_data['id'] will raise a TypeError because NumPy arrays do not support string field indexing. Also, skipped indices due to missing files could leave uninitialized rows, but primary crash is from invalid key assignment.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_data is a NumPy array; assigning X_data['id'] will raise a TypeError because NumPy arrays don't support column assignment by string keys. Also, indices skipped by FileNotFoundError leave uninitialized rows.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_data is a NumPy array; assigning X_data['id'] will raise a TypeError because NumPy arrays do not support string-key indexing. Everything else appears valid.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_data is a NumPy array; assigning X_data['id'] will raise an IndexError since field indexing requires a structured array. Also, skipped images leave zero rows but not a crash. The ['id'] assignment is certain to fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_data is a NumPy array; assigning X_data['id'] will raise a TypeError since NumPy arrays do not support column-style string indexing. Everything else is likely fine.",
+    "detection": true
+  }
+]

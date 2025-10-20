@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Order ID' column may contain non-integer values, which would cause an error when attempting to cast to integer type.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Order ID' column may contain non-integer values, which would cause an error when attempting to cast to integer type.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Order ID' column may contain non-integer values, which would cause an error when attempting to cast to integer type.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Order ID' column may contain non-integer values, which would cause an error when attempting to cast to integer type.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Order ID' column may contain non-integer values, which would cause an error when attempting to cast to integer type.",
+    "detection": false
+  }
+]

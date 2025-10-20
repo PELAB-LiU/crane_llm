@@ -1,0 +1,23 @@
+[
+  {
+    "code_line": "24:     multiplicative_model = seasonal_decompose(data[column_name], model='multiplicative', extrapolate_trend = 'freq')",
+    "message": "Argument of type \"Literal['freq']\" cannot be assigned to parameter \"extrapolate_trend\" of type \"int\" in function \"seasonal_decompose\"\n\u00a0\u00a0\"Literal['freq']\" is not assignable to \"int\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "26:     additive_model = seasonal_decompose(data[column_name], model = 'additive', extrapolate_trend='freq')",
+    "message": "Argument of type \"Literal['freq']\" cannot be assigned to parameter \"extrapolate_trend\" of type \"int\" in function \"seasonal_decompose\"\n\u00a0\u00a0\"Literal['freq']\" is not assignable to \"int\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "36: multiplicative_model",
+    "message": "\"multiplicative_model\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Installs' column likely contains non-numeric characters (e.g., commas, plus signs) that prevent direct conversion to an integer type, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column likely contains non-numeric characters (e.g., commas, plus signs) that prevent direct conversion to an integer type, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column likely contains non-numeric characters (e.g., commas, plus signs) that prevent direct conversion to an integer type, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column likely contains non-numeric characters (e.g., commas, plus signs) that prevent direct conversion to an integer type, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column likely contains non-numeric characters (e.g., commas, plus signs) that prevent direct conversion to an integer type, which will cause a ValueError.",
+    "detection": true
+  }
+]

@@ -1,0 +1,124 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+from datetime import datetime
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+df = pd.read_csv(r'data/excelC_NEW12.csv')
+df=df.sort_values('all',ascending=False)
+df
+
+## Cell 3:
+
+df['weekday'] = df['Date'].apply(lambda x: datetime.strftime(datetime.strptime(x,"%Y/%m/%d"), '%w'))
+df
+
+## Cell 4:
+
+for i,j in df[['holiday','weekday']].iterrows():
+    if (j['weekday']=='0' or j['weekday']=='6' ):
+        df.loc[i,'holiday']=1
+df
+
+## Cell 5:
+
+
+X = np.array(df.filter(['n','v','adj','adv','freq_s','repeat_letter_s']).astype(float).dropna())
+y = np.array(df.filter(['hard_p']).dropna()).reshape(-1)
+
+
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,shuffle=False)
+
+## Cell 6:
+
+from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+model.fit(X_train, y_train)
+yFit = model.predict(X_train)
+
+## Cell 7:
+
+from sklearn.metrics import mean_squared_error, mean_absolute_error, median_absolute_error
+from scipy import stats
+import matplotlib.pyplot as plt
+
+print('回归截距: b={}'.format(model.intercept_))
+print('回归系数: w={}'.format(model.coef_))
+
+print('R2 确定系数：{:.4f}'.format(model.score(X_train, y_train)))
+print('均方误差：{:.4f}'.format(mean_squared_error(y_train, yFit)))
+print('平均绝对值误差：{:.4f}'.format(mean_absolute_error(y_train, yFit)))
+print('中位绝对值误差：{:.4f}'.format(median_absolute_error(y_train, yFit)))
+
+# Current relevent runtime information:
+{'X_test': {'dtype': 'float64',
+            'has_nan': False,
+            'shape': (68, 6),
+            'type': 'numpy.ndarray',
+            'value_range': (0.0, 1.0)},
+ '__method__X_test_shape': {'length': 2, 'type': "<class 'tuple'>"},
+ '__method__np_mean': {'type': "<class 'numpy._ArrayFunctionDispatcher'>"},
+ '__method__plt_show': {'type': "<class 'function'>"},
+ '__method__plt_subplots': {'type': "<class 'function'>"},
+ '__method__plt_xlabel': {'type': "<class 'function'>"},
+ '__method__plt_ylabel': {'type': "<class 'function'>"},
+ '__method__stats_f': {'type': '<class '
+                               "'scipy.stats._continuous_distns.f_gen'>"},
+ 'np': {'type': "<class 'module'>"},
+ 'plt': {'type': "<class 'module'>"},
+ 'stats': {'type': "<class 'module'>"},
+ 'yFit': {'dtype': 'float64',
+          'execution_cell_source': {'cellno': 7, 'lineno': 4},
+          'has_nan': False,
+          'shape': (272,),
+          'type': 'numpy.ndarray',
+          'value_info': {'value_range': (0.07207594816169886,
+                                         0.08864699926530896),
+                         'value_type': 'continuous'},
+          'value_range': (0.07207594816169886, 0.08864699926530896)},
+ 'y_test': {'dtype': 'float64',
+            'has_nan': False,
+            'shape': (68,),
+            'type': 'numpy.ndarray',
+            'value_info': {'value_range': (0.016891976, 0.075280765),
+                           'value_type': 'continuous'},
+            'value_range': (0.016891976, 0.075280765)}}
+# Target Cell:
+
+
+m = X_test.shape[1]
+n = X_test.shape[0]
+yMean = np.mean(y_test)
+SST = sum((y_test-yMean)**2)
+SSR = sum((yFit-yMean)**2)
+SSE = sum((y_test-yFit)**2)
+Fstats = (SSR/m) / (SSE/(n-m-1))
+probFstats = stats.f.sf(Fstats, m, n-m-1)
+print('F统计量：{:.4f}'.format(Fstats))
+print('FF检验的P值：{:.4e}'.format(probFstats))
+
+fig, ax = plt.subplots(figsize=(8, 6))
+ax.plot(range(len(y_test)), y_test, 'b-.', label='Sample')
+ax.plot(range(len(y_test)), yFit, 'r-', label='Fitting')
+ax.legend(loc='best')
+plt.xlabel('period')
+plt.ylabel('percent')
+plt.show()

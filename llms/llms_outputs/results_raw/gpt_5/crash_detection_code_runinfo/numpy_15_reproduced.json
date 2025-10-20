@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model_predict updates w using dw.T, but dw shape from model_optimize (Cell 14) is (n_features,1); weightInitialization returns w shape (1,n_features). The mismatch will cause a broadcasting error when subtracting, so the cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "model_predict updates w using dw.T, but model_optimize (the second definition) returns dw shaped (4,1) matching w (1,n_features expected by rest of code uses first definition). There is a mismatch: weightInitialization returns w shape (1, n_features), but model_predict expects w shape (n_features,1), leading to shape error in np.dot and updates.",
+    "detection": true
+  },
+  {
+    "reasoning": "weightInitialization returns w with shape (1, n_features) but model_predict (overwritten version) expects w with shape (n_features, 1), causing shape misalignment in np.dot(X, w).",
+    "detection": true
+  },
+  {
+    "reasoning": "model_predict updates w using dw.T, causing w shape (1, n_features) to mismatch the expected (n_features, 1) in subsequent np.dot(w, X_tr_arr.T), leading to a ValueError due to incompatible shapes.",
+    "detection": true
+  },
+  {
+    "reasoning": "model_predict updates w using dw.T; with weightInitialization w shape (1,4) and model_optimize (first version) expects w (1,4) and X (75,4) using np.dot(w, X.T), Y shape (75,1). All shapes align; subsequent predictions also align. No obvious exceptions.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Keras Conv2D layers expect channels_last input (32,32,3) by default; the code initially sets that shape, but then moves axes to channels_first before training, causing a shape mismatch. This will likely crash during model.fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras Conv2D expects channels_last by default, but the code moves axes to channels_first only inside the else block; if model.h5 exists, images remain channels_last while model may expect channels_first, causing shape mismatch during fit/evaluate. Also, to_categorical is given (N,1) labels from CIFAR without squeezing, leading to shape (N,1,10) instead of (N,10).",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras Conv2D in TensorFlow expects channel-last (32,32,3) by default, but the code moves axes to channel-first (N,3,32,32) right before training, causing shape mismatch during fit/evaluate/predict.",
+    "detection": true
+  },
+  {
+    "reasoning": "The code sets model input_shape to (32,32,3) but later moves axis to channels-first (N,3,32,32) only in the else branch; however model.fit uses these transformed arrays, so shapes match. Labels are converted with to_categorical, and other variables are defined. No obvious NameError or shape mismatch is certain.",
+    "detection": false
+  },
+  {
+    "reasoning": "The code converts CIFAR-10 labels with to_categorical directly from shape (N,1) arrays, which Keras expects as shape (N,) for sparse labels or (N,10) for one-hot; however to_categorical works, so labels become (N,10). But later, in the else-branch, it moves image axes to channels-first while the model input_shape is channels-last (32,32,3), causing a shape mismatch when fitting.",
+    "detection": true
+  }
+]

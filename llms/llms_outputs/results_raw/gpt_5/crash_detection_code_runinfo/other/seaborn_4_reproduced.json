@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "There are 17 columns but only 14 subplots (2x7), so index will exceed ax size causing IndexError. df.items() exists and plotting calls are valid otherwise.",
+    "detection": true
+  },
+  {
+    "reasoning": "There are 17 columns but only 14 subplots (2x7), so the loop will try to access ax[14] and ax[15], causing an IndexError.",
+    "detection": true
+  },
+  {
+    "reasoning": "There are 17 columns but only 14 subplots (2x7), so the loop will try to access ax[14] and ax[15], causing an IndexError.",
+    "detection": true
+  },
+  {
+    "reasoning": "There are 17 columns but only 14 subplots (2x7); the loop will attempt to index beyond ax's length, causing an IndexError.",
+    "detection": true
+  },
+  {
+    "reasoning": "There are 17 columns but only 14 subplot axes (2x7); after 14 iterations, accessing ax[14] will raise an IndexError.",
+    "detection": true
+  }
+]

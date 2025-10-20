@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "61: docs = np.array([np.array(pad_sequences(tokenize_text(i)), maxlen=max_length) for i in docs])",
+    "message": "No overloads for \"array\" match the provided arguments\n\u00a0\u00a0Argument types: (Unknown, Literal[768])",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

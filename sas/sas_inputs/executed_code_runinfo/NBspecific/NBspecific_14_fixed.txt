@@ -1,0 +1,56 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+
+train_data = pd.read_csv("data/train.csv")
+train_data.head()
+
+## Cell 3:
+
+
+test_data = pd.read_csv("data/test.csv")
+test_data.head()
+
+# Annotated Target Code:
+test_data: pd.DataFrame
+train_data: pd.DataFrame
+
+
+from sklearn.ensemble import RandomForestClassifier
+
+y = train_data["Survived"]
+
+features = ["Pclass", "Sex", "SibSp", "Parch", "Fare"]
+X = pd.get_dummies(train_data[features])
+X_test = pd.get_dummies(test_data[features])
+
+
+X_test.fillna(0, inplace=True)
+
+model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=1)
+model.fit(X, y)
+predictions = model.predict(X_test)
+
+output = pd.DataFrame({'PassengerId': test_data.PassengerId, 'Survived': predictions})
+
+print("Your submission was successfully saved!")

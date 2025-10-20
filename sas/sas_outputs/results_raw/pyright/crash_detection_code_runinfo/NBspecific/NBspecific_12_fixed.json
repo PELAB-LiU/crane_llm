@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "67:         self.df.index = np.arange(len(self.df))",
+    "message": "Cannot assign to attribute \"index\" for class \"DataFrame\"\n\u00a0\u00a0\"ndarray[Any, dtype[signedinteger[Any]]]\" is not assignable to \"Index[Unknown]\"",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "68:         self.df.index.name = 'id'",
+    "message": "Cannot assign to attribute \"name\" for class \"NDArray[signedinteger[Any]]\"\n\u00a0\u00a0Attribute \"name\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

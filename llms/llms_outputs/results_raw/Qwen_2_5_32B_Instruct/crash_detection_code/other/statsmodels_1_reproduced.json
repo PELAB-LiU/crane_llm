@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'train' DataFrame has been filtered and manipulated in previous cells, but there is no indication that 'gravity' column will cause a crash in the qqplot function. The 'line' parameter should be a string, not an integer, which could potentially cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'train' DataFrame has been filtered and manipulated in previous cells, but there is no indication that 'gravity' column will cause a crash in the qqplot function. The 'line' parameter should be a string, not an integer, which could potentially cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'train' DataFrame has been filtered and manipulated in previous cells, but there is no indication that 'gravity' column will cause a crash in the qqplot function. The 'line' parameter should be a string, not an integer, which could potentially cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'train' DataFrame has been filtered and manipulated in previous cells, but there is no indication that 'gravity' column will cause a crash in the qqplot function. The 'line' parameter should be a string, not an integer, which could potentially cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'train' DataFrame has been filtered and manipulated in previous cells, but there is no indication that 'gravity' column will cause a crash in the qqplot function. The 'line' parameter should be a string, not an integer, which could potentially cause a crash.",
+    "detection": true
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "code_line": "60: y_tr_arr= y_train.values",
+    "message": "Cannot access attribute \"values\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"values\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "61: y_ts_arr = y_test.values",
+    "message": "Cannot access attribute \"values\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"values\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "78: def model_optimize(w, b, X, Y):",
+    "message": "Function declaration \"model_optimize\" is obscured by a declaration of the same name",
+    "rule": "reportRedeclaration",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

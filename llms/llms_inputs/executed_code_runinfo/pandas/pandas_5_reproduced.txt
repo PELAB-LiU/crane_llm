@@ -1,0 +1,200 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from imblearn.over_sampling import RandomOverSampler
+sns.set(style='whitegrid')
+
+## Cell 2:
+
+train=pd.read_csv('data/train.csv')
+test=pd.read_csv('data/train.csv')
+
+## Cell 3:
+
+num_feat = ['Age','Vintage']
+cat_feat = ['Gender', 'Driving_License', 'Previously_Insured', 'Vehicle_Age_lt_1_Year','Vehicle_Age_gt_2_Years','Vehicle_Damage_Yes','Region_Code','Policy_Sales_Channel']
+
+## Cell 4:
+
+train['Gender'] = train['Gender'].map( {'Female': 0, 'Male': 1} ).astype(int)
+
+## Cell 5:
+
+train=pd.get_dummies(train,drop_first=True)
+
+## Cell 6:
+
+train=train.rename(columns={"Vehicle_Age_< 1 Year": "Vehicle_Age_lt_1_Year", "Vehicle_Age_> 2 Years": "Vehicle_Age_gt_2_Years"})
+train['Vehicle_Age_lt_1_Year']=train['Vehicle_Age_lt_1_Year'].astype('int')
+train['Vehicle_Age_gt_2_Years']=train['Vehicle_Age_gt_2_Years'].astype('int')
+train['Vehicle_Damage_Yes']=train['Vehicle_Damage_Yes'].astype('int')
+
+## Cell 7:
+
+from sklearn.preprocessing import LabelEncoder, StandardScaler, MinMaxScaler, RobustScaler
+ss = StandardScaler()
+train[num_feat] = ss.fit_transform(train[num_feat])
+
+
+mm = MinMaxScaler()
+train[['Annual_Premium']] = mm.fit_transform(train[['Annual_Premium']])
+
+## Cell 8:
+
+train=train.drop('id',axis=1)
+
+## Cell 9:
+
+for column in cat_feat:
+    train[column] = train[column].astype('str')
+
+## Cell 10:
+
+test['Gender'] = test['Gender'].map( {'Female': 0, 'Male': 1} ).astype(int)
+test=pd.get_dummies(test,drop_first=True)
+test=test.rename(columns={"Vehicle_Age_< 1 Year": "Vehicle_Age_lt_1_Year", "Vehicle_Age_> 2 Years": "Vehicle_Age_gt_2_Years"})
+test['Vehicle_Age_lt_1_Year']=test['Vehicle_Age_lt_1_Year'].astype('int')
+test['Vehicle_Age_gt_2_Years']=test['Vehicle_Age_gt_2_Years'].astype('int')
+test['Vehicle_Damage_Yes']=test['Vehicle_Damage_Yes'].astype('int')
+
+## Cell 11:
+
+from sklearn.preprocessing import LabelEncoder, StandardScaler, MinMaxScaler, RobustScaler
+ss = StandardScaler()
+test[num_feat] = ss.fit_transform(test[num_feat])
+
+
+mm = MinMaxScaler()
+test[['Annual_Premium']] = mm.fit_transform(test[['Annual_Premium']])
+
+## Cell 12:
+
+for column in cat_feat:
+    test[column] = test[column].astype('str')
+
+## Cell 13:
+
+from sklearn.model_selection import train_test_split
+
+train_target=train['Response']
+train=train.drop(['Response'], axis = 1)
+x_train,x_test,y_train,y_test = train_test_split(train,train_target, random_state = 0)
+
+## Cell 14:
+
+test=test.drop('id',axis=1)
+
+# Current relevent runtime information:
+{'cat_feat': {'execution_cell_source': {'cellno': 52, 'lineno': 2},
+              'length': 8,
+              'type': "<class 'list'>",
+              'value_info': {'num_unique': 8,
+                             'value_type': 'categorical or object'}},
+ 'column': {'type': "<class 'str'>", 'value': 'Policy_Sales_Channel'},
+ 'x_test': {'has_nan': False,
+            'per_column': {'Age': {'num_unique': 66,
+                                   'type': 'continuous',
+                                   'value_range': (-1.2134528282014612,
+                                                   2.9769620295319648)},
+                           'Annual_Premium': {'num_unique': 32549,
+                                              'type': 'continuous',
+                                              'value_range': (0.0, 1.0)},
+                           'Driving_License': {'num_unique': 2,
+                                               'type': 'categorical',
+                                               'unique_values': ['1', '0']},
+                           'Gender': {'num_unique': 2,
+                                      'type': 'categorical',
+                                      'unique_values': ['0', '1']},
+                           'Policy_Sales_Channel': {'example_values': ['152.0',
+                                                                       '124.0',
+                                                                       '26.0',
+                                                                       '156.0',
+                                                                       '160.0'],
+                                                    'num_unique': 143,
+                                                    'type': 'categorical'},
+                           'Previously_Insured': {'num_unique': 2,
+                                                  'type': 'categorical',
+                                                  'unique_values': ['1', '0']},
+                           'Region_Code': {'example_values': ['8.0',
+                                                              '28.0',
+                                                              '47.0',
+                                                              '41.0',
+                                                              '15.0'],
+                                           'num_unique': 53,
+                                           'type': 'categorical'},
+                           'Vehicle_Age_gt_2_Years': {'num_unique': 2,
+                                                      'type': 'categorical',
+                                                      'unique_values': ['0',
+                                                                        '1']},
+                           'Vehicle_Age_lt_1_Year': {'num_unique': 2,
+                                                     'type': 'categorical',
+                                                     'unique_values': ['1',
+                                                                       '0']},
+                           'Vehicle_Damage_Yes': {'num_unique': 2,
+                                                  'type': 'categorical',
+                                                  'unique_values': ['0', '1']},
+                           'Vintage': {'num_unique': 290,
+                                       'type': 'continuous',
+                                       'value_range': (-1.725174340526783,
+                                                       1.728822031361137)}},
+            'shape': (95278, 11),
+            'type': 'pandas.core.frame.DataFrame'},
+ 'x_train': {'has_nan': False,
+             'per_column': {'Age': {'num_unique': 66,
+                                    'type': 'continuous',
+                                    'value_range': (-1.2134528282014612,
+                                                    2.9769620295319648)},
+                            'Annual_Premium': {'num_unique': 45732,
+                                               'type': 'continuous',
+                                               'value_range': (0.0, 1.0)},
+                            'Driving_License': {'num_unique': 2,
+                                                'type': 'categorical',
+                                                'unique_values': ['1', '0']},
+                            'Gender': {'num_unique': 2,
+                                       'type': 'categorical',
+                                       'unique_values': ['0', '1']},
+                            'Policy_Sales_Channel': {'example_values': ['26.0',
+                                                                        '12.0',
+                                                                        '152.0',
+                                                                        '124.0',
+                                                                        '160.0'],
+                                                     'num_unique': 153,
+                                                     'type': 'categorical'},
+                            'Previously_Insured': {'num_unique': 2,
+                                                   'type': 'categorical',
+                                                   'unique_values': ['0', '1']},
+                            'Region_Code': {'example_values': ['46.0',
+                                                               '41.0',
+                                                               '30.0',
+                                                               '48.0',
+                                                               '11.0'],
+                                            'num_unique': 53,
+                                            'type': 'categorical'},
+                            'Vehicle_Age_gt_2_Years': {'num_unique': 2,
+                                                       'type': 'categorical',
+                                                       'unique_values': ['0',
+                                                                         '1']},
+                            'Vehicle_Age_lt_1_Year': {'num_unique': 2,
+                                                      'type': 'categorical',
+                                                      'unique_values': ['0',
+                                                                        '1']},
+                            'Vehicle_Damage_Yes': {'num_unique': 2,
+                                                   'type': 'categorical',
+                                                   'unique_values': ['1', '0']},
+                            'Vintage': {'num_unique': 290,
+                                        'type': 'continuous',
+                                        'value_range': (-1.725174340526783,
+                                                        1.728822031361137)}},
+             'shape': (285831, 11),
+             'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+
+
+for column in cat_feat:
+    x_train[column] = x_train[column].astype('int')
+    x_test[column] = x_test[column].astype('int')

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model expects tokenized tensor inputs compatible with TFAutoModel, but fit() is given raw text and labels; input shape/type mismatch will cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects tokenized tensor inputs matching the HuggingFace model signature, but fit is given raw text Series (and labels may be misaligned with processed_data). This mismatch will raise an input shape/type error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects tokenized tensor inputs matching BERT's signature, but train_data is raw text Series, causing input shape/type mismatch during fit. Therefore it will likely error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects tokenized tensor inputs matching the HuggingFace model signature, but fit is given raw text Series and labels without preprocessing or a data pipeline, causing input shape/type mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects tensor inputs matching the transformer model (input IDs, attention masks), but fit is given raw text and labels; shapes and input format are incompatible.",
+    "detection": true
+  }
+]

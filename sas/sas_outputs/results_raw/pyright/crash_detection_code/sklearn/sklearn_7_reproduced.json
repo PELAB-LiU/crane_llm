@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "25: X = df.drop(['Spending Score (1-100)'], axis=1)",
+    "message": "\"df\" is possibly unbound",
+    "rule": "reportPossiblyUnboundVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "26: y = df['Spending Score (1-100)']",
+    "message": "\"df\" is possibly unbound",
+    "rule": "reportPossiblyUnboundVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

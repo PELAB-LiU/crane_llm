@@ -1,0 +1,203 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+class DataLoader:
+
+
+
+
+
+    def __init__(self):
+        self.train = pd.read_csv("data/playground-series-s3e24/train.csv.zip",index_col = 'id')
+        self.test = pd.read_csv( "data/playground-series-s3e24/test.csv.zip",index_col = 'id')
+        self.original = pd.read_csv("data/smoker-status-prediction-using-biosignals/train_dataset.csv.zip")
+
+    def _classifydataset(self)->None:
+        self.train["Source"] = 1
+        self.test["Source"] = 1
+        self.original["Source"] = 0
+    """
+    As we can see from the description all
+    values should be numeric in nature but cols
+    'uniq_Op','uniq_Opnd','total_Op','total_Opnd','branchCount' are object type
+    we will replace all non numeric values with np.nan
+    """
+
+
+
+
+
+
+
+
+
+
+
+
+    def join(self)-> pd.DataFrame:
+        self.df = pd.concat([self.train,self.original],axis = 0,ignore_index = True)
+        self.df = self.df.drop_duplicates()
+        self.df.index = np.arange(len(self.df))
+        self.df.index.name = 'id'
+        return self.df
+
+    def variables(self):
+        self.numvars = [i for i in pp.train.columns if pp.train[i].nunique() > 10]
+        self.catvars = list(set(self.train.columns) - set(self.numvars))
+        return (self.numvars, self.catvars)
+
+    def execute(self):
+        self. _classifydataset()
+
+        self.join()
+        return self
+
+    def information(self,type):
+        if type == 'train':
+            return summary(self.train)
+        elif type == 'test':
+            return summary(self.test)
+        elif type == 'original':
+            return summary(self.df)
+        else:
+            return -1
+
+
+def summary(df: pd.DataFrame)-> pd.DataFrame:
+    summary = pd.DataFrame(df.dtypes,columns=['dtype'])
+    summary["#Missing"] = df.isna().sum().values
+    summary["%Missing"] = summary["#Missing"]/len(df) * 100
+    summary["nuniques"] = df.nunique().values
+    summary["type"] = df.dtypes
+    return summary
+
+## Cell 3:
+
+pp = DataLoader()
+pp.execute()
+pp.train.head()
+
+# Current relevent runtime information:
+{'__method__pp_train': {'has_nan': False,
+                        'per_column': {'ALT': {'num_unique': 188,
+                                               'type': 'continuous',
+                                               'value_range': (1, 2914)},
+                                       'AST': {'num_unique': 140,
+                                               'type': 'continuous',
+                                               'value_range': (6, 778)},
+                                       'Cholesterol': {'num_unique': 227,
+                                                       'type': 'continuous',
+                                                       'value_range': (77,
+                                                                       393)},
+                                       'Gtp': {'num_unique': 362,
+                                               'type': 'continuous',
+                                               'value_range': (2, 999)},
+                                       'HDL': {'num_unique': 108,
+                                               'type': 'continuous',
+                                               'value_range': (9, 136)},
+                                       'LDL': {'num_unique': 222,
+                                               'type': 'continuous',
+                                               'value_range': (1, 1860)},
+                                       'Source': {'num_unique': 1,
+                                                  'type': 'categorical_numeric',
+                                                  'value_range': (1, 1)},
+                                       'Urine protein': {'num_unique': 6,
+                                                         'type': 'categorical_numeric',
+                                                         'value_range': (1, 6)},
+                                       'age': {'num_unique': 18,
+                                               'type': 'continuous',
+                                               'value_range': (20, 85)},
+                                       'dental caries': {'num_unique': 2,
+                                                         'type': 'binary',
+                                                         'value_range': (0, 1)},
+                                       'eyesight(left)': {'num_unique': 20,
+                                                          'type': 'continuous',
+                                                          'value_range': (0.1,
+                                                                          9.9)},
+                                       'eyesight(right)': {'num_unique': 17,
+                                                           'type': 'continuous',
+                                                           'value_range': (0.1,
+                                                                           9.9)},
+                                       'fasting blood sugar': {'num_unique': 229,
+                                                               'type': 'continuous',
+                                                               'value_range': (46,
+                                                                               375)},
+                                       'hearing(left)': {'num_unique': 2,
+                                                         'type': 'categorical_numeric',
+                                                         'value_range': (1, 2)},
+                                       'hearing(right)': {'num_unique': 2,
+                                                          'type': 'categorical_numeric',
+                                                          'value_range': (1,
+                                                                          2)},
+                                       'height(cm)': {'num_unique': 14,
+                                                      'type': 'continuous',
+                                                      'value_range': (135,
+                                                                      190)},
+                                       'hemoglobin': {'num_unique': 134,
+                                                      'type': 'continuous',
+                                                      'value_range': (4.9,
+                                                                      21.0)},
+                                       'relaxation': {'num_unique': 75,
+                                                      'type': 'continuous',
+                                                      'value_range': (44, 133)},
+                                       'serum creatinine': {'num_unique': 28,
+                                                            'type': 'continuous',
+                                                            'value_range': (0.1,
+                                                                            9.9)},
+                                       'smoking': {'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0, 1)},
+                                       'systolic': {'num_unique': 112,
+                                                    'type': 'continuous',
+                                                    'value_range': (77, 213)},
+                                       'triglyceride': {'num_unique': 392,
+                                                        'type': 'continuous',
+                                                        'value_range': (8,
+                                                                        766)},
+                                       'waist(cm)': {'num_unique': 531,
+                                                     'type': 'continuous',
+                                                     'value_range': (51.0,
+                                                                     127.0)},
+                                       'weight(kg)': {'num_unique': 28,
+                                                      'type': 'continuous',
+                                                      'value_range': (30,
+                                                                      130)}},
+                        'shape': (159256, 24),
+                        'type': 'pandas.core.frame.DataFrame'},
+ 'pp': {'execution_cell_source': {'cellno': 4, 'lineno': 1},
+        'type': "<class '__main__.DataLoader'>"}}
+# Target Cell:
+
+fig, axs = plt.subplots(6, 3, figsize=(7, 17))
+for col,ax in zip(numvars,axs.ravel()):
+    if pp.train[col].dtype == float or pp.train[col].dtype == int:
+        sns.histplot(ax = ax, data = pp.train[col],bins=100)
+        plt.xlabel(col)
+        ax.set_xticklabels(ax.get_xticklabels(),fontsize=0.1)
+        ax.set(xlim = (0,None),ylim = (0,None))
+    else:
+        vc = pp.train[col].value_counts()
+        ax.bar(vc.index,vc.values)
+        plt.xlabel(col)
+fig.suptitle('Feature distributions', y=1.02, fontsize=20)
+plt.tight_layout()

@@ -1,0 +1,90 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+dataset = pd.read_csv('data/german_credit_data.csv', index_col=None)
+
+# Current relevent runtime information:
+{'__method__plt_show': {'type': "<class 'function'>"},
+ '__method__sns_catplot': {'type': "<class 'function'>"},
+ '__method__sns_countplot': {'type': "<class 'function'>"},
+ '__method__sns_displot': {'type': "<class 'function'>"},
+ '__method__sns_set_context': {'type': "<class 'function'>"},
+ '__method__sns_violinplot': {'type': "<class 'function'>"},
+ 'dataset': {'execution_cell_source': {'cellno': 1, 'lineno': 9},
+             'has_nan': True,
+             'per_column': {'Age': {'num_unique': 53,
+                                    'type': 'continuous',
+                                    'value_range': (19, 75)},
+                            'Checking account': {'num_unique': 3,
+                                                 'type': 'categorical',
+                                                 'unique_values': ['little',
+                                                                   'moderate',
+                                                                   'rich']},
+                            'Credit amount': {'num_unique': 921,
+                                              'type': 'continuous',
+                                              'value_range': (250, 18424)},
+                            'Duration': {'num_unique': 33,
+                                         'type': 'continuous',
+                                         'value_range': (4, 72)},
+                            'Housing': {'num_unique': 3,
+                                        'type': 'categorical',
+                                        'unique_values': ['own',
+                                                          'free',
+                                                          'rent']},
+                            'Job': {'num_unique': 4,
+                                    'type': 'categorical_numeric',
+                                    'value_range': (0, 3)},
+                            'Purpose': {'example_values': ['radio/TV',
+                                                           'education',
+                                                           'furniture/equipment',
+                                                           'car',
+                                                           'business'],
+                                        'num_unique': 8,
+                                        'type': 'categorical'},
+                            'Risk': {'num_unique': 2,
+                                     'type': 'categorical',
+                                     'unique_values': ['good', 'bad']},
+                            'Saving accounts': {'num_unique': 4,
+                                                'type': 'categorical',
+                                                'unique_values': ['little',
+                                                                  'quite rich',
+                                                                  'rich',
+                                                                  'moderate']},
+                            'Sex': {'num_unique': 2,
+                                    'type': 'categorical',
+                                    'unique_values': ['male', 'female']},
+                            'Unnamed: 0': {'num_unique': 1000,
+                                           'type': 'continuous',
+                                           'value_range': (0, 999)}},
+             'shape': (1000, 11),
+             'type': 'pandas.core.frame.DataFrame'},
+ 'plt': {'type': "<class 'module'>"},
+ 'sns': {'type': "<class 'module'>"}}
+# Target Cell:
+
+sns.set_context('talk', font_scale=.9)
+
+
+
+sns.countplot(data=dataset, x='Sex', hue='Risk')
+plt.show()
+
+
+sns.catplot(data=dataset, x='Sex', y='Age', kind='box')
+plt.show()
+
+
+sns.violinplot(data=dataset, x='Sex', y='Age', hue='Risk', split=True)
+plt.show()
+
+
+sns.displot(data=dataset, row='Sex', y='Purpose', col='Risk')
+plt.show()

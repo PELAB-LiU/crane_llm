@@ -1,0 +1,45 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, accuracy_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+## Cell 2:
+
+df= pd.read_csv("data/iris.csv")
+
+## Cell 3:
+
+X = df.drop("species",axis=1)
+Y = df["species"]
+x_train, x_test , y_train, y_test=train_test_split (X ,Y , test_size=0.25, random_state=42)
+
+## Cell 4:
+
+clf = LogisticRegression()
+clf.fit(x_train, y_train)
+
+## Cell 5:
+
+y_pred = clf.predict(x_test)
+
+# Annotated Target Code:
+y_pred: np.ndarray
+y_test: pd.Series
+
+
+from sklearn import metrics
+confusion_matrix = metrics.confusion_matrix(y_test , y_pred)
+
+
+
+labels = np.unique(np.concatenate((y_test, y_pred)))
+cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix , display_labels=labels)
+
+cm_display.plot()
+plt.show()

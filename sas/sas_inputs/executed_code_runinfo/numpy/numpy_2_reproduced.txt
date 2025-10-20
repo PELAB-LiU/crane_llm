@@ -1,0 +1,28 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+## Cell 2:
+
+houseprice=pd.read_csv('data/data.csv')
+
+## Cell 3:
+
+X=houseprice.drop(['price','date','city','street','statezip','condition'],axis=1)
+Y=houseprice['price']
+
+## Cell 4:
+
+from sklearn.model_selection import train_test_split
+X_train,X_test,Y_train,Y_test=train_test_split(X.values,Y.values,test_size=0.2)
+
+# Annotated Target Code:
+X_train: np.ndarray
+Y_train: np.ndarray
+
+
+train_houseprice=X_train.join(Y_train)

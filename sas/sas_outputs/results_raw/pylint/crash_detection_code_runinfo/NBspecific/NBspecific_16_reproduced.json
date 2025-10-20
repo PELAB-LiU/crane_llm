@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "34: skin_df.head()",
+    "message": "Undefined variable 'skin_df'",
+    "symbol": "undefined-variable",
+    "type": "error",
+    "source": "pylint"
+  }
+]

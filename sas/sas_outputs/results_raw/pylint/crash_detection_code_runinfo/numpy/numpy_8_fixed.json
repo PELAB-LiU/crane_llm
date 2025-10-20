@@ -1,0 +1,37 @@
+[
+  {
+    "code_line": "398: creator.create(\"Individual\", gp.PrimitiveTree, fitness=creator.FitnessMax)",
+    "message": "Module 'deap.creator' has no 'FitnessMax' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "405: toolbox.register(\"individual\", tools.initIterate, creator.Individual, toolbox.expr)",
+    "message": "Module 'deap.creator' has no 'Individual' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "405: toolbox.register(\"individual\", tools.initIterate, creator.Individual, toolbox.expr)",
+    "message": "Instance of 'Toolbox' has no 'expr' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "406: toolbox.register(\"population\", tools.initRepeat, list, toolbox.individual)",
+    "message": "Instance of 'Toolbox' has no 'individual' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  },
+  {
+    "code_line": "410: toolbox.register(\"mutate\", gp.mutUniform, expr=toolbox.expr, pset=pset)",
+    "message": "Instance of 'Toolbox' has no 'expr' member",
+    "symbol": "no-member",
+    "type": "error",
+    "source": "pylint"
+  }
+]

@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "111: print('Number of       test samples : {}'.format(test_images.shape[0]))",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "175: history = model.fit(train_images, train_labels, batch_size = 16, epochs=2, validation_data=(val_images, val_labels), verbose = 1)",
+    "message": "Argument of type \"Literal[1]\" cannot be assigned to parameter \"verbose\" of type \"str\" in function \"fit\"\n\u00a0\u00a0\"Literal[1]\" is not assignable to \"str\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

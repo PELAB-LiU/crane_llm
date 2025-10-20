@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'test_ds' DataFrame has undergone different column dropping and label encoding operations compared to 'train_ds', which was used to train 'FReg'. This discrepancy in features will cause a mismatch when 'FReg.predict(test_ds)' is called, leading to a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'test_ds' DataFrame has undergone different column dropping and label encoding operations compared to 'train_ds', which was used to train 'FReg'. This discrepancy in features will cause a mismatch when 'FReg.predict' is called on 'test_ds'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'test_ds' DataFrame has undergone different column dropping and label encoding operations compared to 'train_ds', which was used to train 'FReg'. This discrepancy in features will cause a mismatch when 'FReg.predict(test_ds)' is called, leading to a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'test_ds' DataFrame has undergone different column dropping and label encoding operations compared to 'train_ds', which was used to train 'FReg'. This discrepancy in features will cause a mismatch when 'FReg.predict' is called on 'test_ds'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'test_ds' DataFrame has undergone different column dropping and label encoding operations compared to 'train_ds', which was used to train 'FReg'. This discrepancy in features will cause a mismatch when 'FReg.predict(test_ds)' is called, leading to a crash.",
+    "detection": true
+  }
+]

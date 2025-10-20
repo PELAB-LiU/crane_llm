@@ -1,0 +1,16 @@
+[
+  {
+    "code_line": "25: poly_X = poly.fit_transform(X)",
+    "message": "\"X\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "27: X.shape, poly_X.shape",
+    "message": "\"X\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

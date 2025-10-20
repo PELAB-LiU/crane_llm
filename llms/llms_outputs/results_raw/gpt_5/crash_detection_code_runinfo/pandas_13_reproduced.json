@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "GradientBoostingRegressor objects (gbr, gbr2, gbr_gs) do not have feature_importances_, so accessing it will raise an AttributeError when iterating the first model list.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor objects (gbr, gbr2, gbr_gs) do not have feature_importances_ by default, causing an AttributeError when accessed. Loop will attempt model.feature_importances_ and crash on the first such model.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor objects (gbr, gbr2, gbr_gs) do not have feature_importances_, so accessing model.feature_importances_ will raise an AttributeError on the first such model encountered.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor objects (gbr, gbr2, gbr_gs) do not have feature_importances_ (they expose feature_importances_ only for tree ensembles like RandomForest), so accessing model.feature_importances_ will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor objects (gbr, gbr2, gbr_gs) do not have feature_importances_, so accessing it will raise an AttributeError.",
+    "detection": true
+  }
+]

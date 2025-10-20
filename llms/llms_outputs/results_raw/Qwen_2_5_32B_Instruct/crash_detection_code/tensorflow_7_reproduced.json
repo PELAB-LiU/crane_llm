@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to fit the model with `train_input` and `train.label.values`. However, `train_input` is a dictionary with keys 'input_word_ids', 'input_mask', and 'input_type_ids', which does not match the expected input format for `model.fit()`. This mismatch will likely cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to fit the model with `train_input` and `train.label.values`. However, `train_input` is a dictionary with keys 'input_word_ids', 'input_mask', and 'input_type_ids', which does not match the expected input format for `model.fit()`. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to fit the model with `train_input` and `train.label.values`. However, `train_input` is a dictionary with keys 'input_word_ids', 'input_mask', and 'input_type_ids', which does not match the expected input format for `model.fit()`. This mismatch will likely cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to fit the model with `train_input` and `train.label.values`. However, `train_input` is a dictionary with keys 'input_word_ids', 'input_mask', and 'input_type_ids', which does not match the expected input format for `model.fit()`. This mismatch will likely cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to fit the model with `train_input` and `train.label.values`. However, `train_input` is a dictionary with keys 'input_word_ids', 'input_mask', and 'input_type_ids', which does not match the expected input format for `model.fit()`. This mismatch will cause a crash.",
+    "detection": true
+  }
+]

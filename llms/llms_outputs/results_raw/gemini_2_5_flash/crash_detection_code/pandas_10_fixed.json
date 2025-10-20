@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Installs' column contains string values like '1,000+' which need to be cleaned by removing '+' and ',' characters before converting to an integer type. The target cell correctly performs these operations sequentially.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Installs' column contains string values like '1,000+' which need to be cleaned by removing '+' and ',' characters before converting to an integer type. The target cell correctly performs these operations sequentially.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Installs' column contains string values with '+' and ',' characters. The target cell attempts to remove these characters and then convert the column to an integer type, which is a valid operation and should not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Installs' column contains string values like '1,000+' which need to be cleaned by removing '+' and ',' before converting to integer. The target cell correctly performs these operations.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Installs' column contains string values like '1,000+' which need to be cleaned by removing '+' and ',' before converting to integer. The target cell correctly performs these operations.",
+    "detection": false
+  }
+]

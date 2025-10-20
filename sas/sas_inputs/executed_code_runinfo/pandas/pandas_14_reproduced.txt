@@ -1,0 +1,77 @@
+# Executed Cells:
+## Cell 1:
+
+import tensorflow as tf
+import tensorflow_decision_forests as tfdf
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+## Cell 2:
+
+
+df = pd.read_csv('data/train.csv')
+print("El tamaño del dataset: {}".format(df.shape))
+
+## Cell 3:
+
+df = df.drop(['PassengerId', 'Name'], axis=1)
+df.head(5)
+
+## Cell 4:
+
+df[['Age', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck','RoomService']] = df[['Age', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck','RoomService']].fillna(value=0)
+df.isnull().sum().sort_values(ascending=False)
+
+## Cell 5:
+
+from sklearn.preprocessing import LabelEncoder
+
+le = LabelEncoder()
+
+df['HomePlanet'] = le.fit_transform(df['HomePlanet'])
+df['Cabin'] = le.fit_transform(df['Cabin'])
+df['Destination'] = le.fit_transform(df['Destination'])
+df['CryoSleep'] = le.fit_transform(df['CryoSleep'])
+df['VIP'] = le.fit_transform(df['VIP'])
+df['Transported'] = le.fit_transform(df['Transported'])
+
+print(df)
+
+## Cell 6:
+
+
+df["Age"] = df["Age"].astype(int)
+df["RoomService"] = df["RoomService"].astype(int)
+df["FoodCourt"] = df["FoodCourt"].astype(int)
+df["ShoppingMall"] = df["ShoppingMall"].astype(int)
+df["Spa"] = df["Spa"].astype(int)
+df["VRDeck"] = df["VRDeck"].astype(int)
+
+df.dtypes
+
+# Annotated Target Code:
+df: pd.DataFrame
+
+
+
+filas = 2
+col = 5
+
+nombres_col = df[["Cabin", "RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck"]]
+y = df["Age"]
+
+
+N = 50
+fig, axs = plt.subplots(filas, col, figsize=(25, 10))
+
+for i in range(filas):
+    for j in range(col):
+        n = i * col + j
+        if n < len(nombres_col):
+            axs[i, j].set_title(nombres_col.columns[n])
+            axs[i, j].scatter(df[nombres_col.columns[n]][:N], y[:N])
+
+fig.tight_layout()
+plt.show()

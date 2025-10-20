@@ -1,0 +1,114 @@
+[
+  {
+    "code_line": "41:  for i in range(len(dataset)-look_back-1):",
+    "message": "Unindent amount does not match previous indent",
+    "rule": null,
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "41:  for i in range(len(dataset)-look_back-1):",
+    "message": "Inconsistent use of tabs and spaces in indentation",
+    "rule": null,
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "41:  for i in range(len(dataset)-look_back-1):",
+    "message": "\"look_back\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "42: \t\ta = dataset[i:(i+look_back), 0]",
+    "message": "\"look_back\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "43:   dataX.append(a)",
+    "message": "Unindent amount does not match previous indent",
+    "rule": null,
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "43:   dataX.append(a)",
+    "message": "Inconsistent use of tabs and spaces in indentation",
+    "rule": null,
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "43:   dataX.append(a)",
+    "message": "\"dataX\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "43:   dataX.append(a)",
+    "message": "\"a\" is possibly unbound",
+    "rule": "reportPossiblyUnboundVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "44:   dataY.append(dataset[i + look_back, 0])",
+    "message": "Unexpected indentation",
+    "rule": null,
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "44:   dataY.append(dataset[i + look_back, 0])",
+    "message": "\"dataY\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "44:   dataY.append(dataset[i + look_back, 0])",
+    "message": "\"i\" is possibly unbound",
+    "rule": "reportPossiblyUnboundVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "44:   dataY.append(dataset[i + look_back, 0])",
+    "message": "\"look_back\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "45:  return np.array(dataX), np.array(dataY)",
+    "message": "Unindent not expected",
+    "rule": null,
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "45:  return np.array(dataX), np.array(dataY)",
+    "message": "\"return\" can be used only within a function",
+    "rule": null,
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "45:  return np.array(dataX), np.array(dataY)",
+    "message": "\"dataX\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "45:  return np.array(dataX), np.array(dataY)",
+    "message": "\"dataY\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

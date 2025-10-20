@@ -1,0 +1,37 @@
+[
+  {
+    "code_line": "15: model .fit(X,y)",
+    "message": "\"X\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "15: model .fit(X,y)",
+    "message": "\"y\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "16: y_hat = model.predict(X)",
+    "message": "\"X\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "17: print ( accuracy_score(y_hat,y))",
+    "message": "\"accuracy_score\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "17: print ( accuracy_score(y_hat,y))",
+    "message": "\"y\" is not defined",
+    "rule": "reportUndefinedVariable",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

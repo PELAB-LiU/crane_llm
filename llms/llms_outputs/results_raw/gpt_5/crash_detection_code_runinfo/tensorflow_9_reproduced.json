@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "tf.keras.utils.plot_model expects a Keras Model or a model with Keras-style graph; bert_model is a PyTorch transformers.BertModel, so plot_model will raise a ValueError/TypeError. Also TensorFlow may not be installed.",
+    "detection": true
+  },
+  {
+    "reasoning": "tf.keras.utils.plot_model expects a Keras Model; bert_model is a HuggingFace PyTorch BertModel, so plotting will fail due to incompatible type.",
+    "detection": true
+  },
+  {
+    "reasoning": "tf.keras.utils.plot_model expects a Keras Model; bert_model is a PyTorch transformers BertModel, so plotting will fail with type incompatibility. Also TensorFlow may not be imported previously but that alone is fine now; the core issue is wrong model type.",
+    "detection": true
+  },
+  {
+    "reasoning": "tf.keras.utils.plot_model expects a Keras Model, but bert_model is a PyTorch Transformers BertModel, so it will raise a TypeError or similar when trying to plot.",
+    "detection": true
+  },
+  {
+    "reasoning": "bert_model is a HuggingFace PyTorch BertModel, not a Keras model; tf.keras.utils.plot_model expects a Keras model and will raise an error. TensorFlow may also be unavailable.",
+    "detection": true
+  }
+]

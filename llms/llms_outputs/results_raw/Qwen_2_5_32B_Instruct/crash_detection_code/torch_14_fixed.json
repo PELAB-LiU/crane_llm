@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The cell will crash because `inputs` and `labels` are tuples of tuples due to the `collate_fn` and cannot be directly passed to the model. The model expects a list of images and targets, not a tuple of tuples.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell will crash because `inputs` and `labels` are tuples of tuples due to the `collate_fn` and cannot be directly passed to the model. The model expects a list of images and targets, not a tuple of tuples.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell will crash because `inputs` and `labels` are tuples of tuples due to the `collate_fn` and cannot be directly passed to the model. The model expects a list of images and targets, not a tuple of tuples.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell will crash because `inputs` and `labels` are tuples of tuples due to the `collate_fn` and cannot be directly passed to the model. The model expects a list of images and targets, not a tuple of tuples.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell will crash because `inputs` and `labels` are tuples of tuples due to the `collate_fn` and cannot be directly passed to the model. The model expects a list of images and targets, not a tuple of tuples.",
+    "detection": true
+  }
+]

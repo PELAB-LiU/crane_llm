@@ -1,0 +1,9 @@
+[
+  {
+    "code_line": "66:             GENERATE_SQUARE),Image.LANCZOS)",
+    "message": "\"LANCZOS\" is not a known attribute of module \"PIL.Image\"",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

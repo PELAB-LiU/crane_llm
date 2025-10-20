@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "CrossEntropyLoss expects class indices but labels are one-hot float tensors; passing float one-hot to CrossEntropyLoss will raise a mismatch error. Additionally, argmax without specifying dim on batched tensors is incorrect.",
+    "detection": true
+  },
+  {
+    "reasoning": "The training loop uses CrossEntropyLoss with one-hot labels and outputs shaped [batch, 6294], but torch.nn.CrossEntropyLoss expects class indices (LongTensor) or raw scores with target of shape [batch]; passing float one-hot tensors will raise a dtype/shape error. Also argmax over entire tensor without dim is ambiguous but returns single index; main crash is loss.",
+    "detection": true
+  },
+  {
+    "reasoning": "CrossEntropyLoss expects class indices (LongTensor) but labels are one-hot FloatTensors of size 6294; loss(output, label) will raise a dtype/shape error. Also argmax over entire prediction tensor misses batch dimension.",
+    "detection": true
+  },
+  {
+    "reasoning": "CrossEntropyLoss expects class indices (LongTensor) but labels are one-hot FloatTensors; this will raise a dtype/shape error when computing loss. Also argmax over entire batch tensor instead of per-sample is incorrect but secondary.",
+    "detection": true
+  },
+  {
+    "reasoning": "CrossEntropyLoss expects class indices but labels are one-hot float tensors; calling loss(output, label) will raise a RuntimeError due to target dtype/shape mismatch.",
+    "detection": true
+  }
+]

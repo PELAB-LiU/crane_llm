@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "history.history contains 'accuracy' and 'val_accuracy', not 'acc'/'val_acc'; accessing missing keys will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "history.history contains keys 'accuracy' and 'val_accuracy', not 'acc'/'val_acc'; accessing missing keys will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "history.history contains keys 'accuracy' and 'val_accuracy', not 'acc'/'val_acc'; accessing missing keys will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "History contains metrics: accuracy, loss, val_accuracy, val_loss, not acc/val_acc. Accessing history['acc'] and history['val_acc'] will KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "History metrics are ['accuracy','loss','val_accuracy','val_loss','learning_rate']; the cell references 'acc' and 'val_acc' which do not exist, causing KeyError.",
+    "detection": true
+  }
+]

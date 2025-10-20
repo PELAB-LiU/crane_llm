@@ -1,0 +1,86 @@
+[
+  {
+    "code_line": "45: df=df[df.index>=\"2019-01-01\"]",
+    "message": "Operator \">=\" not supported for types \"DatetimeIndex\" and \"Literal['2019-01-01']\"",
+    "rule": "reportOperatorIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "71: df_mice_imputed = pd.DataFrame(mice_imputer.fit_transform(df_mice), columns=df_mice.columns,index=df_mice.index)",
+    "message": "No overloads for \"__new__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "71: df_mice_imputed = pd.DataFrame(mice_imputer.fit_transform(df_mice), columns=df_mice.columns,index=df_mice.index)",
+    "message": "Argument of type \"Unknown | NDArray[Unknown] | csr_matrix | csc_matrix | csr_array | csc_array | coo_matrix | Any | coo_array\" cannot be assigned to parameter \"data\" of type \"Scalar\" in function \"__new__\"\n\u00a0\u00a0Type \"Unknown | NDArray[Unknown] | csr_matrix | csc_matrix | csr_array | csc_array | coo_matrix | Any | coo_array\" is not assignable to type \"Scalar\"\n\u00a0\u00a0\u00a0\u00a0Type \"coo_array\" is not assignable to type \"Scalar\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"str\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"bytes\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"date\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"datetime\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"timedelta\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"datetime64\"\n  ...",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "71: df_mice_imputed = pd.DataFrame(mice_imputer.fit_transform(df_mice), columns=df_mice.columns,index=df_mice.index)",
+    "message": "Argument of type \"Unknown | NDArray[Unknown] | csr_matrix | csc_matrix | csr_array | csc_array | coo_matrix | Any | coo_array\" cannot be assigned to parameter \"data\" of type \"Scalar\" in function \"__new__\"\n\u00a0\u00a0Type \"Unknown | NDArray[Unknown] | csr_matrix | csc_matrix | csr_array | csc_array | coo_matrix | Any | coo_array\" is not assignable to type \"Scalar\"\n\u00a0\u00a0\u00a0\u00a0Type \"coo_array\" is not assignable to type \"Scalar\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"str\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"bytes\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"date\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"datetime\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"timedelta\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"datetime64\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "115: Final=pd.DataFrame(mice_imputer.fit_transform(out), columns=out.columns,index=out.index)",
+    "message": "No overloads for \"__new__\" match the provided arguments",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "115: Final=pd.DataFrame(mice_imputer.fit_transform(out), columns=out.columns,index=out.index)",
+    "message": "Argument of type \"Unknown | NDArray[Unknown] | csr_matrix | csc_matrix | csr_array | csc_array | coo_matrix | Any | coo_array\" cannot be assigned to parameter \"data\" of type \"Scalar\" in function \"__new__\"\n\u00a0\u00a0Type \"Unknown | NDArray[Unknown] | csr_matrix | csc_matrix | csr_array | csc_array | coo_matrix | Any | coo_array\" is not assignable to type \"Scalar\"\n\u00a0\u00a0\u00a0\u00a0Type \"coo_array\" is not assignable to type \"Scalar\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"str\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"bytes\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"date\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"datetime\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"timedelta\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"datetime64\"\n  ...",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "115: Final=pd.DataFrame(mice_imputer.fit_transform(out), columns=out.columns,index=out.index)",
+    "message": "Argument of type \"Unknown | NDArray[Unknown] | csr_matrix | csc_matrix | csr_array | csc_array | coo_matrix | Any | coo_array\" cannot be assigned to parameter \"data\" of type \"Scalar\" in function \"__new__\"\n\u00a0\u00a0Type \"Unknown | NDArray[Unknown] | csr_matrix | csc_matrix | csr_array | csc_array | coo_matrix | Any | coo_array\" is not assignable to type \"Scalar\"\n\u00a0\u00a0\u00a0\u00a0Type \"coo_array\" is not assignable to type \"Scalar\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"str\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"bytes\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"date\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"datetime\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"timedelta\"\n\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\"coo_array\" is not assignable to \"datetime64\"",
+    "rule": "reportArgumentType",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "128: daily['ActivePower']=daily['ActivePower'].fillna(method=\"bfill\")",
+    "message": "No overloads for \"fillna\" match the provided arguments\n\u00a0\u00a0Argument types: (Literal['bfill'])",
+    "rule": "reportCallIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "165:     for key, value in adfinput[4].items():",
+    "message": "Index 4 is out of range for type tuple[Any, float | ndarray[Any, dtype[Any]], dict[str, Unknown], ResultsStore | Unbound]",
+    "rule": "reportGeneralTypeIssues",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "165:     for key, value in adfinput[4].items():",
+    "message": "Cannot access attribute \"items\" for class \"float\"\n\u00a0\u00a0Attribute \"items\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "165:     for key, value in adfinput[4].items():",
+    "message": "Cannot access attribute \"items\" for class \"ndarray[Any, dtype[Any]]\"\n\u00a0\u00a0Attribute \"items\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "165:     for key, value in adfinput[4].items():",
+    "message": "Cannot access attribute \"items\" for class \"ResultsStore\"\n\u00a0\u00a0Attribute \"items\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

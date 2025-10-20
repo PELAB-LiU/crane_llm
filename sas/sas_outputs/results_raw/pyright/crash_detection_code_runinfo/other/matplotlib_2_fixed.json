@@ -1,0 +1,23 @@
+[
+  {
+    "code_line": "120: print(train_images.shape)",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "121: print(train_labels.shape)",
+    "message": "Cannot access attribute \"shape\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"shape\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  },
+  {
+    "code_line": "170: train_labels = train_labels.astype(np.float32)",
+    "message": "Cannot access attribute \"astype\" for class \"list[Unknown]\"\n\u00a0\u00a0Attribute \"astype\" is unknown",
+    "rule": "reportAttributeAccessIssue",
+    "severity": "error",
+    "source": "pyright"
+  }
+]

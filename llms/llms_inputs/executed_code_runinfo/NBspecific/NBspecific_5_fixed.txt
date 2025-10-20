@@ -1,0 +1,193 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from mpl_toolkits import mplot3d
+import warnings
+
+warnings.filterwarnings('ignore')
+
+## Cell 2:
+
+df=pd.read_csv('data/kdd_train.csv.zip')
+df.head()
+
+## Cell 3:
+
+numeric_columns = []
+categorical_columns = []
+for column in df.columns:
+    if df[column].dtype != 'object':
+        numeric_columns.append(column)
+    else:
+        categorical_columns.append(column)
+
+categorical_columns = categorical_columns[:-1]
+labels=df['labels'].unique()
+
+# Current relevent runtime information:
+{'__method__df_drop': {'type': "<class 'method'>"},
+ '__method__numeric_columns_remove': {'type': '<class '
+                                              "'builtin_function_or_method'>"},
+ 'df': {'execution_cell_source': {'cellno': 2, 'lineno': 1},
+        'has_nan': False,
+        'per_column': {'count': {'num_unique': 512,
+                                 'type': 'continuous',
+                                 'value_range': (0, 511)},
+                       'diff_srv_rate': {'num_unique': 95,
+                                         'type': 'continuous',
+                                         'value_range': (0.0, 1.0)},
+                       'dst_bytes': {'num_unique': 9326,
+                                     'type': 'continuous',
+                                     'value_range': (0, 1309937401)},
+                       'dst_host_count': {'num_unique': 256,
+                                          'type': 'continuous',
+                                          'value_range': (0, 255)},
+                       'dst_host_diff_srv_rate': {'num_unique': 101,
+                                                  'type': 'continuous',
+                                                  'value_range': (0.0, 1.0)},
+                       'dst_host_rerror_rate': {'num_unique': 101,
+                                                'type': 'continuous',
+                                                'value_range': (0.0, 1.0)},
+                       'dst_host_same_src_port_rate': {'num_unique': 101,
+                                                       'type': 'continuous',
+                                                       'value_range': (0.0,
+                                                                       1.0)},
+                       'dst_host_same_srv_rate': {'num_unique': 101,
+                                                  'type': 'continuous',
+                                                  'value_range': (0.0, 1.0)},
+                       'dst_host_serror_rate': {'num_unique': 101,
+                                                'type': 'continuous',
+                                                'value_range': (0.0, 1.0)},
+                       'dst_host_srv_count': {'num_unique': 256,
+                                              'type': 'continuous',
+                                              'value_range': (0, 255)},
+                       'dst_host_srv_diff_host_rate': {'num_unique': 75,
+                                                       'type': 'continuous',
+                                                       'value_range': (0.0,
+                                                                       1.0)},
+                       'dst_host_srv_rerror_rate': {'num_unique': 101,
+                                                    'type': 'continuous',
+                                                    'value_range': (0.0, 1.0)},
+                       'dst_host_srv_serror_rate': {'num_unique': 100,
+                                                    'type': 'continuous',
+                                                    'value_range': (0.0, 1.0)},
+                       'duration': {'num_unique': 2981,
+                                    'type': 'continuous',
+                                    'value_range': (0, 42908)},
+                       'flag': {'example_values': ['SF',
+                                                   'S0',
+                                                   'REJ',
+                                                   'RSTR',
+                                                   'SH'],
+                                'num_unique': 11,
+                                'type': 'categorical'},
+                       'hot': {'num_unique': 28,
+                               'type': 'continuous',
+                               'value_range': (0, 77)},
+                       'is_guest_login': {'num_unique': 2,
+                                          'type': 'binary',
+                                          'value_range': (0, 1)},
+                       'is_host_login': {'num_unique': 2,
+                                         'type': 'binary',
+                                         'value_range': (0, 1)},
+                       'labels': {'example_values': ['normal',
+                                                     'neptune',
+                                                     'warezclient',
+                                                     'ipsweep',
+                                                     'portsweep'],
+                                  'num_unique': 23,
+                                  'type': 'categorical'},
+                       'land': {'num_unique': 2,
+                                'type': 'binary',
+                                'value_range': (0, 1)},
+                       'logged_in': {'num_unique': 2,
+                                     'type': 'binary',
+                                     'value_range': (0, 1)},
+                       'num_access_files': {'num_unique': 10,
+                                            'type': 'categorical_numeric',
+                                            'value_range': (0, 9)},
+                       'num_compromised': {'num_unique': 88,
+                                           'type': 'continuous',
+                                           'value_range': (0, 7479)},
+                       'num_failed_logins': {'num_unique': 6,
+                                             'type': 'categorical_numeric',
+                                             'value_range': (0, 5)},
+                       'num_file_creations': {'num_unique': 35,
+                                              'type': 'continuous',
+                                              'value_range': (0, 43)},
+                       'num_outbound_cmds': {'num_unique': 1,
+                                             'type': 'categorical_numeric',
+                                             'value_range': (0, 0)},
+                       'num_root': {'num_unique': 82,
+                                    'type': 'continuous',
+                                    'value_range': (0, 7468)},
+                       'num_shells': {'num_unique': 3,
+                                      'type': 'categorical_numeric',
+                                      'value_range': (0, 2)},
+                       'protocol_type': {'num_unique': 3,
+                                         'type': 'categorical',
+                                         'unique_values': ['tcp',
+                                                           'udp',
+                                                           'icmp']},
+                       'rerror_rate': {'num_unique': 82,
+                                       'type': 'continuous',
+                                       'value_range': (0.0, 1.0)},
+                       'root_shell': {'num_unique': 2,
+                                      'type': 'binary',
+                                      'value_range': (0, 1)},
+                       'same_srv_rate': {'num_unique': 101,
+                                         'type': 'continuous',
+                                         'value_range': (0.0, 1.0)},
+                       'serror_rate': {'num_unique': 89,
+                                       'type': 'continuous',
+                                       'value_range': (0.0, 1.0)},
+                       'service': {'example_values': ['ftp_data',
+                                                      'other',
+                                                      'private',
+                                                      'http',
+                                                      'remote_job'],
+                                   'num_unique': 70,
+                                   'type': 'categorical'},
+                       'src_bytes': {'num_unique': 3341,
+                                     'type': 'continuous',
+                                     'value_range': (0, 1379963888)},
+                       'srv_count': {'num_unique': 509,
+                                     'type': 'continuous',
+                                     'value_range': (0, 511)},
+                       'srv_diff_host_rate': {'num_unique': 60,
+                                              'type': 'continuous',
+                                              'value_range': (0.0, 1.0)},
+                       'srv_rerror_rate': {'num_unique': 62,
+                                           'type': 'continuous',
+                                           'value_range': (0.0, 1.0)},
+                       'srv_serror_rate': {'num_unique': 86,
+                                           'type': 'continuous',
+                                           'value_range': (0.0, 1.0)},
+                       'su_attempted': {'num_unique': 3,
+                                        'type': 'categorical_numeric',
+                                        'value_range': (0, 2)},
+                       'urgent': {'num_unique': 4,
+                                  'type': 'categorical_numeric',
+                                  'value_range': (0, 3)},
+                       'wrong_fragment': {'num_unique': 3,
+                                          'type': 'categorical_numeric',
+                                          'value_range': (0, 3)}},
+        'shape': (125973, 42),
+        'type': 'pandas.core.frame.DataFrame'},
+ 'numeric_columns': {'execution_cell_source': {'cellno': 10, 'lineno': 1},
+                     'length': 38,
+                     'type': "<class 'list'>",
+                     'value_info': {'num_unique': 38,
+                                    'value_type': 'categorical or object'}}}
+# Target Cell:
+
+
+
+df.drop(columns='num_outbound_cmds', inplace=True)
+
+
+numeric_columns.remove('num_outbound_cmds')

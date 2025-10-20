@@ -1,0 +1,168 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix,auc,roc_auc_score
+from sklearn.metrics import recall_score, precision_score, accuracy_score, f1_score
+
+df = pd.read_csv("data/creditcard.csv.zip")
+
+
+print(df.shape)
+
+print("First 5 lines:")
+print(df.head(5))
+
+print("describe: ")
+print(df.describe())
+
+print("info: ")
+print(df.info())
+
+"""Since all variables are of float and int type, so this data is easy to handle for modeling"""
+
+## Cell 2:
+
+df = df.drop(['Time'],axis=1)
+
+## Cell 3:
+
+
+from sklearn.preprocessing import StandardScaler
+df['scaled_Amount'] = StandardScaler().fit_transform(df['Amount'].values.reshape(-1,1))
+df = df.drop(['Amount'],axis=1)
+
+# Current relevent runtime information:
+{'StandardScaler': {'type': "<class 'type'>"},
+ '__method__df_drop': {'type': "<class 'method'>"},
+ 'df': {'execution_cell_source': {'cellno': 6, 'lineno': 4},
+        'has_nan': False,
+        'per_column': {'Class': {'num_unique': 2,
+                                 'type': 'binary',
+                                 'value_range': (0, 1)},
+                       'V1': {'num_unique': 275663,
+                              'type': 'continuous',
+                              'value_range': (-56.407509631329,
+                                              2.45492999121121)},
+                       'V10': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-24.5882624372475,
+                                               23.7451361206545)},
+                       'V11': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-4.79747346479757,
+                                               12.0189131816199)},
+                       'V12': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-18.6837146333443,
+                                               7.8483920756446)},
+                       'V13': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-5.79188120632084,
+                                               7.12688295859376)},
+                       'V14': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-19.2143254902614,
+                                               10.5267660517847)},
+                       'V15': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-4.49894467676621,
+                                               8.87774159774277)},
+                       'V16': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-14.1298545174931,
+                                               17.3151115176278)},
+                       'V17': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-25.1627993693248,
+                                               9.25352625047285)},
+                       'V18': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-9.49874592104677,
+                                               5.04106918541184)},
+                       'V19': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-7.21352743017759,
+                                               5.59197142733558)},
+                       'V2': {'num_unique': 275663,
+                              'type': 'continuous',
+                              'value_range': (-72.7157275629303,
+                                              22.0577289904909)},
+                       'V20': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-54.497720494566,
+                                               39.4209042482199)},
+                       'V21': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-34.8303821448146,
+                                               27.2028391573154)},
+                       'V22': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-10.933143697655,
+                                               10.5030900899454)},
+                       'V23': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-44.8077352037913,
+                                               22.5284116897749)},
+                       'V24': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-2.83662691870341,
+                                               4.58454913689817)},
+                       'V25': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-10.2953970749851,
+                                               7.51958867870916)},
+                       'V26': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-2.60455055280817,
+                                               3.5173456116238)},
+                       'V27': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-22.5656793207827,
+                                               31.6121981061363)},
+                       'V28': {'num_unique': 275663,
+                               'type': 'continuous',
+                               'value_range': (-15.4300839055349,
+                                               33.8478078188831)},
+                       'V3': {'num_unique': 275663,
+                              'type': 'continuous',
+                              'value_range': (-48.3255893623954,
+                                              9.38255843282114)},
+                       'V4': {'num_unique': 275663,
+                              'type': 'continuous',
+                              'value_range': (-5.68317119816995,
+                                              16.8753440335975)},
+                       'V5': {'num_unique': 275663,
+                              'type': 'continuous',
+                              'value_range': (-113.743306711146,
+                                              34.8016658766686)},
+                       'V6': {'num_unique': 275663,
+                              'type': 'continuous',
+                              'value_range': (-26.1605059358433,
+                                              73.3016255459646)},
+                       'V7': {'num_unique': 275663,
+                              'type': 'continuous',
+                              'value_range': (-43.5572415712451,
+                                              120.589493945238)},
+                       'V8': {'num_unique': 275663,
+                              'type': 'continuous',
+                              'value_range': (-73.2167184552674,
+                                              20.0072083651213)},
+                       'V9': {'num_unique': 275663,
+                              'type': 'continuous',
+                              'value_range': (-13.4340663182301,
+                                              15.5949946071278)},
+                       'scaled_Amount': {'num_unique': 32767,
+                                         'type': 'continuous',
+                                         'value_range': (-0.35322939296682354,
+                                                         102.36224270928423)}},
+        'shape': (284807, 30),
+        'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+
+from sklearn.preprocessing import StandardScaler
+df['scaled_Amount'] = StandardScaler().fit_transform(df['Amount'].values.reshape(-1,1))
+df = df.drop(['Amount'],axis=1)
