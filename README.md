@@ -35,7 +35,7 @@ We use [**Junobench**]((https://huggingface.co/datasets/PELAB-LiU/JunoBench)) be
         - `results_parsed../`: classification on crash prediction outputs by the LLM judge
     - `runtime_injector.py`: script for constructing type-annotated inputs (i.e., `sas_inputs/executed_code_runinfo`)
     - `static_analysis_tools.py`: script for querying SAs to generate outputs in `sas_outputs/`
-- [results_human_evaluated.xlsx](./results/results_human_evaluated.xlsx): final revised results and compiled statictics
+- [results_summary.xlsx](./results/results_summary.xlsx): final revised results and compiled statictics
 
 ## License
 

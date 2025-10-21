@@ -9,12 +9,13 @@ import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 
 def generate_llm_judge_result_statistics(parsed_summary_sa_filename, parsed_summary_llm_filename, output_filename):
-    df_human = pd.read_excel("results/results_human_evaluated.xlsx", sheet_name="Human_evaluation", engine="openpyxl")
+    df_final = pd.read_excel("results/results_summary.xlsx", sheet_name="Final_evaluation", engine="openpyxl")
+    df_final = df_final.iloc[:222]
     df_sas = pd.read_excel(f"sas/sas_outputs/{parsed_summary_sa_filename}.xlsx", engine="openpyxl")
     df_llms = pd.read_excel(f"llms/llms_outputs/{parsed_summary_llm_filename}.xlsx", engine="openpyxl")
     
     # Merge dataframes on instance name
-    df_combined = df_human.merge(df_llms, on='instance', suffixes=('_human', '_llm'), how='outer')
+    df_combined = df_final.merge(df_llms, on='instance', suffixes=('_human', '_llm'), how='outer')
     df_combined = df_combined.merge(df_sas, on='instance', suffixes=('', '_sas'), how='outer')
     
     # Define the models and their columns
@@ -123,12 +124,13 @@ def generate_llm_judge_result_statistics(parsed_summary_sa_filename, parsed_summ
 def create_detailed_comparison_excel(parsed_summary_sa_filename, parsed_summary_llm_filename, output_filename):
     """Create a detailed Excel file showing all comparisons with mismatches highlighted in blue"""
     
-    df_human = pd.read_excel("results/results_human_evaluated.xlsx", sheet_name="Human_evaluation", engine="openpyxl")
+    df_final = pd.read_excel("results/results_summary.xlsx", sheet_name="Final_evaluation", engine="openpyxl")
+    df_final = df_final.iloc[:222]
     df_sas = pd.read_excel(f"sas/sas_outputs/{parsed_summary_sa_filename}.xlsx", engine="openpyxl")
     df_llms = pd.read_excel(f"llms/llms_outputs/{parsed_summary_llm_filename}.xlsx", engine="openpyxl")
 
     # Merge dataframes
-    df_combined = df_human.merge(df_llms, on='instance', suffixes=('_human', '_llm'), how='outer')
+    df_combined = df_final.merge(df_llms, on='instance', suffixes=('_human', '_llm'), how='outer')
     df_combined = df_combined.merge(df_sas, on='instance', suffixes=('', '_sas'), how='outer')
     
     # Define comparison columns
@@ -246,22 +248,23 @@ def calculate_agreement_rate_between_judges():
 
 def _load_and_prepare_data(metric_type='crash_detection'):
     """Load and prepare data for analysis"""
-    df_human = pd.read_excel("results/results_human_evaluated.xlsx", sheet_name="Human_evaluation", engine="openpyxl")
+    df_final = pd.read_excel("results/results_summary.xlsx", sheet_name="Final_evaluation", engine="openpyxl")
+    df_final = df_final.iloc[:222]
     df_label = pd.read_excel("results/benchmark_labels.xlsx", engine="openpyxl")
     df_label.rename(columns={'nb_name': 'instance'}, inplace=True)
     
     if metric_type == 'crash_detection':
         # For crash detection: only _reproduced cases (remove _fixed suffix)
-        df_human = df_human[~df_human['instance'].str.endswith('_fixed')]
+        df_final = df_final[~df_final['instance'].str.endswith('_fixed')]
         # modify instance values by removing _reproduced suffix
-        df_human['instance'] = df_human['instance'].str.replace('_reproduced', '', regex=False)
+        df_final['instance'] = df_final['instance'].str.replace('_reproduced', '', regex=False)
     else:
         # For accuracy: include all instances (both _fixed and _reproduced)
         # Remove both _fixed and _reproduced suffixes to match benchmark labels
-        df_human['instance'] = df_human['instance'].str.replace('_fixed', '', regex=False).str.replace('_reproduced', '', regex=False)
+        df_final['instance'] = df_final['instance'].str.replace('_fixed', '', regex=False).str.replace('_reproduced', '', regex=False)
     
     # Merge dataframes on instance name
-    df_combined = df_human.merge(df_label, on='instance', how='inner')
+    df_combined = df_final.merge(df_label, on='instance', how='inner')
     print(f"Merged dataframe shape for {metric_type}: {df_combined.shape}")
     
     return df_combined
@@ -403,7 +406,7 @@ def _create_plot(rates_data, causes, cause_counts, cause_type, metric_type):
     if cause_type == 'label_root_cause':
         fig_size = (8, 5.5)
     else:
-        fig_size = (12, 5.2)
+        fig_size = (12, 5.8) # 5.2
     fig, ax = plt.subplots(figsize=fig_size)
     
     # Calculate positions for grouped bars
@@ -446,7 +449,7 @@ def _create_plot(rates_data, causes, cause_counts, cause_type, metric_type):
                     linestyle=line_styles[i], marker=markers[i], markersize=6,
                     label=f"{model_name} Improvement")
         if cause_type == 'label_root_cause':
-            line_ax.set_ylim(-0.11, 0.21)
+            line_ax.set_ylim(-0.11, 0.25)
         else:
             line_ax.set_ylim(-0.11, 0.35)
     
