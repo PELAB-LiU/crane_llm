@@ -24,7 +24,7 @@ We use [**Junobench**]((https://huggingface.co/datasets/PELAB-LiU/JunoBench)) be
     - `llms_outputs/`: generated outputs by the LLMs
         - `results_raw/`: crash prediction outputs from the three LLMs
         - `results_parsed../`: classification on crash prediction outputs by the LLM judge
-        - `ground_truth.xlsx`: ground truth labels used for LLM judge for classification
+        - `ground_truth_crash_prediction.xlsx`: ground truth labels used for LLM judge for classification, provided by JunoBench
     - `prompt_extractor.py`: script for constructing prompts (i.e., `llms_inputs/`)
     - `llm_executor.py`: script for querying LLMs to generate outputs in `llms_outputs/`
 - [main_sa.py](./main_sa.py): script to run the experiment pipeline involving static analyzers (SAs)

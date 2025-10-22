@@ -26,7 +26,7 @@ class Config:
         self.param_temperature_result_parsing = 0.01
 
         self.path_nbs = Path("target_nbs")
-        self.path_ground_truth = Path("llms/llms_outputs/ground_truth.xlsx")
+        self.path_ground_truth = Path("llms/llms_outputs/ground_truth_crash_prediction.xlsx")
 
         # config define --------
         self.path_input_executed_code = Path("llms/llms_inputs/executed_code")

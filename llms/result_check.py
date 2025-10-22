@@ -16,11 +16,11 @@ def find_ground_truth(df, instance_name):
     gt = df[df["instance"]==instance_name]
     res = ""
     if len(gt)==1:
-        res = f"\nGround truth: {gt.iloc[0]['ground_truth']}. "
-        reason = gt.iloc[0]["buggy_reasoning"]
+        res = f"\nGround truth: {gt.iloc[0]['detection']}. "
+        reason = gt.iloc[0]["diagnosis"]
         if pd.notna(reason) and reason: # append reasoning
             res += reason
-        elif gt.iloc[0]['ground_truth'] is True: # buggy instance but no reasoning
+        elif gt.iloc[0]['detection'] is True: # buggy instance but no reasoning
             print(f"Buggy instance lacks ground truth of reasoning: {instance_name}")
     else:
         print(f"Instance not found in ground truth file: {instance_name}")
@@ -91,7 +91,7 @@ def check_all_predictions(model_name, query_llm_tokenizer, query_llm_model, lib_
 
 def check_prediction_sa(instance_name, df, query_llm_tokenizer, query_llm_model, input_json_file, output_json_file, if_reverse=False):
     pred_res = load_json(input_json_file)
-    # ground_truth = df[df["instance"]==instance_name].iloc[0]['ground_truth']
+    # ground_truth = df[df["instance"]==instance_name].iloc[0]['detection']
     res = []
     # if (len(pred_res) <= 0) and (not ground_truth):
     #     res.append("[Correct]")
