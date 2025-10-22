@@ -405,8 +405,10 @@ def _create_plot(rates_data, causes, cause_counts, cause_type, metric_type):
 
     if cause_type == 'label_root_cause':
         fig_size = (8, 5.5)
+    elif metric_type == 'crash_detection' and cause_type == 'Libs-cause':
+        fig_size = (12, 5.2) # 5.2
     else:
-        fig_size = (12, 5.8) # 5.2
+        fig_size = (12, 5.8)
     fig, ax = plt.subplots(figsize=fig_size)
     
     # Calculate positions for grouped bars
@@ -470,7 +472,9 @@ def _create_plot(rates_data, causes, cause_counts, cause_type, metric_type):
     # Set tick label sizes for both axes
     ax.tick_params(axis='y', labelsize=12)
     line_ax.tick_params(axis='y', labelsize=12)
-    
+    from matplotlib.ticker import FuncFormatter
+    ax.yaxis.set_major_formatter(FuncFormatter(lambda x, p: f'{x*100:.0f}'))
+
     # Create legend patches for models (always needed)
     model_patches = []
     for i, model_name in enumerate(models):
