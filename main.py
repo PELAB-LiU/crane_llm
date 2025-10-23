@@ -25,6 +25,13 @@
 
 # ----------------------------------------------------------------------------------------------
 
+# # Cohen’s kappa between LLM judge with human results
+# from results import result_statistics
+
+# result_statistics.calculate_cohens_kappa()
+
+# ----------------------------------------------------------------------------------------------
+
 # # Agreement rate between LLM judge with its reversed inputs
 # from results import result_statistics
 # result_statistics.calculate_agreement_rate_between_judges()

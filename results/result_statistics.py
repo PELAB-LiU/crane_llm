@@ -557,3 +557,51 @@ def generate_label_results_statistics(cause_type='label_root_cause', metric_type
     filtered_causes = [cause if cause != "tensorflow/keras" else "tensorflow\n/keras" for cause in filtered_causes]
     filtered_causes = [cause if cause != "implementation error" else "implementation\nerror" for cause in filtered_causes]
     _create_plot(rates_data, filtered_causes, cause_counts, cause_type, metric_type)
+
+
+def calculate_cohens_kappa():
+    from sklearn.metrics import cohen_kappa_score
+
+    df_human = pd.read_excel("results/results_summary.xlsx", sheet_name="Final_evaluation", engine="openpyxl")
+    df_human = df_human.iloc[:222]
+    df_sas = pd.read_excel(f"sas/sas_outputs/results_parsed_summary_sas.xlsx", engine="openpyxl")
+    df_llms = pd.read_excel(f"llms/llms_outputs/results_parsed_summary_llms.xlsx", engine="openpyxl")
+    df_judge = df_sas.merge(df_llms, on='instance')
+    df_combined = df_human.merge(df_judge, on='instance', suffixes=('_human', '_llmjudge'), how='outer')
+
+    # Define model column pairs for comparison
+    models = {
+        'gemini_2_5_flash_crash_detection_code': ('gemini_2_5_flash_crash_detection_code_human', 'gemini_2_5_flash_crash_detection_code_llmjudge'),
+        'qwen_2_5_32b_crash_detection_code': ('Qwen_2_5_32B_Instruct_crash_detection_code_human', 'Qwen_2_5_32B_Instruct_crash_detection_code_llmjudge'),
+        'gpt_5_crash_detection_code': ('gpt_5_crash_detection_code_human', 'gpt_5_crash_detection_code_llmjudge'),
+        'pylint_crash_detection_code': ('pylint_crash_detection_code_human', 'pylint_crash_detection_code_llmjudge'),
+        'pyright_crash_detection_code': ('pyright_crash_detection_code_human', 'pyright_crash_detection_code_llmjudge'),
+        'gemini_2_5_flash_crash_detection_code_runinfo': ('gemini_2_5_flash_crash_detection_code_runinfo_human', 'gemini_2_5_flash_crash_detection_code_runinfo_llmjudge'),
+        'qwen_2_5_32b_crash_detection_code_runinfo': ('Qwen_2_5_32B_Instruct_crash_detection_code_runinfo_human', 'Qwen_2_5_32B_Instruct_crash_detection_code_runinfo_llmjudge'),
+        'gpt_5_crash_detection_code_runinfo': ('gpt_5_crash_detection_code_runinfo_human', 'gpt_5_crash_detection_code_runinfo_llmjudge'),
+        'pylint_crash_detection_code_runinfo': ('pylint_crash_detection_code_runinfo_human', 'pylint_crash_detection_code_runinfo_llmjudge'),
+        'pyright_crash_detection_code_runinfo': ('pyright_crash_detection_code_runinfo_human', 'pyright_crash_detection_code_runinfo_llmjudge')
+    }
+    
+    # Collect all human and judge predictions
+    all_human_predictions = []
+    all_judge_predictions = []
+    
+    for model_name, (human_col, judge_col) in models.items():
+        if human_col in df_combined.columns and judge_col in df_combined.columns:
+            # Get valid data for this model (no missing values)
+            valid_data = df_combined[[human_col, judge_col]].dropna()
+            if len(valid_data) > 0:
+                all_human_predictions.extend(valid_data[human_col].tolist())
+                all_judge_predictions.extend(valid_data[judge_col].tolist())
+    
+    # Calculate overall Cohen's kappa
+    if len(all_human_predictions) > 0 and len(all_judge_predictions) > 0:
+        total_kappa = cohen_kappa_score(all_human_predictions, all_judge_predictions)
+        print(f"Overall Cohen's kappa between LLM judge and human results: {total_kappa:.4f}")
+        print(f"Total sample size: {len(all_human_predictions)}")
+        
+        return total_kappa
+    else:
+        print("No valid data found for Cohen's kappa calculation")
+        return None
