@@ -1,6 +1,6 @@
-# CRANE-LLM: Runtime-Augmented LLMs for Crash Detection and Reasoning in ML Notebooks
+# CRANE-LLM: Runtime-Augmented LLMs for Crash Detection and Diagnosis in ML Notebooks
 
-This is the official repository for our paper "Runtime-Augmented LLMs for Crash Detection and Reasoning in ML Notebooks". It is an approach that augments LLMs with runtime information extracted from the notebook kernel state to enhance their detection and explanation of ML notebook crashes.
+This is the official repository for our paper "Runtime-Augmented LLMs for Crash Detection and Diagnosis in ML Notebooks". It is an approach that augments LLMs with runtime information extracted from the notebook kernel state to enhance their detection and explanation of ML notebook crashes.
 
 ## Environment setup
 
