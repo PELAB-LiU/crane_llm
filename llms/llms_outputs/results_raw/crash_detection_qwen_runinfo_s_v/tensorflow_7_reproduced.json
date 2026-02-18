@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model input shape is (8, 172) while the model expects an input shape of (None, 50). This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model input shape is (8, 172) while the model expects an input shape of (None, 50). This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model input shape is (8, 172) while the model expects an input shape of (None, 50). This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model input shape is (8, 172) while the model expects an input shape of (None, 50). This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model input shape is (8, 172) while the model expects an input shape of (None, 50). This mismatch will cause a crash.",
+    "detection": true
+  }
+]

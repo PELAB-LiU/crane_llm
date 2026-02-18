@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The correct method to load a model in TensorFlow is `model.load_weights` or `tf.keras.models.load_model`, not `model.load`. The `model.load` method does not exist, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The correct method to load a model in TensorFlow is `model.load_weights` or `tf.keras.models.load_model`, not `model.load`. The `model.load` method does not exist, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The correct method to load a model in TensorFlow is `model.load_weights` or `tf.keras.models.load_model`, not `model.load`. The `model.load` method does not exist, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The correct method to load a model in TensorFlow is `model.load_weights` or `tf.keras.models.load_model`, not `model.load`. The `model.load` method does not exist, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The correct method to load a model in TensorFlow is `model.load_weights` or `tf.keras.models.load_model`, not `model.load`. The `model.load` method does not exist, which will cause a crash.",
+    "detection": true
+  }
+]

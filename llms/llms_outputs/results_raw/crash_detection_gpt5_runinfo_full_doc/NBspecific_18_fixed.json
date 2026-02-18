@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "y_test and y_pred are present, same length, numeric, no NaNs; mean_absolute_error is imported correctly.",
+    "detection": false
+  },
+  {
+    "reasoning": "mean_absolute_error is imported, and y_test and y_pred are aligned numeric arrays of same length without NaNs. The call signature matches.",
+    "detection": false
+  },
+  {
+    "reasoning": "mean_absolute_error is imported; y_test and y_pred are aligned 1D arrays of same length without NaNs. This should execute successfully and return a float MAE.",
+    "detection": false
+  },
+  {
+    "reasoning": "y_test and y_pred are aligned numeric arrays of equal length without NaNs, and mean_absolute_error is imported correctly.",
+    "detection": false
+  },
+  {
+    "reasoning": "mean_absolute_error is imported, and y_test/y_pred are aligned numeric arrays without NaNs and same length. No type or shape issues expected.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame with the same number of features (208) as the model expects. There is no indication that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame with the same number of features (208) as the model expects. There is no indication that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame with the same number of features (208) as the model expects. There is no indication that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame with the same number of features (208) as the model expects. There is no indication that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame with the same number of features (208) as the model expects. There is no indication that this will cause a crash.",
+    "detection": false
+  }
+]

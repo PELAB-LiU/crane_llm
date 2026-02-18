@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not a one-hot encoded array but an array of class indices. This will cause a crash when attempting to use `y_true_onehot` as a one-hot encoded array.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not a one-hot encoded array but an array of class indices. This will cause a crash when attempting to use `y_true_onehot` as a one-hot encoded array.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not a one-hot encoded array but an array of class indices. This will cause a crash when attempting to use `y_true_onehot` as a one-hot encoded array.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not a one-hot encoded array but an array of class indices. This will cause a crash when attempting to use `y_true_onehot` as a one-hot encoded array.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not a one-hot encoded array but an array of class indices. This will cause a crash when attempting to use `y_true_onehot` as a one-hot encoded array.",
+    "detection": true
+  }
+]

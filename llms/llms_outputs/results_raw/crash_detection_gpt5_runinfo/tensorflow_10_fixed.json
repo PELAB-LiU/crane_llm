@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train_hg contains up to 1000 processed samples, but train_data/labels were not used; however shapes likely align. The main risk is that train_hg['input_ids'] is a list of lists convertible to np.array of shape (N,128) int64, which Keras will accept (casts). Labels are 0/1. Model compiled. Not certain of crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "train_hg contains only the first 1000 processed rows, but model expects input_ids and attention_mask aligned; converting lists of variable-length sequences to np.array may produce arrays of dtype=object or wrong shape, causing TensorFlow shape/type errors during fit. Not certain it will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "Keras model expects both train and validation or at least matching tensor shapes; here x uses arrays from train_hg which are lists of lists convertible to numpy; labels are 0/1. No obvious shape/type mismatch given inputs and model signature. Not certain of a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "train_hg only contains the first 1000 processed rows, but model inputs require tensors of shape (batch, 128). Converting train_hg['input_ids'] (list of lists) with np.array should work; labels are 0/1. However, TFAutoModel requires token_type_ids for BERT by default; missing token_type_ids may cause a shape/key error depending on model config.",
+    "detection": false
+  },
+  {
+    "reasoning": "train_hg contains only up to 1000 processed rows, but model expects inputs matching tokenizer output keys; that’s fine. Potential crash: converting ragged lists to np.array yields dtype=object, but Keras can accept object arrays if shapes align. Not certain of a crash.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `test_ds` DataFrame has 53 columns, but the `FReg` model was fitted on data with 58 features. This mismatch in the number of features will cause a ValueError when `FReg.predict()` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_ds` DataFrame has 53 columns, but the `FReg` model was fitted on data with 58 features. This mismatch in the number of features will cause a ValueError when `FReg.predict()` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_ds` DataFrame has 53 columns, but the `FReg` model was fitted on data with 58 features. This mismatch in the number of features will cause a ValueError when `FReg.predict()` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_ds` DataFrame has 53 columns, but the `FReg` model was fitted on data with 58 features. This mismatch in the number of features will cause a ValueError when `FReg.predict()` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_ds` DataFrame has 53 columns, but the `FReg` model was fitted on data with 58 features. This mismatch in the number of features will cause a ValueError when `FReg.predict()` is called.",
+    "detection": true
+  }
+]

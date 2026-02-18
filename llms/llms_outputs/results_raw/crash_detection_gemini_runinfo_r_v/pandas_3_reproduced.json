@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `procData` function attempts to join `data` with `name_count` on the 'RescuerID' column, but `name_count` is a Series indexed by 'Name', not 'RescuerID'. This will cause the join to fail or produce unexpected results, leading to a crash when 'RescuerID' is later dropped.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `procData` function attempts to join `data` with `name_count` on the 'RescuerID' column, but `name_count` is a Series indexed by 'Name', not 'RescuerID'. This will cause the join to fail or produce unexpected results, leading to a crash when 'RescuerID' is later dropped.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `procData` function attempts to join `data` with `name_count` on the 'RescuerID' column, but `name_count` is derived from the 'Name' column of the training data, not 'RescuerID'. This will cause a KeyError when trying to join on 'RescuerID' with `name_count`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `procData` function attempts to join `data` with `name_count` on the 'RescuerID' column, but `name_count` is a Series indexed by 'Name', not 'RescuerID'. This will cause the join to fail or produce unexpected results, leading to a crash when 'RescuerID' is later dropped.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `procData` function attempts to join `data` with `name_count` on the 'RescuerID' column, but `name_count` is derived from the 'Name' column of the training data, not 'RescuerID'. This will cause a KeyError when trying to join on 'RescuerID' with `name_count`.",
+    "detection": true
+  }
+]

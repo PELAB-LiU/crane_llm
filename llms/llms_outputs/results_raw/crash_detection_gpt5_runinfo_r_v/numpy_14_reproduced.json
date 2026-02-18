@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "test_generator.classes is a 1D array of class indices, not one-hot; applying np.argmax to it will raise an axis error. The first two lines run fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes returns a 1D array of class indices, not one-hot vectors. Applying np.argmax to it will raise an AxisError due to invalid axis on 1D input.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes is a 1D array of class indices, not one-hot; applying np.argmax to it will raise an error. The first two lines run fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes returns integer class indices, not one-hot vectors. Applying np.argmax to a 1D array will raise an axis error. The first two lines execute fine; the last line will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes returns a 1D array of class indices, not one-hot; applying np.argmax to it will raise an error since it's 1D and not one-hot encoded.",
+    "detection": true
+  }
+]

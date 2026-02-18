@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "str.replace with '+' uses regex by default; '+' is a regex quantifier and will raise a FutureWarning but still works by escaping implicitly? In current pandas, replacing '+' without regex=True will treat as regex and remove all plus signs; it should not error, and casting to int is valid given values like '10,000+' become '10000'.",
+    "detection": false
+  },
+  {
+    "reasoning": "String replace uses '+' which is a regex special char, causing regex error; also pandas .str.replace defaults to regex=True and '+' is invalid. This will raise an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "df['Installs'] is string-like; chaining str.replace on '+' and ',' then astype('int') should work. No NaNs remain to cause issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "String .str.replace takes a literal '+' which is a regex special char, so without regex=False it raises a regex error; also pandas now requires regex parameter for single char. This will likely error on the first replace.",
+    "detection": true
+  },
+  {
+    "reasoning": "Installs column is strings like '10,000+'; str.replace('+','') works since regex=False not specified but '+' is special; however default is regex=True which treats '+' as regex quantifier causing error? Pandas str.replace with '+' pattern raises error 'nothing to repeat'. But plus is literal without escaping; so it will error.",
+    "detection": true
+  }
+]

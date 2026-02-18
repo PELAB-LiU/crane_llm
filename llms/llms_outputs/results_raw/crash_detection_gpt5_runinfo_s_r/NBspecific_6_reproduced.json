@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Variable 'history' has not been created or assigned in the executed cells, so accessing history.history will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variable 'history' has not been created or assigned; plotting accesses history.history which will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'history' is not defined; no prior cell shows model.fit() producing a History object. Accessing history.history will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variable 'history' has not been created; no model fitting cell producing a History object is present. Accessing history.history will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'history' has not been defined or assigned from a model.fit call, so accessing history.history will raise a NameError.",
+    "detection": true
+  }
+]

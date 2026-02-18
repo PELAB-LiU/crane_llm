@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train_hg['input_ids'] are lists of length-128 ints, converting to np.array yields object dtype arrays; Keras expects numeric tensor. Also train_hg may contain Python lists; but np.array should become shape (N,128) if consistent. However Dataset columns likely are lists; np.array should work. Labels shape matches. Most likely runs. Not certain of crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "train_hg only contains rows for the sampled/processed subset (~1000), but the tokenizer outputs in processed_data are lists; converting train_hg['input_ids'] and 'attention_mask' to np.array will yield an array of dtype object with ragged shapes unless all sequences are equal length 128. Since padding='max_length' and max_length=128 were used, shapes should be uniform, so compile/fit likely proceed.",
+    "detection": false
+  },
+  {
+    "reasoning": "train_hg was built from a pandas DataFrame of dict-like tokenizer outputs; train_hg['input_ids'] and ['attention_mask'] should be sequences of equal-length lists (len 128) matching model inputs, and labels are binary. Model is compiled; no obvious type/shape mismatch is evident.",
+    "detection": false
+  },
+  {
+    "reasoning": "Likely crash: train_hg['input_ids'] contains lists of varying lengths or objects; converting to np.array may create ragged arrays incompatible with TensorFlow inputs expecting shape (None,128). Also datasets may hold lists; need proper tf.data or padding ensured.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects fixed-length arrays of shape (128,) for inputs; train_hg likely contains lists of varying-length token ids unless padded consistently. Converting to np.array may produce ragged arrays causing shape/type errors in model.fit.",
+    "detection": false
+  }
+]

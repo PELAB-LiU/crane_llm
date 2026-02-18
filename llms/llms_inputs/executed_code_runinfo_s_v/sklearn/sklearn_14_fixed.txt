@@ -1,0 +1,164 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+import numpy as np
+import pandas as pd
+
+## Cell 2:
+
+
+
+df=pd.read_csv('data/data.csv')
+
+## Cell 3:
+
+
+
+from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+
+## Cell 4:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+categorical_columns = ['street', 'city', 'statezip', 'country']
+df = pd.get_dummies(df, columns=categorical_columns, drop_first=True)
+
+## Cell 5:
+
+
+
+
+
+
+
+
+
+
+
+X = df.drop(columns=['date','price'])
+y = df['price']
+
+## Cell 6:
+
+
+
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test=train_test_split(X,y,train_size=0.8,random_state=2529)
+
+# Current relevent runtime information:
+{'X_train': {'has_nan': False,
+             'per_column_max_20': {'bathrooms': {'num_unique': 25,
+                                                      'value_range': (0.0,
+                                                                      8.0)},
+                                        'bedrooms': {'num_unique': 10,
+                                                     'value_range': (0.0, 9.0)},
+                                        'condition': {'num_unique': 5,
+                                                      'value_range': (1, 5)},
+                                        'floors': {'num_unique': 6,
+                                                   'value_range': (1.0, 3.5)},
+                                        'sqft_above': {'num_unique': 482,
+                                                       'value_range': (370,
+                                                                       9410)},
+                                        'sqft_basement': {'num_unique': 200,
+                                                          'value_range': (0,
+                                                                          4130)},
+                                        'sqft_living': {'num_unique': 534,
+                                                        'value_range': (370,
+                                                                        13540)},
+                                        'sqft_lot': {'num_unique': 2586,
+                                                     'value_range': (638,
+                                                                     478288)},
+                                        'street_10 W Etruria St': {'num_unique': 1,
+                                                                   'value_range': (False,
+                                                                                   False)},
+                                        'street_100 20th Ave E': {'num_unique': 2,
+                                                                  'value_range': (False,
+                                                                                  True)},
+                                        'street_100 24th Ave E': {'num_unique': 1,
+                                                                  'value_range': (False,
+                                                                                  False)},
+                                        'street_100 Mt Si Pl NW': {'num_unique': 2,
+                                                                   'value_range': (False,
+                                                                                   True)},
+                                        'street_1000 Mountain View Blvd SE': {'num_unique': 2,
+                                                                              'value_range': (False,
+                                                                                              True)},
+                                        'street_10000-10026 S 100th St': {'num_unique': 2,
+                                                                          'value_range': (False,
+                                                                                          True)},
+                                        'street_10005 16th Ave S': {'num_unique': 2,
+                                                                    'value_range': (False,
+                                                                                    True)},
+                                        'street_10009 SE 247th Pl': {'num_unique': 2,
+                                                                     'value_range': (False,
+                                                                                     True)},
+                                        'view': {'num_unique': 5,
+                                                 'value_range': (0, 4)},
+                                        'waterfront': {'num_unique': 2,
+                                                       'value_range': (0, 1)},
+                                        'yr_built': {'num_unique': 115,
+                                                     'value_range': (1900,
+                                                                     2014)},
+                                        'yr_renovated': {'num_unique': 59,
+                                                         'value_range': (0,
+                                                                         2014)}},
+             'shape': (3680, 4655)},
+ 'model': {'class_name': 'LinearRegression'},
+ 'y_train': {'has_nan': False,
+             'length': 3680,
+             'value_info': {'value_range': (0.0, 26590000.0)}}}
+# Target Cell:
+
+
+model.fit(X_train,y_train)

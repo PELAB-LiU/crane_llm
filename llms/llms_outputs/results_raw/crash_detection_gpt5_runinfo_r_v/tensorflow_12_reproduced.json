@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model expects input shape (100,100,3) but train_images are grayscale arrays likely shaped (100,100) without channel dimension; also loss uses from_logits=True with softmax outputs causing a mismatch. This will raise an error at fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects input shape (100,100,3) but train_images are grayscale arrays shaped (100,100) and dtype uint8; also loss uses from_logits=True with softmax outputs causing a mismatch. The input shape mismatch will cause an immediate error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects input shape (100,100,3) but train_images are grayscale shaped (100,100) and dtype uint8; also using SparseCategoricalCrossentropy(from_logits=True) with softmax output is inconsistent. The shape mismatch will cause an error on fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects input shape (100,100,3) but images are grayscale arrays (likely (100,100)); also loss uses from_logits=True with softmax outputs causing mismatch. Either issue can trigger a shape/value error at fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects input shape (100,100,3) but train_images are grayscale (100,100) uint8; also loss uses from_logits=True with softmax outputs causing mismatch. The shape mismatch will cause a crash on fit.",
+    "detection": true
+  }
+]

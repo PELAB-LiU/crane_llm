@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "x and y are numeric, same length, no NaNs; train_test_split and LinearRegression accept 2D arrays. Code should execute without errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "x and y are 2D arrays with matching first dimension, contain no NaNs, and shapes are compatible with scikit-learn. train_test_split and LinearRegression.fit/predict should run without errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "x and y are 2D numeric arrays of matching length without NaNs; train_test_split, LinearRegression.fit, predict, and r2_score will accept these shapes. No missing imports or shape mismatches.",
+    "detection": false
+  },
+  {
+    "reasoning": "x and y are 2D numpy arrays with matching first dimension, no NaNs, and valid value ranges; scikit-learn LinearRegression and train_test_split will handle these shapes. No undefined variables or missing imports.",
+    "detection": false
+  },
+  {
+    "reasoning": "Inputs x and y are 2D numeric arrays without NaNs and consistent sample sizes; train_test_split and LinearRegression accept these shapes, so the code should run and print an R^2 score.",
+    "detection": false
+  }
+]

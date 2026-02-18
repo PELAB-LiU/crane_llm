@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Id' column is present in the 'test' DataFrame, but the columns 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' were already dropped in a previous cell. Attempting to drop these non-existent columns again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Id' column is present in the 'test' DataFrame, but 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' columns were already dropped in a previous cell. Attempting to drop these non-existent columns again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Id' column is present in the 'test' DataFrame, but 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' columns were already dropped in a previous cell, so attempting to drop them again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Id' column is present in the 'test' DataFrame, but 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' columns were already dropped in the previous cell due to high missing values. Attempting to drop them again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Id' column is present in the 'test' DataFrame, but 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' columns were already dropped in a previous cell, so attempting to drop them again will raise a KeyError.",
+    "detection": true
+  }
+]

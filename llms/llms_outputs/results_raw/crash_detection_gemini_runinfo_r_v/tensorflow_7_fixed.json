@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model expects input_word_ids, input_mask, and input_type_ids as separate inputs, but train_input is a dictionary containing these. Keras's fit method can accept a dictionary of inputs when the model's inputs are named, which is the case here. The labels are provided correctly as train.label.values.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model expects input_word_ids, input_mask, and input_type_ids as separate inputs, but train_input is a dictionary containing these. Keras's fit method expects either a tuple of (inputs, targets) or a tf.data.Dataset when inputs are a dictionary.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input_word_ids, input_mask, and input_type_ids as separate inputs, but train_input is a dictionary containing these. Keras's fit method expects either a tuple of (inputs, targets) or a tf.data.Dataset when inputs are a dictionary.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input_word_ids, input_mask, and input_type_ids as separate inputs, but train_input is a dictionary containing these. Keras's fit method expects either a tuple of (inputs, targets) or a tf.data.Dataset when inputs are a dictionary.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input_word_ids, input_mask, and input_type_ids as separate inputs, but train_input is a dictionary containing these. Keras's fit method can accept a dictionary of inputs when the model's inputs are named, which is the case here. The labels are provided correctly as train.label.values.",
+    "detection": false
+  }
+]

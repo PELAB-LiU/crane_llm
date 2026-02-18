@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The code attempts to create a DataFrame using `feature_importance` arrays from models. However, the number of features in `X_train` (109) and `X_2_train` (8) differ, which will cause a shape mismatch when constructing the DataFrame for `X_train` models.",
+    "detection": true
+  },
+  {
+    "reasoning": "The code attempts to create a DataFrame using `feature_importance` arrays from models. However, the number of features in `X_train` (109) and `X_2_train` (8) differ, which will cause a shape mismatch when constructing the DataFrame for `X_train` models.",
+    "detection": true
+  },
+  {
+    "reasoning": "The code attempts to create a DataFrame using `feature_importance` arrays from models. However, the number of features in `X_train` (109) and `X_2_train` (8) differ, which will cause a shape mismatch when constructing the DataFrame for `X_train` models.",
+    "detection": true
+  },
+  {
+    "reasoning": "The code attempts to create a DataFrame using `feature_importance` arrays from models. However, the number of features in `X_train` (109) and `X_2_train` (8) differ, which will cause a shape mismatch when constructing the DataFrame for `X_train` models.",
+    "detection": true
+  },
+  {
+    "reasoning": "The code attempts to create a DataFrame using `feature_importance` arrays from models. However, the number of features in `X_train` (109) and `X_2_train` (8) differ, which will cause a shape mismatch when constructing the DataFrame for `X_train` models.",
+    "detection": true
+  }
+]

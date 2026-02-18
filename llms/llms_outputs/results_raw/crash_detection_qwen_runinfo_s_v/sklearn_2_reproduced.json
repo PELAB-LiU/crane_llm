@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The DTRmodel has not been retrained or updated since Cell 23, and it may not have the best parameters for prediction. Additionally, the structure and columns of dft_encoded need to match exactly with the training data X for prediction to avoid errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "The DTRmodel has not been retrained or updated since Cell 23, and it may not have the best parameters for prediction. Additionally, the structure and columns of dft_encoded need to match exactly with the training data X for prediction to avoid errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "The DTRmodel has not been retrained or updated since Cell 23, and it may not have the best parameters for prediction. Additionally, the structure and columns of dft_encoded need to match exactly with the training data X for prediction to avoid errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "The DTRmodel has not been retrained or updated since Cell 23, and it may not have the best parameters for prediction. Additionally, the structure and columns of dft_encoded need to match exactly with the training data X for prediction to avoid errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "The DTRmodel has not been retrained or updated since Cell 23, and it may not have the best parameters for prediction. Additionally, the structure and columns of dft_encoded need to match exactly with the training data X for prediction to avoid errors.",
+    "detection": false
+  }
+]

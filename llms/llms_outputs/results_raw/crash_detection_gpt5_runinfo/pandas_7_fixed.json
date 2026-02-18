@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Column 'released' contains values like '2015-10-23'; splitting by '-' and converting the year to float then pandas Int64 is valid. Any NaNs from missing entries are supported by nullable Int64.",
+    "detection": false
+  },
+  {
+    "reasoning": "The column 'released' contains date-like strings; splitting by '-' and converting the year to float then Int64 should succeed even if values are missing or already numeric, since str(x) handles NaNs and pandas 'Int64' supports NA.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains mixed/non-date values; splitting and converting to float then Int64 may fail on non-numeric strings (e.g., 'nan' or malformed dates). Uncertain if all values are convertible.",
+    "detection": false
+  },
+  {
+    "reasoning": "Converting year strings to float then pandas Int64 requires all values to be valid numbers; but released has NaNs present (dataset has NaNs overall), causing astype('float') to produce NaN which cannot be cast to Int64 without errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'released' column contains some missing or non-date values; converting to float then Int64 with astype will raise if any non-numeric strings like 'nan' are present. Without coercion, this may crash.",
+    "detection": false
+  }
+]

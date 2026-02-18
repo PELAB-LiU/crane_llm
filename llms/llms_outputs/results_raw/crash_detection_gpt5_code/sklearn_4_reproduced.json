@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "balanced_accuracy_score expects class labels while preds are continuous from AdaBoostRegressor, causing a type/value error. No thresholding or casting is applied.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects classification labels, but preds are continuous from AdaBoostRegressor, causing a ValueError due to mixed types. Therefore, executing will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "Balanced accuracy is for classification; preds are from AdaBoostRegressor and y_test is categorical, causing a ValueError due to continuous predictions.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects discrete class labels; preds from AdaBoostRegressor are continuous floats, causing a ValueError when comparing to y_test classes.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects classification labels; preds comes from AdaBoostRegressor and will be continuous floats, causing a ValueError. Also y_test is likely binary, so mismatch.",
+    "detection": true
+  }
+]

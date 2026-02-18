@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The cell will crash because the function `run_model` is not defined in the provided executed cells or current runtime information.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell will crash because the function `run_model` is not defined in the provided executed cells or current runtime information.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell will crash because the function `run_model` is not defined in the provided executed cells or current runtime information.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell will crash because the function `run_model` is not defined in the provided executed cells or current runtime information.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell will crash because the function `run_model` is not defined in the provided executed cells or current runtime information.",
+    "detection": true
+  }
+]

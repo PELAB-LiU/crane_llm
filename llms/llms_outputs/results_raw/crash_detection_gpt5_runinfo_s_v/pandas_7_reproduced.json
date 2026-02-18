@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Column 'released' likely contains NaNs or non-year strings; converting to int will raise a ValueError. Also dataset has NaNs overall.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'released' contains NaNs; converting to int will raise a ValueError when attempting to cast 'nan' strings to int.",
+    "detection": true
+  },
+  {
+    "reasoning": "If any 'released' value is NaN or a non-numeric year, converting to int will raise ValueError; dataset still has NaNs overall. Uncertain if 'released' specifically has NaNs.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'released' likely contains NaN or non-numeric values; after splitting, values like 'nan' will cause astype('int') to raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Casting the split year to int will fail if any 'released' value is NaN or non-numeric; the dataframe still has NaNs.",
+    "detection": true
+  }
+]

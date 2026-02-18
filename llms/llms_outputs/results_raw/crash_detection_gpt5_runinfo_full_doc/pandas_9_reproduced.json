@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The code references columns 'Total Gross (millions)' and possibly 'Gross Unkown' that do not exist in df; actual column is 'Total_Gross'. This will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The dataframe df does not have a column named 'Total Gross (millions)'; it has 'Total_Gross' instead, so key access will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DataFrame df does not have a column named 'Total Gross (millions)'; available column is 'Total_Gross'. Accessing a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The code references a column 'Total Gross (millions)' which does not exist; the dataframe has 'Total_Gross' instead. Accessing a nonexistent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The code references a column 'Total Gross (millions)' which does not exist; the dataframe has 'Total_Gross' instead. Accessing a non-existent column will raise a KeyError.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model expects inputs shaped (batch, 128), but train_hg tokenized sequences may not all have length 128; dataset columns likely contain lists leading to ragged arrays, causing shape/type mismatch during np.array conversion or model input.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model and data tensors match required shapes and types; inputs and labels exist and align with the compiled binary loss. No undefined variables or shape/type mismatches are apparent.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model expects BERT outputs from input_ids and attention_mask only; y shape matches. train_hg contains required fields processed earlier. No obvious dtype/shape mismatch or missing keys.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model expects inputs of shape (None, 128) matching tokenizer max_length=128; train_hg columns come from processed_data with input_ids and attention_mask arrays, and labels exist. Compilation and fit API usage are correct.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model expects input tensors shaped (batch, 128) but train_hg stores lists of variable-length tokenized sequences unless padding was enforced into arrays; converting to np.array may yield arrays of objects causing shape/type mismatch. Not certain it will crash though.",
+    "detection": false
+  }
+]

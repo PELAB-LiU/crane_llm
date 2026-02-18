@@ -1,0 +1,171 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+# Current relevent runtime information:
+{'RandomForestClassifier': {'type': "<class 'abc.ABCMeta'>"},
+ 'X': {'has_nan': False,
+       'per_column': {'age': {'dtype': 'int64',
+                              'num_unique': 41,
+                              'type': 'continuous',
+                              'value_range': (29, 77)},
+                      'caa': {'dtype': 'int64',
+                              'num_unique': 5,
+                              'type': 'categorical_numeric',
+                              'value_range': (0, 4)},
+                      'chol': {'dtype': 'int64',
+                               'num_unique': 152,
+                               'type': 'continuous',
+                               'value_range': (126, 564)},
+                      'cp': {'dtype': 'int64',
+                             'num_unique': 4,
+                             'type': 'categorical_numeric',
+                             'value_range': (0, 3)},
+                      'exng': {'dtype': 'int64',
+                               'num_unique': 2,
+                               'type': 'binary',
+                               'value_range': (0, 1)},
+                      'fbs': {'dtype': 'int64',
+                              'num_unique': 2,
+                              'type': 'binary',
+                              'value_range': (0, 1)},
+                      'oldpeak': {'dtype': 'float64',
+                                  'num_unique': 40,
+                                  'type': 'continuous',
+                                  'value_range': (0.0, 6.2)},
+                      'restecg': {'dtype': 'int64',
+                                  'num_unique': 3,
+                                  'type': 'categorical_numeric',
+                                  'value_range': (0, 2)},
+                      'sex': {'dtype': 'int64',
+                              'num_unique': 2,
+                              'type': 'binary',
+                              'value_range': (0, 1)},
+                      'slp': {'dtype': 'int64',
+                              'num_unique': 3,
+                              'type': 'categorical_numeric',
+                              'value_range': (0, 2)},
+                      'thalachh': {'dtype': 'int64',
+                                   'num_unique': 91,
+                                   'type': 'continuous',
+                                   'value_range': (71, 202)},
+                      'thall': {'dtype': 'int64',
+                                'num_unique': 4,
+                                'type': 'categorical_numeric',
+                                'value_range': (0, 3)},
+                      'trtbps': {'dtype': 'int64',
+                                 'num_unique': 49,
+                                 'type': 'continuous',
+                                 'value_range': (94, 200)}},
+       'shape': (303, 13),
+       'type': 'pandas.core.frame.DataFrame'},
+ 'X_test': {'has_nan': False,
+            'per_column': {'age': {'dtype': 'int64',
+                                   'num_unique': 29,
+                                   'type': 'continuous',
+                                   'value_range': (35, 70)},
+                           'caa': {'dtype': 'int64',
+                                   'num_unique': 5,
+                                   'type': 'categorical_numeric',
+                                   'value_range': (0, 4)},
+                           'chol': {'dtype': 'int64',
+                                    'num_unique': 63,
+                                    'type': 'continuous',
+                                    'value_range': (149, 409)},
+                           'cp': {'dtype': 'int64',
+                                  'num_unique': 4,
+                                  'type': 'categorical_numeric',
+                                  'value_range': (0, 3)},
+                           'exng': {'dtype': 'int64',
+                                    'num_unique': 2,
+                                    'type': 'binary',
+                                    'value_range': (0, 1)},
+                           'fbs': {'dtype': 'int64',
+                                   'num_unique': 2,
+                                   'type': 'binary',
+                                   'value_range': (0, 1)},
+                           'oldpeak': {'dtype': 'float64',
+                                       'num_unique': 28,
+                                       'type': 'continuous',
+                                       'value_range': (0.0, 4.2)},
+                           'restecg': {'dtype': 'int64',
+                                       'num_unique': 2,
+                                       'type': 'binary',
+                                       'value_range': (0, 1)},
+                           'sex': {'dtype': 'int64',
+                                   'num_unique': 2,
+                                   'type': 'binary',
+                                   'value_range': (0, 1)},
+                           'slp': {'dtype': 'int64',
+                                   'num_unique': 3,
+                                   'type': 'categorical_numeric',
+                                   'value_range': (0, 2)},
+                           'thalachh': {'dtype': 'int64',
+                                        'num_unique': 52,
+                                        'type': 'continuous',
+                                        'value_range': (71, 185)},
+                           'thall': {'dtype': 'int64',
+                                     'num_unique': 3,
+                                     'type': 'categorical_numeric',
+                                     'value_range': (1, 3)},
+                           'trtbps': {'dtype': 'int64',
+                                      'num_unique': 31,
+                                      'type': 'continuous',
+                                      'value_range': (100, 172)}},
+            'shape': (76, 13),
+            'type': 'pandas.core.frame.DataFrame'},
+ '__method__model_fit': {'type': "<class 'method'>"},
+ '__method__model_predict': {'type': "<class 'method'>"},
+ '__method__pd_DataFrame': {'type': "<class 'type'>"},
+ '__method__pd_get_dummies': {'type': "<class 'function'>"},
+ 'model': {'class_name': 'DecisionTreeClassifier',
+           'fitted_attributes': {'n_features_in_': 13, 'n_outputs_': 1},
+           'is_fitted': True,
+           'module': 'sklearn.tree._classes',
+           'type': "<class 'sklearn.tree._classes.DecisionTreeClassifier'>"},
+ 'output': {'device': 'cpu',
+            'dtype': 'torch.float32',
+            'has_nan': False,
+            'requires_grad': True,
+            'shape': (1, 1000),
+            'type': "<class 'torch.Tensor'>"},
+ 'pd': {'type': "<class 'module'>"},
+ 'y': {'dtype': 'int64',
+       'has_nan': False,
+       'length': 303,
+       'type': 'pandas.core.series.Series',
+       'value_info': {'unique_values': [0, 1], 'value_type': 'binary'}}}
+# Target Cell:
+
+from sklearn.ensemble import RandomForestClassifier
+
+y = train_data["Survived"]
+
+features = ["Pclass", "Sex", "SibSp", "Parch", "Fare"]
+X = pd.get_dummies(train_data[features])
+X_test = pd.get_dummies(test_data[features])
+
+model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=1)
+model.fit(X, y)
+predictions = model.predict(X_test)
+
+output = pd.DataFrame({'PassengerId': test_data.PassengerId, 'Survived': predictions})
+output.to_csv('submission.csv', index=False)
+print("Your submission was successfully saved!")

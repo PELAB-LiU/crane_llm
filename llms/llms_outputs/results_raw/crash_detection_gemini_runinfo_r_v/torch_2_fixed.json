@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model. It modifies the model in place and saves its state_dict if `save` is True. Therefore, `quantized_vit` will be `None`, leading to an error when passed to the `inference` function.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model. It modifies the model in place and saves its state_dict if `save` is True. Therefore, `quantized_vit` will be `None`, leading to an error when passed to the `inference` function.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model. It modifies the model in place and saves its state_dict if `save` is True. Therefore, `quantized_vit` will be `None`, leading to an error when passed to `inference`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model. It modifies the model in place and saves its state_dict if `save` is True. Therefore, `quantized_vit` will be `None`, leading to an error when passed to `inference`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model. It modifies the model in place and saves its state_dict if `save` is True. Therefore, `quantized_vit` will be `None`, leading to an error when passed to `inference`.",
+    "detection": true
+  }
+]

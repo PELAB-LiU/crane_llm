@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not one-hot encoded. The `test_generator.classes` is an array of class indices, not one-hot encoded labels. This will cause a type mismatch when trying to use `y_true_onehot` as one-hot encoded labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not one-hot encoded. The `test_generator.classes` is an array of class indices, not one-hot encoded labels. This will cause a type mismatch when trying to use `y_true_onehot` as one-hot encoded labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not one-hot encoded. The `test_generator.classes` is an array of class indices, not one-hot encoded labels. This will cause a type mismatch when trying to use `y_true_onehot` as one-hot encoded labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not one-hot encoded. The `test_generator.classes` is an array of class indices, not one-hot encoded labels. This will cause a type mismatch when trying to use `y_true_onehot` as one-hot encoded labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not one-hot encoded. The `test_generator.classes` is an array of class indices, not one-hot encoded labels. This will cause a type mismatch when trying to use `y_true_onehot` as one-hot encoded labels.",
+    "detection": true
+  }
+]

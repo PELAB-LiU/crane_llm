@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The cell calls run_model, but no such function is defined in the executed cells, leading to a NameError when executed.",
+    "detection": true
+  },
+  {
+    "reasoning": "The Target Cell calls run_model, but no such function is defined in the executed cells, leading to a NameError when executed.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell calls run_model, but no such function is defined in the executed cells, leading to a NameError. Other components (optimizer, scheduler, model, dataloader) exist.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell calls run_model, but no such function is defined in the executed cells, leading to a NameError when executed.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell calls run_model, which is not defined in the executed cells; this will raise a NameError when executed.",
+    "detection": true
+  }
+]

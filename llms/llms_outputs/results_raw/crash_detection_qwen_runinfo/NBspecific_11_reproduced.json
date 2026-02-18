@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The array `adv` has a shape of (3, 224, 224) which is not compatible with `plt.imshow` as it expects the color dimension to be the last dimension. This will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The array `adv` has a shape of (3, 224, 224), which is not compatible with `plt.imshow` as it expects the color dimension to be the last dimension. This will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The array `adv` has a shape of (3, 224, 224) which is not compatible with `plt.imshow` as it expects the color dimension to be the last dimension. This will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The array `adv` has a shape of (3, 224, 224), which is not compatible with `plt.imshow` as it expects the color dimension to be the last dimension. This will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The array `adv` has a shape of (3, 224, 224), which is not compatible with `plt.imshow` as it expects the color dimension to be the last dimension. This will cause a crash.",
+    "detection": true
+  }
+]

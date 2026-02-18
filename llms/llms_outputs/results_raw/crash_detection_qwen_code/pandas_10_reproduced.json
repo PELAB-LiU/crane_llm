@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Installs' column likely contains non-numeric values such as commas or a '+' sign, which would prevent it from being cast directly to an integer, causing a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column likely contains non-numeric values such as commas or a '+' sign, which would prevent it from being cast directly to an integer, causing a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column likely contains non-numeric values such as commas or a '+' sign, which would prevent it from being cast directly to an integer, causing a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column likely contains non-numeric values such as commas or a '+' sign, which would prevent it from being cast directly to an integer, causing a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column likely contains non-numeric values such as commas or a '+' sign, which would prevent it from being cast directly to an integer, causing a crash.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The DataFrame does not have a column named 'Total Gross (millions)'; it has 'Total_Gross'. Accessing a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DataFrame does not have a column named 'Total Gross (millions)'; the relevant column is 'Total_Gross'. Accessing a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DataFrame does not have a column named 'Total Gross (millions)'; it has 'Total_Gross'. Accessing a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DataFrame does not have a column named 'Total Gross (millions)'; the existing column is 'Total_Gross'. Accessing a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DataFrame does not have a column named 'Total Gross (millions)'; it has 'Total_Gross'. Indexing with a non-existent column will raise a KeyError.",
+    "detection": true
+  }
+]

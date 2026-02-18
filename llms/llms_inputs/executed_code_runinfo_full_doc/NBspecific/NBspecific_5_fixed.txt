@@ -1,0 +1,188 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from mpl_toolkits import mplot3d
+import warnings
+
+warnings.filterwarnings('ignore')
+
+## Cell 2:
+
+df=pd.read_csv('data/kdd_train.csv.zip')
+df.head()
+
+## Cell 3:
+
+numeric_columns = []
+categorical_columns = []
+for column in df.columns:
+    if df[column].dtype != 'object':
+        numeric_columns.append(column)
+    else:
+        categorical_columns.append(column)
+
+categorical_columns = categorical_columns[:-1]
+labels=df['labels'].unique()
+
+# Current relevent runtime information:
+{'__method__df_drop': {'context': {'public_attributes': []},
+                       'signature': {'parameters': [{'annotation': "'IndexLabel "
+                                                                   "| None'",
+                                                     'default': 'None',
+                                                     'kind': 'POSITIONAL_OR_KEYWORD',
+                                                     'name': 'labels',
+                                                     'required': False},
+                                                    {'annotation': "'Axis'",
+                                                     'default': '0',
+                                                     'kind': 'KEYWORD_ONLY',
+                                                     'name': 'axis',
+                                                     'required': False},
+                                                    {'annotation': "'IndexLabel "
+                                                                   "| None'",
+                                                     'default': 'None',
+                                                     'kind': 'KEYWORD_ONLY',
+                                                     'name': 'index',
+                                                     'required': False},
+                                                    {'annotation': "'IndexLabel "
+                                                                   "| None'",
+                                                     'default': 'None',
+                                                     'kind': 'KEYWORD_ONLY',
+                                                     'name': 'columns',
+                                                     'required': False},
+                                                    {'annotation': "'Level | "
+                                                                   "None'",
+                                                     'default': 'None',
+                                                     'kind': 'KEYWORD_ONLY',
+                                                     'name': 'level',
+                                                     'required': False},
+                                                    {'annotation': "'bool'",
+                                                     'default': 'False',
+                                                     'kind': 'KEYWORD_ONLY',
+                                                     'name': 'inplace',
+                                                     'required': False},
+                                                    {'annotation': "'IgnoreRaise'",
+                                                     'default': "'raise'",
+                                                     'kind': 'KEYWORD_ONLY',
+                                                     'name': 'errors',
+                                                     'required': False}],
+                                     'return_annotation': "'DataFrame | None'"},
+                       'type': "<class 'method'>"},
+ '__method__numeric_columns_remove': {'signature': {'parameters': [{'annotation': None,
+                                                                    'default': None,
+                                                                    'kind': 'POSITIONAL_ONLY',
+                                                                    'name': 'value',
+                                                                    'required': True}],
+                                                    'return_annotation': None},
+                                      'type': '<class '
+                                              "'builtin_function_or_method'>"},
+ 'df': {'execution_cell_source': {'cellno': 2, 'lineno': 1},
+        'has_nan': False,
+        'per_column_max_20': {'dst_bytes': {'dtype': 'int64',
+                                               'num_unique': 9326,
+                                               'type': 'continuous',
+                                               'value_range': (0, 1309937401)},
+                                 'duration': {'dtype': 'int64',
+                                              'num_unique': 2981,
+                                              'type': 'continuous',
+                                              'value_range': (0, 42908)},
+                                 'flag': {'dtype': 'object',
+                                          'example_values': ['RSTOS0',
+                                                             'SH',
+                                                             'SF',
+                                                             'S2',
+                                                             'RSTO'],
+                                          'num_unique': 11,
+                                          'type': 'categorical'},
+                                 'hot': {'dtype': 'int64',
+                                         'num_unique': 28,
+                                         'type': 'continuous',
+                                         'value_range': (0, 77)},
+                                 'land': {'dtype': 'int64',
+                                          'num_unique': 2,
+                                          'type': 'binary',
+                                          'value_range': (0, 1)},
+                                 'logged_in': {'dtype': 'int64',
+                                               'num_unique': 2,
+                                               'type': 'binary',
+                                               'value_range': (0, 1)},
+                                 'num_access_files': {'dtype': 'int64',
+                                                      'num_unique': 10,
+                                                      'type': 'categorical_numeric',
+                                                      'value_range': (0, 9)},
+                                 'num_compromised': {'dtype': 'int64',
+                                                     'num_unique': 88,
+                                                     'type': 'continuous',
+                                                     'value_range': (0, 7479)},
+                                 'num_failed_logins': {'dtype': 'int64',
+                                                       'num_unique': 6,
+                                                       'type': 'categorical_numeric',
+                                                       'value_range': (0, 5)},
+                                 'num_file_creations': {'dtype': 'int64',
+                                                        'num_unique': 35,
+                                                        'type': 'continuous',
+                                                        'value_range': (0, 43)},
+                                 'num_outbound_cmds': {'dtype': 'int64',
+                                                       'num_unique': 1,
+                                                       'type': 'categorical_numeric',
+                                                       'value_range': (0, 0)},
+                                 'num_root': {'dtype': 'int64',
+                                              'num_unique': 82,
+                                              'type': 'continuous',
+                                              'value_range': (0, 7468)},
+                                 'num_shells': {'dtype': 'int64',
+                                                'num_unique': 3,
+                                                'type': 'categorical_numeric',
+                                                'value_range': (0, 2)},
+                                 'protocol_type': {'dtype': 'object',
+                                                   'num_unique': 3,
+                                                   'type': 'categorical',
+                                                   'unique_values': ['tcp',
+                                                                     'udp',
+                                                                     'icmp']},
+                                 'root_shell': {'dtype': 'int64',
+                                                'num_unique': 2,
+                                                'type': 'binary',
+                                                'value_range': (0, 1)},
+                                 'service': {'dtype': 'object',
+                                             'example_values': ['mtp',
+                                                                'ntp_u',
+                                                                'bgp',
+                                                                'sunrpc',
+                                                                'domain'],
+                                             'num_unique': 70,
+                                             'type': 'categorical'},
+                                 'src_bytes': {'dtype': 'int64',
+                                               'num_unique': 3341,
+                                               'type': 'continuous',
+                                               'value_range': (0, 1379963888)},
+                                 'su_attempted': {'dtype': 'int64',
+                                                  'num_unique': 3,
+                                                  'type': 'categorical_numeric',
+                                                  'value_range': (0, 2)},
+                                 'urgent': {'dtype': 'int64',
+                                            'num_unique': 4,
+                                            'type': 'categorical_numeric',
+                                            'value_range': (0, 3)},
+                                 'wrong_fragment': {'dtype': 'int64',
+                                                    'num_unique': 3,
+                                                    'type': 'categorical_numeric',
+                                                    'value_range': (0, 3)}},
+        'shape': (125973, 42),
+        'type': 'pandas.core.frame.DataFrame'},
+ 'numeric_columns': {'execution_cell_source': {'cellno': 10, 'lineno': 1},
+                     'length': 38,
+                     'type': "<class 'list'>",
+                     'value_info': {'num_unique': 38,
+                                    'value_type': 'categorical or object'}}}
+# Target Cell:
+
+
+
+df.drop(columns='num_outbound_cmds', inplace=True)
+
+
+numeric_columns.remove('num_outbound_cmds')

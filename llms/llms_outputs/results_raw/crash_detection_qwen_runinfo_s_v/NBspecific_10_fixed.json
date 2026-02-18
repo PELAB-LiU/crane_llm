@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The function `check_stationarity` requires the input series to not have NaN values, but `train['ActivePower']` still contains NaN values. This will likely cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `check_stationarity` requires the input series to not have NaN values, but `train['ActivePower']` still contains NaN values. This will likely cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `check_stationarity` requires the input series to not have NaN values, but `train['ActivePower']` still contains NaN values. This will likely cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `check_stationarity` requires the input series to not have NaN values, but `train['ActivePower']` still contains NaN values. This will likely cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `check_stationarity` requires the input series to not have NaN values, but `train['ActivePower']` still contains NaN values. This will likely cause a crash.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Order ID' column contains non-integer values (e.g., 'CA-2016-152156') which will cause a ValueError when attempting to convert them directly to integers using astype('int').",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-numeric values (e.g., 'CA-2016-152156') which cannot be directly converted to an integer type, leading to a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-integer values (e.g., 'CA-2017-152156') which will cause a ValueError when attempting to convert them directly to integers using astype('int').",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-numeric values (e.g., 'C581484') which will cause a ValueError when attempting to convert them to integers using astype('int').",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-integer values (e.g., 'CA-2017-152156') which will cause a ValueError when attempting to convert them directly to integers using astype('int').",
+    "detection": true
+  }
+]

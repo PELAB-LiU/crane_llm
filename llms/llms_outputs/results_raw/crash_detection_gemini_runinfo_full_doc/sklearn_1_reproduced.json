@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model.compile` method in TensorFlow/Keras does not accept a `class_weight` argument directly. Class weights are typically passed during the `model.fit` call.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.compile` method in TensorFlow/Keras does not accept a `class_weight` argument directly. Class weights are typically passed during the `model.fit` call.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.compile` method in TensorFlow/Keras does not accept a `class_weight` argument directly. Class weights are typically passed during the `model.fit` call.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.compile` method in TensorFlow/Keras does not accept a `class_weight` argument directly. Class weights are typically passed during the `model.fit` call.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.compile` method in TensorFlow/Keras does not accept a `class_weight` argument directly. Class weights are typically passed during the `model.fit` call.",
+    "detection": true
+  }
+]

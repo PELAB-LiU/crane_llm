@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model was trained on columns X (from df_encoded) which likely differ from dft_encoded’s columns; predict requires same features/ordering and will raise a shape mismatch. Also best_estimator is defined, but feature alignment is uncertain. Hence not certain to crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "best_estimator was trained on X with a specific dummy-encoded column set; dft_encoded likely has a different set/order of columns, causing a shape/feature mismatch during predict. This typically raises a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "best_estimator expects the same feature columns as used in training (X). dft_encoded’s columns likely differ from X due to dummy-encoding mismatches, causing a shape mismatch error on predict.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model was trained on X with specific dummy-encoded columns, but dft_encoded likely has a different set/order of columns than X; sklearn requires the same features, causing a shape/feature mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects same feature columns as during training, but dft_encoded likely has different dummy columns and order; predict will raise a shape mismatch error.",
+    "detection": true
+  }
+]

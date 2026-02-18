@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The column 'num_outbound_cmds' does not exist in the DataFrame 'df', which will cause a KeyError when attempting to drop it. Consequently, the subsequent removal from 'numeric_columns' will also fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' does not exist in the DataFrame 'df', which will cause a KeyError when attempting to drop it. Consequently, the subsequent removal from 'numeric_columns' will also fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' does not exist in the DataFrame 'df', which will cause a KeyError when attempting to drop it. Consequently, the subsequent removal from 'numeric_columns' will also fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' does not exist in the DataFrame 'df', which will cause a KeyError when attempting to drop it. Consequently, the subsequent removal from 'numeric_columns' will also fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' does not exist in the DataFrame 'df', which will cause a KeyError when attempting to drop it. Consequently, the subsequent removal from 'numeric_columns' will also fail.",
+    "detection": true
+  }
+]

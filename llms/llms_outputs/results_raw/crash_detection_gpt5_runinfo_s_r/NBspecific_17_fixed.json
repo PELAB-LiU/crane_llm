@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "PolynomialFeatures with degree=1 and interaction_only=True will output the bias term plus the original features; input X has shape (1460, 287), so transform will succeed and produce an array of shape (1460, 288). No incompatible types are indicated.",
+    "detection": false
+  },
+  {
+    "reasoning": "X is a DataFrame with shape (1460, 287). PolynomialFeatures with degree=1 and interaction_only=True will produce only bias and original features, so transform will succeed and output shape should be (1460, 288).",
+    "detection": false
+  },
+  {
+    "reasoning": "PolynomialFeatures with degree=1 and interaction_only=True is valid for a DataFrame input; fit_transform will return a 2D array. Shapes can be printed without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "PolynomialFeatures with degree=1 and interaction_only=True is valid and fit_transform accepts a DataFrame; X has proper shape, so it will produce a numpy array without error and shapes can be printed.",
+    "detection": false
+  },
+  {
+    "reasoning": "PolynomialFeatures with degree=1 and interaction_only=True is valid and can fit_transform a DataFrame X; output will be a NumPy array with added bias and (since degree=1, no interactions), so it should run. Shapes will be consistent.",
+    "detection": false
+  }
+]

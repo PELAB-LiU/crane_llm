@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Id' column was not dropped in the previous cell, and it is present in the 'test' DataFrame. However, the columns 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' were already dropped in the previous cell as they were identified as high missing value columns. Attempting to drop them again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Id' column was not dropped in the previous cell, and it is present in the 'test' DataFrame. However, the columns 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' were already dropped in the previous cell as they were identified as high missing value columns. Attempting to drop them again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Id' column was not dropped in the previous cell, and it is present in the 'test' DataFrame. However, the columns 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' were already dropped in the previous cell as they were identified as high missing value columns. Attempting to drop them again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Id' column was not dropped in the previous cell, and it is present in the 'test' DataFrame. However, the columns 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' were already dropped in the previous cell as they were identified as high missing value columns. Attempting to drop them again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Id' column was not dropped in the previous cell, and it is present in the 'test' DataFrame. However, the columns 'Alley', 'PoolQC', 'Fence', and 'MiscFeature' were already dropped in the previous cell as they were identified as high missing value columns. Attempting to drop them again will raise a KeyError.",
+    "detection": true
+  }
+]

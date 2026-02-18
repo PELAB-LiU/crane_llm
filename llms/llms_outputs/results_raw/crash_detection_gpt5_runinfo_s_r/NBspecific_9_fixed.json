@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "df is a DataFrame and drop is a valid method; index 10472 exists within the DataFrame's range, so dropping it in place should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "df is a DataFrame with 10841 rows; dropping index 10472 is valid and the drop method exists. No type or key issues are indicated.",
+    "detection": false
+  },
+  {
+    "reasoning": "df is a DataFrame and drop with label 10472 along index is valid given that row label 10472 exists in a typical 0-based index of length 10841. No type or syntax issues expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "df is a valid DataFrame and dropping index 10472 in place is a supported operation; the row index likely exists given the shape. No type or API issues apparent.",
+    "detection": false
+  },
+  {
+    "reasoning": "df is a DataFrame with 10841 rows, and dropping index 10472 in-place is valid; df.drop refers to the bound method. No missing index or type issue indicated.",
+    "detection": false
+  }
+]

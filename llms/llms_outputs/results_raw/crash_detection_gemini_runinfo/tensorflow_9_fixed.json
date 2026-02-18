@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `summary` function from `torchinfo` expects a `torch.nn.Module` as its first argument, and `bert_model` is an instance of `transformers.models.bert.modeling_bert.BertModel`, which inherits from `torch.nn.Module`. Therefore, the call will be successful.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `summary` function from `torchinfo` expects a `torch.nn.Module` as its first argument, and `bert_model` is an instance of `transformers.models.bert.modeling_bert.BertModel`, which inherits from `torch.nn.Module`. Therefore, the call will be successful.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `summary` function from `torchinfo` expects a `torch.nn.Module` as its first argument, and `bert_model` is an instance of `transformers.models.bert.modeling_bert.BertModel`, which inherits from `torch.nn.Module`. Therefore, the call will be successful.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `summary` function from `torchinfo` expects a `torch.nn.Module` as its first argument, and `bert_model` is an instance of `transformers.models.bert.modeling_bert.BertModel`, which inherits from `torch.nn.Module`. Therefore, the call will be successful.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `summary` function from `torchinfo` expects a `torch.nn.Module` as its first argument, and `bert_model` is an instance of `transformers.models.bert.modeling_bert.BertModel`, which inherits from `torch.nn.Module`. Therefore, the call will be successful.",
+    "detection": false
+  }
+]

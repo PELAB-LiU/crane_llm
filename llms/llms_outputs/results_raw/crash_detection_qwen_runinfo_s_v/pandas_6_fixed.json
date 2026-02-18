@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Order ID' column contains non-numeric values that cannot be coerced into numeric types, which will result in NaNs. Dropping rows with NaNs in 'Order ID' will cause a crash if all rows become NaN.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-numeric values that cannot be coerced into numeric types, which will result in NaNs. Dropping rows with NaNs in 'Order ID' will cause a crash if all rows become NaN.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-numeric values that cannot be converted to numeric types, which will result in NaNs. Dropping rows with NaNs in 'Order ID' will cause a crash if all rows become NaNs.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-numeric values that cannot be coerced into numeric types, which will result in NaNs. Dropping rows with NaNs in 'Order ID' will cause a crash if all rows become NaN.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-numeric values that cannot be converted to numeric types, which will result in NaNs. Dropping rows with NaNs in 'Order ID' will cause a crash if all rows become NaNs.",
+    "detection": false
+  }
+]

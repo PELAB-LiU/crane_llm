@@ -1,0 +1,73 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+
+train_data = pd.read_csv("data/train.csv")
+train_data.head()
+
+## Cell 3:
+
+
+test_data = pd.read_csv("data/test.csv")
+test_data.head()
+
+# Current relevent runtime information:
+{'RandomForestClassifier': {'type': "<class 'abc.ABCMeta'>"},
+ 'X': {'shape': (303, 13), 'type': 'pandas.core.frame.DataFrame'},
+ 'X_test': {'shape': (76, 13), 'type': 'pandas.core.frame.DataFrame'},
+ '__method__X_test_fillna': {'type': "<class 'method'>"},
+ '__method__model_fit': {'type': "<class 'method'>"},
+ '__method__model_predict': {'type': "<class 'method'>"},
+ '__method__pd_DataFrame': {'type': "<class 'type'>"},
+ '__method__pd_get_dummies': {'type': "<class 'function'>"},
+ '__method__test_data_PassengerId': {'dtype': 'int64',
+                                     'length': 418,
+                                     'type': 'pandas.core.series.Series'},
+ 'model': {'fitted_attributes': {'n_features_in_': 13, 'n_outputs_': 1},
+           'is_fitted': True,
+           'module': 'sklearn.tree._classes',
+           'type': "<class 'sklearn.tree._classes.DecisionTreeClassifier'>"},
+ 'pd': {'type': "<class 'module'>"},
+ 'test_data': {'shape': (418, 11), 'type': 'pandas.core.frame.DataFrame'},
+ 'train_data': {'shape': (891, 12), 'type': 'pandas.core.frame.DataFrame'},
+ 'y': {'dtype': 'int64', 'length': 303, 'type': 'pandas.core.series.Series'}}
+# Target Cell:
+
+from sklearn.ensemble import RandomForestClassifier
+
+y = train_data["Survived"]
+
+features = ["Pclass", "Sex", "SibSp", "Parch", "Fare"]
+X = pd.get_dummies(train_data[features])
+X_test = pd.get_dummies(test_data[features])
+
+
+X_test.fillna(0, inplace=True)
+
+model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=1)
+model.fit(X, y)
+predictions = model.predict(X_test)
+
+output = pd.DataFrame({'PassengerId': test_data.PassengerId, 'Survived': predictions})
+
+print("Your submission was successfully saved!")

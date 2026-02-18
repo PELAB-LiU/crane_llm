@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to access a column named 'Total Gross (millions)' which does not exist in the DataFrame 'df'. The existing column is named 'Total_Gross'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to access a column named 'Total Gross (millions)' which does not exist in the DataFrame 'df'. The existing column is named 'Total_Gross'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to access a column named 'Total Gross (millions)' which does not exist in the DataFrame 'df'. The existing column is named 'Total_Gross'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to access a column named 'Total Gross (millions)' which does not exist in the DataFrame 'df'. The existing column is named 'Total_Gross'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to access a column named 'Total Gross (millions)' which does not exist in the DataFrame 'df'. The existing column is named 'Total_Gross'.",
+    "detection": true
+  }
+]

@@ -1,0 +1,78 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+from matplotlib import pyplot as plt
+
+## Cell 2:
+
+df = pd.read_csv("data/heart.csv")
+
+## Cell 3:
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+df=pd.read_csv("data/heart.csv")
+
+y = df['output']
+X = df.drop(['output'], axis=1)
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+
+model = DecisionTreeClassifier()
+
+
+model.fit(X_train, y_train)
+
+
+y_hat = model.predict(X_test)
+
+
+accuracy = accuracy_score(y_test, y_hat)
+print("Accuracy:", accuracy)
+
+# Current relevent runtime information:
+{'DecisionTreeClassifier': {'type': "<class 'abc.ABCMeta'>"},
+ 'X': {'has_nan': False,
+       'per_column': {'age': {'num_unique': 41, 'value_range': (29, 77)},
+                      'caa': {'num_unique': 5, 'value_range': (0, 4)},
+                      'chol': {'num_unique': 152, 'value_range': (126, 564)},
+                      'cp': {'num_unique': 4, 'value_range': (0, 3)},
+                      'exng': {'num_unique': 2, 'value_range': (0, 1)},
+                      'fbs': {'num_unique': 2, 'value_range': (0, 1)},
+                      'oldpeak': {'num_unique': 40, 'value_range': (0.0, 6.2)},
+                      'restecg': {'num_unique': 3, 'value_range': (0, 2)},
+                      'sex': {'num_unique': 2, 'value_range': (0, 1)},
+                      'slp': {'num_unique': 3, 'value_range': (0, 2)},
+                      'thalachh': {'num_unique': 91, 'value_range': (71, 202)},
+                      'thall': {'num_unique': 4, 'value_range': (0, 3)},
+                      'trtbps': {'num_unique': 49, 'value_range': (94, 200)}},
+       'type': 'pandas.core.frame.DataFrame'},
+ '__method__model_fit': {'type': "<class 'method'>"},
+ '__method__model_predict': {'type': "<class 'method'>"},
+ 'accuracy_score': {'type': "<class 'function'>"},
+ 'model': {'class_name': 'DecisionTreeClassifier',
+           'fitted_attributes': {'n_features_in_': 13, 'n_outputs_': 1},
+           'is_fitted': True,
+           'module': 'sklearn.tree._classes',
+           'type': "<class 'sklearn.tree._classes.DecisionTreeClassifier'>"},
+ 'y': {'dtype': 'int64',
+       'has_nan': False,
+       'type': 'pandas.core.series.Series',
+       'value_info': {'unique_values': [0, 1]}},
+ 'y_hat': {'dtype': 'int64',
+           'has_nan': False,
+           'type': 'numpy.ndarray',
+           'value_info': {'unique_values': [0, 1]},
+           'value_range': (0, 1)}}
+# Target Cell:
+
+from sklearn.tree import DecisionTreeClassifier
+model = DecisionTreeClassifier()
+model .fit(X,y)
+y_hat = model.predict(X)
+print ( accuracy_score(y_hat,y))

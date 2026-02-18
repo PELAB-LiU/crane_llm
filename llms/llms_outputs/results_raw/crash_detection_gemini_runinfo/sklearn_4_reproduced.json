@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multiclass labels, but `preds` contains continuous values (float64) from a regressor, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multiclass labels, but `preds` contains continuous values from a regressor. This will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multiclass labels, but `preds` contains continuous values (float64) from a regressor, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multiclass labels, but `preds` contains continuous values (float64) from a regressor, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multiclass labels, but `preds` contains continuous values from a regressor. This will cause a ValueError.",
+    "detection": true
+  }
+]

@@ -1,0 +1,67 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+from pprint import pprint
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import holoviews as hv
+hv.extension('bokeh', 'matplotlib', logo=False)
+
+
+import warnings
+warnings.filterwarnings('ignore')
+
+## Cell 2:
+
+df=pd.read_csv('data/hmeq.csv')
+df.head()
+
+## Cell 3:
+
+df.loc[df.BAD == 1, 'STATUS'] = 'DEFAULT'
+df.loc[df.BAD == 0, 'STATUS'] = 'PAID'
+
+# Target Cell:
+
+
+
+g = df.groupby('STATUS')
+
+cols = ['LOAN',
+        'MORTDUE',
+        'VALUE',
+        'YOJ',
+        'DEROG',
+        'DELINQ',
+        'CLAGE',
+        'NINQ',
+        'CLNO']
+dd={}
+
+
+for col in cols:
+
+
+
+    values = df[col].dropna().values
+    if len(values) == 0:
+        print(f"Skipping column '{col}' – all values are NaN")
+        continue
+
+    freq, edges = np.histogram(values)
+
+
+    dd[col] = hv.Histogram((edges, freq), label='ALL Loans').redim.label(x=' ')
+
+    freq, edges = np.histogram(g.get_group('PAID')[col].values, bins=edges)
+    dd[col] *= hv.Histogram((edges, freq), label='PAID Loans').redim.label(x=' ')
+
+    freq, edges = np.histogram(g.get_group('DEFAULT')[col].values, bins=edges)
+    dd[col] *= hv.Histogram((edges, freq), label='DEFAULT Loans' ).redim.label(x=' ')
+
+var = [*dd]
+kdims=hv.Dimension(('var', 'Variable'), values=var)
+hv.HoloMap(dd, kdims=kdims)

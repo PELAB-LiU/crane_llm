@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "All variables used in the target cell are defined and have the correct shapes and types. No operations are likely to cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "All variables used in the target cell are defined and have the correct shapes and types. No operations are likely to cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "All variables used in the target cell are defined and have the correct shapes and types. No operations are likely to cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "All variables used in the target cell are defined and have the correct shapes and types. No operations are likely to cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "All variables used in the target cell are defined and have the correct shapes and types. No operations are likely to cause a crash.",
+    "detection": false
+  }
+]

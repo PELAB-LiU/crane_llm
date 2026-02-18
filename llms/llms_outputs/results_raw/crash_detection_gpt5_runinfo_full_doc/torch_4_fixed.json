@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model.__init__ constructs modules with existing globals and uses vocab.label_size(); device is defined. Forward not executed now, so no shape ops run. No undefined names or file I/O here.",
+    "detection": false
+  },
+  {
+    "reasoning": "All referenced classes, variables, and device exist; dimensions align and no operations executed yet that depend on runtime tensor shapes. Model initialization should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model initializes modules defined earlier and uses vocab for output size; device selection exists. No undefined names or obvious shape/type errors at instantiation.",
+    "detection": false
+  },
+  {
+    "reasoning": "All dependencies (vocab, encoders, attention) are defined; dimensions are consistent, and model initialization does not execute forward. No undefined variables or device issues apparent. Execution should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model references globals defined earlier (device, word_hidden_size, sent_hidden_size) and uses vocab.label_size(); all required classes and variables exist. No obvious shape/type errors at instantiation since forward isn't executed.",
+    "detection": false
+  }
+]

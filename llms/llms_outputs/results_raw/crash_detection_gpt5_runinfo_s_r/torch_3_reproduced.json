@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model’s forward expects labels shaped to match number of choices per example (e.g., shape [batch_size]) and uses NLLLoss with logits after sigmoid (not log-softmax). Passing labels of shape (1,3) will cause a target size mismatch error in NLLLoss.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels shape is (1,3) but model’s NLLLoss expects class indices of shape (batch_size,), and logits after sigmoid have shape matching choices with 2 classes set in classifier; also using sigmoid with NLLLoss is incompatible. This will error due to target size/type mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels is shaped (1,3) and dtype long, but the model applies Sigmoid then NLLLoss, which expects log-probabilities (LogSoftmax) and target of shape (batch,) for MultipleChoice; shape/dtype mismatch and wrong loss input will cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels shape (1,3) does not match expected shape (batch_size,) for MultipleChoice; also model classifier set to Linear(768,2) mismatches hidden size and choice dims. This will likely cause a dimension/shape error during loss computation.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects labels shape [batch_size] for MultipleChoice; provided labels is shape [1,3], causing a shape mismatch in loss computation. Also classifier output size and use of Sigmoid with NLLLoss are incompatible.",
+    "detection": true
+  }
+]

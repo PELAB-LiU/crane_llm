@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "X_train is a numpy array with dtype object and shape compatible with X.columns; Y_train is a 1D float64 array. Converting to DataFrames with matching column counts and joining should work without errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "X_train is a NumPy array with dtype object and may not preserve original column dtypes, but shape should match X.columns since it was split from X.values; Y_train aligns in length. Pandas can construct DataFrames from these arrays and join by index.",
+    "detection": false
+  },
+  {
+    "reasoning": "X_train is a NumPy array with dtype object; creating a DataFrame with columns=X.columns is valid, and Y_train is a NumPy float64 array; joining the two DataFrames aligns by index and should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "X_train is a numpy array with dtype object and is split from X.values, so its column count matches X.columns. Y_train is a 1D numpy array; wrapping into DataFrame with one column is valid. Joining two DataFrames with the same default RangeIndex works without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "X_train is a numpy array of dtype object; creating a DataFrame with columns=X.columns is valid if shapes match. Joining with Y_train as a single-column DataFrame also works with aligned default indices. No errors evident.",
+    "detection": false
+  }
+]

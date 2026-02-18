@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `custom_dataset.images` and `custom_dataset.labels` have valid shapes and no NaN values, and the indexing operation is within bounds.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `custom_dataset.images` and `custom_dataset.labels` have valid shapes and no NaN values, and the indexing operation is within bounds.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `custom_dataset.images` and `custom_dataset.labels` have valid shapes and no NaN values, and the indexing operation is within bounds.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `custom_dataset.images` and `custom_dataset.labels` have valid shapes and no NaN values, and the indexing operation is within bounds.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `custom_dataset.images` and `custom_dataset.labels` have valid shapes and no NaN values, and the indexing operation is within bounds.",
+    "detection": false
+  }
+]

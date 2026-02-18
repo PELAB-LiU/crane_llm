@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model.load()` method does not exist. The correct method to load a Keras model is `tf.keras.models.load_model()`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.load()` method does not exist in Keras/TensorFlow. The correct method to load a model is `tf.keras.models.load_model()`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.load()` method does not exist in Keras/TensorFlow. The correct method to load a model is `tf.keras.models.load_model()`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.load()` method does not exist in Keras/TensorFlow. The correct method to load a model is `tf.keras.models.load_model()`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.load()` method does not exist in Keras/TensorFlow. The correct method to load a model is `tf.keras.models.load_model()`.",
+    "detection": true
+  }
+]

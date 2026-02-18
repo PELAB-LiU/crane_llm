@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "custom_dataset.images[1][0, :, :] is a 2D float tensor valid for imshow, but custom_dataset.labels[0] is a scalar int64 tensor and imshow expects a 2D/3D array; this will raise an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "custom_dataset.images[1][0, :, :] is a 2D float tensor valid for imshow, but custom_dataset.labels[0] is a scalar int64 tensor and passing it to plt.imshow will raise an error because imshow expects 2D/3D array-like, not a scalar.",
+    "detection": true
+  },
+  {
+    "reasoning": "First imshow uses a 2D tensor slice and is fine. Second imshow is given a scalar label tensor (0 or 1), which is not a 2D/3D array and will raise a TypeError in matplotlib.",
+    "detection": true
+  },
+  {
+    "reasoning": "custom_dataset.labels[0] is a scalar tensor (int64), but plt.imshow expects 2D/3D array; passing a 0-dim tensor will raise a TypeError. Other lines are fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "First imshow call receives a 2D float tensor and is fine. Second imshow call tries to plot a scalar label tensor; imshow expects 2D/3D array and will raise a TypeError.",
+    "detection": true
+  }
+]

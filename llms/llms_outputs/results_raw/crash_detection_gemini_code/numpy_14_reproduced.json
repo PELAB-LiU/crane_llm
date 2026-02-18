@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `test_generator.classes` attribute returns a 1D array of integer labels, not one-hot encoded labels. Therefore, `np.argmax` on `y_true_onehot` will raise an error because it expects an array with an axis to perform the argmax operation on, which is not present in a 1D array.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_generator.classes` attribute returns a 1D array of integer labels, not one-hot encoded labels. Therefore, `np.argmax` on `y_true_onehot` will raise an error because it expects an array with an axis to reduce, but `y_true_onehot` will be 1D.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_generator.classes` attribute returns a 1D array of integer labels, not one-hot encoded labels. Therefore, `np.argmax` on `y_true_onehot` will raise an error because it expects an array with an axis to reduce, but `y_true_onehot` will be 1D.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_generator.classes` attribute returns a 1D array of integer labels, not one-hot encoded labels. Therefore, `np.argmax` on `y_true_onehot` will raise an error because it expects an array with an axis to reduce, but `y_true_onehot` will be 1D.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_generator.classes` attribute returns a 1D array of integer labels, not one-hot encoded labels. Therefore, `np.argmax` on `y_true_onehot` will raise an error because it expects an array with an axis to perform the argmax operation on, which is not present in a 1D array.",
+    "detection": true
+  }
+]

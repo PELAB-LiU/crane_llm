@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, and attempting to use an unfitted model for prediction will result in an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, and attempting to use an unfitted model for prediction will result in an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, and attempting to use an unfitted model for prediction will result in an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, and attempting to use an unfitted model for prediction will result in an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, and attempting to use an unfitted model for prediction will result in an error.",
+    "detection": true
+  }
+]

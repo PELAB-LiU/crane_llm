@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model expects 58 features but test_ds has 53 columns after drops; shape mismatch will raise an error in predict.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model was trained with 58 features, but test_ds has 53 features; scikit-learn will raise an error due to mismatched number of features during predict.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model was trained with 58 features, but test_ds has 53 columns; predict will raise a feature number mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects 58 features but test_ds has 53 columns; shape mismatch will cause a ValueError during predict.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects 58 features but test_ds has 53; predict will raise a feature mismatch error.",
+    "detection": true
+  }
+]

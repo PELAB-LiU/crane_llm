@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist, which will cause an error when trying to compute class weights. The correct attribute should be `train_dataset.classes`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist, which will cause an error when trying to compute class weights. The correct attribute should be `train_dataset.classes`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist, which will cause an error when trying to compute class weights. The correct attribute should be `train_dataset.classes`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist, which will cause an error when trying to compute class weights. The correct attribute should be `train_dataset.classes`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist, which will cause an error when trying to compute class weights. The correct attribute should be `train_dataset.classes`.",
+    "detection": true
+  }
+]

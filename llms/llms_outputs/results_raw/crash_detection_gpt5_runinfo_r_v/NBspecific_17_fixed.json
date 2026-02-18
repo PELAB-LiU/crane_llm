@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "PolynomialFeatures with degree=1 and interaction_only=True is valid; X is a DataFrame without NaNs, so fit_transform will succeed and return a NumPy array. Printing shapes is safe.",
+    "detection": false
+  },
+  {
+    "reasoning": "PolynomialFeatures with degree=1 and interaction_only=True is valid and X is a numeric DataFrame without NaNs; fit_transform should succeed and output shapes tuple will be produced.",
+    "detection": false
+  },
+  {
+    "reasoning": "PolynomialFeatures with degree=1 and interaction_only=True is valid; X is a numeric DataFrame without NaNs. fit_transform should succeed and returning shapes is fine.",
+    "detection": false
+  },
+  {
+    "reasoning": "PolynomialFeatures is imported; X is a DataFrame without NaNs. degree=1 with interaction_only=True is valid and fit_transform accepts DataFrame. Shape query is fine.",
+    "detection": false
+  },
+  {
+    "reasoning": "X is a DataFrame without NaNs and PolynomialFeatures is available; degree=1 with interaction_only=True is valid and fit_transform accepts DataFrames, returning a NumPy array. Shape retrieval is valid.",
+    "detection": false
+  }
+]

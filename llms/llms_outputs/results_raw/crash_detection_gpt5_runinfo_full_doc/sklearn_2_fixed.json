@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "best_estimator expects 208 features and dft_encoded has shape (32573, 208), matching training features; predict accepts a DataFrame. No NaNs reported.",
+    "detection": false
+  },
+  {
+    "reasoning": "best_estimator expects 208 features; dft_encoded has shape (32573, 208) and no NaNs, so predict should run without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "best_estimator is a fitted DecisionTreeRegressor expecting 208 features, and dft_encoded has shape (32573, 208) with no NaNs. predict accepts a DataFrame X and should run.",
+    "detection": false
+  },
+  {
+    "reasoning": "best_estimator was fitted with 208 features; dft_encoded has shape (32573, 208). Predict expects only X, and dft_encoded has no NaNs. This should run without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "best_estimator is a fitted DecisionTreeRegressor expecting 208 features, and dft_encoded has shape (32573, 208) with no NaNs. predict(dft_encoded) should work.",
+    "detection": false
+  }
+]

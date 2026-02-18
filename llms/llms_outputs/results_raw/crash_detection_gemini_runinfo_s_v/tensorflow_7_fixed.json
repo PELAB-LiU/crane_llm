@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model expects a batch size of 64, but the input data only has 10 samples. This will cause an error during training as the batch size is larger than the dataset size.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects a batch size of 64, but the training data only has 10 samples. This will cause an error because the batch size is larger than the number of available samples.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects a batch size of 64, but the training data only has 10 samples. This will cause an error because the batch size is larger than the number of available samples.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects a batch size of 64, but the training data only has 10 samples. This will cause an error because the batch size is larger than the number of available samples.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects a batch size of 64, but the training data only has 10 samples. This will cause an error because the batch size is larger than the number of available samples.",
+    "detection": true
+  }
+]

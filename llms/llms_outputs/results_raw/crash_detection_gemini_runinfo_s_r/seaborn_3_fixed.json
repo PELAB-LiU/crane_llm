@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `sns.barplot` function expects x and y arguments, or data and x/y arguments. Providing only a single series `df[col]` will cause a TypeError because it cannot infer how to plot the data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sns.barplot` function expects x and y arguments, or data and x/y arguments. Providing only a single series `df[col]` will cause a TypeError because it cannot infer how to plot the data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sns.barplot` function expects x and y arguments, or data and x/y arguments. Providing only a single series `df[col]` will cause a TypeError because it cannot infer how to plot the data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sns.barplot` function expects x and y arguments, or data and x/y arguments. Providing only a single series `df[col]` will cause a TypeError because it cannot infer how to plot the data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sns.barplot` function expects x and y arguments, or data and x/y arguments. Providing only a single series `df[col]` will cause a TypeError because it cannot infer how to plot the data.",
+    "detection": true
+  }
+]

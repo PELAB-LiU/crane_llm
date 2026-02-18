@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `residuals` series does not contain NaN values and has a sufficient length of 92, which is greater than the specified lags of 180. However, the length of the residuals is less than the specified lags, which will cause an error in the ACF and PACF plots.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `residuals` series does not contain NaN values and has a sufficient length of 92, which is greater than the specified lags of 180. However, the length of the residuals is less than the specified lags, which will cause an error in the ACF and PACF plots.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `residuals` series does not contain NaN values and has a sufficient length of 92, which is greater than the specified lags of 180. However, the length of the residuals is less than the specified lags, which will cause an error in the ACF and PACF plots.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `residuals` series does not contain NaN values and has a sufficient length of 92, which is greater than the specified lags of 180. However, the length of the residuals is less than the specified lags, which will cause an error in the ACF and PACF plots.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `residuals` series does not contain NaN values and has a sufficient length of 92, which is greater than the specified lags of 180. However, the length of the residuals is less than the specified lags, which will cause an error in the ACF and PACF plots.",
+    "detection": true
+  }
+]

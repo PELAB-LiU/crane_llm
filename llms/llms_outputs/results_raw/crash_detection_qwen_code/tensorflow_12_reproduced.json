@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model expects input shape (100, 100, 3) but the training images are grayscale (100, 100, 1), which will cause a dimension mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input shape (100, 100, 3) but the training images are grayscale (100, 100, 1), which will cause a dimension mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input shape (100, 100, 3) but the training images are grayscale (100, 100, 1), which will cause a dimension mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input shape (100, 100, 3) but the training images are grayscale (100, 100, 1), which will cause a dimension mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input shape (100, 100, 3) but the training images are grayscale (100, 100, 1), which will cause a dimension mismatch.",
+    "detection": true
+  }
+]

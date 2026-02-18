@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "matplotlib.pyplot.scatter accepts x, y, and optional s, c, etc., but not a third positional argument for z; also plt.zlabel does not exist. Passing X[:,2] as a positional arg will be treated as size array, not 3D, and calling plt.zlabel will raise AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "plt.scatter accepts x,y,(s) not 3D z; passing X[:,2] as third positional arg is interpreted as sizes array, but zlabel does not exist in pyplot and will raise AttributeError. Also 3D scatter needs Axes3D. Therefore this will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "matplotlib.pyplot.scatter only accepts x and y (2D); passing a third positional argument is size, not z. Also plt.zlabel does not exist. This will raise errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "plt.scatter does not accept a third positional array for z; also plt.zlabel does not exist. This will raise errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "plt.scatter accepts x and y only; passing X[:,2] as a third positional arg is interpreted as size, not z, and there is no 3D axes set. Also, plt.zlabel does not exist. This will raise an AttributeError on zlabel (and likely misuse of scatter).",
+    "detection": true
+  }
+]

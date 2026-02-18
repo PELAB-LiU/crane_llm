@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model is defined with an input shape of (100, 100, 3), but the generators provide images with a target size of (223, 223). This mismatch will cause a crash when fitting the model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is defined with an input shape of (100, 100, 3), but the generators provide images with a target size of (223, 223). This mismatch will cause a crash when fitting the model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is defined with an input shape of (100, 100, 3), but the generators provide images with a target size of (223, 223). This mismatch will cause a crash when fitting the model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is defined with an input shape of (100, 100, 3), but the generators provide images with a target size of (223, 223). This mismatch will cause a crash when fitting the model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is defined with an input shape of (100, 100, 3), but the generators provide images with a target size of (223, 223). This mismatch will cause a crash when fitting the model.",
+    "detection": true
+  }
+]

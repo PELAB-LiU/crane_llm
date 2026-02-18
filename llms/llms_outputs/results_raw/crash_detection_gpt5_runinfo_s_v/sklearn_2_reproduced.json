@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "DTRmodel is an unfitted DecisionTreeRegressor (the fitted model is best_estimator), and predicting with an unfitted sklearn estimator raises NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel is an unfitted DecisionTreeRegressor instance; predictions were made with best_estimator earlier, not DTRmodel. Calling predict on an unfitted estimator raises NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel is an unfitted DecisionTreeRegressor; the fitted model is best_estimator. Calling predict on the unfitted DTRmodel will raise NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel is an unfitted DecisionTreeRegressor instance; the fitted model is best_estimator. Calling predict on an unfitted estimator raises NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel is an unfitted base DecisionTreeRegressor; the fitted model is best_estimator from GridSearch. Calling predict with an unfitted estimator raises NotFittedError.",
+    "detection": true
+  }
+]

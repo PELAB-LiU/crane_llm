@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "df['MSRP'] is object with dollar signs and commas (e.g., '$29,595 '), so pd.to_numeric without cleaning will raise a ValueError. NaNs also possible but main issue is non-numeric characters.",
+    "detection": true
+  },
+  {
+    "reasoning": "df['MSRP'] is object with dollar signs/commas and spaces; pd.to_numeric on such strings without cleaning or errors='coerce' will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "df['MSRP'] is object with dollar signs/commas and spaces; pd.to_numeric on such strings without cleaning/coercion will raise ValueError. Therefore it will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "df['MSRP'] is object with dollar signs/commas/spaces; pd.to_numeric without cleaning or errors='coerce' will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "df['MSRP'] is object strings with dollar signs/commas/spaces; pd.to_numeric on such values without cleaning will raise ValueError.",
+    "detection": true
+  }
+]

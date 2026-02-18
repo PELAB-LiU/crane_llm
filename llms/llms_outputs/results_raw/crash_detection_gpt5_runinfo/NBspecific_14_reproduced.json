@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Variables train_data and test_data are not defined in the executed cells, so accessing train_data[features] and test_data[features] will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variables train_data and test_data are not defined in prior cells, so accessing them will raise a NameError when the target cell runs.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variables train_data and test_data are not defined in executed cells or runtime info; accessing them will raise a NameError at y = train_data[\"Survived\"].",
+    "detection": true
+  },
+  {
+    "reasoning": "train_data and test_data are not defined in the runtime, so accessing them will raise a NameError at the first reference.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variables train_data and test_data are not defined in prior cells or runtime info, so accessing them will raise a NameError.",
+    "detection": true
+  }
+]

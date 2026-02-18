@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to use variables `train_data` and `test_data` which are not defined in the current runtime information. This will result in a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use variables `train_data` and `test_data` which are not defined in the current runtime information. This will result in a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use variables `train_data` and `test_data` which are not defined in the current runtime information. This will result in a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use variables `train_data` and `test_data` which are not defined in the current runtime information. This will result in a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use variables `train_data` and `test_data` which are not defined in the current runtime information. This will result in a NameError.",
+    "detection": true
+  }
+]

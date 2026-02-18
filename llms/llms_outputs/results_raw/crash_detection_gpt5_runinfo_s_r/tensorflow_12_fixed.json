@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model outputs softmax probabilities but loss is SparseCategoricalCrossentropy(from_logits=True), causing a shape/value mismatch error. Set from_logits=False or remove softmax.",
+    "detection": true
+  },
+  {
+    "reasoning": "Shapes and dtypes match the model’s expected input; labels are integer class indices for SparseCategoricalCrossentropy. The training and validation arrays align in size.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model uses SparseCategoricalCrossentropy(from_logits=True) but final layer has softmax, causing a mismatch; this will not crash but may hurt training. Shapes and dtypes match, and batch size divides data. Execution should run.",
+    "detection": false
+  },
+  {
+    "reasoning": "Shapes and dtypes match the model input and labels; validation data provided correctly. Potential issue: loss uses from_logits=True while final layer is softmax, but this won’t crash, only affect training.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model expects 20 classes (Dense(20)), but labels likely have fewer unique classes; however SparseCategoricalCrossentropy can handle this. Data shapes and dtypes match input. No clear crash guaranteed.",
+    "detection": false
+  }
+]

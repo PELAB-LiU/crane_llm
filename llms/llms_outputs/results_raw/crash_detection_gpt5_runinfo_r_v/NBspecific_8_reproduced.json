@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Column 'Amount' was dropped in a previous cell, so accessing df['Amount'] will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'Amount' was dropped in a previous cell, so accessing df['Amount'] will raise a KeyError before scaling.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Amount' column was already dropped in a prior cell, so accessing df['Amount'] will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Amount' was dropped in Cell 3, so accessing df['Amount'] will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Amount' column was already dropped in Cell 3, so accessing df['Amount'] will raise a KeyError. Therefore the cell will crash.",
+    "detection": true
+  }
+]

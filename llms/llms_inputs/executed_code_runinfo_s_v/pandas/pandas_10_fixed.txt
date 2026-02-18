@@ -1,0 +1,91 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+## Cell 2:
+
+df=pd.read_csv('data/googleplaystore.csv')
+
+## Cell 3:
+
+df.dropna(inplace=True)
+
+## Cell 4:
+
+df['Reviews']=df['Reviews'].astype('int')
+
+# Current relevent runtime information:
+{'df': {'has_nan': False,
+        'per_column': {'Android Ver': {'example_values': ['2.0 and up',
+                                                          '4.4 and up',
+                                                          '7.0 - 7.1.1',
+                                                          '2.2 and up',
+                                                          '1.0 and up'],
+                                       'num_unique': 31},
+                       'App': {'example_values': ['FC Porto',
+                                                  'All Info about Cg',
+                                                  'Mr. Number-Block cal...',
+                                                  'HAWK – Force of an A...',
+                                                  'Text SMS'],
+                               'num_unique': 8190},
+                       'Category': {'example_values': ['FINANCE',
+                                                       'PARENTING',
+                                                       'FOOD_AND_DRINK',
+                                                       'MEDICAL',
+                                                       'MAPS_AND_NAVIGATION'],
+                                    'num_unique': 33},
+                       'Content Rating': {'example_values': ['Everyone 10+',
+                                                             'Teen',
+                                                             'Adults only 18+',
+                                                             'Everyone',
+                                                             'Unrated'],
+                                          'num_unique': 6},
+                       'Current Ver': {'example_values': ['6.1.6',
+                                                          '1.43',
+                                                          '220',
+                                                          '5.2.8',
+                                                          '1.31.4'],
+                                       'num_unique': 2594},
+                       'Genres': {'example_values': ['Puzzle;Education',
+                                                     'Art & Design;Pretend...',
+                                                     'Casual;Music & Video',
+                                                     'Puzzle;Action & Adve...',
+                                                     'Action'],
+                                  'num_unique': 115},
+                       'Installs': {'example_values': ['1,000+',
+                                                       '10+',
+                                                       '1,000,000+',
+                                                       '10,000,000+',
+                                                       '50+'],
+                                    'num_unique': 19},
+                       'Last Updated': {'example_values': ['4-Apr-16',
+                                                           '29-Dec-17',
+                                                           '27-Aug-14',
+                                                           '18-Oct-17',
+                                                           '2-Jul-17'],
+                                        'num_unique': 1299},
+                       'Price': {'example_values': ['$9.00 ',
+                                                    '$13.99 ',
+                                                    '$39.99 ',
+                                                    '$1.61 ',
+                                                    '$6.99 '],
+                                 'num_unique': 73},
+                       'Rating': {'num_unique': 39, 'value_range': (1.0, 5.0)},
+                       'Reviews': {'num_unique': 5990,
+                                   'value_range': (1, 78158306)},
+                       'Size': {'example_values': ['313k',
+                                                   '8.4M',
+                                                   '540k',
+                                                   '51k',
+                                                   '608k'],
+                                'num_unique': 413},
+                       'Type': {'num_unique': 2,
+                                'unique_values': ['Free', 'Paid']}},
+        'shape': (9360, 13)}}
+# Target Cell:
+
+
+df['Installs']=df['Installs'].str.replace('+','').str.replace(',','').astype('int')

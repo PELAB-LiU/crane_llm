@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Keras History typically includes 'loss' and 'val_loss', but accuracy keys are usually 'accuracy' and 'val_accuracy', not 'acc' and 'val_acc'. Plotting 'acc' and 'val_acc' will likely KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras History typically uses 'accuracy' and 'val_accuracy' keys, while the code accesses 'acc' and 'val_acc', likely causing KeyError. Loss keys should exist.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras History stores metrics using names matching compiled metrics; with metrics=['accuracy'], keys are 'accuracy' and 'val_accuracy', not 'acc'/'val_acc'. Accessing history.history['acc'] and ['val_acc'] will KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "history exists from model.fit. But Keras history keys use 'accuracy' and 'val_accuracy', not 'acc' and 'val_acc', so accessing history.history['acc'] and ['val_acc'] will likely raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras History in modern TF uses 'accuracy' and 'val_accuracy' keys, while the code accesses 'acc' and 'val_acc', causing KeyError when plotting.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Installs contains strings like '5,000,000+' and '50+' which cannot be directly cast to int without cleaning, so astype('int') will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "df['Installs'] contains strings like '5,000,000+' which cannot be directly cast to int, so astype('int') will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Installs' contains strings like '5,000,000+' which cannot be directly cast to int without cleaning commas and '+' signs, causing a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Installs' contains strings with '+' and commas (e.g., '5,000,000+'), which cannot be directly cast to int and will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Installs values contain non-numeric characters like '+' and commas (e.g., '5,000,000+'), so direct astype('int') will raise a ValueError. No prior cleaning is shown.",
+    "detection": true
+  }
+]

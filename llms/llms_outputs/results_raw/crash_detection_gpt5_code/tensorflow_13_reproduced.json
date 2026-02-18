@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "pad_sequences expects a 2D list/array of sequences, but tokenize_text returns a 1D list of ids; wrapping it directly causes shape/type mismatch. Also np.array(pad_sequences(...), maxlen=...) misuses np.array with maxlen argument.",
+    "detection": true
+  },
+  {
+    "reasoning": "pad_sequences expects a 2D list/array of sequences, but tokenize_text returns a 1D list; wrapping each call directly in pad_sequences without nesting will raise a shape/type error. Also, the list is then wrapped with np.array incorrectly with maxlen provided inside np.array.",
+    "detection": true
+  },
+  {
+    "reasoning": "pad_sequences expects a 2D list/array of sequences, but tokenize_text returns a 1D list of ids; calling pad_sequences on it without wrapping will raise a ValueError. Also np.array(pad_sequences(...), maxlen=...) misuses np.array’s parameters.",
+    "detection": true
+  },
+  {
+    "reasoning": "pad_sequences expects a 2D list/array of sequences, but tokenize_text returns a 1D list of ids; also the list comprehension passes each tokenized list directly to pad_sequences without nesting and then wraps with np.array incorrectly. This will raise a ValueError about shape or input rank.",
+    "detection": true
+  },
+  {
+    "reasoning": "pad_sequences expects a 2D list/array of sequences, but tokenize_text returns a 1D list of token IDs; also its output is passed directly instead of wrapped. This will raise a ValueError about input shape.",
+    "detection": true
+  }
+]

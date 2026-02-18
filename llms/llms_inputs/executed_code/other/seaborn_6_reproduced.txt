@@ -1,0 +1,28 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import seaborn as sns
+from matplotlib import pyplot as plt
+
+from sklearn.metrics import *
+from sklearn.model_selection import *
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+
+## Cell 2:
+
+df = pd.read_csv("data/penguins.csv")
+
+## Cell 3:
+
+df=df.dropna()
+
+## Cell 4:
+
+df["sex"] = df["sex"].map({"male" : 0,"female" : 1})
+
+# Target Cell:
+
+sns.violinplot(df, x='species')

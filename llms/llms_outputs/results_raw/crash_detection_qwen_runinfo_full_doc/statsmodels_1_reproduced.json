@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `sm.qqplot` function expects `line` parameter to be a string or None, not an integer. Providing an integer will cause a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function expects `line` parameter to be a string or None, not an integer. Providing an integer will cause a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function expects `line` parameter to be a string or None, not an integer. Providing an integer will cause a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function expects `line` parameter to be a string or None, not an integer. Providing an integer will cause a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function expects `line` parameter to be a string or None, not an integer. Providing an integer will cause a TypeError.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.6 and later. Using it will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.6 and later, and its usage will raise an AttributeError. The current TensorFlow version is likely 2.6 or newer, leading to a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.6 and later. Using it will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.6 and later. Using it will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.6 and later, and its usage will raise an AttributeError. The current TensorFlow version is likely 2.6 or newer, leading to a crash.",
+    "detection": true
+  }
+]

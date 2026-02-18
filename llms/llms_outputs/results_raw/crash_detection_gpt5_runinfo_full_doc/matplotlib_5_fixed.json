@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "matplotlib.pyplot.scatter takes x, y, and optional size as the third positional argument, not a z coordinate; passing X[:,2] as the third positional argument will be interpreted as sizes and combined with c=labels causes a shape mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "plt.scatter signature expects x, y, s, c... The first call passes three positional arrays, so the third array will be interpreted as sizes, not z; sizes must be scalar or same-length, which it is, so no crash. Other variables exist and shapes match.",
+    "detection": false
+  },
+  {
+    "reasoning": "matplotlib.pyplot.scatter expects x, y (and optional s) but the first call passes three positional arrays (X[:,0], X[:,1], X[:,2]); the third is interpreted as size and is invalid shape, causing a ValueError. Also 'centriods' is misspelled earlier but exists as variable, so main crash is from scatter params.",
+    "detection": true
+  },
+  {
+    "reasoning": "matplotlib.pyplot.scatter accepts x, y, and then s as the 3rd positional arg; passing X[:,2] as the 3rd positional arg will be interpreted as sizes, not z, but it won’t crash. All variables exist with correct shapes; second scatter call is valid too.",
+    "detection": false
+  },
+  {
+    "reasoning": "plt.scatter accepts x, y, and then size as the third positional argument; passing X[:,2] there is interpreted as sizes and will conflict with c=labels length mismatch, causing a ValueError.",
+    "detection": true
+  }
+]

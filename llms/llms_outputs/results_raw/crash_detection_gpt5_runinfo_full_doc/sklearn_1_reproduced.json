@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model.compile does not accept class_weight; class weights are provided to model.fit, so passing class_weight to compile will raise an unexpected keyword argument error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model input shape is (64,64,3) while data generator yields (48,48,3), which will cause a shape mismatch when compiling/training but compile itself won’t crash. compute_class_weight expects class labels; passing np.unique(train_dataset.labels) and train_dataset.labels is valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "model.compile does not accept class_weight; it belongs to model.fit. Passing class_weight to compile will raise an unexpected keyword argument error.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.compile does not accept class_weight; it belongs to model.fit, so passing class_weight to compile will raise an unexpected keyword argument error.",
+    "detection": true
+  },
+  {
+    "reasoning": "compute_class_weight expects labels as 1D array of integer class indices; train_dataset.labels is a numpy int32 array and np.unique over it is fine. model.compile does not accept class_weight; class_weight is for model.fit, not compile.",
+    "detection": true
+  }
+]

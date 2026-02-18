@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model is compiled with 'sparse_categorical_crossentropy' loss, which expects integer labels. However, 'train_labels' is of type float64, which will cause a crash during model training.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is compiled with 'sparse_categorical_crossentropy' loss, which expects integer labels. However, 'train_labels' is of type float64, which will cause a crash during model training.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is compiled with 'sparse_categorical_crossentropy' loss, which expects integer labels. However, 'train_labels' is of type float64, which will cause a crash during model training.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is compiled with 'sparse_categorical_crossentropy' loss, which expects integer labels. However, 'train_labels' is of type float64, which will cause a crash during model training.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is compiled with 'sparse_categorical_crossentropy' loss, which expects integer labels. However, 'train_labels' is of type float64, which will cause a crash during model training.",
+    "detection": true
+  }
+]

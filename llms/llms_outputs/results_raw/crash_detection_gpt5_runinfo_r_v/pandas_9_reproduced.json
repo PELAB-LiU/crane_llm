@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The Target Cell references columns 'Total Gross (millions)' and uses value 'Gross Unkown', but the dataframe has 'Total_Gross' instead and no evidence of those exact labels. This will raise a KeyError for missing column.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DataFrame does not have a column named 'Total Gross (millions)'; available related column is 'Total_Gross'. Accessing a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DataFrame df does not have a column named 'Total Gross (millions)'; available gross column is 'Total_Gross'. Accessing a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The dataframe df does not have a column named 'Total Gross (millions)'; available related column is 'Total_Gross'. Accessing a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DataFrame df does not have a column named 'Total Gross (millions)'; it has 'Total_Gross'. Accessing a non-existent column will raise a KeyError.",
+    "detection": true
+  }
+]

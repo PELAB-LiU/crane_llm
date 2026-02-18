@@ -1,0 +1,68 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+dataset = pd.read_csv('data/german_credit_data.csv', index_col=None)
+
+# Current relevent runtime information:
+{'dataset': {'has_nan': True,
+             'per_column': {'Age': {'num_unique': 53, 'value_range': (19, 75)},
+                            'Checking account': {'num_unique': 3,
+                                                 'unique_values': ['little',
+                                                                   'moderate',
+                                                                   'rich']},
+                            'Credit amount': {'num_unique': 921,
+                                              'value_range': (250, 18424)},
+                            'Duration': {'num_unique': 33,
+                                         'value_range': (4, 72)},
+                            'Housing': {'num_unique': 3,
+                                        'unique_values': ['own',
+                                                          'free',
+                                                          'rent']},
+                            'Job': {'num_unique': 4, 'value_range': (0, 3)},
+                            'Purpose': {'example_values': ['vacation/others',
+                                                           'domestic '
+                                                           'appliances',
+                                                           'car',
+                                                           'furniture/equipment',
+                                                           'business'],
+                                        'num_unique': 8},
+                            'Risk': {'num_unique': 2,
+                                     'unique_values': ['good', 'bad']},
+                            'Saving accounts': {'num_unique': 4,
+                                                'unique_values': ['little',
+                                                                  'quite rich',
+                                                                  'rich',
+                                                                  'moderate']},
+                            'Sex': {'num_unique': 2,
+                                    'unique_values': ['male', 'female']},
+                            'Unnamed: 0': {'num_unique': 1000,
+                                           'value_range': (0, 999)}},
+             'shape': (1000, 11)}}
+# Target Cell:
+
+sns.set_context('talk', font_scale=.9)
+
+
+
+sns.countplot(data=dataset, x='Sex', hue='Risk')
+plt.show()
+
+
+sns.catplot(data=dataset, x='Sex', y='Age', kind='box')
+plt.show()
+
+
+sns.violinplot(data=dataset, x='Sex', y='Age', hue='Risk', split=True)
+plt.show()
+
+
+sns.displot(data=dataset, row='Sex', y='Purpose', col='Risk')
+plt.show()

@@ -1,0 +1,125 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+df = pd.read_csv('data/train.csv', index_col = 0)
+df.head()
+
+## Cell 3:
+
+df = df.drop('New_Price', axis = 1)
+
+## Cell 4:
+
+df = df.dropna()
+df.head()
+
+## Cell 5:
+
+df['Engine'] = df['Engine'].apply(lambda x : x.replace(' CC', ''))
+df['Engine'] = df['Engine'].astype(float)
+
+## Cell 6:
+
+def process_mileage(mileage):
+    if mileage.endswith('kmpl'):
+        mileage = mileage.replace(' kmpl', '')
+        return float(mileage)
+    elif mileage.endswith('km/kg'):
+        mileage = mileage.replace(' km/kg', '')
+        return float(mileage) * 1.4
+    else:
+        return None
+df['Mileage'] = df['Mileage'].apply(process_mileage)
+df.head()
+
+## Cell 7:
+
+df['No_of_owners'] = df.Owner_Type.map({
+    'First' : 1,
+    'Second' : 2
+})
+df['No_of_owners'] = df['No_of_owners'].fillna(3)
+df.head()
+
+## Cell 8:
+
+df.drop('Owner_Type', axis = 1, inplace = True)
+df.head()
+
+## Cell 9:
+
+df['Power'] = df['Power'].apply(lambda x : x.replace(' bhp', ''))
+df['Power'] = df['Power'].astype(float)
+
+## Cell 10:
+
+df = pd.get_dummies(df, columns = ['Transmission', 'Fuel_Type'])
+df.head()
+
+## Cell 11:
+
+df['Age'] = df['Year'].apply(lambda year : 2023 - year)
+df.drop('Year', axis = 1, inplace = True)
+df.head()
+
+## Cell 12:
+
+Names = df['Name']
+df.drop('Name', inplace = True, axis = 1)
+
+## Cell 13:
+
+
+df = pd.get_dummies(df, columns = ['Location'])
+df.head()
+
+## Cell 14:
+
+from sklearn.tree import DecisionTreeRegressor
+model = DecisionTreeRegressor()
+
+## Cell 15:
+
+X = df.drop('Price', axis = 1)
+y = df['Price']
+
+## Cell 16:
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size = 0.8)
+
+## Cell 17:
+
+model.fit(X_train, y_train)
+
+## Cell 18:
+
+
+y_pred = model.predict(X_test)
+print(y_pred)
+
+# Target Cell:
+
+from sklearn.metrics import mean_absolute_error
+mae = mean_absolute_error(y_test, y_pred)
+mae

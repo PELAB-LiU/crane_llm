@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to use `DTRmodel.predict` on `dft_encoded`, but `DTRmodel` has been replaced by `best_estimator` from the grid search. Therefore, `DTRmodel` is not fitted and will likely cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use `DTRmodel.predict` on `dft_encoded`, but `DTRmodel` has been replaced by `best_estimator` from the grid search. Therefore, `DTRmodel` is not fitted and will likely cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use `DTRmodel.predict` on `dft_encoded`, but `DTRmodel` has been replaced by `best_estimator` from the grid search. Therefore, `DTRmodel` is not fitted and will likely cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use `DTRmodel.predict` on `dft_encoded`, but `DTRmodel` has been replaced by `best_estimator` from the grid search. Therefore, `DTRmodel` is not fitted and will likely cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use `DTRmodel.predict` on `dft_encoded`, but `DTRmodel` has been replaced by `best_estimator` from the grid search. Therefore, `DTRmodel` is not fitted and will likely cause an error.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model.__init__ calls nn.Linear with out_features=vocab.label_size, but Vocab.label_size() was never used; _id2label contains integers and label_size is a method, so vocab.label_size is a method object, causing a TypeError when passed to nn.Linear.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model uses vocab.label_size in nn.Linear; Vocab.label_size() is a method, not an attribute, so accessing vocab.label_size causes a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model.__init__ uses vocab.label_size which is a method; passing it to nn.Linear expects an int but receives a function, causing a TypeError. It should be vocab.label_size().",
+    "detection": true
+  },
+  {
+    "reasoning": "Model depends on previously defined classes and vocab; shapes and attributes used exist. No undefined names or obvious shape/type mismatches at init time. Execution should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "In __init__, nn.Linear is constructed with out_features=vocab.label_size, but Vocab.label_size is a method; passing the method object instead of an int will raise a TypeError. Everything else has defined inputs.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "X is a numeric DataFrame with shape (1460, 287) and no NaNs. PolynomialFeatures with degree=1 and interaction_only=True reduces to original features plus bias, so fit_transform should work and output has shape (1460, 288) if include_bias=True (default).",
+    "detection": false
+  },
+  {
+    "reasoning": "X is a numeric DataFrame with shape (1460, 287) and no NaNs. PolynomialFeatures with degree=1 and interaction_only=True will produce only linear terms (and possibly bias if include_bias=True by default), so fit_transform should work.",
+    "detection": false
+  },
+  {
+    "reasoning": "X is a numeric DataFrame with shape (1460, 287) and no NaNs. PolynomialFeatures with degree=1 and interaction_only=True is valid and will produce a transformable array.",
+    "detection": false
+  },
+  {
+    "reasoning": "X is a numeric DataFrame of shape (1460, 287) with no NaNs. PolynomialFeatures with degree=1 and interaction_only=True will effectively return only the bias (excluded by default) and the original features, producing a valid numeric array.",
+    "detection": false
+  },
+  {
+    "reasoning": "X is a numeric DataFrame with shape (1460, 287) and no NaNs; PolynomialFeatures with degree=1 and interaction_only=True will produce only bias (excluded by default) and original features, so fit_transform should succeed, yielding array shape (1460, 287).",
+    "detection": false
+  }
+]

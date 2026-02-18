@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model outputs shape is (batch,1) with Sigmoid, but labels are integer tensors and not reshaped; BCE expects floating labels of same shape. Also data/device mismatch (model on CPU, inputs/labels on CPU) is fine. The main issue likely is loss_fn shape/type mismatch causing a runtime error.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model outputs shape (batch,1) with Sigmoid for BCELoss, but labels from targets are int tensors; BCELoss expects float. Also tensors not moved to same device as model (model likely on CPU, test used device but training doesn't), but device mismatch won't occur unless model moved. Type mismatch is likely but may auto-convert; however labels are LongTensor causing BCELoss dtype mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs shape (batch,1) with Sigmoid, but targets are integer tensors from labels; BCELoss expects float targets of same shape. Also labels likely shape (batch,) not (batch,1), causing size mismatch/type error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model outputs shape [batch,1] with sigmoid; BCELoss expects targets of same shape float, but targets were created as integer tensors and DataLoader batches likely have dtype torch.int64, causing a dtype mismatch error. Also training not moved to device but earlier test moved; however default CPU consistent.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model outputs shape (batch,1) due to Sigmoid, while netice are integer tensors from torch.tensor(target) without float cast; BCELoss expects float targets of same shape. This will trigger a dtype/shape mismatch error.",
+    "detection": true
+  }
+]

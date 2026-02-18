@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "df exists with required columns, seaborn.violinplot supports given arguments, and plt.show() is valid. No missing data or type mismatch.",
+    "detection": false
+  },
+  {
+    "reasoning": "df exists with columns 'species' (categorical) and 'bill_length_mm' (float), no NaNs; sns.violinplot and plt.show are available. This should execute without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "df exists with required columns; seaborn.violinplot with given args is valid and plt.show() is fine. No type or missing data issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "df exists with required columns, contains no NaNs, and seaborn/plt are imported. The call matches function signature, so it should execute without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "df exists with required columns and no NaNs; seaborn.violinplot with given args is valid, and plt.show() is fine. No type or name errors expected.",
+    "detection": false
+  }
+]

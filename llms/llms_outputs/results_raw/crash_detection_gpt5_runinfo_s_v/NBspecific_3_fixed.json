@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "All required variables (X_test, y_test, yFit, stats, plt, np) exist with compatible shapes; divisions use n-m-1=61>0, so no zero-division or shape errors expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "All referenced variables (X_test, y_test, yFit, stats, plt) exist with compatible shapes (68,) and (68,6); no NaNs. Degrees of freedom n-m-1 = 61 > 0, so F-stat and p-value well-defined.",
+    "detection": false
+  },
+  {
+    "reasoning": "All variables used are defined with compatible shapes (y_test and yFit both (68,), X_test shape (68,6)); denominators n-m-1=61 > 0, no NaNs. stats and plt are imported. No crash expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "All required variables (X_test, y_test, yFit, stats, plt, np) exist with matching shapes; computations avoid division by zero since n-m-1=61>0 and SSE is unlikely zero. No type or NaN issues indicated.",
+    "detection": false
+  },
+  {
+    "reasoning": "All variables used are defined with compatible shapes: X_test (68,6), y_test (68,), yFit (68,). Denominators n-m-1 = 61 > 0, no NaNs, and stats/plt imported; computations and plotting should succeed.",
+    "detection": false
+  }
+]

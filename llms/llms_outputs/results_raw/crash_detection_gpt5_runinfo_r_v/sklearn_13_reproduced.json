@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "scikit-learn's LinearRegression requires numeric features/targets; x and y are object dtype arrays from categorical columns, so fit will raise a ValueError during conversion.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y are object dtype arrays from categorical strings; LinearRegression.fit expects numeric arrays. This will raise a ValueError during fitting due to non-numeric data.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y are object dtype arrays from categorical columns; LinearRegression.fit expects numeric arrays and will raise a ValueError when converting to float.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y are object-dtype arrays from categorical columns; LinearRegression requires numeric inputs and will raise a ValueError when encountering non-numeric data.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y are object-dtype arrays with categorical/string values; LinearRegression.fit requires numeric arrays and will raise a ValueError when converting to float.",
+    "detection": true
+  }
+]

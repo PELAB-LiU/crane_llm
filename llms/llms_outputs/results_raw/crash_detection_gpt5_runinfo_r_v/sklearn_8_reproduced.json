@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "accuracy_score expects true and predicted labels of equal length, but x is a feature DataFrame and y is labels; shapes mismatch will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects true and predicted labels of equal length; passing DataFrame x and Series y will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects (y_true, y_pred), but the code passes (x, y) where x is a DataFrame of features, causing a shape/type error.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects true labels and predicted labels of equal length, but x is a feature DataFrame and y is labels; passing x instead of predictions will raise a ValueError about shape mismatch or invalid input.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects true labels and predicted labels of equal shape, but x is a DataFrame of features and y is labels; passing x instead of predictions will raise a ValueError on shape mismatch.",
+    "detection": true
+  }
+]

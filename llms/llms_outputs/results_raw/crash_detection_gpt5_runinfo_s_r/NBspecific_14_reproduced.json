@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train_data and test_data are not defined in the runtime info, so accessing train_data[features] will raise a NameError. Other objects present do not provide these variables.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_data and test_data are not defined in the runtime info; accessing them will raise a NameError at the first usage.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_data and test_data are not defined in the runtime info or executed cells; accessing them will raise a NameError at the first reference.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_data and test_data are not defined in the runtime info or executed cells, so referencing them will raise a NameError when creating y and feature matrices.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_data and test_data are not defined in the runtime info, so accessing them will raise a NameError. Other variables like pd exist, but missing datasets will crash.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "history is a valid Keras History with keys loss, val_loss, accuracy, val_accuracy; plt.subplots returns axes used correctly. No undefined variables or mismatched keys.",
+    "detection": false
+  },
+  {
+    "reasoning": "history is a valid Keras History object with loss/val_loss/accuracy/val_accuracy present, and plt.subplots returns axes used correctly. No undefined variables or API mismatches.",
+    "detection": false
+  },
+  {
+    "reasoning": "history is a Keras History object and contains keys like loss, val_loss, accuracy, val_accuracy per runtime info; plt.subplots returns ax array; plotting these keys is valid. No undefined variables.",
+    "detection": false
+  },
+  {
+    "reasoning": "history is a valid Keras History object and history.history contains the required keys ('loss', 'val_loss', 'accuracy', 'val_accuracy'); plt.subplots returns axes suitable for plotting. No undefined names or mismatched keys.",
+    "detection": false
+  },
+  {
+    "reasoning": "history is a valid Keras History with keys including loss/val_loss/accuracy/val_accuracy, and plt/subplots exist. Plotting on ax array is standard. No undefined variables. Should run.",
+    "detection": false
+  }
+]

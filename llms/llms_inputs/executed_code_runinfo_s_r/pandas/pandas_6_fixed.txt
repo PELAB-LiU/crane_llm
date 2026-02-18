@@ -1,0 +1,37 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+## Cell 2:
+
+df= pd.read_csv(r'data/Retailsales.csv')
+df=df.drop(columns='Unnamed: 0')
+df.head()
+
+## Cell 3:
+
+df=df.dropna(how='all')
+df
+
+# Current relevent runtime information:
+{'__method__df_dropna': {'type': "<class 'method'>"},
+ '__method__pd_to_numeric': {'type': "<class 'function'>"},
+ 'df': {'shape': (186305, 6), 'type': 'pandas.core.frame.DataFrame'},
+ 'pd': {'type': "<class 'module'>"}}
+# Target Cell:
+
+
+
+df["Order ID"] = pd.to_numeric(df["Order ID"], errors="coerce")
+df = df.dropna(subset=["Order ID"])
+

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "adv has shape (3, 224, 224) and value range approximately [-2.12, 2.47]. plt.imshow can display (M, N, 3) or (M, N, 4), but not (3, M, N).",
+    "detection": true
+  },
+  {
+    "reasoning": "adv has shape (3, 224, 224) which is channel-first, but plt.imshow expects (H, W, 3); passing as-is likely shows incorrect colors but does not crash. Values are finite.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv has shape (3, 224, 224) and finite values; matplotlib can display 3xHxW arrays. No missing dependencies or type issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is a NumPy array with shape (3, 224, 224) and real values; matplotlib.pyplot.imshow accepts channel-first arrays and will display them without error. No undefined variables or incompatible types.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv has shape (3, 224, 224) but plt.imshow expects (H, W) or (H, W, 3); this will raise a TypeError for invalid shape.",
+    "detection": true
+  }
+]

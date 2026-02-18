@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `sm.qqplot` function does not have a parameter named `line`. The correct parameter is `line` with options like '45', 's45', etc., but not a numerical value. This will cause a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function does not have a parameter named `line`. The correct parameter is `line` with options like '45', 's45', etc., but not a numerical value. This will cause a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function does not have a parameter named `line`. The correct parameter is `line` with options like '45', 's45', etc., but not a numerical value. This will cause a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function does not have a parameter named `line`. The correct parameter is `line` with options like '45', 's45', etc., but not a numerical value. This will cause a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function does not have a parameter named `line`. The correct parameter is `line` with options like '45', 's45', etc., but not a numerical value. This will cause a TypeError.",
+    "detection": true
+  }
+]

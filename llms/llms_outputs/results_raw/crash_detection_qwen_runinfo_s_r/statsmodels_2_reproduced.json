@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The required libraries and functions are imported, and the 'residuals' Series is available. The code to plot ACF and PACF of residuals is valid and should not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The required libraries and functions are imported, and the 'residuals' Series is available. The code to plot ACF and PACF of residuals is valid and should not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The required libraries and functions are imported, and the 'residuals' Series is available. The code to plot ACF and PACF of residuals is valid and should not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The required libraries and functions are imported, and the 'residuals' Series is available. The code to plot ACF and PACF of residuals is valid and should not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The required libraries and functions are imported, and the 'residuals' Series is available. The code to plot ACF and PACF of residuals is valid and should not cause a crash.",
+    "detection": false
+  }
+]

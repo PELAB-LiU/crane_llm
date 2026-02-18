@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `adv` array has a valid shape and range of values suitable for `plt.imshow`. There are no indications of potential crashes based on the provided information.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `adv` array has a valid shape and range of values suitable for `plt.imshow`. There are no indications of potential crashes based on the provided information.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `adv` array has a valid shape and range of values suitable for `plt.imshow`. There are no indications of potential crashes based on the provided information.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `adv` array has a valid shape and range of values suitable for `plt.imshow`. There are no indications of potential crashes based on the provided information.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `adv` array has a valid shape and range of values suitable for `plt.imshow`. There are no indications of potential crashes based on the provided information.",
+    "detection": false
+  }
+]

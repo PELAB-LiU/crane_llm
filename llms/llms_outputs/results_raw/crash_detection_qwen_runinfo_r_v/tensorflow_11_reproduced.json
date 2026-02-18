@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The number of classes in the training and validation data (2) does not match the number of classes in the model's output layer (5). This mismatch will cause a crash during model fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The number of classes in the training and validation data (2) does not match the number of classes in the model's output layer (5). This mismatch will cause a crash during model fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The number of classes in the training and validation data (2) does not match the number of classes in the model output (5). This mismatch will cause a crash during model fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The number of classes in the training and validation data (2) does not match the number of classes in the model's output layer (5). This mismatch will cause a crash during model fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The number of classes in the training and validation data (2) does not match the number of classes in the model's output layer (5). This mismatch will cause a crash during model fitting.",
+    "detection": true
+  }
+]

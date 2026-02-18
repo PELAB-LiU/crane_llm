@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'train_input' dictionary contains ragged tensors that have been converted to dense tensors without padding to 'max_len'. The model expects inputs of shape (None, max_len), but the current input tensors have varying lengths, which will cause a shape mismatch during model.fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_input` dictionary contains ragged tensors that have not been padded to a fixed length. The model expects inputs of `max_len` (50), but the `train_input` dictionary's tensors are of varying lengths, which will cause a shape mismatch during `model.fit`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'train_input' dictionary contains ragged tensors that have been converted to dense tensors without padding to 'max_len'. The model expects inputs of shape (None, max_len), but the current input tensors have varying lengths, which will cause a shape mismatch during model.fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'train_input' dictionary contains ragged tensors that have not been padded to a fixed length. The model expects inputs of a fixed 'max_len' (50), so passing the unpadded 'train_input' will cause a shape mismatch during model fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'train_input' dictionary contains ragged tensors that have not been padded to a fixed length. The model expects inputs of a fixed 'max_len' (50), so passing the unpadded 'train_input' will cause a shape mismatch during model fitting.",
+    "detection": true
+  }
+]

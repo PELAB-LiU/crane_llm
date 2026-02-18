@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `CustomModelMultichoice` expects `labels` to be a 1D tensor, but `target` is a 2D tensor. This will cause a shape mismatch when `loss_func(logits.view(-1,self.num_choice),labels.view(-1))` is called, leading to a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `CustomModelMultichoice` expects `labels` to be a 1D tensor, but `target` is a 2D tensor. This will cause a shape mismatch when `loss_func(logits.view(-1,self.num_choice),labels.view(-1))` is called, leading to a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `CustomModelMultichoice` expects `labels` to be a 1D tensor, but `target` is a 2D tensor. This will cause a shape mismatch when `loss_func(logits.view(-1,self.num_choice),labels.view(-1))` is called, leading to a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `CustomModelMultichoice` expects `labels` to be a 1D tensor, but `target` is a 2D tensor. This will cause a shape mismatch when `loss_func(logits.view(-1,self.num_choice),labels.view(-1))` is called, leading to a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `CustomModelMultichoice` expects `labels` to be a 1D tensor, but `target` is a 2D tensor. This will cause a shape mismatch when `loss_func(logits.view(-1,self.num_choice),labels.view(-1))` is called, leading to a crash.",
+    "detection": true
+  }
+]

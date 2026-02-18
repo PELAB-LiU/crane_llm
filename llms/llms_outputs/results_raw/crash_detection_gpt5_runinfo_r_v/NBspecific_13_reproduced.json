@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "X is a DataFrame and y is a float64 Series without NaNs, but DecisionTreeClassifier requires a classification target with discrete class labels; a continuous float target can still be accepted, leading to a regression-like misuse but not a guaranteed crash. Imports are available and shapes/types seem compatible, so a crash is not certain.",
+    "detection": false
+  },
+  {
+    "reasoning": "X is a DataFrame and y is a float Series with values in range (0.1, 35.0). DecisionTreeClassifier expects discrete class labels; continuous float targets will not raise a type error but will be treated as many classes, which still fits. sklearn.metrics.accuracy_score signature is accuracy_score(y_true, y_pred); passing reversed may still compute but is valid. Import and class available. Not certain it will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "X is a DataFrame and y is a float64 Series with values in range (0.1, 35.0). DecisionTreeClassifier requires a classifier target with discrete class labels, but continuous float targets are allowed and will be treated as a regression-like multi-class only if discrete. However sklearn's DecisionTreeClassifier will accept float targets; fit will proceed, but accuracy_score expects classification; still works if predictions equal floats. No clear crash is certain.",
+    "detection": false
+  },
+  {
+    "reasoning": "X is a DataFrame and y is a float64 Series with values in [0.1, 35.0], which makes this a regression target, but DecisionTreeClassifier requires discrete class labels; scikit-learn will raise an error due to continuous target for classification.",
+    "detection": true
+  },
+  {
+    "reasoning": "DecisionTreeClassifier is importable, X is a DataFrame without NaNs, and y is a numeric Series. scikit-learn accepts continuous targets for decision trees, so fit and predict should run.",
+    "detection": false
+  }
+]

@@ -1,0 +1,77 @@
+# Executed Cells:
+## Cell 1:
+
+import tensorflow as tf
+from tensorflow.keras.layers import Input, Reshape, Dropout, Dense
+from tensorflow.keras.layers import Flatten, BatchNormalization
+from tensorflow.keras.layers import Activation, ZeroPadding2D
+from tensorflow.keras.layers import LeakyReLU
+from tensorflow.keras.layers import UpSampling2D, Conv2D
+from tensorflow.keras.models import Sequential, Model, load_model
+from tensorflow.keras.optimizers import Adam
+import numpy as np
+from PIL import Image
+from tqdm import tqdm
+import os
+import time
+import matplotlib.pyplot as plt
+
+## Cell 2:
+
+
+
+
+
+
+GENERATE_RES = 2
+
+GENERATE_SQUARE = 32 * GENERATE_RES
+IMAGE_CHANNELS = 3
+
+
+PREVIEW_ROWS = 1
+PREVIEW_COLS = 1
+PREVIEW_MARGIN = 16
+
+
+SEED_SIZE = 100
+
+
+DATA_PATH = 'data'
+EPOCHS = 5000
+BATCH_SIZE = 32
+BUFFER_SIZE = 60000
+
+print(f"Will generate {GENERATE_SQUARE}px square images.")
+
+# Target Cell:
+
+training_binary_path = os.path.join(DATA_PATH,
+        f'training_data_{GENERATE_SQUARE}_{GENERATE_SQUARE}.npy')
+
+print(f"Looking for file: {training_binary_path}")
+
+if not os.path.isfile(training_binary_path):
+  start = time.time()
+  print("Loading training images...")
+
+  training_data = []
+  faces_path = 'data/apple_disease_classification/Train/Blotch_Apple'
+  for filename in tqdm(os.listdir(faces_path)):
+      path = os.path.join(faces_path,filename)
+      image = Image.open(path).resize((GENERATE_SQUARE,
+            GENERATE_SQUARE),Image.LANCZOS)
+      training_data.append(np.asarray(image))
+  training_data = np.reshape(training_data,(-1,GENERATE_SQUARE,
+            GENERATE_SQUARE,3))
+  training_data = training_data.astype(np.float32)
+  training_data = training_data / 127.5 - 1.
+
+
+  print("Saving training image binary...")
+
+  elapsed = time.time()-start
+
+else:
+  print("Loading previous training pickle...")
+  training_data = np.load(training_binary_path)

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model is compiled with 'sparse_categorical_crossentropy' loss, which expects integer labels. However, 'train_labels' has a float64 dtype and a shape of (1719, 1), meaning it contains float values and is not a 1D array of integers, which will cause a crash during model training.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is compiled with 'sparse_categorical_crossentropy' loss, which expects integer labels. However, 'train_labels' has a float64 dtype and a shape of (1719, 1), meaning it contains float values and is not a 1D array of integers, which will cause a crash during model training.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is compiled with 'sparse_categorical_crossentropy' loss, which expects integer labels. However, 'train_labels' has a float64 dtype and a shape of (1719, 1), meaning it contains float values and is not a 1D array of integers, which will cause a crash during model training.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is compiled with 'sparse_categorical_crossentropy' loss, which expects integer labels. However, 'train_labels' has a float64 dtype and a shape of (1719, 1), meaning it contains float values and is not a 1D array of integers, which will cause a crash during model training.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is compiled with 'sparse_categorical_crossentropy' loss, which expects integer labels. However, 'train_labels' has a float64 dtype and a shape of (1719, 1), meaning it contains float values and is not a 1D array of integers, which will cause a crash during model training.",
+    "detection": true
+  }
+]

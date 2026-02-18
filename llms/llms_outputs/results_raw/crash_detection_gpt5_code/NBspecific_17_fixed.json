@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "PolynomialFeatures with interaction_only=True and degree=1 is invalid and raises a ValueError because no interaction terms exist at degree 1.",
+    "detection": true
+  },
+  {
+    "reasoning": "PolynomialFeatures with degree=1 and interaction_only=True is valid and fit_transform on X should work if X is numeric; previous steps created numeric features. Printing shapes is safe.",
+    "detection": false
+  },
+  {
+    "reasoning": "PolynomialFeatures with degree=1 and interaction_only=True will produce the same number of features as X plus bias, so fit_transform(X) is valid and X is defined. No clear cause for crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "PolynomialFeatures with degree=1 and interaction_only=True is valid and fit_transform(X) works on numeric arrays; X was constructed from scaled numeric and one-hot encoded categorical features. Shape query is also valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "PolynomialFeatures with degree=1 and interaction_only=True is valid; fitting and transforming X is supported. Shapes printing is safe.",
+    "detection": false
+  }
+]

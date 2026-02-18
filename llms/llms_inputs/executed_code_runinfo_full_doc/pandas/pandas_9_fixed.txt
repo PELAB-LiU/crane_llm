@@ -1,0 +1,104 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+df = pd.read_csv("data/IMDb_All_Genres_etf_clean1.csv")
+
+# Current relevent runtime information:
+{'df': {'execution_cell_source': {'cellno': 1, 'lineno': 1},
+        'has_nan': False,
+        'per_column': {'Actors': {'dtype': 'object',
+                                  'example_values': ['Mel Gibson, Nick Sta...',
+                                                     'Jim Carrey, Taylor M...',
+                                                     'Christina Ricci, Sam...',
+                                                     'Jennifer Lawrence, J...',
+                                                     'Annette Bening, Elle...'],
+                                  'num_unique': 5511,
+                                  'type': 'categorical'},
+                       'Censor': {'dtype': 'object',
+                                  'example_values': ['13',
+                                                     '18',
+                                                     '12',
+                                                     'UA 16+',
+                                                     'R'],
+                                  'num_unique': 25,
+                                  'type': 'categorical'},
+                       'Director': {'dtype': 'object',
+                                    'example_values': ['Daniel Barnz',
+                                                       'John McNaughton',
+                                                       'Claire Denis',
+                                                       'Lexi Alexander',
+                                                       'Simon Wincer'],
+                                    'num_unique': 2320,
+                                    'type': 'categorical'},
+                       'Movie_Title': {'dtype': 'object',
+                                       'example_values': ['Romeo + Juliet',
+                                                          "Look Who's Talking",
+                                                          'Haider',
+                                                          '50 First Dates',
+                                                          'Karthikeya 2'],
+                                       'num_unique': 5453,
+                                       'type': 'categorical'},
+                       'Rating': {'dtype': 'float64',
+                                  'num_unique': 74,
+                                  'type': 'continuous',
+                                  'value_range': (1.0, 9.3)},
+                       'Runtime(Mins)': {'dtype': 'int64',
+                                         'num_unique': 156,
+                                         'type': 'continuous',
+                                         'value_range': (45, 321)},
+                       'Total_Gross': {'dtype': 'object',
+                                       'example_values': ['$6.85M',
+                                                          '$22.43M',
+                                                          '$37.40M',
+                                                          '$14.97M',
+                                                          '$40.49M'],
+                                       'num_unique': 3501,
+                                       'type': 'categorical'},
+                       'Year': {'dtype': 'int64',
+                                'num_unique': 99,
+                                'type': 'continuous',
+                                'value_range': (1920, 2022)},
+                       'main_genre': {'dtype': 'object',
+                                      'example_values': ['Western',
+                                                         'Comedy',
+                                                         'Adventure',
+                                                         'Crime',
+                                                         'Fantasy'],
+                                      'num_unique': 13,
+                                      'type': 'categorical'},
+                       'side_genre': {'dtype': 'object',
+                                      'example_values': [' Comedy,  Fantasy',
+                                                         ' Fantasy,  Sci-Fi',
+                                                         ' Crime,  Mystery',
+                                                         ' Adventure',
+                                                         ' History,  Musical'],
+                                      'num_unique': 144,
+                                      'type': 'categorical'}},
+        'shape': (5562, 10),
+        'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+
+
+clean_df = df[(df["Total_Gross"]!="$0.00M") & (df["Total_Gross"]!="Gross Unkown")].copy()
+clean_df = clean_df[clean_df['Censor']!="(Banned)"]

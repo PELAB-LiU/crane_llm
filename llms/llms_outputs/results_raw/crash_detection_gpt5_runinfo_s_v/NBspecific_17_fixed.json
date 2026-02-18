@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "PolynomialFeatures with degree=1 and interaction_only=True is valid and X has no NaNs; fit_transform should return an array with added bias column, so shapes will be compatible.",
+    "detection": false
+  },
+  {
+    "reasoning": "PolynomialFeatures with degree=1 and interaction_only=True is valid and X has no NaNs; fit_transform will succeed and return an array with added bias column. Shapes will be computable.",
+    "detection": false
+  },
+  {
+    "reasoning": "X exists with shape (1460, 287) and no NaNs; PolynomialFeatures with degree=1 and interaction_only=True will fit/transform fine. No type or shape issues apparent.",
+    "detection": false
+  },
+  {
+    "reasoning": "X has no NaNs and is a 2D array-like with shape (1460, 287). PolynomialFeatures with degree=1 and interaction_only=True will add only the bias term, producing a valid transformed array.",
+    "detection": false
+  },
+  {
+    "reasoning": "X exists with shape (1460, 287) and no NaNs. PolynomialFeatures with degree=1 and interaction_only=True is valid and accepts numeric inputs, so fit_transform will succeed.",
+    "detection": false
+  }
+]

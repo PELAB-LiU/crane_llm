@@ -1,0 +1,191 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+
+train_data = pd.read_csv("data/train.csv")
+train_data.head()
+
+## Cell 3:
+
+
+test_data = pd.read_csv("data/test.csv")
+test_data.head()
+
+# Current relevent runtime information:
+{'RandomForestClassifier': {'type': "<class 'abc.ABCMeta'>"},
+ 'X': {'has_nan': False,
+       'per_column': {'age': {'num_unique': 41, 'value_range': (29, 77)},
+                      'caa': {'num_unique': 5, 'value_range': (0, 4)},
+                      'chol': {'num_unique': 152, 'value_range': (126, 564)},
+                      'cp': {'num_unique': 4, 'value_range': (0, 3)},
+                      'exng': {'num_unique': 2, 'value_range': (0, 1)},
+                      'fbs': {'num_unique': 2, 'value_range': (0, 1)},
+                      'oldpeak': {'num_unique': 40, 'value_range': (0.0, 6.2)},
+                      'restecg': {'num_unique': 3, 'value_range': (0, 2)},
+                      'sex': {'num_unique': 2, 'value_range': (0, 1)},
+                      'slp': {'num_unique': 3, 'value_range': (0, 2)},
+                      'thalachh': {'num_unique': 91, 'value_range': (71, 202)},
+                      'thall': {'num_unique': 4, 'value_range': (0, 3)},
+                      'trtbps': {'num_unique': 49, 'value_range': (94, 200)}},
+       'type': 'pandas.core.frame.DataFrame'},
+ 'X_test': {'has_nan': False,
+            'per_column': {'age': {'num_unique': 34, 'value_range': (35, 71)},
+                           'caa': {'num_unique': 5, 'value_range': (0, 4)},
+                           'chol': {'num_unique': 63,
+                                    'value_range': (157, 341)},
+                           'cp': {'num_unique': 4, 'value_range': (0, 3)},
+                           'exng': {'num_unique': 2, 'value_range': (0, 1)},
+                           'fbs': {'num_unique': 2, 'value_range': (0, 1)},
+                           'oldpeak': {'num_unique': 24,
+                                       'value_range': (0.0, 4.2)},
+                           'restecg': {'num_unique': 3, 'value_range': (0, 2)},
+                           'sex': {'num_unique': 2, 'value_range': (0, 1)},
+                           'slp': {'num_unique': 3, 'value_range': (0, 2)},
+                           'thalachh': {'num_unique': 48,
+                                        'value_range': (71, 188)},
+                           'thall': {'num_unique': 4, 'value_range': (0, 3)},
+                           'trtbps': {'num_unique': 31,
+                                      'value_range': (100, 180)}},
+            'type': 'pandas.core.frame.DataFrame'},
+ '__method__X_test_fillna': {'type': "<class 'method'>"},
+ '__method__model_fit': {'type': "<class 'method'>"},
+ '__method__model_predict': {'type': "<class 'method'>"},
+ '__method__pd_DataFrame': {'type': "<class 'type'>"},
+ '__method__pd_get_dummies': {'type': "<class 'function'>"},
+ '__method__test_data_PassengerId': {'dtype': 'int64',
+                                     'has_nan': False,
+                                     'type': 'pandas.core.series.Series',
+                                     'value_info': {'value_range': (892,
+                                                                    1309)}},
+ 'model': {'class_name': 'DecisionTreeClassifier',
+           'fitted_attributes': {'n_features_in_': 13, 'n_outputs_': 1},
+           'is_fitted': True,
+           'module': 'sklearn.tree._classes',
+           'type': "<class 'sklearn.tree._classes.DecisionTreeClassifier'>"},
+ 'pd': {'type': "<class 'module'>"},
+ 'test_data': {'has_nan': True,
+               'per_column': {'Age': {'num_unique': 79,
+                                      'value_range': (0.17, 76.0)},
+                              'Cabin': {'example_values': ['C97',
+                                                           'A18',
+                                                           'B69',
+                                                           'C130',
+                                                           'A9'],
+                                        'num_unique': 76},
+                              'Embarked': {'num_unique': 3,
+                                           'unique_values': ['Q', 'S', 'C']},
+                              'Fare': {'num_unique': 169,
+                                       'value_range': (0.0, 512.3292)},
+                              'Name': {'example_values': ['Wells, Mrs. Arthur '
+                                                          'H...',
+                                                          'Widener, Mr. George '
+                                                          '...',
+                                                          'Wilson, Miss. Helen '
+                                                          '...',
+                                                          'Niklasson, Mr. '
+                                                          'Samue...',
+                                                          'Hagardon, Miss. '
+                                                          'Kate'],
+                                       'num_unique': 418},
+                              'Parch': {'num_unique': 8, 'value_range': (0, 9)},
+                              'PassengerId': {'num_unique': 418,
+                                              'value_range': (892, 1309)},
+                              'Pclass': {'num_unique': 3,
+                                         'value_range': (1, 3)},
+                              'Sex': {'num_unique': 2,
+                                      'unique_values': ['male', 'female']},
+                              'SibSp': {'num_unique': 7, 'value_range': (0, 8)},
+                              'Ticket': {'example_values': ['AQ/4 3130',
+                                                            '2696',
+                                                            '2652',
+                                                            '2003',
+                                                            '348122'],
+                                         'num_unique': 363}},
+               'type': 'pandas.core.frame.DataFrame'},
+ 'train_data': {'has_nan': True,
+                'per_column': {'Age': {'num_unique': 88,
+                                       'value_range': (0.42, 80.0)},
+                               'Cabin': {'example_values': ['C125',
+                                                            'E121',
+                                                            'B51 B53 B55',
+                                                            'F E69',
+                                                            'D45'],
+                                         'num_unique': 147},
+                               'Embarked': {'num_unique': 3,
+                                            'unique_values': ['S', 'C', 'Q']},
+                               'Fare': {'num_unique': 248,
+                                        'value_range': (0.0, 512.3292)},
+                               'Name': {'example_values': ['Anderson, Mr. '
+                                                           'Harry',
+                                                           'Johnson, Mr. '
+                                                           'William...',
+                                                           'Shelley, Mrs. '
+                                                           'Willia...',
+                                                           'Kelly, Miss. Anna '
+                                                           'Ka...',
+                                                           'Seward, Mr. '
+                                                           'Frederic...'],
+                                        'num_unique': 891},
+                               'Parch': {'num_unique': 7,
+                                         'value_range': (0, 6)},
+                               'PassengerId': {'num_unique': 891,
+                                               'value_range': (1, 891)},
+                               'Pclass': {'num_unique': 3,
+                                          'value_range': (1, 3)},
+                               'Sex': {'num_unique': 2,
+                                       'unique_values': ['male', 'female']},
+                               'SibSp': {'num_unique': 7,
+                                         'value_range': (0, 8)},
+                               'Survived': {'num_unique': 2,
+                                            'value_range': (0, 1)},
+                               'Ticket': {'example_values': ['349254',
+                                                             'STON/O2. 3101283',
+                                                             '348121',
+                                                             '347074',
+                                                             '347743'],
+                                          'num_unique': 681}},
+                'type': 'pandas.core.frame.DataFrame'},
+ 'y': {'dtype': 'int64',
+       'has_nan': False,
+       'type': 'pandas.core.series.Series',
+       'value_info': {'unique_values': [0, 1]}}}
+# Target Cell:
+
+from sklearn.ensemble import RandomForestClassifier
+
+y = train_data["Survived"]
+
+features = ["Pclass", "Sex", "SibSp", "Parch", "Fare"]
+X = pd.get_dummies(train_data[features])
+X_test = pd.get_dummies(test_data[features])
+
+
+X_test.fillna(0, inplace=True)
+
+model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=1)
+model.fit(X, y)
+predictions = model.predict(X_test)
+
+output = pd.DataFrame({'PassengerId': test_data.PassengerId, 'Survived': predictions})
+
+print("Your submission was successfully saved!")

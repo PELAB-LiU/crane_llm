@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model_quantization` function returns `None` when `save=True` because it saves the model to a file but does not return the quantized model object. Consequently, `quantized_vit` will be `None`, leading to an error when `inference` is called with `model=quantized_vit`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None` when `save=True` because it saves the model to a file but does not return the quantized model object. Consequently, `quantized_vit` will be `None`, leading to an error when `inference` is called with `model=quantized_vit`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None` when `save=True` because it saves the model to a file but does not return the quantized model object. Consequently, `quantized_vit` will be `None`, leading to an error when `inference` is called with `model=quantized_vit`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None` when `save=True` because it saves the model to a file but does not return the quantized model object. Consequently, `quantized_vit` will be `None`, leading to an error when `inference` is called with `model=quantized_vit`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None` when `save=True` because it saves the scripted quantized model to a file but does not return the model itself. Consequently, `quantized_vit` will be `None`, leading to an error when `inference` is called with `model=quantized_vit`.",
+    "detection": true
+  }
+]

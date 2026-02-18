@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `test_generator.classes` attribute returns a 1D array of integer class labels, not one-hot encoded labels. Therefore, applying `np.argmax` with `axis=1` to `y_true_onehot` will raise an error because `y_true_onehot` is not a 2D array.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_generator.classes` attribute returns a 1D array of integer class labels, not one-hot encoded labels. Therefore, applying `np.argmax` to `y_true_onehot` will raise an error because it expects an array with an axis to reduce.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_generator.classes` attribute returns a 1D array of integer class labels, not one-hot encoded labels. Therefore, applying `np.argmax` to `y_true_onehot` will raise an error because it expects an array with an axis to reduce.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_generator.classes` attribute returns a 1D array of integer class labels, not one-hot encoded labels. Therefore, applying `np.argmax` with `axis=1` to `y_true_onehot` will raise an error because `y_true_onehot` is not a 2D array.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_generator.classes` attribute returns a 1D array of integer class labels, not one-hot encoded labels. Therefore, applying `np.argmax` to `y_true_onehot` will raise an error because it expects an array with an axis to reduce.",
+    "detection": true
+  }
+]

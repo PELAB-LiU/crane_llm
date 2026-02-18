@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The PolynomialFeatures transformation will increase the number of features, but the operation itself is valid and will not cause a crash. The shapes of X and poly_X will be printed correctly.",
+    "detection": false
+  },
+  {
+    "reasoning": "The PolynomialFeatures transformation will increase the number of features, so the shape of poly_X will be different from X, but the operation itself is valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "The PolynomialFeatures transformation will increase the number of features, but the operation itself is valid and will not cause a crash. The shapes of X and poly_X will be printed correctly.",
+    "detection": false
+  },
+  {
+    "reasoning": "The PolynomialFeatures transformation will increase the number of features, but the operation itself is valid and will not cause a crash. The shapes of X and poly_X will be printed correctly.",
+    "detection": false
+  },
+  {
+    "reasoning": "The PolynomialFeatures transformation will increase the number of features, but the operation itself is valid and will not cause a crash. The shapes of X and poly_X will be printed correctly.",
+    "detection": false
+  }
+]

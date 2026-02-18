@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "DataLoader yields NumPy arrays, but the model expects torch.Tensors; also labels are arrays of images not class indices. This will cause type/shape errors when moving to device and in loss computation.",
+    "detection": true
+  },
+  {
+    "reasoning": "The custom MyDataset returns numpy arrays; DataLoader will collate them into numpy arrays, but the model expects torch tensors, causing .to(device) to fail since numpy arrays lack .to. This will raise an AttributeError in train_model loop.",
+    "detection": true
+  },
+  {
+    "reasoning": "MyDataset returns numpy arrays; PyTorch model expects tensors of shape [B,C,H,W]. Also labels are arrays of images, not class indices, due to misuse of train_test_split with two image arrays as X and y, causing criterion to receive invalid target.",
+    "detection": true
+  },
+  {
+    "reasoning": "DataLoader yields numpy arrays, but model expects torch tensors; operations like inputs.to(device) and loss computation will fail due to numpy types.",
+    "detection": true
+  },
+  {
+    "reasoning": "DataLoader yields NumPy arrays from MyDataset, but the model expects torch tensors; operations like inputs.to(device) and autograd require tensors, causing an AttributeError or TypeError. Also labels are arrays not class indices for CrossEntropyLoss.",
+    "detection": true
+  }
+]

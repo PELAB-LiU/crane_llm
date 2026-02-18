@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `input_word_ids` tensor in `train_input` has a shape of (8, 172), but the model's input layer expects a shape of (None, 50) due to `max_len = 50`. This mismatch will cause a shape error during model fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `input_word_ids` tensor in `train_input` has a shape of (8, 172), but the model's input layer expects a shape of (None, 50) due to `max_len = 50`. This mismatch will cause a shape error during model fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `input_word_ids` tensor in `train_input` has a shape of (8, 172), but the model's input layer expects a shape of (None, 50) due to `max_len = 50`. This mismatch in sequence length will cause a crash during model fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `input_word_ids` tensor in `train_input` has a shape of (8, 172), but the model's input layer expects a shape of (None, 50) due to `max_len = 50`. This mismatch will cause a shape error during model fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `input_word_ids` tensor in `train_input` has a shape of (8, 172), while the model's input layer expects a shape of (None, 50). This mismatch in sequence length will cause a crash during model fitting.",
+    "detection": true
+  }
+]

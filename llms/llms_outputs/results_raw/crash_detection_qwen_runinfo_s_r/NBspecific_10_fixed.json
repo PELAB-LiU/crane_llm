@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The function `check_stationarity` is defined and the `train` DataFrame contains the 'ActivePower' column, so the cell should execute without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The function `check_stationarity` is defined and the `train` DataFrame contains the 'ActivePower' column, so the cell should execute without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The function `check_stationarity` is defined and the `train` DataFrame contains the 'ActivePower' column, so the cell should execute without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The function `check_stationarity` is defined and the `train` DataFrame contains the 'ActivePower' column, so the cell should execute without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The function `check_stationarity` is defined and the `train` DataFrame contains the 'ActivePower' column, so the cell should execute without crashing.",
+    "detection": false
+  }
+]

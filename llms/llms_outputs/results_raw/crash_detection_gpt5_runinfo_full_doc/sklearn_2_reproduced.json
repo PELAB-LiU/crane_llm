@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "DTRmodel is an unfitted DecisionTreeRegressor while predict is called; calling predict on an unfitted estimator raises NotFittedError. Also shape mismatch possible but first error is unfitted model.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel is an unfitted DecisionTreeRegressor (is_fitted: False), and predict on it will raise NotFittedError. Also feature misalignment may occur, but the unfitted model alone guarantees a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel is an unfitted DecisionTreeRegressor, and predict on an unfitted model raises NotFittedError. Therefore executing will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel is an unfitted DecisionTreeRegressor, and calling predict on an unfitted sklearn estimator raises NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel is an unfitted DecisionTreeRegressor, and predict requires a fitted estimator; calling predict will raise NotFittedError.",
+    "detection": true
+  }
+]

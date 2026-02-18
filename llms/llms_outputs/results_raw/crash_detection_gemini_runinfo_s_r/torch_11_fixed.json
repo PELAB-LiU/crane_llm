@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train` function expects `cy` to be a tensor of class indices for `F.one_hot` and `F.mse_loss` to work correctly. However, `st_train` yields `cy` as a tensor of sentiment labels (0 or 1), which are not suitable for `F.one_hot` with `num_classes=2` when `cy` is already a one-hot like representation. This will cause a runtime error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train` function expects `cy` to be a tensor of class indices for `F.one_hot` and `F.mse_loss`. However, `st_train` yields `cy` as a tensor of sentiment labels (0 or 1), which are not suitable for `F.one_hot` with `num_classes=2` when `cy` is already a one-hot like representation. The `F.one_hot` function expects class indices, not already one-hot encoded labels, which will cause a runtime error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train` function expects `cy` to be a tensor of class indices for `F.one_hot` and `F.mse_loss` to work correctly. However, `st_train` yields `cy` as a tensor of sentiment labels (0 or 1), which are not suitable for `F.one_hot` with `num_classes=2` when `cy` is already a one-hot like representation. This will cause a runtime error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train` function expects `cy` to be a tensor of class indices for `F.one_hot` and `F.mse_loss`. However, `st_train` yields `cy` as a tensor of sentiment labels (0 or 1), which are not suitable for `F.one_hot` with `num_classes=2` when `cy` is already a one-hot like representation. The `F.one_hot` function expects class indices, not already one-hot encoded labels, which will cause a runtime error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train` function expects `cy` to be a tensor of class indices for `F.one_hot` and `F.mse_loss` to work correctly. However, `st_train` yields `cy` as a tensor of sentiment labels (0 or 1), which are not suitable for `F.one_hot` with `num_classes=2` when `cy` is already a one-hot like representation. This will cause a runtime error.",
+    "detection": true
+  }
+]

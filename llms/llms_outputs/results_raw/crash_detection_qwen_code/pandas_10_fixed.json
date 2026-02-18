@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to clean and convert the 'Installs' column. If the 'Installs' column contains values that cannot be converted to integers after replacements, it will crash. There is no certainty that all values will be convertible.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to clean and convert the 'Installs' column. If the 'Installs' column contains values that cannot be converted to integers after replacements, it will crash. There is no certainty that all values will be convertible.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to clean and convert the 'Installs' column. If the 'Installs' column contains values that cannot be converted to integers after replacements, it will crash. There is no certainty that all values will be convertible.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to clean and convert the 'Installs' column. If the 'Installs' column contains values that cannot be converted to integers after replacements, it will crash. There is no certainty that all values will be convertible.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to clean and convert the 'Installs' column. If the 'Installs' column contains values that cannot be converted to integers after replacements, it will crash. There is no certainty that all values will be convertible.",
+    "detection": false
+  }
+]

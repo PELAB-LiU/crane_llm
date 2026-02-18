@@ -1,0 +1,73 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+## Cell 2:
+
+df= pd.read_csv(r'data/Retailsales.csv')
+df=df.drop(columns='Unnamed: 0')
+df.head()
+
+## Cell 3:
+
+df=df.dropna(how='all')
+df
+
+# Current relevent runtime information:
+{'df': {'has_nan': False,
+        'per_column': {'Order Date': {'example_values': ['05/13/19 17:10',
+                                                         '04/30/19 17:01',
+                                                         '04/07/19 04:31',
+                                                         '01/06/19 08:52',
+                                                         '12/23/19 12:36'],
+                                      'num_unique': 142396},
+                       'Order ID': {'example_values': ['147985',
+                                                       '180944',
+                                                       '247841',
+                                                       '155451',
+                                                       '151234'],
+                                    'num_unique': 178438},
+                       'Price Each': {'example_values': ['149.99',
+                                                         '389.99',
+                                                         '150',
+                                                         '700',
+                                                         '2.99'],
+                                      'num_unique': 24},
+                       'Product': {'example_values': ['Bose SoundSport Head...',
+                                                      'Flatscreen TV',
+                                                      'USB-C Charging Cable',
+                                                      'Macbook Pro Laptop',
+                                                      'Wired Headphones'],
+                                   'num_unique': 20},
+                       'Purchase Address': {'example_values': ['520 Meadow St, '
+                                                               'Atlan...',
+                                                               '682 Hickory '
+                                                               'St, Los ...',
+                                                               '968 2nd St, '
+                                                               'Dallas, ...',
+                                                               '842 Johnson '
+                                                               'St, San ...',
+                                                               '377 Elm St, '
+                                                               'Austin, ...'],
+                                            'num_unique': 140788},
+                       'Quantity Ordered': {'example_values': ['Quantity '
+                                                               'Ordered',
+                                                               '1',
+                                                               '4',
+                                                               '2',
+                                                               '6'],
+                                            'num_unique': 10}},
+        'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+df=df['Order ID'].astype('int')

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The function `row2image` will fail because the `emotion_map` does not contain the key `1` (for 'disgust'), and the loop in the target cell attempts to access emotions from 0 to 6, which includes the missing key.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` will fail because the `emotion_map` does not contain the key `1` (for 'disgust'), and the loop in the target cell attempts to access emotions from 0 to 6, which includes the missing key.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` will fail because the `emotion_map` does not contain the key `1` (for 'disgust'), and the loop in the target cell attempts to access emotions from 0 to 6, which includes the missing key.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` will fail because the `emotion_map` does not contain the key `1` (for 'disgust'), and the loop in the target cell attempts to access emotions from 0 to 6, which includes the missing key.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` will fail because the `emotion_map` does not contain the key `1` (for 'disgust'), and the loop in the target cell attempts to access emotions from 0 to 6, which includes the missing key.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model outputs have 6294 classes, but labels are one-hot of size 393; CrossEntropyLoss will error due to target class index out of range. Hence run_model will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model outputs 6294 classes, but your dataset labels have size 393; CrossEntropyLoss expects matching class dimension, causing a size mismatch error when computing loss. Therefore, the cell will crash during loss computation.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model outputs have size 6294 but your one-hot labels have size 393; CrossEntropyLoss expects class indices in range [0, C) with C matching output size. label.argmax(dim=1) yields indices up to 392, causing a target out of bounds error for aux head (size 6294 vs expected 393). This will crash at loss(out_aux, label).",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs have 6294 classes, but labels in the dataloader are one-hot with size 393; CrossEntropyLoss expects target indices < num_classes, causing size mismatch. This will raise a runtime error when computing loss.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs logits of size 6294, but dataset labels are one-hot of size 393; CrossEntropyLoss requires matching class dimension, causing a size mismatch error when computing loss.",
+    "detection": true
+  }
+]

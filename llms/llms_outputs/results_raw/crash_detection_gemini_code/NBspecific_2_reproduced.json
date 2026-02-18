@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to use `X_train`, `y_train`, `X_test`, and `y_test` which have not been defined in the executed cells. These variables are typically created by a train-test split, which is missing.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use `X_train`, `y_train`, `X_test`, and `y_test` which have not been defined in the executed cells. These variables are typically created by a train-test split, which is missing.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use `X_train`, `y_train`, `X_test`, and `y_test` which have not been defined in the executed cells. These variables are typically created by a train-test split, which is missing.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use `X_train`, `y_train`, `X_test`, and `y_test` which have not been defined in the executed cells. These variables are typically created by a train-test split, which is missing.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use `X_train`, `y_train`, `X_test`, and `y_test` which have not been defined in the executed cells. These variables are typically created by a train-test split, which is missing.",
+    "detection": true
+  }
+]

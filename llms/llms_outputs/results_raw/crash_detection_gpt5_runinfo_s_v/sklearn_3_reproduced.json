@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "StandardScaler requires numeric arrays; after get_dummies both dataframes are numeric and have no NaNs. However, train_df has 18532 columns while test_df has 56, so scaler.transform(test_df) will raise a shape mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "StandardScaler expects numeric arrays; after get_dummies both DataFrames are numeric. fit_transform on train_df and transform on test_df will work even with different column counts since transform only uses fitted stats and returns arrays.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler expects numeric input; after get_dummies, both DataFrames are numeric. fit_transform on train_df and transform on test_df will work even with different columns since transform only needs same features as seen during fit, but here test has fewer columns which will raise a shape mismatch. However, StandardScaler fitted on train expects 18532 features; test has 56, so transform will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "StandardScaler requires numeric array-like inputs; after get_dummies both train_df and test_df are numeric, and shapes need not match for transform. No NaNs present.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler expects numeric arrays; after get_dummies both DataFrames are numeric and have no NaNs. However, train_df has 18532 columns while test_df has 56, so scaler.transform will raise a shape mismatch error.",
+    "detection": true
+  }
+]

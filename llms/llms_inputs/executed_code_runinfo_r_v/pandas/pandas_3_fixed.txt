@@ -1,0 +1,177 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import os
+import numpy as np
+from sklearn.model_selection import KFold
+from sklearn.preprocessing import LabelEncoder
+import sklearn.metrics
+
+train = pd.read_csv('data/train.csv.zip', index_col="PetID")
+test = pd.read_csv('data/test.csv.zip', index_col="PetID")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Cell 2:
+
+name_count = train["Name"].value_counts().rename("name_count")
+
+RescuerID = LabelEncoder().fit(train["RescuerID"].to_list()+test["RescuerID"].to_list())
+
+def procData(data, name_count, RescuerID):
+
+
+
+
+    data["RescuerID"] = RescuerID.transform(data["RescuerID"])
+    data["RescuerID"] = data["RescuerID"].fillna(-1)
+
+
+    data["NameNull"] = data["Name"].isnull()
+    data["NameLen"] = data["Name"].fillna("").str.len()
+    data["SinNombre"] = data["Name"].str.lower().replace(" ", "") == "nonameyet"
+
+
+
+    data["name_count"] = data['Name'].map(name_count)
+    data["name_count"] = data["name_count"].fillna(0)
+
+    data = data.drop(["Name", "RescuerID", "Description"], axis=1)
+    return data
+
+# Current relevent runtime information:
+{'RescuerID': {'class_name': 'LabelEncoder',
+               'classes_dtype': dtype('<U32'),
+               'fitted_attributes': {'n_features_in_': None,
+                                     'n_outputs_': None},
+               'is_fitted': True,
+               'module': 'sklearn.preprocessing._label',
+               'n_classes': 7113,
+               'type': "<class 'sklearn.preprocessing._label.LabelEncoder'>"},
+ 'name_count': {'dtype': 'int64',
+                'has_nan': False,
+                'type': 'pandas.core.series.Series',
+                'value_info': {'value_range': (1, 66)}},
+ 'procData': {'type': "<class 'function'>"},
+ 'test': {'has_nan': True,
+          'per_column_max_20': {'Age': {'num_unique': 71,
+                                           'value_range': (0, 156)},
+                                   'Breed1': {'num_unique': 118,
+                                              'value_range': (2, 307)},
+                                   'Breed2': {'num_unique': 92,
+                                              'value_range': (0, 307)},
+                                   'Color1': {'num_unique': 7,
+                                              'value_range': (1, 7)},
+                                   'Color2': {'num_unique': 7,
+                                              'value_range': (0, 7)},
+                                   'Color3': {'num_unique': 6,
+                                              'value_range': (0, 7)},
+                                   'Dewormed': {'num_unique': 3,
+                                                'value_range': (1, 3)},
+                                   'Fee': {'num_unique': 41,
+                                           'value_range': (0, 1500)},
+                                   'FurLength': {'num_unique': 3,
+                                                 'value_range': (1, 3)},
+                                   'Gender': {'num_unique': 3,
+                                              'value_range': (1, 3)},
+                                   'Health': {'num_unique': 3,
+                                              'value_range': (1, 3)},
+                                   'MaturitySize': {'num_unique': 4,
+                                                    'value_range': (1, 4)},
+                                   'Name': {'example_values': ['D209(300914)',
+                                                               'Dobby',
+                                                               'Shelby',
+                                                               'Penny & Benny',
+                                                               'Jovian'],
+                                            'num_unique': 2750},
+                                   'Quantity': {'num_unique': 16,
+                                                'value_range': (1, 20)},
+                                   'RescuerID': {'example_values': ['10e5a436b7d4f93acf4d...',
+                                                                    'c0a9f18836f83ec881c5...',
+                                                                    'f68b3f1d2557e56fd65c...',
+                                                                    '9a4bc43f58ac96c2a6bd...',
+                                                                    'dcbb75fd8cda612690b0...'],
+                                                 'num_unique': 1518},
+                                   'State': {'num_unique': 15,
+                                             'value_range': (41324, 41415)},
+                                   'Sterilized': {'num_unique': 3,
+                                                  'value_range': (1, 3)},
+                                   'Type': {'num_unique': 2,
+                                            'value_range': (1, 2)},
+                                   'Vaccinated': {'num_unique': 3,
+                                                  'value_range': (1, 3)},
+                                   'VideoAmt': {'num_unique': 8,
+                                                'value_range': (0, 8)}},
+          'type': 'pandas.core.frame.DataFrame'},
+ 'train': {'has_nan': True,
+           'per_column_max_20': {'Age': {'num_unique': 106,
+                                            'value_range': (0, 255)},
+                                    'Breed1': {'num_unique': 176,
+                                               'value_range': (0, 307)},
+                                    'Breed2': {'num_unique': 135,
+                                               'value_range': (0, 307)},
+                                    'Color1': {'num_unique': 7,
+                                               'value_range': (1, 7)},
+                                    'Color2': {'num_unique': 7,
+                                               'value_range': (0, 7)},
+                                    'Color3': {'num_unique': 6,
+                                               'value_range': (0, 7)},
+                                    'Dewormed': {'num_unique': 3,
+                                                 'value_range': (1, 3)},
+                                    'Fee': {'num_unique': 74,
+                                            'value_range': (0, 3000)},
+                                    'FurLength': {'num_unique': 3,
+                                                  'value_range': (1, 3)},
+                                    'Gender': {'num_unique': 3,
+                                               'value_range': (1, 3)},
+                                    'Health': {'num_unique': 3,
+                                               'value_range': (1, 3)},
+                                    'MaturitySize': {'num_unique': 4,
+                                                     'value_range': (1, 4)},
+                                    'Name': {'example_values': ['Mimi ,lily , '
+                                                                'Nini , ...',
+                                                                'Qaseh(male) & '
+                                                                'Chinta...',
+                                                                'Can You Give '
+                                                                'Us A Ho...',
+                                                                'F4',
+                                                                'Cloey'],
+                                             'num_unique': 9059},
+                                    'Quantity': {'num_unique': 19,
+                                                 'value_range': (1, 20)},
+                                    'RescuerID': {'example_values': ['d764c4fd47f73438f82f...',
+                                                                     'f320d8e337c15059efcf...',
+                                                                     'a319219c85120e3b56c6...',
+                                                                     'a21d898a2ee7d559b41c...',
+                                                                     '07e43c5d6bec7545908f...'],
+                                                  'num_unique': 5595},
+                                    'State': {'num_unique': 14,
+                                              'value_range': (41324, 41415)},
+                                    'Sterilized': {'num_unique': 3,
+                                                   'value_range': (1, 3)},
+                                    'Type': {'num_unique': 2,
+                                             'value_range': (1, 2)},
+                                    'Vaccinated': {'num_unique': 3,
+                                                   'value_range': (1, 3)},
+                                    'VideoAmt': {'num_unique': 9,
+                                                 'value_range': (0, 8)}},
+           'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+train = procData(train, name_count, RescuerID)
+test = procData(test, name_count, RescuerID)

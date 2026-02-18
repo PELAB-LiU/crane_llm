@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are likely strings or objects, which will cause a ValueError when the LinearRegression model tries to fit numerical data. These columns need to be encoded or dropped before fitting the model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are likely strings or objects, which will cause a ValueError when the LinearRegression model tries to fit numerical data. These columns need to be encoded or dropped before fitting the model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are likely strings or objects, which will cause a ValueError when the LinearRegression model tries to fit numerical data. These columns need to be encoded or dropped before fitting the model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are likely strings or objects, which will cause a ValueError when the LinearRegression model tries to fit numerical data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are likely strings or objects, which will cause a ValueError when the LinearRegression model tries to fit numerical data.",
+    "detection": true
+  }
+]

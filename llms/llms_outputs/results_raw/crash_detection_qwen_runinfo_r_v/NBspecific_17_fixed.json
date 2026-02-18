@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `PolynomialFeatures` with `degree=1` and `interaction_only=True` will only generate interaction features without any polynomial terms. Given that `X` is a DataFrame without NaN values, the transformation should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `PolynomialFeatures` with `degree=1` and `interaction_only=True` will only generate interaction features without any polynomial terms. Given that `X` is a DataFrame without NaN values, the transformation should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `PolynomialFeatures` with `degree=1` and `interaction_only=True` will only generate interaction features without any polynomial terms. Given that `X` is a DataFrame without NaN values, the transformation should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `PolynomialFeatures` with `degree=1` and `interaction_only=True` will only generate interaction features without any polynomial terms. Given that `X` is a DataFrame without NaN values, the transformation should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `PolynomialFeatures` with `degree=1` and `interaction_only=True` will only generate interaction features without any polynomial terms. Given that `X` is a DataFrame without NaN values, the transformation should not crash.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "best_estimator is a fitted DecisionTreeRegressor expecting 208 features, and dft_encoded has shape (32573, 208). Predict will run without shape/type errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "best_estimator is a fitted DecisionTreeRegressor expecting 208 features, and dft_encoded has shape (_, 208). predict will run without shape/type issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "best_estimator is a fitted DecisionTreeRegressor expecting 208 features, and dft_encoded has shape (32573, 208), so prediction should work.",
+    "detection": false
+  },
+  {
+    "reasoning": "best_estimator is a fitted DecisionTreeRegressor expecting 208 features, and dft_encoded has shape (_, 208). predict accepts a DataFrame with matching feature count.",
+    "detection": false
+  },
+  {
+    "reasoning": "best_estimator is a fitted DecisionTreeRegressor with n_features_in_ = 208, and dft_encoded has shape (?, 208), so feature counts match; predict expects a 2D array which is provided.",
+    "detection": false
+  }
+]

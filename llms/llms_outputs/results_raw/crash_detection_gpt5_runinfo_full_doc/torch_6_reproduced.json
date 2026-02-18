@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "CrossEntropyLoss expects class indices of shape (N,) but labels are one-hot tensors of shape (N, 393); mod_loss.backward() will raise a size mismatch error during loss computation.",
+    "detection": true
+  },
+  {
+    "reasoning": "CrossEntropyLoss expects class indices (LongTensor) but labels are one-hot FloatTensors with size 393, while model outputs have size 6294; this causes a size mismatch error during loss computation.",
+    "detection": true
+  },
+  {
+    "reasoning": "CrossEntropyLoss expects class indices of shape (N) but labels are one-hot vectors of size 393; this will raise a runtime error when computing loss. Also model outputs 6294 classes while labels are 393, causing size mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "CrossEntropyLoss expects class indices, but labels are one-hot vectors with size 393 while model outputs size 6294, causing a dimension mismatch error when computing loss.",
+    "detection": true
+  },
+  {
+    "reasoning": "CrossEntropyLoss expects class indices (Long) of shape [N] for targets, but labels are one-hot tensors of shape [batch, 393], and model outputs are shape [batch, 6294], causing a size mismatch error when computing loss.",
+    "detection": true
+  }
+]

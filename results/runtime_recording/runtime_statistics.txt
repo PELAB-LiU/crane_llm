@@ -1,0 +1,37 @@
+Execution Time (Prior Cells) Statistics:
+Count: 111
+Mean: 11.7169
+Median: 1.1649
+Std Dev: 27.5601
+Min: 0.0001
+Max: 176.8312
+Sum: 1300.5710
+
+Query Time (GPT-5, Reproduced Only) Statistics:
+Count: 111
+Mean: 1.7814
+Median: 1.6435
+Std Dev: 0.6094
+Min: 1.2061
+Max: 6.4449
+Sum: 197.7348
+
+Final saved_times length: 111
+
+Saved Time (Execution - Query) Statistics:
+Count: 111
+Mean: 9.9355
+Median: -0.6035
+Std Dev: 27.4990
+Min: -3.5878
+Max: 173.9251
+Sum: 1102.8363
+
+==================================================
+SUMMARY:
+==================================================
+Total saved time calculations: 1102.8362679481506
+Cases with time savings (positive): 52
+Cases with time loss (negative): 59
+Average time saved (positive cases): 22.7985
+Average time loss (negative cases): -1.4014

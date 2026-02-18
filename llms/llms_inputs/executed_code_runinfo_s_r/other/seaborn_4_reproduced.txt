@@ -1,0 +1,35 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+import warnings
+%matplotlib inline
+warnings.filterwarnings('ignore')
+
+## Cell 2:
+
+df = pd.read_csv('data/ParisHousing_synthetic.csv')
+df.head()
+
+# Current relevent runtime information:
+{'__method__df_items': {'type': "<class 'method'>"},
+ '__method__plt_subplots': {'type': "<class 'function'>"},
+ '__method__plt_tight_layout': {'type': "<class 'function'>"},
+ '__method__sns_boxplot': {'type': "<class 'function'>"},
+ 'df': {'shape': (10000, 17), 'type': 'pandas.core.frame.DataFrame'},
+ 'plt': {'type': "<class 'module'>"},
+ 'sns': {'type': "<class 'module'>"}}
+# Target Cell:
+
+
+fig, ax = plt.subplots(ncols=7, nrows=2, figsize=(20, 10))
+index = 0
+ax = ax.flatten()
+
+for col, value in df.items():
+    sns.boxplot(y=col, data=df, ax=ax[index])
+    index += 1
+plt.tight_layout(pad=0.5, w_pad=0.7, h_pad=5.0)

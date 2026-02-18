@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `target` tensor dimensions do not match the expected input dimensions for the `labels` parameter in the `forward` method of `CustomModelMultichoice`. The `labels` should be a 1D tensor with shape (batch_size,), but `target` is a 2D tensor with shape (1, 3).",
+    "detection": true
+  },
+  {
+    "reasoning": "The `target` tensor dimensions do not match the expected input dimensions for the `labels` parameter in the `forward` method of `CustomModelMultichoice`. The `labels` should be a 1D tensor with shape (batch_size,), but `target` is a 2D tensor with shape (1, 3).",
+    "detection": true
+  },
+  {
+    "reasoning": "The `target` tensor dimensions do not match the expected input dimensions for the `labels` parameter in the `forward` method of `CustomModelMultichoice`. The `labels` should be a 1D tensor with shape (batch_size,), but `target` is a 2D tensor with shape (1, 3).",
+    "detection": true
+  },
+  {
+    "reasoning": "The `target` tensor dimensions do not match the expected input dimensions for the `labels` parameter in the `forward` method of `CustomModelMultichoice`. The `labels` should be a 1D tensor with shape (batch_size,), but `target` is a 2D tensor with shape (1, 3).",
+    "detection": true
+  },
+  {
+    "reasoning": "The `target` tensor dimensions do not match the expected input dimensions for the `labels` parameter in the `forward` method of `CustomModelMultichoice`. The `labels` should be a 1D tensor with shape (batch_size,), but `target` is a 2D tensor with shape (1, 3).",
+    "detection": true
+  }
+]

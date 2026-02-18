@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `check_stationarity` function is defined in an executed cell and then called in the target cell with a valid DataFrame column. All necessary imports for the function are also present in the executed cells.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `check_stationarity` function is defined in an executed cell and then called in the target cell with a valid DataFrame column. All necessary imports for the function are also present in the executed cells.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `check_stationarity` function is defined in an executed cell and relies on `plot_acf`, `plot_pacf`, and `adfuller` from `statsmodels.graphics.tsaplots` and `statsmodels.tsa.stattools`. The target cell imports these necessary modules right before calling the function, ensuring all dependencies are met.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `check_stationarity` function is defined in an executed cell and then called in the target cell with a valid DataFrame column. All necessary imports for the function are also present in the executed cells.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `check_stationarity` function is defined in an executed cell and relies on `plot_acf`, `plot_pacf`, and `adfuller` from `statsmodels.graphics.tsaplots` and `statsmodels.tsa.stattools`. The target cell imports these necessary modules right before calling the function, ensuring all dependencies are met.",
+    "detection": false
+  }
+]

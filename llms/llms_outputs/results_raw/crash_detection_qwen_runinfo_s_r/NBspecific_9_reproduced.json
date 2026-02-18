@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The row index 10472 has already been dropped in Cell 3, attempting to drop it again will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The row index 10472 has already been dropped in Cell 3, attempting to drop it again will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The row index 10472 has already been dropped in Cell 3, attempting to drop it again will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The row index 10472 has already been dropped in Cell 3, attempting to drop it again will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The row index 10472 has already been dropped in Cell 3, attempting to drop it again will result in a KeyError.",
+    "detection": true
+  }
+]

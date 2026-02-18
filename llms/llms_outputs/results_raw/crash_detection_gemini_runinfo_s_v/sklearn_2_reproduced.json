@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The DTRmodel was trained on a different set of features (X) than what is present in dft_encoded. The number of columns in X (209) and dft_encoded (208) are different, which will cause a ValueError during prediction.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel was trained on a different set of features (X) than what is present in dft_encoded. The number of columns in X (209) and dft_encoded (208) are different, which will cause a ValueError during prediction.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel was trained on a dataset (X) with 207 features, but the dft_encoded dataframe, which is being used for prediction, has 208 features. This mismatch in the number of features will cause a ValueError during prediction.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel was trained on a dataset (X) with 207 features, but the dft_encoded dataframe, which is being used for prediction, has 208 features. This mismatch in the number of features will cause a ValueError during prediction.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel was trained on a dataset (X) with 207 features, but the dft_encoded dataframe, which is being used for prediction, has 208 features. This mismatch in the number of features will cause a ValueError during prediction.",
+    "detection": true
+  }
+]

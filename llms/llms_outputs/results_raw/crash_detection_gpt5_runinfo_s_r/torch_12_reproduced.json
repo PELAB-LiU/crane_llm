@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT2, but attention_mask compares against None leading to a TypeError; also using GPT2Tokenizer vs earlier GPT2TokenizerFast inconsistency is fine. This will crash when creating attention_mask.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT-2, but attention_mask uses input_ids.ne(tokenizer.pad_token_id), causing a dtype error; also GPT2Tokenizer differs from previously used fast tokenizer but main crash is None comparison.",
+    "detection": true
+  },
+  {
+    "reasoning": "GPT2Tokenizer has no pad_token_id (None), so attention_mask=input_ids.ne(tokenizer.pad_token_id) compares to None, causing a type error in tensor operation. This will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT-2, but code uses it to build attention_mask and compare, causing a TypeError; also attention_mask expects valid mask. This will crash on first iteration.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT-2, so attention_mask=input_ids.ne(tokenizer.pad_token_id) compares to None and will error (or produce invalid mask). Also GPT2Tokenizer conflicts with earlier GPT2TokenizerFast but main crash is None pad_token. ",
+    "detection": true
+  }
+]

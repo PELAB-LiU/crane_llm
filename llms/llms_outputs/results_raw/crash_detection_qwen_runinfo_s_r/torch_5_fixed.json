@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to load a saved model state dict, but the training and saving of the model are not guaranteed to have been executed successfully before this cell. If the model is not saved, `torch.load(path)` will raise an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to load a saved model state dict, but the training and saving of the model are not guaranteed to have been executed successfully before this cell. If the model is not saved, `torch.load(path)` will raise an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to load a saved model state dict, but the training and saving of the model are not guaranteed to have been executed successfully before this cell. If the model is not saved, `torch.load(path)` will raise an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to load a saved model state dict, but the training and saving of the model are not guaranteed to have been executed successfully before this cell. If the model is not saved, `torch.load(path)` will raise an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to load a saved model state dict, but the training and saving of the model are not guaranteed to have been executed successfully before this cell. If the model is not saved, `torch.load(path)` will raise an error.",
+    "detection": false
+  }
+]

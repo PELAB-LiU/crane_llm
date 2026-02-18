@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train_input tensors have sequence lengths exceeding max_len=50 expected by the model inputs; passing longer sequences to fixed-shape Input(shape=(50,)) will cause a shape mismatch error during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_input tensors likely have sequence lengths > max_len=50 because encode_sentence appends tokens without truncation, while model inputs expect shape (50,). Mismatch will cause shape error during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_input tensors likely have sequence lengths > max_len=50, but model inputs expect fixed shape (50). Passing ragged/padded to different length than 50 will cause shape mismatch. Also batch_size 64 with only 8 samples is fine. Likely crash due to input shape inconsistency.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_input tensors likely have variable sequence lengths from ragged-to-tensor without padding to fixed max_len=50, while the model expects inputs of shape (50,). Mismatch in sequence length shapes can cause a crash during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Batch size 64 exceeds dataset size 8 but is allowed; validation_split=0.2 leaves enough samples. Train inputs are a dict of 3 tensors matching model inputs, and labels length is 8, so training should run.",
+    "detection": false
+  }
+]

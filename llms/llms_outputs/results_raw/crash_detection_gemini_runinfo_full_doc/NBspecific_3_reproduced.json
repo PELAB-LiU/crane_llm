@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The variable 'yFit' has a shape of (272,), while 'y_test' has a shape of (68,). When attempting to perform element-wise operations like subtraction and squaring, and then summing them, a ValueError will occur due to the mismatch in array sizes.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'yFit' has a shape of (272,), while 'y_test' has a shape of (68,). When attempting to perform element-wise operations like subtraction and squaring, and then summing them, a ValueError will occur due to the mismatch in array sizes.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'yFit' has a shape of (272,), while 'y_test' has a shape of (68,). When attempting to perform element-wise operations like subtraction and squaring, and then summing them, a ValueError will occur due to the mismatch in array sizes.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'yFit' has a shape of (272,), while 'y_test' has a shape of (68,). When attempting to perform element-wise operations like subtraction and squaring, and then summing them, a ValueError will occur due to the mismatch in array sizes.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'yFit' has a shape of (272,), while 'y_test' has a shape of (68,). When attempting to perform element-wise operations like subtraction and squaring, and then summing them, a ValueError will occur due to the mismatch in array sizes.",
+    "detection": true
+  }
+]

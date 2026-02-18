@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model’s classifier expects hidden size 768, but the loaded config (vinai/phobert-base) likely has a different hidden size (e.g., 768 for base BERT is okay). However, labels shape (1,3) for NLLLoss with logits shaped (batch, num_choices) is incompatible, and using Sigmoid + NLLLoss expects log-probabilities; also inputs include token_type_ids which PhoBERT may not support. Not certain it will crash due to unknown exact shapes/fields.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model expects labels shape matching (batch_size,) with class indices, but provided labels tensor has shape (1,3) of multi-hot; also model uses NLLLoss on sigmoid logits (not log-probabilities). Likely shape/type mismatch will raise an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels shape (1,3) with integer class targets is incompatible with NLLLoss expecting class indices of shape (batch,) or (batch, seq) while logits are probabilities from Sigmoid, not log-probs; also model output logits shape likely (1,3,2), causing NLLLoss dimension mismatch. This will raise a runtime error.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels shape (1,3) conflicts with expected shape (batch_size,) for MultipleChoice; also model's classifier expects 768 in_features, but underlying config may differ. Uncertain crash, but likely shape mismatch triggers error.",
+    "detection": false
+  },
+  {
+    "reasoning": "labels shape is (1,3) but NLLLoss expects class indices of shape (batch,) with num_classes=3; also logits are sigmoid outputs and NLLLoss expects log-probabilities. This mismatch will raise an error.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell calls run_model, which is not defined in the executed cells; this will raise a NameError when executed.",
+    "detection": true
+  },
+  {
+    "reasoning": "The code calls run_model, which is never defined in the executed cells, causing a NameError when the target cell runs.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell calls run_model, which is not defined in the executed cells; this will raise a NameError before training proceeds.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell calls run_model, but no such function is defined in the executed cells, causing a NameError when executed.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell calls run_model, which is not defined in the executed cells, leading to a NameError when executed.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "FReg is fitted with 58 features, and test_ds has matching 58 columns with no NaNs; predict should work and DataFrame creation aligns lengths. No error expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model is fitted with 58 features and test_ds has matching 58 columns without NaNs; IDs length matches rows. Predict and DataFrame creation should work.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model is fitted and test_ds has 58 features matching n_features_in_. test_ds has no NaNs and types are numeric. Predictions shape will align with test_ds_ids length for DataFrame creation.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model is fitted with 58 features and test_ds has shape (1459, 58) with no NaNs; predictor exists and IDs length matches rows. Execution should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model is fitted with 58 features and test_ds has matching 58 columns with no NaNs; predict should work and DataFrame construction aligns lengths.",
+    "detection": false
+  }
+]

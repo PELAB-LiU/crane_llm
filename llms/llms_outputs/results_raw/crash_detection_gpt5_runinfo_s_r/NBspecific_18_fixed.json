@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "mean_absolute_error is importable, and y_test/y_pred are aligned numeric arrays of the same length. No undefined variables. Execution should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "mean_absolute_error is available, and y_test/y_pred are aligned arrays of equal length; computing MAE should work without errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "mean_absolute_error is available, and y_test/y_pred are aligned numeric arrays of equal length. The function call should succeed and return a float.",
+    "detection": false
+  },
+  {
+    "reasoning": "mean_absolute_error is available, and y_test/y_pred have matching lengths and compatible types. The function call should execute and return a float.",
+    "detection": false
+  },
+  {
+    "reasoning": "mean_absolute_error is available, and y_test/y_pred have matching lengths and compatible types. The function call should succeed and return a float.",
+    "detection": false
+  }
+]

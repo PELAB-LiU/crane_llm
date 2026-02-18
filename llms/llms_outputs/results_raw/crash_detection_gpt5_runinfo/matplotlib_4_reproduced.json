@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "labels is a one-hot vector per sample; using it as an index into class_names causes a TypeError. You should get the class index via tf.argmax(labels[i]).",
+    "detection": true
+  },
+  {
+    "reasoning": "labels[i] is a one-hot vector tensor, not an index; using it to index class_names will error. Also subplot grid 3x3 but only 6 images plotted is fine. Crash likely at class_names[labels[i]].",
+    "detection": true
+  },
+  {
+    "reasoning": "labels is a one-hot vector per sample, so using it as an index into class_names (labels[i]) will raise a TypeError; need argmax or mapping to index.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels is a one-hot vector, so using it as an index into class_names will raise a TypeError. Need argmax to get class index.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels is a one-hot vector; indexing class_names with labels[i] (a tensor) will fail. Should use argmax to get class index.",
+    "detection": true
+  }
+]

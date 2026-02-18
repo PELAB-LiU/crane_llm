@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "outputs has shape (batch,1) with Sigmoid, but netice are integer tensors of shape (batch,) and dtype long; BCELoss expects float targets of same shape. This will raise a dtype/size mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model outputs shape (batch,1) with sigmoid while labels are integer tensors likely shape (batch,) and dtype long; BCELoss expects targets of same shape and float. This will raise a dtype/shape mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "BCELoss expects target shape matching output; model outputs shape [batch,1] float, but targets were created as scalar tensors stacked to shape [batch] (long by default). This causes a size/type mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model outputs shape (batch,1) with sigmoid, but labels are integer tensors of shape (batch,) and type long; BCELoss expects float targets of same shape. Mismatch will cause a dtype/size error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model outputs shape is (batch,1) float, but targets from TensorDataset are likely shape (batch,) long; BCELoss expects matching float shapes. This will raise a size mismatch or dtype error.",
+    "detection": true
+  }
+]

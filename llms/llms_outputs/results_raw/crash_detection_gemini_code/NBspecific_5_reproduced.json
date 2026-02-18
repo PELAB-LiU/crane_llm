@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'num_outbound_cmds' column was already dropped in Cell 4. Attempting to drop it again or remove it from 'numeric_columns' will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'num_outbound_cmds' column was already dropped in Cell 4. Attempting to drop it again or remove it from 'numeric_columns' will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'num_outbound_cmds' column was already dropped in Cell 4. Attempting to drop it again or remove it from 'numeric_columns' will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'num_outbound_cmds' column was already dropped in Cell 4. Attempting to drop it again or remove it from 'numeric_columns' will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'num_outbound_cmds' column was already dropped in Cell 4. Attempting to drop it again or remove it from 'numeric_columns' will cause a KeyError.",
+    "detection": true
+  }
+]

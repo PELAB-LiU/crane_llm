@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train_labels` array has a shape of (1719, 1), which is not compatible with `sparse_categorical_crossentropy` loss when the output layer has 2 units. The labels should be 1D for `sparse_categorical_crossentropy`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_labels` array has a shape of (1719, 1), which is not compatible with `sparse_categorical_crossentropy` loss when the number of classes is 2. The labels should be 1D (1719,) for this loss function.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_labels` array has a shape of (1719, 1), which is not compatible with `sparse_categorical_crossentropy` loss when the output layer has 2 units. The labels should be 1D for `sparse_categorical_crossentropy`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_labels` array has a shape of (1719, 1), which is not compatible with `sparse_categorical_crossentropy` loss when the number of classes is 2. The labels should be 1D (1719,) for this loss function.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_labels` array has a shape of (1719, 1), which is not compatible with `sparse_categorical_crossentropy` loss when the number of classes is 2. The labels should be 1D (1719,) for this loss function.",
+    "detection": true
+  }
+]

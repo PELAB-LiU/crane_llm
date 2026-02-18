@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "All referenced variables exist with compatible shapes; computations and plotting use valid operations and dimensions.",
+    "detection": false
+  },
+  {
+    "reasoning": "All required variables exist with compatible shapes (X_test 68x6; y_test and yFit length 68). No NaNs; n-m-1 = 61 > 0, so F-stat computation is valid. Plotting functions are available. Unlikely to crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "All referenced variables exist with compatible shapes: X_test is (68,6), y_test and yFit are (68,), and no NaNs. Degrees of freedom n-m-1 = 61 > 0, so F-statistics computation and plotting should work.",
+    "detection": false
+  },
+  {
+    "reasoning": "All referenced variables (X_test, y_test, yFit, np, stats, plt) exist with compatible shapes (68,) and (68,6). Degrees of freedom n-m-1 = 68-6-1 = 61 > 0, so F-stat computation is valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "All variables used exist with compatible shapes (X_test 68x6, y_test and yFit length 68). Degrees of freedom n-m-1 = 61 > 0, so F-stat and plotting should work.",
+    "detection": false
+  }
+]

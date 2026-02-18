@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT-2 until explicitly set; attention_mask uses tokenizer.pad_token_id causing a NoneType error. Also torch not imported? It is imported. So generate will crash on attention_mask creation.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT2; attention_mask=input_ids.ne(None) will error because .ne expects a tensor/number, not None. This causes a runtime crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT-2 until set; attention_mask uses tokenizer.pad_token_id, causing a TypeError when comparing tensor to None. Also df may contain NaNs but loop uses df.iloc[:2] likely fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT2Tokenizer before setting; attention_mask uses tokenizer.pad_token_id which is None, causing .ne(None) type error on tensor. Also GPT2 has no pad_token_id by default. Likely crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT2Tokenizer until pad_token is set; attention_mask uses tokenizer.pad_token_id (None) causing .ne(None) to error. Also generation on CPU is fine. Thus this will likely raise a TypeError.",
+    "detection": true
+  }
+]

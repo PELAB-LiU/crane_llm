@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier and features has 10 columns; feature_importances_ exists with shape (10,), matching features.columns. Imports are present.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier and exposes feature_importances_ of length 10; features has 10 columns. pandas Series is imported. Index matches length. No NaNs. Execution should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier with feature_importances_ of length 10, and features has 10 columns; importing Series is valid. Index aligns with importance length.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier and has feature_importances_; features has 10 columns matching the importances' shape. Series from values with given index will succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier and exposes feature_importances_; features has 10 columns matching the shape, and pandas Series is available. Execution should succeed.",
+    "detection": false
+  }
+]

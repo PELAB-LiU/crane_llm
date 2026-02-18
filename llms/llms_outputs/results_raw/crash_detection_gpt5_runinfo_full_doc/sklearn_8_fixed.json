@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "accuracy_score expects (y_true, y_pred), but the arguments are swapped; however, this does not raise an error and will still compute a value since both arrays are same length and integer-coded. So it will run without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "accuracy_score expects y_true then y_pred; passing (val_predictions, y) instead of (y, val_predictions) still works since both are same length and label sets, so no crash. It will just compute a possibly different value.",
+    "detection": false
+  },
+  {
+    "reasoning": "accuracy_score expects y_true then y_pred; here arguments are swapped but still same length/shape, so it will compute a (possibly different) value without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "accuracy_score expects y_true then y_pred of equal length; the arguments are swapped but lengths match, so it won't crash, just compute wrong metric.",
+    "detection": false
+  },
+  {
+    "reasoning": "accuracy_score expects y_true then y_pred; swapping them does not crash since shapes match. Both inputs are valid arrays/Series of equal length.",
+    "detection": false
+  }
+]

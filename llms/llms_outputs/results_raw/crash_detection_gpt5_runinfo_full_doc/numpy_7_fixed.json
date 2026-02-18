@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train_labels, validation_labels, test_labels are to_categorical on arrays shaped (n,1), producing shape (n,1,10), which mismatches model.fit expected (n,10). Also train_images/validation/test are moved axis to channels_last then conditionally moved back to channels_first only in else branch, causing inconsistency when loading a saved model. These likely cause shape errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels/validation_labels/test_labels are one-hot (to_categorical) but y arrays from load_cifar are shape (N,1); to_categorical expects integer array, but that's fine. However, before model building, images are moved to channels_last (32,32,3), then inside else they are moved again to channels_first (N,3,32,32) while the model expects input_shape (32,32,3), causing shape mismatch during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels and similar from load_cifar are shape (N,1) with dtype uint8; to_categorical expects 1D or already class indices; passing (N,1) works but produces shape (N,1,10) causing mismatch with model training expecting (N,10). Thus model.fit will crash due to label shape.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels/validation_labels/test_labels are one-hot arrays of shape (N,1,10) because to_categorical was applied to (N,1) integer labels; Keras expects shape (N,10). This mismatch will crash model.fit with a shape error.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels/validation_labels/test_labels are one-hot arrays of shape (N,1,10,?) after to_categorical on (N,1) labels; but model expects shape (N,10). Also, train_images/validation_images/test_images are moved to channels-first (N,3,32,32) while the Conv2D is built with input_shape (32,32,3) (channels-last). This causes shape mismatches during compile/fit.",
+    "detection": true
+  }
+]

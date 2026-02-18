@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "test_generator.classes returns integer class indices, not one-hot vectors; applying np.argmax on a 1D array will error due to axis=1 being out of bounds.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes returns a 1D array of class indices, not one-hot; applying argmax to it will raise an error. Therefore the target cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes returns integer class indices, not one-hot arrays; applying np.argmax to a 1D integer array will raise an error due to axis=1 being out of bounds.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes returns class indices (1D integers), not one-hot vectors; applying argmax to it will raise an error due to incorrect shape/type.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes returns class indices (1D integers), not one-hot vectors; applying argmax on it will raise an error because it's not a 2D array.",
+    "detection": true
+  }
+]

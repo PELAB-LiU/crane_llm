@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The training loop expects inputs and labels as tensors of matching batch sizes; however, X_train/X_test were created by train_test_split on two arrays of images (not labels), so labels are arrays of images rather than class indices. CrossEntropyLoss will error due to label type/shape mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_loader yields NumPy arrays, but the model expects torch tensors; calling inputs.to(device) on NumPy arrays will raise an AttributeError. Also labels are arrays of images, not class indices, causing loss shape issues.",
+    "detection": true
+  },
+  {
+    "reasoning": "DataLoader yields numpy arrays with shapes (H,W,C) and labels as arrays; the model expects torch tensors of shape (N,C,H,W), so inputs.to(device) will fail since numpy arrays lack .to().",
+    "detection": true
+  },
+  {
+    "reasoning": "train_loader yields numpy arrays, but the model expects torch tensors of shape [B,C,H,W]; inputs are uint8 HxWxC and labels are arrays, causing type/shape errors when moved to device and fed to model. Additionally, using torch.cuda.amp.autocast without CUDA may also error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects torch tensors (N,C,H,W) but dataset returns NumPy arrays (H,W,C); operations like inputs.to(device) and model(inputs) will fail due to type/shape mismatch.",
+    "detection": true
+  }
+]

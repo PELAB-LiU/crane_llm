@@ -1,0 +1,292 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+## Cell 2:
+
+file_path = 'data/diabetes.csv'
+data = pd.read_csv(file_path)
+X = data[['Glucose','BloodPressure','Insulin']].values
+
+## Cell 3:
+
+K = 3
+
+## Cell 4:
+
+kmeans = KMeans(n_clusters = K)
+kmeans.fit(X)
+
+## Cell 5:
+
+labels = kmeans.labels_
+
+## Cell 6:
+
+centriods = kmeans.cluster_centers_
+
+# Current relevent runtime information:
+{'X': {'dtype': 'int64',
+       'execution_cell_source': {'cellno': 1, 'lineno': 3},
+       'has_nan': False,
+       'shape': (768, 3),
+       'type': 'numpy.ndarray',
+       'value_range': (0, 846)},
+ '__method__plt_scatter': {'doc_importants': {'notes': '* The `.plot` function '
+                                                       'will be faster for '
+                                                       'scatterplots where '
+                                                       "markers don't vary in "
+                                                       'size or color. * Any '
+                                                       'or all of *x*, *y*, '
+                                                       '*s*, and *c* may be '
+                                                       'masked arrays, in '
+                                                       'which case all masks '
+                                                       'will be combined and '
+                                                       'only unmasked points '
+                                                       'will be plotted. * '
+                                                       'Fundamentally, scatter '
+                                                       'works with 1D arrays; '
+                                                       '*x*, *y*, *s*, and *c* '
+                                                       'may be input as N-D '
+                                                       'arrays, but within '
+                                                       'scatter they will be '
+                                                       'flattened. The '
+                                                       'exception is *c*, '
+                                                       'which will be '
+                                                       'flattened only if its '
+                                                       'size matches the size '
+                                                       'of *x* and *y*.'},
+                           'signature': {'parameters': [{'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'x',
+                                                         'required': True},
+                                                        {'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'y',
+                                                         'required': True},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 's',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'c',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'marker',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'cmap',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'norm',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'vmin',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'vmax',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'alpha',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'linewidths',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'edgecolors',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'False',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'plotnonfinite',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'data',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'VAR_KEYWORD',
+                                                         'name': 'kwargs',
+                                                         'required': True}],
+                                         'return_annotation': None},
+                           'type': "<class 'function'>"},
+ '__method__plt_show': {'doc_importants': {'notes': '**Saving figures to file '
+                                                    'and showing a window at '
+                                                    'the same time** If you '
+                                                    'want an image file as '
+                                                    'well as a user interface '
+                                                    'window, use '
+                                                    '`.pyplot.savefig` before '
+                                                    '`.pyplot.show`. At the '
+                                                    'end of (a blocking) '
+                                                    '``show()`` the figure is '
+                                                    'closed and thus '
+                                                    'unregistered from pyplot. '
+                                                    'Calling `.pyplot.savefig` '
+                                                    'afterwards would save a '
+                                                    'new and thus empty '
+                                                    'figure. This limitation '
+                                                    'of command order does not '
+                                                    'apply if the show is '
+                                                    'non-blocking or if you '
+                                                    'keep a reference to the '
+                                                    'figure and use '
+                                                    '`.Figure.savefig`. '
+                                                    '**Auto-show in jupyter '
+                                                    'notebooks** The jupyter '
+                                                    'backends (activated via '
+                                                    '``%matplotlib inline``, '
+                                                    '``%matplotlib notebook``, '
+                                                    'or ``%matplotlib '
+                                                    'widget``), call '
+                                                    '``show()`` at the end of '
+                                                    'every cell by default. '
+                                                    "Thus, you usually don't "
+                                                    'have to call it '
+                                                    'explicitly there.'},
+                        'signature': {'parameters': [{'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'block',
+                                                      'required': False}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ '__method__plt_title': {'signature': {'parameters': [{'annotation': None,
+                                                       'default': None,
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'label',
+                                                       'required': True},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'fontdict',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'loc',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'pad',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'KEYWORD_ONLY',
+                                                       'name': 'y',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': None,
+                                                       'kind': 'VAR_KEYWORD',
+                                                       'name': 'kwargs',
+                                                       'required': True}],
+                                       'return_annotation': None},
+                         'type': "<class 'function'>"},
+ '__method__plt_xlabel': {'signature': {'parameters': [{'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'xlabel',
+                                                        'required': True},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'fontdict',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'labelpad',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'loc',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ '__method__plt_ylabel': {'signature': {'parameters': [{'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'ylabel',
+                                                        'required': True},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'fontdict',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'labelpad',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'loc',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ 'centriods': {'dtype': 'float64',
+               'execution_cell_source': {'cellno': 5, 'lineno': 1},
+               'has_nan': False,
+               'shape': (3, 3),
+               'type': 'numpy.ndarray',
+               'value_range': (14.400000000000048, 441.2894736842106)},
+ 'labels': {'dtype': 'int32',
+            'execution_cell_source': {'cellno': 4, 'lineno': 1},
+            'has_nan': False,
+            'shape': (768,),
+            'type': 'numpy.ndarray',
+            'value_info': {'num_unique': 3,
+                           'unique_values': [0, 1, 2],
+                           'value_type': 'categorical numeric(no more than 10 '
+                                         'unique values)'},
+            'value_range': (0, 2)},
+ 'plt': {'type': "<class 'module'>"}}
+# Target Cell:
+
+plt.scatter(X[:,0], X[:,1], X[:,2], c = labels, cmap = 'viridis')
+plt.scatter(centriods[:,0], centriods[:,1], centriods[:,2], marker = 'X', s = 200, c = 'red')
+plt.title("K-Means Clustering")
+plt.xlabel("Gluscose")
+plt.ylabel("BloodPressure")
+plt.zlabel("Insulin")
+plt.show()

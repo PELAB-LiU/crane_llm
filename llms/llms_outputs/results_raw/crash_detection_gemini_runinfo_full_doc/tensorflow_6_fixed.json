@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'val_acc' metric was used for monitoring in `ReduceLROnPlateau` and `ModelCheckpoint` callbacks, but the `history.history` dictionary contains 'val_accuracy' and 'accuracy'. This mismatch will cause a KeyError when trying to access 'val_acc' or 'acc' from the history object.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'val_acc' metric was used for monitoring in `ReduceLROnPlateau` and `ModelCheckpoint` callbacks, but the `history.history` dictionary contains 'val_accuracy' instead of 'val_acc'. This will cause a KeyError when trying to access 'val_acc'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'val_acc' metric was used for monitoring in `ReduceLROnPlateau` and `ModelCheckpoint` callbacks, but the `history.history` dictionary contains 'val_accuracy' and 'accuracy'. This mismatch will cause a KeyError when trying to access 'val_acc' or 'acc' from the history object.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'val_acc' metric was used for monitoring in `ReduceLROnPlateau` and `ModelCheckpoint` callbacks, but the `history.history` dictionary contains 'val_accuracy' and 'accuracy'. This mismatch will cause a KeyError when trying to access 'val_acc' or 'acc' from the history object.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'val_acc' metric was used for monitoring in `ReduceLROnPlateau` and `ModelCheckpoint` callbacks, but the `history.history` dictionary contains 'val_accuracy' and 'accuracy'. This mismatch will cause a KeyError when trying to access 'val_acc' or 'acc' from the history object.",
+    "detection": true
+  }
+]

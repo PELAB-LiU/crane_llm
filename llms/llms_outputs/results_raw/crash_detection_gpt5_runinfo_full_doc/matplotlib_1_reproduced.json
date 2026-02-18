@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train_labels has shape (50000, 1); using it as an index class_names[train_labels[i]] passes an array (e.g., array([6], dtype=uint8)) instead of an integer, causing a TypeError for list indices. Casting to int or using train_labels[i,0] would fix it.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels[i] is a 1-element array (shape (1,)), so class_names[train_labels[i]] will raise a TypeError because list indices must be integers, not numpy arrays.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels has shape (50000, 1) and dtype uint8; indexing class_names with train_labels[i] yields an array, not an int, causing a TypeError. Also class_names in runtime was a list of length 2 but is redefined here to length 10, which is fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels has shape (50000, 1) with dtype uint8; indexing class_names[train_labels[i]] uses a 1-element array, causing TypeError: list indices must be integers or slices, not numpy.ndarray.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels has shape (50000, 1) with dtype uint8; indexing train_labels[i] returns a 1-element array, not an int, causing class_names[...] to raise a TypeError. Also, advanced indexing for title requires an int.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The cell attempts to group by 'region' and get the group 'Asia Pacific', but 'Asia Pacific' is not listed among the unique values for 'region'. This will result in an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to group by 'region' and get the group 'Asia Pacific', but 'Asia Pacific' is not listed among the unique values for 'region'. This will result in an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to group by 'region' and get the group 'Asia Pacific', but 'Asia Pacific' is not listed in the unique values for 'region'. This will result in an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to group by 'region' and get the group 'Asia Pacific', but 'Asia Pacific' is not listed among the unique values for 'region'. This will result in an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to group by 'region' and get the group 'Asia Pacific', but 'Asia Pacific' is not listed in the unique values for 'region'. This will result in an error.",
+    "detection": true
+  }
+]

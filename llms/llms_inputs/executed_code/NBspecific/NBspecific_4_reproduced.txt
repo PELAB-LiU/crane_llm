@@ -1,0 +1,22 @@
+# Executed Cells:
+No cell has been executed
+# Target Cell:
+
+sns.set_context('talk', font_scale=.9)
+
+
+
+sns.countplot(data=dataset, x='Sex', hue='Risk')
+plt.show()
+
+
+sns.catplot(data=dataset, x='Sex', y='Age', kind='box')
+plt.show()
+
+
+sns.violinplot(data=dataset, x='Sex', y='Age', hue='Risk', split=True)
+plt.show()
+
+
+sns.displot(data=dataset, row='Sex', y='Purpose', col='Risk')
+plt.show()

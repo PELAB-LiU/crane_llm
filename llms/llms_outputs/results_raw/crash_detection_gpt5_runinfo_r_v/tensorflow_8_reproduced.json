@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model input expects shape (75,75,3) but X_train images were loaded in grayscale (shape last dim 1). This channel mismatch will cause a shape error when fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model input expects shape (75,75,3) but X_train images were loaded in grayscale with shape (75,75,1), causing a shape mismatch during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects input shape (75,75,3) but X_train images were loaded in grayscale with shape (75,75,1); this mismatch will cause a shape error when fitting. Also Y are 2-class one-hot but loss is compatible.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model input expects shape (75,75,3) but X_train images were loaded as grayscale with shape (75,75,1), causing input shape mismatch during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model input expects shape (75,75,3) but X_train images were loaded with color_mode='grayscale' giving shape (75,75,1), causing a shape mismatch during fit.",
+    "detection": true
+  }
+]

@@ -1,0 +1,319 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import skimage.io
+import tensorflow
+import glob
+import tqdm
+import cv2
+from tqdm import tqdm
+
+from skimage.io import imread, imshow
+from skimage.transform import resize
+
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.applications.vgg16 import VGG16
+from tensorflow.keras.layers import InputLayer, Dense, BatchNormalization, Dropout, Flatten, Activation
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+import torch
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+%matplotlib inline
+
+## Cell 2:
+
+train_datagen = ImageDataGenerator(rescale = 1.0 / 255.0,
+                                   zoom_range = 0.4,
+                                   validation_split = 0.2)
+
+valid_datagen = ImageDataGenerator(rescale = 1.0 / 255.0,
+                                   validation_split = 0.2)
+
+test_datagen  = ImageDataGenerator(rescale = 1.0 / 255.0)
+
+## Cell 3:
+
+train_dataset = train_datagen.flow_from_directory(directory = 'data_small/chest-xray-pneumonia/chest_xray/train',
+                                                  target_size = (224,224),
+                                                  class_mode = 'binary',
+                                                  subset = 'training',
+                                                  batch_size = 64)
+
+## Cell 4:
+
+valid_dataset = valid_datagen.flow_from_directory(directory = 'data_small/chest-xray-pneumonia/chest_xray/train',
+                                                  target_size = (224,224),
+                                                  class_mode = 'binary',
+                                                  subset = 'validation',
+                                                  batch_size = 64)
+
+## Cell 5:
+
+
+
+base_model = VGG16(input_shape=(224,224,3),
+                   include_top=False,
+                   weights="imagenet")
+
+## Cell 6:
+
+for layer in base_model.layers:
+    layer.trainable=False
+
+## Cell 7:
+
+
+
+model=Sequential()
+model.add(base_model)
+model.add(Dropout(0.2))
+model.add(Flatten())
+model.add(BatchNormalization())
+model.add(Dense(1024,kernel_initializer='he_uniform'))
+model.add(BatchNormalization())
+model.add(Activation('relu'))
+model.add(Dropout(0.2))
+model.add(Dense(1024,kernel_initializer='he_uniform'))
+model.add(BatchNormalization())
+model.add(Activation('relu'))
+model.add(Dropout(0.2))
+
+model.add(Dense(1,activation='sigmoid'))
+
+## Cell 8:
+
+
+
+OPT    = tensorflow.keras.optimizers.Adam(learning_rate=0.001)
+
+model.compile(loss='binary_crossentropy',
+              metrics=[tensorflow.keras.metrics.AUC(name = 'auc')],
+              optimizer=OPT)
+
+## Cell 9:
+
+
+
+filepath = 'data_small/best_weights.keras'
+
+earlystopping = EarlyStopping(monitor = 'val_auc',
+                              mode = 'max' ,
+                              patience = 3,
+                              verbose = 1)
+
+checkpoint    = ModelCheckpoint(filepath,
+                                monitor = 'val_auc',
+                                mode='max',
+                                save_best_only=True,
+                                verbose = 1)
+
+
+callback_list = [earlystopping, checkpoint]
+
+## Cell 10:
+
+
+model_history=model.fit(train_dataset,
+                        validation_data=valid_dataset,
+                        epochs = 1,
+                        callbacks = callback_list,
+                        verbose = 1)
+
+## Cell 11:
+
+class_names = ['PNEUMONIA','NORMAL']
+
+# Current relevent runtime information:
+{'__method__model_predict': {'context': {'public_attributes': ['activity_regularizer',
+                                                               'autocast',
+                                                               'build',
+                                                               'built',
+                                                               'compiled',
+                                                               'history',
+                                                               'loss',
+                                                               'name',
+                                                               'optimizer',
+                                                               'predict_function',
+                                                               'steps_per_execution',
+                                                               'stop_evaluating',
+                                                               'stop_training',
+                                                               'supports_jit',
+                                                               'test_function',
+                                                               'train_function']},
+                             'signature': {'parameters': [{'annotation': None,
+                                                           'default': None,
+                                                           'kind': 'POSITIONAL_OR_KEYWORD',
+                                                           'name': 'x',
+                                                           'required': True},
+                                                          {'annotation': None,
+                                                           'default': 'None',
+                                                           'kind': 'POSITIONAL_OR_KEYWORD',
+                                                           'name': 'batch_size',
+                                                           'required': False},
+                                                          {'annotation': None,
+                                                           'default': "'auto'",
+                                                           'kind': 'POSITIONAL_OR_KEYWORD',
+                                                           'name': 'verbose',
+                                                           'required': False},
+                                                          {'annotation': None,
+                                                           'default': 'None',
+                                                           'kind': 'POSITIONAL_OR_KEYWORD',
+                                                           'name': 'steps',
+                                                           'required': False},
+                                                          {'annotation': None,
+                                                           'default': 'None',
+                                                           'kind': 'POSITIONAL_OR_KEYWORD',
+                                                           'name': 'callbacks',
+                                                           'required': False}],
+                                           'return_annotation': None},
+                             'type': "<class 'method'>"},
+ '__method__np_argmax': {'doc_importants': {'notes': 'In case of multiple '
+                                                     'occurrences of the '
+                                                     'maximum values, the '
+                                                     'indices corresponding to '
+                                                     'the first occurrence are '
+                                                     'returned.'},
+                         'signature': {'parameters': [{'annotation': None,
+                                                       'default': None,
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'a',
+                                                       'required': True},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'axis',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'out',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': '<no value>',
+                                                       'kind': 'KEYWORD_ONLY',
+                                                       'name': 'keepdims',
+                                                       'required': False}],
+                                       'return_annotation': None},
+                         'type': "<class 'numpy._ArrayFunctionDispatcher'>"},
+ '__method__np_array': {'doc_importants': {'notes': "When order is 'A' and "
+                                                    '``object`` is an array in '
+                                                    "neither 'C' nor 'F' "
+                                                    'order, and a copy is '
+                                                    'forced by a change in '
+                                                    'dtype, then the order of '
+                                                    'the result is not '
+                                                    "necessarily 'C' as "
+                                                    'expected. This is likely '
+                                                    'a bug.'},
+                        'type': "<class 'builtin_function_or_method'>"},
+ '__method__np_concatenate': {'doc_importants': {'notes': 'When one or more of '
+                                                          'the arrays to be '
+                                                          'concatenated is a '
+                                                          'MaskedArray, this '
+                                                          'function will '
+                                                          'return a '
+                                                          'MaskedArray object '
+                                                          'instead of an '
+                                                          'ndarray, but the '
+                                                          'input masks are '
+                                                          '*not* preserved. In '
+                                                          'cases where a '
+                                                          'MaskedArray is '
+                                                          'expected as input, '
+                                                          'use the '
+                                                          'ma.concatenate '
+                                                          'function from the '
+                                                          'masked array module '
+                                                          'instead.'},
+                              'type': '<class '
+                                      "'numpy._ArrayFunctionDispatcher'>"},
+ 'class_names': {'execution_cell_source': {'cellno': 22, 'lineno': 1},
+                 'length': 2,
+                 'type': "<class 'list'>",
+                 'value_info': {'num_unique': 2,
+                                'unique_values': ['PNEUMONIA', 'NORMAL'],
+                                'value_type': 'categorical or object'}},
+ 'classification_report': {'signature': {'parameters': [{'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'y_true',
+                                                         'required': True},
+                                                        {'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'y_pred',
+                                                         'required': True},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'labels',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'target_names',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'sample_weight',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '2',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'digits',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'False',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'output_dict',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': "'warn'",
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'zero_division',
+                                                         'required': False}],
+                                         'return_annotation': None},
+                           'type': "<class 'function'>"},
+ 'model': {'execution_cell_source': {'cellno': 16, 'lineno': 3},
+           'signature': {'parameters': [{'annotation': None,
+                                         'default': None,
+                                         'kind': 'VAR_POSITIONAL',
+                                         'name': 'args',
+                                         'required': True},
+                                        {'annotation': None,
+                                         'default': None,
+                                         'kind': 'VAR_KEYWORD',
+                                         'name': 'kwargs',
+                                         'required': True}],
+                         'return_annotation': None},
+           'type': "<class 'keras.src.models.sequential.Sequential'>"},
+ 'np': {'type': "<class 'module'>"},
+ 'valid_dataset': {'batch_size': 64,
+                   'execution_cell_source': {'cellno': 6, 'lineno': 1},
+                   'image_shape': (224, 224, 3),
+                   'n_samples': 105,
+                   'num_classes': 2,
+                   'target_size': (224, 224),
+                   'type': '<class '
+                           "'keras.src.legacy.preprocessing.image.DirectoryIterator'>"}}
+# Target Cell:
+
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
+
+prediction_classes = np.array([])
+true_classes =  np.array([])
+
+for x, y in valid_dataset:
+  prediction_classes = np.concatenate([prediction_classes,
+                       np.argmax(model.predict(x), axis = -1)])
+  true_classes = np.concatenate([true_classes, np.argmax(y.numpy(), axis=-1)])
+
+
+print(classification_report(true_classes, prediction_classes, target_names=class_names, digits=4))

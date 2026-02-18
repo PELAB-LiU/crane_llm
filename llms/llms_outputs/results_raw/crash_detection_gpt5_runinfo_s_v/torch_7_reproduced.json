@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model is in eval mode and the input tensor shape matches expected (1,3,224,224). All required modules and weights are loaded; forward uses standard ops with no mismatched shapes.",
+    "detection": false
+  },
+  {
+    "reasoning": "Inception.forward returns a list of tensors but GoogLeNet.forward treats outputs as tensors and applies pooling/linear layers, causing a type error when passing a list to layers expecting tensors.",
+    "detection": true
+  },
+  {
+    "reasoning": "Inception.forward returns a list of tensors, but GoogLeNet.forward assigns it back to x and later layers expect a tensor; passing a list into subsequent layers will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Inception.forward returns a list of tensors per block, but GoogLeNet.forward assigns its outputs to x expecting a tensor, causing a type mismatch when passed to subsequent layers. This will raise an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model is in eval mode and expects a 4D tensor (N,C,H,W); torch_img has shape (1,3,224,224). All layers are defined, and weights loaded. No obvious type/shape mismatch.",
+    "detection": false
+  }
+]

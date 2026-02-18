@@ -1,0 +1,227 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from tqdm import tqdm
+from tensorflow.keras.preprocessing import image
+from sklearn.preprocessing import label_binarize
+from sklearn.model_selection import train_test_split
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPool2D, Dropout
+from keras.optimizers import Adam
+
+## Cell 2:
+
+import tensorflow as tf
+from keras.applications.resnet_v2 import ResNet50V2
+from tensorflow import keras
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import seaborn as sns
+import matplotlib.pyplot as plt
+import cv2
+
+## Cell 3:
+
+import os
+from tensorflow.keras.preprocessing.image import load_img
+
+## Cell 4:
+
+labels_all = pd.read_csv('data_small/New folder/labels.csv')
+print(labels_all.shape)
+labels_all.head()
+
+## Cell 5:
+
+CLASS_NAME = ['scottish_deerhound', 'maltese_dog', 'afghan_hound', 'entlebucher', 'bernese_mountain_dog']
+labels = labels_all[(labels_all['breed'].isin(CLASS_NAME))]
+labels = labels.reset_index()
+labels.head()
+
+## Cell 6:
+
+train_path = 'data_small/New folder/train'
+
+
+
+train_labels = pd.read_csv('data_small/New folder/labels.csv')
+
+# Current relevent runtime information:
+{'CLASS_NAME': {'execution_cell_source': {'cellno': 5, 'lineno': 1},
+                'length': 5,
+                'type': "<class 'list'>",
+                'value_info': {'num_unique': 5,
+                               'unique_values': ['scottish_deerhound',
+                                                 'maltese_dog',
+                                                 'afghan_hound',
+                                                 'entlebucher',
+                                                 'bernese_mountain_dog'],
+                               'value_type': 'categorical or object'}},
+ '__method__image_img_to_array': {'signature': {'parameters': [{'annotation': None,
+                                                                'default': None,
+                                                                'kind': 'POSITIONAL_OR_KEYWORD',
+                                                                'name': 'img',
+                                                                'required': True},
+                                                               {'annotation': None,
+                                                                'default': 'None',
+                                                                'kind': 'POSITIONAL_OR_KEYWORD',
+                                                                'name': 'data_format',
+                                                                'required': False},
+                                                               {'annotation': None,
+                                                                'default': 'None',
+                                                                'kind': 'POSITIONAL_OR_KEYWORD',
+                                                                'name': 'dtype',
+                                                                'required': False}],
+                                                'return_annotation': None},
+                                  'type': "<class 'function'>"},
+ '__method__image_load_img': {'signature': {'parameters': [{'annotation': None,
+                                                            'default': None,
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'path',
+                                                            'required': True},
+                                                           {'annotation': None,
+                                                            'default': "'rgb'",
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'color_mode',
+                                                            'required': False},
+                                                           {'annotation': None,
+                                                            'default': 'None',
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'target_size',
+                                                            'required': False},
+                                                           {'annotation': None,
+                                                            'default': "'nearest'",
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'interpolation',
+                                                            'required': False},
+                                                           {'annotation': None,
+                                                            'default': 'False',
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'keep_aspect_ratio',
+                                                            'required': False}],
+                                            'return_annotation': None},
+                              'type': "<class 'function'>"},
+ '__method__np_expand_dims': {'signature': {'parameters': [{'annotation': None,
+                                                            'default': None,
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'a',
+                                                            'required': True},
+                                                           {'annotation': None,
+                                                            'default': None,
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'axis',
+                                                            'required': True}],
+                                            'return_annotation': None},
+                              'type': '<class '
+                                      "'numpy._ArrayFunctionDispatcher'>"},
+ '__method__np_zeros': {'type': "<class 'builtin_function_or_method'>"},
+ 'image': {'type': "<class 'module'>"},
+ 'label_binarize': {'signature': {'parameters': [{'annotation': None,
+                                                  'default': None,
+                                                  'kind': 'POSITIONAL_OR_KEYWORD',
+                                                  'name': 'y',
+                                                  'required': True},
+                                                 {'annotation': None,
+                                                  'default': None,
+                                                  'kind': 'KEYWORD_ONLY',
+                                                  'name': 'classes',
+                                                  'required': True},
+                                                 {'annotation': None,
+                                                  'default': '0',
+                                                  'kind': 'KEYWORD_ONLY',
+                                                  'name': 'neg_label',
+                                                  'required': False},
+                                                 {'annotation': None,
+                                                  'default': '1',
+                                                  'kind': 'KEYWORD_ONLY',
+                                                  'name': 'pos_label',
+                                                  'required': False},
+                                                 {'annotation': None,
+                                                  'default': 'False',
+                                                  'kind': 'KEYWORD_ONLY',
+                                                  'name': 'sparse_output',
+                                                  'required': False}],
+                                  'return_annotation': None},
+                    'type': "<class 'function'>"},
+ 'labels': {'execution_cell_source': {'cellno': 5, 'lineno': 3},
+            'has_nan': False,
+            'per_column': {'breed': {'dtype': 'object',
+                                     'num_unique': 5,
+                                     'type': 'categorical',
+                                     'unique_values': ['scottish_deerhound',
+                                                       'maltese_dog',
+                                                       'entlebucher',
+                                                       'bernese_mountain_dog',
+                                                       'afghan_hound']},
+                           'id': {'dtype': 'object',
+                                  'example_values': ['3b4cec19f75467e3c972...',
+                                                     'fb73518d7dc9e11b00c9...',
+                                                     'a93f2659ef71bcaf4859...',
+                                                     'e86acb593c6718489134...',
+                                                     'd48a8aa150e8ec0f9786...'],
+                                  'num_unique': 588,
+                                  'type': 'categorical'},
+                           'index': {'dtype': 'int64',
+                                     'num_unique': 588,
+                                     'type': 'continuous',
+                                     'value_range': (9, 10204)}},
+            'shape': (588, 3),
+            'type': 'pandas.core.frame.DataFrame'},
+ 'np': {'type': "<class 'module'>"},
+ 'tqdm': {'signature': {'parameters': [{'annotation': None,
+                                        'default': None,
+                                        'kind': 'VAR_POSITIONAL',
+                                        'name': '_',
+                                        'required': True},
+                                       {'annotation': None,
+                                        'default': None,
+                                        'kind': 'VAR_KEYWORD',
+                                        'name': '__',
+                                        'required': True}],
+                        'return_annotation': None},
+          'type': "<class 'type'>"},
+ 'train_labels': {'execution_cell_source': {'cellno': 6, 'lineno': 5},
+                  'has_nan': False,
+                  'per_column': {'breed': {'dtype': 'object',
+                                           'example_values': ['dingo',
+                                                              'irish_wolfhound',
+                                                              'eskimo_dog',
+                                                              'briard',
+                                                              'vizsla'],
+                                           'num_unique': 120,
+                                           'type': 'categorical'},
+                                 'id': {'dtype': 'object',
+                                        'example_values': ['834c4d710ee55585b899...',
+                                                           '086e8ca78ec3303a8f06...',
+                                                           'd4a4869618c541244f40...',
+                                                           'dff884afad091397ca26...',
+                                                           '2307046859dc0fcd27ec...'],
+                                        'num_unique': 10222,
+                                        'type': 'categorical'}},
+                  'shape': (10222, 2),
+                  'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+X_data = np.zeros((len(labels), 224, 224, 3), dtype='float32')
+
+Y_data = label_binarize(labels['breed'], classes = CLASS_NAME)
+
+
+for i in tqdm(range(len(labels))):
+    try:
+        img = image.load_img(f'data_small/New folder/train/{labels["id"][i]}.jpg', target_size=(224, 224))
+    except FileNotFoundError:
+        continue
+    img = image.img_to_array(img)
+
+
+    x = np.expand_dims(img.copy(), axis=0)
+    X_data[i] = x / 255.0
+X_data['id'] = train_labels['id']
+
+
+print('\nTrain Images shape: ',X_data.shape,' size: {:,}'.format(X_data.size))
+print('One-hot encoded output shape: ',Y_data.shape,' size: {:,}'.format(Y_data.size))

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "valid_dataset yields batches indefinitely; the for-loop will not terminate and will eventually hang or exhaust memory. Also, y from a Keras DirectoryIterator is a NumPy array, so calling y.numpy() will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "valid_dataset is a DirectoryIterator yielding batches until exhaustion is undefined; looping over it without breaking will raise a StopIteration or hang. Also, y from DirectoryIterator is already class indices for binary mode, so y.numpy() and argmax on 1D labels will error.",
+    "detection": true
+  },
+  {
+    "reasoning": "valid_dataset yields binary labels as scalars/1D arrays, so calling y.numpy() and np.argmax on y will fail; DirectoryIterator returns numpy arrays, not tensors with .numpy().",
+    "detection": true
+  },
+  {
+    "reasoning": "valid_dataset is a DirectoryIterator yielding (x, y) where y is already a 1D array of class indices for binary class_mode='binary'. Applying y.numpy() will fail since y is a NumPy array, not a tensor, and np.argmax on a 1D array is also unnecessary. This will likely raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "valid_dataset is a Keras DirectoryIterator yielding (x, y) where y are scalar binary labels (shape (batch_size,)), not one-hot tensors; calling y.numpy() and np.argmax on y will fail. Also iterating over DirectoryIterator without stopping will be infinite loop.",
+    "detection": true
+  }
+]

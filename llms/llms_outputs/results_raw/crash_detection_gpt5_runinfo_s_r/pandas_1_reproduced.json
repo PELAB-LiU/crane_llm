@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "data1 is a Categorical created from a single column; it won't contain 'Duration' or 'DayOfWeek' for groupby. Also rename_categories with inplace is deprecated and wrong; groupby on data1 causes AttributeError/KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "data1 is a Categorical, not a DataFrame; trying to groupby and compute mean on 'Duration' will fail. Also rename_categories with inplace=True is deprecated and data1 has no 'DayOfWeek' column.",
+    "detection": true
+  },
+  {
+    "reasoning": "data1 is a Categorical, not a DataFrame; attempting groupby on it and accessing columns like 'Duration' will fail. Also rename_categories is used incorrectly with inplace on the returned object. This will crash with attribute/key errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "data['PDweek'] is converted to a Categorical but not combined with Duration; groupby on non-existent 'DayOfWeek' and 'Duration' in that object will fail. Also rename_categories with inplace is deprecated and data1 lacks those columns.",
+    "detection": true
+  },
+  {
+    "reasoning": "data1 is a Categorical made from PDweek, not a DataFrame with Duration, so groupby on 'DayOfWeek' and accessing 'Duration' will fail; also rename_categories with inplace is deprecated/invalid in this form. This will raise errors.",
+    "detection": true
+  }
+]

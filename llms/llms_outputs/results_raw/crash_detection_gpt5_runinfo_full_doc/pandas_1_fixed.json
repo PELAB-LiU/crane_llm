@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "data exists with PDweek and Duration; PDweek values are 0-6 so Categorical categories match. rename_categories length 7 matches. Groupby and plotting are valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "data['PDweek'] exists with values in 0-6 and no NaNs; creating ordered categorical and renaming categories will work. Groupby on categorical index and plotting should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "data exists and PDweek has values 0-6; creating ordered Categorical and renaming categories is valid, grouping by new column works, and plotting with matplotlib functions is fine. No obvious type or missing-value issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "data exists with PDweek int8 0-6 and Duration present; pd.Categorical with categories range(7) is valid, renaming to 7 names matches; groupby on categorical works; plotting uses valid arrays. No errors expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "data exists with PDweek and Duration; PDweek values range 0-6 matching categories, no NaNs, and plotting calls are valid. rename_categories uses 7 labels matching categories.",
+    "detection": false
+  }
+]

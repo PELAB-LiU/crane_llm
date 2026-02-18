@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "In Cell 24, train was transformed into a NumPy array via MinMaxScaler, so it no longer has a column 'ActivePower'; indexing train['ActivePower'] will raise a TypeError. Also, check_stationarity expects a Series but receives an array, further mismatching.",
+    "detection": true
+  },
+  {
+    "reasoning": "After scaling, `train` is a NumPy array, not a DataFrame with column 'ActivePower'. Indexing `train['ActivePower']` will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "train was overwritten as a NumPy array by MinMaxScaler and no longer has column 'ActivePower', so train['ActivePower'] will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "After scaling in Cell 24, train is a NumPy array, not a DataFrame, so train['ActivePower'] will raise a TypeError. Also plot_acf/adfuller are imported only in the target cell but used inside check_stationarity; that’s fine once imported. The immediate crash is from indexing the array with a string.",
+    "detection": true
+  },
+  {
+    "reasoning": "train was transformed to a NumPy array by MinMaxScaler and no longer has the 'ActivePower' column; indexing with ['ActivePower'] will raise a TypeError. Also, check_stationarity expects a Series, not an array.",
+    "detection": true
+  }
+]

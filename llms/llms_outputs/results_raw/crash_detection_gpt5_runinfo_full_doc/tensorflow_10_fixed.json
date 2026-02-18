@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train_hg contains only the first 1000 processed examples, but the model expects inputs of fixed length 128; converting train_hg columns to np.array should yield arrays of shape (N,128) matching the model inputs, and loss/labels match sigmoid output. No clear error is evident.",
+    "detection": false
+  },
+  {
+    "reasoning": "The Keras model expects input tensors of shape (batch, 128) for both input_ids and attention_mask, which match the tokenizer settings; labels are scalar. No missing variables or mismatched shapes are evident.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model expects inputs shaped (batch, 128), but train_hg likely contains lists of varying shapes/types; converting to np.array may create ragged arrays causing shape/type mismatch during fit. Not certain without inspecting train_hg contents.",
+    "detection": false
+  },
+  {
+    "reasoning": "train_hg was created from train_df, which came from a random train_test_split of the first 1000 processed rows; arrays in a HuggingFace Dataset can be of dtype 'object' with varying-length lists, and converting to np.array likely yields an array of dtype object with ragged shapes, which Keras can't feed into fixed-shape int32 inputs (128). Uncertain if the tokenizer output is consistently length 128 in the dataset objects.",
+    "detection": false
+  },
+  {
+    "reasoning": "train_hg is built from only the first 1000 processed rows, but model inputs expect tensors of shape (None,128). Converting train_hg['input_ids'] and ['attention_mask'] to np.array will yield arrays of lists with consistent length 128, so compile and fit should work; no clear crash is certain.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "ConfusionMatrixDisplay expects display_labels matching the number of classes (3), but [False, True] has length 2, causing a ValueError. Also, confusion_matrix variable name shadows earlier function but is fine as array.",
+    "detection": true
+  },
+  {
+    "reasoning": "metrics.confusion_matrix returns a 3x3 array for three classes, but ConfusionMatrixDisplay is given binary display_labels [False, True], causing a mismatch in number of labels vs. matrix size and raising a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "ConfusionMatrixDisplay expects 3 labels for a 3-class problem, but [False, True] provides only 2 and is mismatched with string class labels, likely causing a ValueError. Also, reassigning confusion_matrix shadows the imported function but is not itself an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "metrics.ConfusionMatrixDisplay is given binary display_labels [False, True] but y_test/y_pred are 3-class strings; this will raise a ValueError due to mismatched labels' size/type.",
+    "detection": true
+  },
+  {
+    "reasoning": "metrics.confusion_matrix will compute fine, but ConfusionMatrixDisplay with display_labels [False, True] mismatches the 3-class confusion matrix (expects 3 labels), causing a ValueError about label size mismatch.",
+    "detection": true
+  }
+]

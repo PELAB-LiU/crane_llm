@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "pad_sequences and tokenize_text are available, and docs is a NumPy array of strings; list comprehension will produce integer ID lists, making pad_sequences valid. Imports are standard. No conflicting variable names. Should run and output a shape tuple.",
+    "detection": false
+  },
+  {
+    "reasoning": "Using TensorFlow/Keras modules requires tensorflow to be installed/imported; it hasn't been imported previously, so importing from tensorflow.keras will raise ModuleNotFoundError if TensorFlow isn't available. Also, max_length=768 fits BERT IDs; tokenize_text is defined and docs is a NumPy array of strings, so list comprehension is fine.",
+    "detection": false
+  },
+  {
+    "reasoning": "pad_sequences and list comprehension expect tokenize_text to return lists of ids, which it does; docs is an array of strings and is iterable. max_length is set, and imports are valid if tensorflow is installed. No certain crash evident.",
+    "detection": false
+  },
+  {
+    "reasoning": "pad_sequences and tokenize_text exist; docs is an array of strings and will be iterated to produce integer ID sequences; max_length is within reasonable size. No undefined names or type errors expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "docs is a NumPy array of strings, tokenize_text exists and returns integer ID lists, pad_sequences can handle lists of integer sequences with given maxlen. No undefined names or type mismatches apparent.",
+    "detection": false
+  }
+]

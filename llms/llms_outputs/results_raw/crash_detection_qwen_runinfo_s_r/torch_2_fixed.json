@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The function `model_quantization` does not return any value, so `quantized_vit` will be `None`. However, the `inference` function is called with the original `model`, not `quantized_vit`, so the cell will not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The function `model_quantization` does not return any value, so `quantized_vit` will be `None`. However, the `inference` function is called with the original `model`, not `quantized_vit`, so the cell will not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The function `model_quantization` does not return any value, so `quantized_vit` will be `None`. However, the `inference` function is called with the original `model`, not `quantized_vit`, so the cell will not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The function `model_quantization` does not return any value, so `quantized_vit` will be `None`. However, the `inference` function is called with the original `model`, not `quantized_vit`, so the cell will not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The function `model_quantization` does not return any value, so `quantized_vit` will be `None`. However, the `inference` function is called with the original `model`, not `quantized_vit`, so the cell will not crash.",
+    "detection": false
+  }
+]

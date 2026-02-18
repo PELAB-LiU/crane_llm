@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train_labels/validation_labels/test_labels are DataFrames per runtime info, but the target cell calls to_categorical on them and later fits Keras expecting arrays of class indices; additionally, it moves axes on images to channels-first then builds a model with channels-last input_shape, causing a guaranteed shape mismatch. The cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels/validation_labels/test_labels are DataFrames per runtime info, but to_categorical expects integer arrays; also np.moveaxis on images is applied twice, causing incorrect shape for Keras input.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels/validation_labels/test_labels are to_categorical outputs requiring integer class indices, but the provided train_labels in runtime is a pandas DataFrame of shape (10222, 2), which will cause shape/type errors when fitting or during to_categorical earlier. Also, images are moved between channel orders inconsistently, likely mismatching model input_shape. Crash likely during to_categorical or model.fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels/validation_labels/test_labels are DataFrames per runtime info, but code calls to_categorical on them, expecting integer arrays; moreover, dataset images are already (N,32,32,3) yet code moves axes to (N,3,32,32) then later moves back only inside else, creating potential shape mismatches. Uncertain crash but likely; per rule, not certain.",
+    "detection": false
+  },
+  {
+    "reasoning": "train_labels/validation_labels/test_labels are categorical arrays created from dataset labels, but current runtime shows train_labels is a pandas DataFrame with shape (10222, 2), indicating mismatch and likely failure when calling to_categorical or model.fit due to inconsistent shapes/types. However, exact shapes after to_categorical in this run are not certain.",
+    "detection": false
+  }
+]

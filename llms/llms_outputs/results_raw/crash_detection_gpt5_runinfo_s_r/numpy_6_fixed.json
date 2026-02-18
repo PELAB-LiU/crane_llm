@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "All required modules and functions are imported; labels is a valid DataFrame and CLASS_NAME is provided. The code handles missing files, and indexing and array operations are consistent, so a crash is unlikely.",
+    "detection": false
+  },
+  {
+    "reasoning": "All required modules and functions are imported; labels exists with expected columns and shape. FileNotFoundError is handled, and indexing aligns via valid_indices; np.array of list of arrays is valid. No certain crash detected.",
+    "detection": false
+  },
+  {
+    "reasoning": "All required modules and functions are imported; labels exists with expected columns, and FileNotFoundError is handled. While varying counts of found images could yield empty arrays, conversions and indexing with valid_indices remain valid, so a crash is not certain.",
+    "detection": false
+  },
+  {
+    "reasoning": "All required modules and functions are imported; labels is a DataFrame with expected columns, and missing files are handled. Operations like binarization, image loading, array stacking, and indexing are valid even if some images are skipped.",
+    "detection": false
+  },
+  {
+    "reasoning": "All required modules and variables are defined. The code handles missing files, and list indexing into labels works; label_binarize and numpy operations are consistent. No certain crash is evident.",
+    "detection": false
+  }
+]

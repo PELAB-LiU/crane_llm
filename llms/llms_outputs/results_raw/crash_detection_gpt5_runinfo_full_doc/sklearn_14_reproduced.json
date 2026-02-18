@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "LinearRegression cannot handle object dtype features; X_train includes categorical object columns (street, statezip, country), so fit will raise a ValueError about converting strings to float.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train contains object dtype columns (street, statezip, country). LinearRegression.fit requires numeric array-like; scikit-learn will raise a ValueError when encountering strings.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train contains object/categorical columns ('street', 'statezip', 'country') which LinearRegression cannot handle directly, causing a dtype error during fit. No preprocessing/encoding is applied.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train contains object/categorical columns (street, statezip, country) that LinearRegression cannot handle directly; it expects numeric arrays. This will raise a ValueError during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train contains object-type categorical columns (street, statezip, country) which LinearRegression cannot handle directly; fit will raise a ValueError about non-numeric data.",
+    "detection": true
+  }
+]

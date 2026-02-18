@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `evaluate_fitness` function uses `lr` (LogisticRegression) which was trained on `X_train` that was scaled using `StandardScaler`. However, `X_train_gp` and `X_test_gp` are not scaled before being passed to `lr.fit` and `lr.predict_proba`, leading to a mismatch in data scaling and potential errors or poor performance.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `evaluate_fitness` function uses `lr` (LogisticRegression) which was trained on `X_train` that was scaled using `StandardScaler`. However, `X_train_gp` and `X_test_gp` are not scaled before being passed to `lr.fit` and `lr.predict_proba`, leading to a mismatch in data scaling and potential errors or poor performance.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `evaluate_fitness` function uses `lr` (LogisticRegression) which was trained on `X_train` that was scaled using `StandardScaler`. However, `X_train_gp` and `X_test_gp` are not scaled before being passed to `lr.fit` and `lr.predict_proba`, leading to a mismatch in data scaling and potential errors or poor performance.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `evaluate_fitness` function uses `lr` (LogisticRegression) which was trained on `X_train` that was scaled using `StandardScaler`. However, `X_train_gp` and `X_test_gp` are not scaled before being passed to `lr.fit` and `lr.predict_proba`, leading to a mismatch in data scaling and potential errors or poor performance.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `evaluate_fitness` function uses `lr` (LogisticRegression) which was trained on `X_train` that was scaled using `StandardScaler`. However, `X_train_gp` and `X_test_gp` are not scaled before being passed to `lr.fit` and `lr.predict_proba`, leading to a mismatch in data scaling and potential errors or poor performance.",
+    "detection": true
+  }
+]

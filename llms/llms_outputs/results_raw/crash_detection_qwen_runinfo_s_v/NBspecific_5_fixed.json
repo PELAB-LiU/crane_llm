@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'num_outbound_cmds' column is present in both the dataframe and the numeric_columns list, so removing it from both should not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'num_outbound_cmds' column is present in both the dataframe and the numeric_columns list, so removing it from both should not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'num_outbound_cmds' column is present in both the dataframe and the numeric_columns list, so removing it from both should not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'num_outbound_cmds' column is present in both the dataframe and the numeric_columns list, so removing it from both should not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'num_outbound_cmds' column is present in both the dataframe and the numeric_columns list, so removing it from both should not cause a crash.",
+    "detection": false
+  }
+]

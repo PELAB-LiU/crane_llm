@@ -1,0 +1,390 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import plotly.graph_objs as go
+import plotly.offline as py
+import plotly.express as px
+
+
+import warnings
+warnings.filterwarnings('ignore')
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+
+
+from transformers import AutoTokenizer
+
+df = pd.read_csv('data/train.csv')
+
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
+
+
+df.drop_duplicates(inplace=True)
+df.dropna(subset=['output', 'instruction'], inplace=True)
+
+
+df['instruction_tokens'] = df['instruction'].apply(lambda x: len(tokenizer.tokenize(x)))
+df['output_tokens'] = df['output'].apply(lambda x: len(tokenizer.tokenize(x)))
+
+
+print(df.head())
+
+# Current relevent runtime information:
+{'__method__df_iloc': {'signature': {'parameters': [{'annotation': "'Axis | "
+                                                                   "None'",
+                                                     'default': 'None',
+                                                     'kind': 'POSITIONAL_OR_KEYWORD',
+                                                     'name': 'axis',
+                                                     'required': False}],
+                                     'return_annotation': "'Self'"},
+                       'type': "<class 'pandas.core.indexing._iLocIndexer'>"},
+ '__method__tokenizer_decode': {'context': {'public_attributes': ['add_bos_token',
+                                                                  'add_prefix_space',
+                                                                  'chat_template',
+                                                                  'clean_up_tokenization_spaces',
+                                                                  'deprecation_warnings',
+                                                                  'init_inputs',
+                                                                  'init_kwargs',
+                                                                  'model_input_names',
+                                                                  'model_max_length',
+                                                                  'name_or_path',
+                                                                  'padding_side',
+                                                                  'split_special_tokens',
+                                                                  'truncation_side',
+                                                                  'verbose']},
+                                'signature': {'parameters': [{'annotation': 'typing.Union[int, '
+                                                                            'typing.List[int], '
+                                                                            "ForwardRef('np.ndarray'), "
+                                                                            "ForwardRef('torch.Tensor'), "
+                                                                            "ForwardRef('tf.Tensor')]",
+                                                              'default': None,
+                                                              'kind': 'POSITIONAL_OR_KEYWORD',
+                                                              'name': 'token_ids',
+                                                              'required': True},
+                                                             {'annotation': '<class '
+                                                                            "'bool'>",
+                                                              'default': 'False',
+                                                              'kind': 'POSITIONAL_OR_KEYWORD',
+                                                              'name': 'skip_special_tokens',
+                                                              'required': False},
+                                                             {'annotation': '<class '
+                                                                            "'bool'>",
+                                                              'default': 'None',
+                                                              'kind': 'POSITIONAL_OR_KEYWORD',
+                                                              'name': 'clean_up_tokenization_spaces',
+                                                              'required': False},
+                                                             {'annotation': None,
+                                                              'default': None,
+                                                              'kind': 'VAR_KEYWORD',
+                                                              'name': 'kwargs',
+                                                              'required': True}],
+                                              'return_annotation': '<class '
+                                                                   "'str'>"},
+                                'type': "<class 'method'>"},
+ '__method__tokenizer_encode': {'context': {'public_attributes': ['add_bos_token',
+                                                                  'add_prefix_space',
+                                                                  'chat_template',
+                                                                  'clean_up_tokenization_spaces',
+                                                                  'deprecation_warnings',
+                                                                  'init_inputs',
+                                                                  'init_kwargs',
+                                                                  'model_input_names',
+                                                                  'model_max_length',
+                                                                  'name_or_path',
+                                                                  'padding_side',
+                                                                  'split_special_tokens',
+                                                                  'truncation_side',
+                                                                  'verbose']},
+                                'signature': {'parameters': [{'annotation': 'typing.Union[str, '
+                                                                            'typing.List[str], '
+                                                                            'typing.List[int]]',
+                                                              'default': None,
+                                                              'kind': 'POSITIONAL_OR_KEYWORD',
+                                                              'name': 'text',
+                                                              'required': True},
+                                                             {'annotation': 'typing.Union[str, '
+                                                                            'typing.List[str], '
+                                                                            'typing.List[int], '
+                                                                            'NoneType]',
+                                                              'default': 'None',
+                                                              'kind': 'POSITIONAL_OR_KEYWORD',
+                                                              'name': 'text_pair',
+                                                              'required': False},
+                                                             {'annotation': '<class '
+                                                                            "'bool'>",
+                                                              'default': 'True',
+                                                              'kind': 'POSITIONAL_OR_KEYWORD',
+                                                              'name': 'add_special_tokens',
+                                                              'required': False},
+                                                             {'annotation': 'typing.Union[bool, '
+                                                                            'str, '
+                                                                            'transformers.utils.generic.PaddingStrategy]',
+                                                              'default': 'False',
+                                                              'kind': 'POSITIONAL_OR_KEYWORD',
+                                                              'name': 'padding',
+                                                              'required': False},
+                                                             {'annotation': 'typing.Union[bool, '
+                                                                            'str, '
+                                                                            'transformers.tokenization_utils_base.TruncationStrategy]',
+                                                              'default': 'None',
+                                                              'kind': 'POSITIONAL_OR_KEYWORD',
+                                                              'name': 'truncation',
+                                                              'required': False},
+                                                             {'annotation': 'typing.Optional[int]',
+                                                              'default': 'None',
+                                                              'kind': 'POSITIONAL_OR_KEYWORD',
+                                                              'name': 'max_length',
+                                                              'required': False},
+                                                             {'annotation': '<class '
+                                                                            "'int'>",
+                                                              'default': '0',
+                                                              'kind': 'POSITIONAL_OR_KEYWORD',
+                                                              'name': 'stride',
+                                                              'required': False},
+                                                             {'annotation': 'typing.Union[str, '
+                                                                            'transformers.utils.generic.TensorType, '
+                                                                            'NoneType]',
+                                                              'default': 'None',
+                                                              'kind': 'POSITIONAL_OR_KEYWORD',
+                                                              'name': 'return_tensors',
+                                                              'required': False},
+                                                             {'annotation': None,
+                                                              'default': None,
+                                                              'kind': 'VAR_KEYWORD',
+                                                              'name': 'kwargs',
+                                                              'required': True}],
+                                              'return_annotation': 'typing.List[int]'},
+                                'type': "<class 'method'>"},
+ '__method__tokenizer_eos_token': {'type': "<class 'str'>",
+                                   'value': '<|endoftext|>'},
+ '__method__tokenizer_eos_token_id': {'type': "<class 'int'>", 'value': 50256},
+ '__method__tokenizer_pad_token': {'type': "<class 'NoneType'>"},
+ '__method__tokenizer_pad_token_id': {'type': "<class 'NoneType'>"},
+ 'df': {'execution_cell_source': {'cellno': 10, 'lineno': 5},
+        'has_nan': True,
+        'per_column': {'data_source': {'dtype': 'object',
+                                       'example_values': ['reclor',
+                                                          'leetcode_ne',
+                                                          'guanaco',
+                                                          'theoremqa',
+                                                          'ARB'],
+                                       'num_unique': 10,
+                                       'type': 'categorical'},
+                       'input': {'dtype': 'object',
+                                 'example_values': ['A sentence is a grou...',
+                                                    'During peer review, ...',
+                                                    'Organisms that carry...',
+                                                    'When you review a fe...',
+                                                    'All organisms have p...'],
+                                 'num_unique': 6,
+                                 'type': 'categorical'},
+                       'instruction': {'dtype': 'object',
+                                       'example_values': ['Baker had a '
+                                                          'contract...',
+                                                          "In Pascal's "
+                                                          'Triangle...',
+                                                          'If $3^{x + y} = 81$ '
+                                                          '...',
+                                                          'Whenever a major '
+                                                          'pol...',
+                                                          'What is the '
+                                                          'smallest...'],
+                                       'num_unique': 24926,
+                                       'type': 'categorical'},
+                       'instruction_tokens': {'dtype': 'int64',
+                                              'num_unique': 1011,
+                                              'type': 'continuous',
+                                              'value_range': (4, 2281)},
+                       'output': {'dtype': 'object',
+                                  'example_values': ['\ndef count_routes(lo...',
+                                                     'I need to find the n...',
+                                                     'First, we need to de...',
+                                                     'I think we should st...',
+                                                     'So, if $y + 6$, $12$...'],
+                                  'num_unique': 19530,
+                                  'type': 'categorical'},
+                       'output_tokens': {'dtype': 'int64',
+                                         'num_unique': 1338,
+                                         'type': 'continuous',
+                                         'value_range': (1, 5217)}},
+        'shape': (24926, 6),
+        'type': 'pandas.core.frame.DataFrame'},
+ 'tokenizer': {'execution_cell_source': {'cellno': 10, 'lineno': 7},
+               'signature': {'parameters': [{'annotation': 'typing.Union[str, '
+                                                           'typing.List[str], '
+                                                           'typing.List[typing.List[str]]]',
+                                             'default': 'None',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'text',
+                                             'required': False},
+                                            {'annotation': 'typing.Union[str, '
+                                                           'typing.List[str], '
+                                                           'typing.List[typing.List[str]], '
+                                                           'NoneType]',
+                                             'default': 'None',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'text_pair',
+                                             'required': False},
+                                            {'annotation': 'typing.Union[str, '
+                                                           'typing.List[str], '
+                                                           'typing.List[typing.List[str]]]',
+                                             'default': 'None',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'text_target',
+                                             'required': False},
+                                            {'annotation': 'typing.Union[str, '
+                                                           'typing.List[str], '
+                                                           'typing.List[typing.List[str]], '
+                                                           'NoneType]',
+                                             'default': 'None',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'text_pair_target',
+                                             'required': False},
+                                            {'annotation': "<class 'bool'>",
+                                             'default': 'True',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'add_special_tokens',
+                                             'required': False},
+                                            {'annotation': 'typing.Union[bool, '
+                                                           'str, '
+                                                           'transformers.utils.generic.PaddingStrategy]',
+                                             'default': 'False',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'padding',
+                                             'required': False},
+                                            {'annotation': 'typing.Union[bool, '
+                                                           'str, '
+                                                           'transformers.tokenization_utils_base.TruncationStrategy]',
+                                             'default': 'None',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'truncation',
+                                             'required': False},
+                                            {'annotation': 'typing.Optional[int]',
+                                             'default': 'None',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'max_length',
+                                             'required': False},
+                                            {'annotation': "<class 'int'>",
+                                             'default': '0',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'stride',
+                                             'required': False},
+                                            {'annotation': "<class 'bool'>",
+                                             'default': 'False',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'is_split_into_words',
+                                             'required': False},
+                                            {'annotation': 'typing.Optional[int]',
+                                             'default': 'None',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'pad_to_multiple_of',
+                                             'required': False},
+                                            {'annotation': 'typing.Union[str, '
+                                                           'transformers.utils.generic.TensorType, '
+                                                           'NoneType]',
+                                             'default': 'None',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'return_tensors',
+                                             'required': False},
+                                            {'annotation': 'typing.Optional[bool]',
+                                             'default': 'None',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'return_token_type_ids',
+                                             'required': False},
+                                            {'annotation': 'typing.Optional[bool]',
+                                             'default': 'None',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'return_attention_mask',
+                                             'required': False},
+                                            {'annotation': "<class 'bool'>",
+                                             'default': 'False',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'return_overflowing_tokens',
+                                             'required': False},
+                                            {'annotation': "<class 'bool'>",
+                                             'default': 'False',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'return_special_tokens_mask',
+                                             'required': False},
+                                            {'annotation': "<class 'bool'>",
+                                             'default': 'False',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'return_offsets_mapping',
+                                             'required': False},
+                                            {'annotation': "<class 'bool'>",
+                                             'default': 'False',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'return_length',
+                                             'required': False},
+                                            {'annotation': "<class 'bool'>",
+                                             'default': 'True',
+                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                             'name': 'verbose',
+                                             'required': False},
+                                            {'annotation': None,
+                                             'default': None,
+                                             'kind': 'VAR_KEYWORD',
+                                             'name': 'kwargs',
+                                             'required': True}],
+                             'return_annotation': '<class '
+                                                  "'transformers.tokenization_utils_base.BatchEncoding'>"},
+               'type': '<class '
+                       "'transformers.models.gpt2.tokenization_gpt2_fast.GPT2TokenizerFast'>"}}
+# Target Cell:
+
+import pandas as pd
+import torch
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
+
+
+model_name = "gpt2"
+model = GPT2LMHeadModel.from_pretrained(model_name)
+tokenizer = GPT2Tokenizer.from_pretrained(model_name)
+
+
+tokenizer.pad_token = tokenizer.eos_token
+
+
+
+generated_responses = []
+
+for index, row in df.iloc[:2].iterrows():
+    prompt = row['instruction']
+    input_ids = tokenizer.encode(prompt, return_tensors="pt")
+
+
+    with torch.no_grad():
+        output = model.generate(
+            input_ids,
+            max_length=input_ids.size(1) + 50,
+            num_return_sequences=1,
+            pad_token_id=tokenizer.eos_token_id,
+            attention_mask=input_ids.ne(tokenizer.pad_token_id)
+        )
+
+
+    padded_output = output[:, input_ids.size(1):]
+
+    response = tokenizer.decode(padded_output[0], skip_special_tokens=True)
+    generated_responses.append(response)

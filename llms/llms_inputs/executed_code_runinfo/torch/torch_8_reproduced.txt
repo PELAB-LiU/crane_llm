@@ -1,0 +1,291 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+import cv2
+
+
+
+
+
+
+
+
+
+
+
+
+## Cell 2:
+
+import os
+os.listdir('data_small/dataset/train')
+
+## Cell 3:
+
+def takeFileName(filedir):
+
+    filename = np.array(filedir.split('/'))[-1]
+
+    return filename
+
+## Cell 4:
+
+train_path_watermarked_images = 'data_small/dataset/train/watermark/'
+train_path_nonwatermarked_images = 'data_small/dataset/train/no_watermark/'
+
+## Cell 5:
+
+tp_watermarked = np.array([])
+tp_nonwatermarked = np.array([])
+
+for root, dirs, files in os.walk(train_path_watermarked_images, topdown=True):
+    for file in files:
+        tp_watermarked = np.append(tp_watermarked, takeFileName(file))
+
+for root, dirs, files in os.walk(train_path_nonwatermarked_images, topdown=True):
+    for file in files:
+        tp_nonwatermarked = np.append(tp_nonwatermarked, takeFileName(file))
+
+## Cell 6:
+
+output_array_wm = []
+
+for i in tp_watermarked:
+    output_string_wm = train_path_watermarked_images + i
+    output_array_wm.append(output_string_wm)
+    out_array_wm=np.array(output_array_wm)
+
+## Cell 7:
+
+output_array_nwm = []
+
+for i in tp_nonwatermarked:
+    output_string_nwm = train_path_nonwatermarked_images + i
+    output_array_nwm.append(output_string_nwm)
+    out_array_nwm=np.array(output_array_nwm)
+
+## Cell 8:
+
+
+width = 196
+height = 196
+dim = (width, height)
+def createPixelArr(files):
+    data = []
+    for image in files:
+        try:
+            img_arr = cv2.imread(image, cv2.IMREAD_COLOR)
+            img_arr = cv2.cvtColor(img_arr, cv2.COLOR_BGR2RGB)
+            resized_arr = cv2.resize(img_arr, (width, height))
+            data.append(resized_arr)
+        except Exception as e:
+            print(e)
+    return np.array(data)
+
+## Cell 9:
+
+train_wms_pixVals = createPixelArr(out_array_wm[:90])
+train_nwms_pixVals = createPixelArr(out_array_nwm[:90])
+
+## Cell 10:
+
+X_train, X_test, y_train, y_test = train_test_split(train_wms_pixVals, train_nwms_pixVals, train_size=0.8, random_state=1)
+
+## Cell 11:
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from tqdm import tqdm
+import numpy as np
+import torchvision
+from torchvision import datasets, models, transforms
+from torch.utils.data import DataLoader, Dataset
+import matplotlib.pyplot as plt
+import time
+import os
+import copy
+from PIL import Image
+import pandas as pd
+import random
+from tqdm import tqdm
+import timm
+import torch.nn.functional as F
+from timm.models.layers import trunc_normal_, DropPath
+from timm.models.registry import register_model
+
+## Cell 12:
+
+model_ft = timm.create_model(
+    'efficientnet_b3a', pretrained=True, num_classes=2
+)
+model_ft.classifier = nn.Sequential(
+    nn.Linear(in_features=1536, out_features=625),
+    nn.ReLU(),
+    nn.Dropout(p=0.3),
+    nn.Linear(in_features=625, out_features=256),
+    nn.ReLU(),
+    nn.Linear(in_features=256, out_features=2),
+)
+
+## Cell 13:
+
+device = torch.device('cpu')
+
+def train_model(model, train_loader, test_loader, criterion, optimizer, num_epochs=80):
+    since = time.time()
+
+    val_acc_history = []
+    train_acc_history = []
+
+    best_model_wts = copy.deepcopy(model.state_dict())
+    best_acc = 0.0
+
+    for epoch in range(num_epochs):
+        print('Epoch {}/{}'.format(epoch, num_epochs - 1))
+        print('-' * 10)
+
+        model.train()
+
+        running_loss = 0.0
+        running_corrects = 0
+
+        for inputs, labels in tqdm(train_loader):
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+
+            optimizer.zero_grad()
+
+            with torch.set_grad_enabled(True):
+                with torch.cuda.amp.autocast():
+                    outputs = model(inputs)
+                    loss = criterion(outputs, labels)
+
+                _, preds = torch.max(outputs, 1)
+
+                loss.backward()
+                optimizer.step()
+
+            running_loss += loss.item() * inputs.size(0)
+            running_corrects += torch.sum(preds == labels.data)
+
+        epoch_loss = running_loss / len(train_loader.dataset)
+        epoch_acc = running_corrects.double() / len(train_loader.dataset)
+
+        print('Train Loss: {:.4f} Acc: {:.4f}'.format(epoch_loss, epoch_acc))
+        train_acc_history.append(epoch_acc)
+
+        model.eval()
+
+        running_loss = 0.0
+        running_corrects = 0
+
+        for inputs, labels in tqdm(test_loader):
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+
+            with torch.set_grad_enabled(False):
+                with torch.cuda.amp.autocast():
+                    outputs = model(inputs)
+                    loss = criterion(outputs, labels)
+
+                _, preds = torch.max(outputs, 1)
+
+            running_loss += loss.item() * inputs.size(0)
+            running_corrects += torch.sum(preds == labels.data)
+
+        epoch_loss = running_loss / len(test_loader.dataset)
+        epoch_acc = running_corrects.double() / len(test_loader.dataset)
+
+        print('Test Loss: {:.4f} Acc: {:.4f}'.format(epoch_loss, epoch_acc))
+        val_acc_history.append(epoch_acc)
+
+        if epoch_acc > best_acc:
+            best_acc = epoch_acc
+            best_model_wts = copy.deepcopy(model.state_dict())
+
+        print()
+
+    time_elapsed = time.time() - since
+    print('Training complete in {:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
+    print('Best val Acc: {:4f}'.format(best_acc))
+
+    model.load_state_dict(best_model_wts)
+    return model, train_acc_history, val_acc_history
+
+## Cell 14:
+
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = optim.AdamW(params=model_ft.parameters(), lr=0.2e-5)
+
+## Cell 15:
+
+class MyDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = X
+        self.y = y
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
+
+## Cell 16:
+
+train_dataset = MyDataset(X_train, y_train)
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+
+## Cell 17:
+
+test_dataset = MyDataset(X_test, y_test)
+test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+
+# Current relevent runtime information:
+{'criterion': {'execution_cell_source': {'cellno': 23, 'lineno': 1},
+               'type': "<class 'torch.nn.modules.loss.CrossEntropyLoss'>"},
+ 'model_ft': {'execution_cell_source': {'cellno': 20, 'lineno': 1},
+              'type': "<class 'timm.models.efficientnet.EfficientNet'>"},
+ 'optimizer': {'execution_cell_source': {'cellno': 23, 'lineno': 2},
+               'type': "<class 'torch.optim.adamw.AdamW'>"},
+ 'test_loader': {'batch_size': 64,
+                 'dataset': {'batch_shapes': {'batch[0]': torch.Size([10, 196, 196, 3]),
+                                              'batch[1]': torch.Size([10, 196, 196, 3])},
+                             'dataset_info': {'X': {'type': 'ndarray'},
+                                              'y': {'type': 'ndarray'}},
+                             'sample_shapes': defaultdict(<class 'set'>,
+                                                          {'input': {'ndarray'},
+                                                           'label': {'ndarray'}})},
+                 'execution_cell_source': {'cellno': 26, 'lineno': 2},
+                 'num_batches': 1,
+                 'num_examples': 18,
+                 'type': 'torch.utils.data.dataloader.DataLoader'},
+ 'train_loader': {'batch_size': 64,
+                  'dataset': {'batch_shapes': {'batch[0]': torch.Size([10, 196, 196, 3]),
+                                               'batch[1]': torch.Size([10, 196, 196, 3])},
+                              'dataset_info': {'X': {'type': 'ndarray'},
+                                               'y': {'type': 'ndarray'}},
+                              'sample_shapes': defaultdict(<class 'set'>,
+                                                           {'input': {'ndarray'},
+                                                            'label': {'ndarray'}})},
+                  'execution_cell_source': {'cellno': 25, 'lineno': 2},
+                  'num_batches': 2,
+                  'num_examples': 72,
+                  'type': 'torch.utils.data.dataloader.DataLoader'},
+ 'train_model': {'execution_cell_source': {'cellno': 22, 'lineno': 3},
+                 'type': "<class 'function'>"}}
+# Target Cell:
+
+import warnings
+warnings.filterwarnings("ignore")
+
+model_ft, train_acc_history, val_acc_history = train_model(
+    model_ft, train_loader, test_loader, criterion, optimizer, num_epochs=3
+)

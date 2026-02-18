@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "StandardScaler requires numeric input, but train_df/test_df were converted to dummy variables of booleans; scikit-learn will coerce booleans to numeric and fit/transform works. Shapes may differ but transform only needs matching columns order was same when created; however get_dummies applied separately likely produced different columns, causing transform to fail due to mismatched features.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler requires numeric inputs, but train_df/test_df were converted to one-hot encoded booleans; StandardScaler can handle boolean arrays by casting to float, and shapes match for transform. No NaNs present.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler expects numeric arrays, but train_df and test_df are one-hot encoded booleans; sklearn will coerce booleans to numerics, so fit_transform and transform should work without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler requires numeric arrays; after get_dummies, train_df and test_df are numeric. Shapes need not match for transform as long as columns align to fit array shape, which they do since both were independently dummified but not aligned—however scaler.transform expects same number of features as seen in fit; test_df likely has fewer or different columns than train_df, causing shape mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "StandardScaler requires numeric input, but train_df/test_df were converted to one-hot columns as booleans; scikit-learn can handle booleans as numeric, but columns between train and test now likely mismatch due to different dummy sets, causing transform to error on unseen/missing features.",
+    "detection": true
+  }
+]

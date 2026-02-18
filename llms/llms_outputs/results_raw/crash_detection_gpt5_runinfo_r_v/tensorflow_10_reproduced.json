@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model expects tokenized tensor inputs matching the HuggingFace model signature, but train_data is a pandas Series of raw text strings; passing these to a TFAutoModel layer will cause a shape/type mismatch error during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects tokenized tensor inputs for BERT, but train_data is a Series of raw text; input shapes/types won't match the HuggingFaceLayer, causing an error during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects tokenized tensor inputs matching the HuggingFace model signature, but train_data is a pandas Series of raw text; passing it to model.fit will cause an input shape/type error. Also, labels are a pandas Series, not tensors.",
+    "detection": true
+  },
+  {
+    "reasoning": "The Sequential model expects tensor inputs matching the HuggingFace model (input_ids/attention_mask), but train_data is a Series of raw text strings without tokenization to tensors, causing input shape/type mismatch during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects tokenized tensor inputs matching the HuggingFace model signature, but train_data is a pandas Series of raw strings. Passing strings to a TFAutoModel inside the Sequential will raise a type/shape error.",
+    "detection": true
+  }
+]

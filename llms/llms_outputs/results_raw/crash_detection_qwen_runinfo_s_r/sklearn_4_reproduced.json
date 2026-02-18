@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects `y_test` to be of integer type and `preds` to be of integer or boolean type. However, `preds` is a float array, which will cause a type mismatch and result in a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects `y_test` to be of integer type and `preds` to be of integer or boolean type. However, `preds` is a float array, which will cause a type mismatch and result in a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects `y_test` to be of integer type and `preds` to be of integer or boolean type. However, `preds` is a float array, which will cause a type mismatch and result in a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects `y_test` to be of integer type and `preds` to be of integer or boolean type. However, `preds` is a float array, which will cause a type mismatch and result in a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects `y_test` to be of integer type and `preds` to be of integer or boolean type. However, `preds` is a float array, which will cause a type mismatch and result in a crash.",
+    "detection": true
+  }
+]

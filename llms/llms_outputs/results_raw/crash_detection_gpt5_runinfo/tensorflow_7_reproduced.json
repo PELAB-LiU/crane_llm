@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model input layers expect shape (None, 50) but train_input tensors have shape (8, 172), causing a shape mismatch error during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model inputs expect shape (None, 50) but train_input tensors have shape (8, 172), causing input shape mismatch on fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model inputs expect shape (None, 50) but train_input tensors have shape (8, 172), causing a shape mismatch error when fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model input layers expect shape (None, 50) but train_input tensors are shape (8, 172), causing shape mismatch when calling fit. Also batch_size 64 with only 8 samples is fine; main issue is max_len mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model inputs expect shape (None, 50) but train_input tensors have shape (8, 172), causing shape mismatch when calling model.fit. Also batch_size 64 with only 8 samples is fine, and validation_split works. The input length mismatch will crash.",
+    "detection": true
+  }
+]

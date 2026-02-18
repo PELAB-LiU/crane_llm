@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The method `model.load` does not exist in Keras. The correct method to load a model is `load_model` from `tensorflow.keras.models`. This will cause an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The method `model.load` does not exist in Keras. The correct method to load a model is `load_model` from `tensorflow.keras.models`. This will cause an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The method `model.load` does not exist in Keras. The correct method to load a model is `load_model` from `tensorflow.keras.models`. This will cause an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The method `model.load` does not exist in Keras. The correct method to load a model is `load_model` from `tensorflow.keras.models`. This will cause an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The method `model.load` does not exist in Keras. The correct method to load a model is `load_model` from `tensorflow.keras.models`. This will cause an AttributeError.",
+    "detection": true
+  }
+]

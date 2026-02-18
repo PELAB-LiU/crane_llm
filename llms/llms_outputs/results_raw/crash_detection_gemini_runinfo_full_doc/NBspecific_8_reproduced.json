@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Amount' column was dropped in the previous execution of this cell. Attempting to drop it again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Amount' column was dropped in the previous execution of this cell. Attempting to drop it again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Amount' column was dropped in the previous execution of this cell. Attempting to drop it again will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Amount' column was dropped in the previous execution of this cell. Attempting to drop it again will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Amount' column was dropped in the previous execution of this cell. Attempting to drop it again will raise a KeyError.",
+    "detection": true
+  }
+]

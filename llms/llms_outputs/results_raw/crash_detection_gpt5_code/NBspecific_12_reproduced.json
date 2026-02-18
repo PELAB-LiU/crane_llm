@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The cell uses plt, sns, and numvars, none of which are defined/imported in prior cells; this will raise NameError. Also plt is not imported.",
+    "detection": true
+  },
+  {
+    "reasoning": "plt, sns, and numvars are not defined/imported; also zip(numvars, ...) references an undefined variable. This will raise NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "plt, sns, and numvars are not defined/imported in prior cells; referencing them will raise NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell uses plt, sns, and numvars, none of which are defined/imported in executed cells; this will raise NameError. Also variables() defines numvars under pp, not as a global.",
+    "detection": true
+  },
+  {
+    "reasoning": "plt, sns, and numvars are not defined; also pp.train likely lacks columns referenced. This will raise NameError for plt/sns/numvars.",
+    "detection": true
+  }
+]

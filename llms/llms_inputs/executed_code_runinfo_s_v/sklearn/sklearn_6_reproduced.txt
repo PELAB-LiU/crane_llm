@@ -1,0 +1,156 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+## Cell 3:
+
+train_ds = pd.read_csv("data/train.csv")
+test_ds = pd.read_csv("data/test.csv")
+
+## Cell 4:
+
+train_ds.drop(['Id', 'MoSold', 'GarageYrBlt', 'Condition1', 'Condition2'], axis = 1, inplace = True)
+
+## Cell 5:
+
+for column in train_ds:
+    null_count = train_ds[column].isnull().sum()
+    if null_count > 1:
+        print(f"Dropping column {column} with {null_count} missing values.")
+        train_ds.drop(column, axis = 1, inplace = True)
+
+## Cell 6:
+
+le = LabelEncoder()
+string_columns = train_ds.select_dtypes(include = ['object']).columns
+for column in string_columns:
+    train_ds[column] = le.fit_transform(train_ds[column])
+
+## Cell 7:
+
+X = train_ds.drop(['SalePrice'], axis = 1)
+y = train_ds['SalePrice']
+
+## Cell 8:
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = 42)
+
+## Cell 9:
+
+from sklearn.ensemble import RandomForestRegressor
+FReg = RandomForestRegressor(n_estimators = 100, random_state = 42)
+
+## Cell 10:
+
+FReg.fit(X_train, y_train)
+
+## Cell 11:
+
+y_pred = FReg.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f'R2 Score: {r2}')
+print(f'MSE: {mse}')
+
+## Cell 12:
+
+test_ds_ids = test_ds['Id']
+test_ds.drop(['Id', 'MoSold', 'GarageYrBlt', 'Condition1', 'Condition2'], axis = 1, inplace = True)
+
+## Cell 13:
+
+for column in test_ds:
+    null_count = test_ds[column].isnull().sum()
+    if null_count > 1:
+        print(f"Dropping column {column} with {null_count} missing values.")
+        test_ds.drop(column, axis = 1, inplace = True)
+
+## Cell 14:
+
+le = LabelEncoder()
+string_columns = test_ds.select_dtypes(include = ['object']).columns
+for column in string_columns:
+    test_ds[column] = le.fit_transform(test_ds[column])
+
+# Current relevent runtime information:
+{'FReg': {'class_name': 'RandomForestRegressor'},
+ 'test_ds': {'has_nan': True,
+             'per_column_max_20': {'BldgType': {'num_unique': 5,
+                                                   'value_range': (0, 4)},
+                                      'ExterCond': {'num_unique': 5,
+                                                    'value_range': (0, 4)},
+                                      'ExterQual': {'num_unique': 4,
+                                                    'value_range': (0, 3)},
+                                      'Exterior1st': {'num_unique': 14,
+                                                      'value_range': (0, 13)},
+                                      'Exterior2nd': {'num_unique': 16,
+                                                      'value_range': (0, 15)},
+                                      'HouseStyle': {'num_unique': 7,
+                                                     'value_range': (0, 6)},
+                                      'LandContour': {'num_unique': 4,
+                                                      'value_range': (0, 3)},
+                                      'LandSlope': {'num_unique': 3,
+                                                    'value_range': (0, 2)},
+                                      'LotArea': {'num_unique': 1106,
+                                                  'value_range': (1470, 56600)},
+                                      'LotConfig': {'num_unique': 5,
+                                                    'value_range': (0, 4)},
+                                      'LotShape': {'num_unique': 4,
+                                                   'value_range': (0, 3)},
+                                      'MSSubClass': {'num_unique': 16,
+                                                     'value_range': (20, 190)},
+                                      'Neighborhood': {'num_unique': 25,
+                                                       'value_range': (0, 24)},
+                                      'OverallCond': {'num_unique': 9,
+                                                      'value_range': (1, 9)},
+                                      'OverallQual': {'num_unique': 10,
+                                                      'value_range': (1, 10)},
+                                      'RoofMatl': {'num_unique': 4,
+                                                   'value_range': (0, 3)},
+                                      'RoofStyle': {'num_unique': 6,
+                                                    'value_range': (0, 5)},
+                                      'Street': {'num_unique': 2,
+                                                 'value_range': (0, 1)},
+                                      'YearBuilt': {'num_unique': 106,
+                                                    'value_range': (1879,
+                                                                    2010)},
+                                      'YearRemodAdd': {'num_unique': 61,
+                                                       'value_range': (1950,
+                                                                       2010)}},
+             'shape': (1459, 53)},
+ 'test_ds_ids': {'has_nan': False,
+                 'length': 1459,
+                 'value_info': {'value_range': (1461, 2919)}}}
+# Target Cell:
+
+predictions = FReg.predict(test_ds)
+submissions_df = pd.DataFrame({
+    "ID" : test_ds_ids,
+    "Predictions" : predictions
+})
+

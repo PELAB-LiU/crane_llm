@@ -1,0 +1,19 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np;
+import pandas as pd;
+import seaborn as sn;
+import matplotlib.pyplot as plt;
+
+## Cell 2:
+
+df = pd.read_csv('data/googleplaystore.csv');
+
+# Current relevent runtime information:
+{'__method__df_drop': {'type': "<class 'method'>"},
+ 'df': {'shape': (10841, 13), 'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+
+df.drop([10472],inplace = True);

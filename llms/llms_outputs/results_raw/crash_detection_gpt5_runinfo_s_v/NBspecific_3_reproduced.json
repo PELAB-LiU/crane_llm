@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "yFit is predictions for the training set (length 272) while y_test has length 68; operations like SSE = sum((y_test - yFit)**2) will broadcast-error due to mismatched shapes.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_test has length 68 while yFit has length 272, so operations like SSE = sum((y_test - yFit)**2) and plotting both arrays together will raise a shape mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit is predictions for the training set (length 272), while y_test has length 68; operations like SSE = sum((y_test - yFit)**2) will raise a broadcasting error due to mismatched shapes.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit is length 272 (train predictions) while y_test is length 68 (test targets). Operations computing SSE and plotting attempt elementwise operations between mismatched lengths, causing a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit has shape (272,) while y_test has shape (68,), so operations like SSE = sum((y_test - yFit)**2) will raise a broadcasting error due to mismatched lengths.",
+    "detection": true
+  }
+]

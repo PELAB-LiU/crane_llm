@@ -1,0 +1,677 @@
+# Executed Cells:
+## Cell 1:
+
+import os
+import cv2
+import glob
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from tensorflow.keras.utils import to_categorical
+from sklearn.model_selection import train_test_split
+from PIL import Image
+import pickle
+
+## Cell 2:
+
+
+
+
+train_dir="data/signature-verification-dataset/sign_data/train"
+test_dir="data/signature-verification-dataset/sign_data/test"
+
+## Cell 3:
+
+SIZE = 224
+
+## Cell 4:
+
+def find_files_in_folder(path, folder_name):
+    folder_path = None
+    for root, dirs, files in os.walk(path):
+        if folder_name in dirs:
+            folder_path = os.path.join(root, folder_name)
+            break
+    img1 = []
+    if folder_path:
+        files = os.listdir(folder_path)
+        for file in files:
+            folder_name = os.path.dirname(file)
+            file_name = os.path.basename(file)
+            img1.append(file_name)
+        return img1
+    else:
+        return None
+
+
+train_data_names = []
+test_data_names = []
+
+train_data = []
+train_labels = []
+
+real_images = []
+forged_images = []
+
+for per in os.listdir(train_dir):
+    for data in glob.glob(train_dir+'/'+per+'/*.*'):
+
+        train_data_names.append(data)
+
+        if per[-1]=='g':
+            img = cv2.imread(data)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            img = cv2.resize(img, (SIZE,SIZE))
+            forged_images.append([img])
+
+        else:
+            img = cv2.imread(data)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            img = cv2.resize(img, (SIZE,SIZE))
+            real_images.append([img])
+
+
+
+
+print("number of real_images",len(real_images))
+
+
+test_data = []
+test_labels = []
+
+for per in os.listdir(test_dir):
+    for data in glob.glob(test_dir+'/'+per+'/*.*'):
+        test_data_names.append(data)
+
+        if per[-1]=='g':
+            img = cv2.imread(data)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            img = cv2.resize(img, (SIZE,SIZE))
+            forged_images.append([img])
+
+        else:
+            img = cv2.imread(data)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            img = cv2.resize(img, (SIZE,SIZE))
+            real_images.append([img])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+real_images = np.array(real_images)
+forged_images = np.array(forged_images)
+
+
+real_labels = np.zeros((real_images.shape[0], 1))
+forged_labels = np.ones((forged_images.shape[0], 1))
+
+print("number of real_images",len(real_images))
+print("number of forged_images",len(forged_images))
+
+## Cell 5:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+images = np.concatenate((real_images, forged_images))
+labels = np.concatenate((real_labels, forged_labels))
+
+
+train_data, test_data, train_labels, test_labels = train_test_split(images, labels, test_size=0.2, random_state=42)
+print(train_data.shape)
+print(test_data.shape)
+
+## Cell 6:
+
+print(train_labels.shape)
+
+# Current relevent runtime information:
+{'__method__plt_figure': {'doc_importants': {'notes': 'A newly created figure '
+                                                      'is passed to the '
+                                                      '`~.FigureCanvasBase.new_manager` '
+                                                      'method or the '
+                                                      '`new_figure_manager` '
+                                                      'function provided by '
+                                                      'the current backend, '
+                                                      'which install a canvas '
+                                                      'and a manager on the '
+                                                      'figure. Once this is '
+                                                      'done, '
+                                                      ':rc:`figure.hooks` are '
+                                                      'called, one at a time, '
+                                                      'on the figure; these '
+                                                      'hooks allow arbitrary '
+                                                      'customization of the '
+                                                      'figure (e.g., attaching '
+                                                      'callbacks) or of '
+                                                      'associated elements '
+                                                      '(e.g., modifying the '
+                                                      'toolbar).  See '
+                                                      ':doc:`/gallery/user_interfaces/mplcvd` '
+                                                      'for an example of '
+                                                      'toolbar customization. '
+                                                      'If you are creating '
+                                                      'many figures, make sure '
+                                                      'you explicitly call '
+                                                      '`.pyplot.close` on the '
+                                                      'figures you are not '
+                                                      'using, because this '
+                                                      'will enable pyplot to '
+                                                      'properly clean up the '
+                                                      'memory. '
+                                                      '`~matplotlib.rcParams` '
+                                                      'defines the default '
+                                                      'values, which can be '
+                                                      'modified in the '
+                                                      'matplotlibrc file.'},
+                          'signature': {'parameters': [{'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'num',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'figsize',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'dpi',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'facecolor',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'edgecolor',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'True',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'frameon',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': '<class '
+                                                                   "'matplotlib.figure.Figure'>",
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'FigureClass',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'False',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'clear',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ '__method__plt_legend': {'doc_importants': {'notes': 'Some artists are not '
+                                                      'supported by this '
+                                                      'function.  See '
+                                                      ':doc:`/tutorials/intermediate/legend_guide` '
+                                                      'for details.'},
+                          'signature': {'parameters': [{'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_POSITIONAL',
+                                                        'name': 'args',
+                                                        'required': True},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ '__method__plt_plot': {'doc_importants': {'notes': '**Format Strings** A '
+                                                    'format string consists of '
+                                                    'a part for color, marker '
+                                                    'and line:: fmt = '
+                                                    "'[marker][line][color]' "
+                                                    'Each of them is optional. '
+                                                    'If not provided, the '
+                                                    'value from the style '
+                                                    'cycle is used. Exception: '
+                                                    'If ``line`` is given, but '
+                                                    'no ``marker``, the data '
+                                                    'will be a line without '
+                                                    'markers. Other '
+                                                    'combinations such as '
+                                                    '``[color][marker][line]`` '
+                                                    'are also supported, but '
+                                                    'note that their parsing '
+                                                    'may be ambiguous. '
+                                                    '**Markers** '
+                                                    '=============   '
+                                                    '=============================== '
+                                                    'character       '
+                                                    'description '
+                                                    '=============   '
+                                                    '=============================== '
+                                                    "``'.'``         point "
+                                                    "marker ``','``         "
+                                                    'pixel marker '
+                                                    "``'o'``         circle "
+                                                    "marker ``'v'``         "
+                                                    'triangle_down marker '
+                                                    "``'^'``         "
+                                                    'triangle_up marker '
+                                                    "``'<'``         "
+                                                    'triangle_left marker '
+                                                    "``'>'``         "
+                                                    'triangle_right marker '
+                                                    "``'1'``         tri_down "
+                                                    "marker ``'2'``         "
+                                                    'tri_up marker '
+                                                    "``'3'``         tri_left "
+                                                    "marker ``'4'``         "
+                                                    'tri_right marker '
+                                                    "``'8'``         octagon "
+                                                    "marker ``'s'``         "
+                                                    'square marker '
+                                                    "``'p'``         pentagon "
+                                                    "marker ``'P'``         "
+                                                    'plus (filled) marker '
+                                                    "``'*'``         star "
+                                                    "marker ``'h'``         "
+                                                    'hexagon1 marker '
+                                                    "``'H'``         hexagon2 "
+                                                    "marker ``'+'``         "
+                                                    'plus marker '
+                                                    "``'x'``         x marker "
+                                                    "``'X'``         x "
+                                                    '(filled) marker '
+                                                    "``'D'``         diamond "
+                                                    "marker ``'d'``         "
+                                                    'thin_diamond marker '
+                                                    "``'|'``         vline "
+                                                    "marker ``'_'``         "
+                                                    'hline marker '
+                                                    '=============   '
+                                                    '=============================== '
+                                                    '**Line Styles** '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    'character        '
+                                                    'description '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    "``'-'``          solid "
+                                                    'line style '
+                                                    "``'--'``         dashed "
+                                                    'line style '
+                                                    "``'-.'``         dash-dot "
+                                                    'line style '
+                                                    "``':'``          dotted "
+                                                    'line style '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    'Example format strings:: '
+                                                    "'b'    # blue markers "
+                                                    "with default shape 'or'   "
+                                                    "# red circles '-g'   # "
+                                                    "green solid line '--'   # "
+                                                    'dashed line with default '
+                                                    "color '^k:'  # black "
+                                                    'triangle_up markers '
+                                                    'connected by a dotted '
+                                                    'line **Colors** The '
+                                                    'supported color '
+                                                    'abbreviations are the '
+                                                    'single letter codes '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    'character        color '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    "``'b'``          blue "
+                                                    "``'g'``          green "
+                                                    "``'r'``          red "
+                                                    "``'c'``          cyan "
+                                                    "``'m'``          magenta "
+                                                    "``'y'``          yellow "
+                                                    "``'k'``          black "
+                                                    "``'w'``          white "
+                                                    '=============    '
+                                                    '=============================== '
+                                                    "and the ``'CN'`` colors "
+                                                    'that index into the '
+                                                    'default property cycle. '
+                                                    'If the color is the only '
+                                                    'part of the format '
+                                                    'string, you can '
+                                                    'additionally use any  '
+                                                    '`matplotlib.colors` spec, '
+                                                    'e.g. full names '
+                                                    "(``'green'``) or hex "
+                                                    "strings (``'#008000'``)."},
+                        'signature': {'parameters': [{'annotation': None,
+                                                      'default': None,
+                                                      'kind': 'VAR_POSITIONAL',
+                                                      'name': 'args',
+                                                      'required': True},
+                                                     {'annotation': None,
+                                                      'default': 'True',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'scalex',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'True',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'scaley',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'data',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': None,
+                                                      'kind': 'VAR_KEYWORD',
+                                                      'name': 'kwargs',
+                                                      'required': True}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ '__method__plt_show': {'doc_importants': {'notes': '**Saving figures to file '
+                                                    'and showing a window at '
+                                                    'the same time** If you '
+                                                    'want an image file as '
+                                                    'well as a user interface '
+                                                    'window, use '
+                                                    '`.pyplot.savefig` before '
+                                                    '`.pyplot.show`. At the '
+                                                    'end of (a blocking) '
+                                                    '``show()`` the figure is '
+                                                    'closed and thus '
+                                                    'unregistered from pyplot. '
+                                                    'Calling `.pyplot.savefig` '
+                                                    'afterwards would save a '
+                                                    'new and thus empty '
+                                                    'figure. This limitation '
+                                                    'of command order does not '
+                                                    'apply if the show is '
+                                                    'non-blocking or if you '
+                                                    'keep a reference to the '
+                                                    'figure and use '
+                                                    '`.Figure.savefig`. '
+                                                    '**Auto-show in jupyter '
+                                                    'notebooks** The jupyter '
+                                                    'backends (activated via '
+                                                    '``%matplotlib inline``, '
+                                                    '``%matplotlib notebook``, '
+                                                    'or ``%matplotlib '
+                                                    'widget``), call '
+                                                    '``show()`` at the end of '
+                                                    'every cell by default. '
+                                                    "Thus, you usually don't "
+                                                    'have to call it '
+                                                    'explicitly there.'},
+                        'signature': {'parameters': [{'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'block',
+                                                      'required': False}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ '__method__plt_title': {'signature': {'parameters': [{'annotation': None,
+                                                       'default': None,
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'label',
+                                                       'required': True},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'fontdict',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'loc',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'pad',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'KEYWORD_ONLY',
+                                                       'name': 'y',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': None,
+                                                       'kind': 'VAR_KEYWORD',
+                                                       'name': 'kwargs',
+                                                       'required': True}],
+                                       'return_annotation': None},
+                         'type': "<class 'function'>"},
+ '__method__test_data_astype': {'doc_importants': {'notes': '.. '
+                                                            'versionchanged:: '
+                                                            '1.17.0 Casting '
+                                                            'between a simple '
+                                                            'data type and a '
+                                                            'structured one is '
+                                                            'possible only for '
+                                                            '"unsafe" '
+                                                            'casting.  Casting '
+                                                            'to multiple '
+                                                            'fields is '
+                                                            'allowed, but '
+                                                            'casting from '
+                                                            'multiple fields '
+                                                            'is not. .. '
+                                                            'versionchanged:: '
+                                                            '1.9.0 Casting '
+                                                            'from numeric to '
+                                                            'string types in '
+                                                            "'safe' casting "
+                                                            'mode requires '
+                                                            'that the string '
+                                                            'dtype length is '
+                                                            'long enough to '
+                                                            'store the max '
+                                                            'integer/float '
+                                                            'value converted.'},
+                                'type': "<class 'builtin_function_or_method'>"},
+ '__method__test_data_reshape': {'doc_importants': {'notes': 'Unlike the free '
+                                                             'function '
+                                                             '`numpy.reshape`, '
+                                                             'this method on '
+                                                             '`ndarray` allows '
+                                                             'the elements of '
+                                                             'the shape '
+                                                             'parameter to be '
+                                                             'passed in as '
+                                                             'separate '
+                                                             'arguments. For '
+                                                             'example, '
+                                                             '``a.reshape(10, '
+                                                             '11)`` is '
+                                                             'equivalent to '
+                                                             '``a.reshape((10, '
+                                                             '11))``.'},
+                                 'type': '<class '
+                                         "'builtin_function_or_method'>"},
+ '__method__train_data_astype': {'doc_importants': {'notes': '.. '
+                                                             'versionchanged:: '
+                                                             '1.17.0 Casting '
+                                                             'between a simple '
+                                                             'data type and a '
+                                                             'structured one '
+                                                             'is possible only '
+                                                             'for "unsafe" '
+                                                             'casting.  '
+                                                             'Casting to '
+                                                             'multiple fields '
+                                                             'is allowed, but '
+                                                             'casting from '
+                                                             'multiple fields '
+                                                             'is not. .. '
+                                                             'versionchanged:: '
+                                                             '1.9.0 Casting '
+                                                             'from numeric to '
+                                                             'string types in '
+                                                             "'safe' casting "
+                                                             'mode requires '
+                                                             'that the string '
+                                                             'dtype length is '
+                                                             'long enough to '
+                                                             'store the max '
+                                                             'integer/float '
+                                                             'value '
+                                                             'converted.'},
+                                 'type': '<class '
+                                         "'builtin_function_or_method'>"},
+ '__method__train_data_reshape': {'doc_importants': {'notes': 'Unlike the free '
+                                                              'function '
+                                                              '`numpy.reshape`, '
+                                                              'this method on '
+                                                              '`ndarray` '
+                                                              'allows the '
+                                                              'elements of the '
+                                                              'shape parameter '
+                                                              'to be passed in '
+                                                              'as separate '
+                                                              'arguments. For '
+                                                              'example, '
+                                                              '``a.reshape(10, '
+                                                              '11)`` is '
+                                                              'equivalent to '
+                                                              '``a.reshape((10, '
+                                                              '11))``.'},
+                                  'type': '<class '
+                                          "'builtin_function_or_method'>"},
+ 'plt': {'type': "<class 'module'>"},
+ 'test_data': {'dtype': 'uint8',
+               'execution_cell_source': {'cellno': 8, 'lineno': 51},
+               'has_nan': False,
+               'shape': (430, 1, 224, 224),
+               'type': 'numpy.ndarray',
+               'value_range': (0, 254)},
+ 'train_data': {'dtype': 'uint8',
+                'execution_cell_source': {'cellno': 8, 'lineno': 22},
+                'has_nan': False,
+                'shape': (1719, 1, 224, 224),
+                'type': 'numpy.ndarray',
+                'value_range': (0, 254)},
+ 'train_labels': {'dtype': 'float64',
+                  'execution_cell_source': {'cellno': 8, 'lineno': 23},
+                  'has_nan': False,
+                  'shape': (1719, 1),
+                  'type': 'numpy.ndarray',
+                  'value_range': (0.0, 1.0)}}
+# Target Cell:
+
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+from sklearn.model_selection import train_test_split
+
+
+
+
+
+train_data = train_data.astype('float32') / 255
+test_data = test_data.astype('float32') / 255
+
+
+train_data = train_data.reshape(-1, 224, 224, 1)
+test_data = test_data.reshape(-1, 224, 224, 1)
+
+
+model = keras.Sequential([
+
+
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(224, 224, 1)),
+    layers.MaxPooling2D((2, 2)),
+    layers.Flatten(),
+
+    layers.Dense(2, activation='softmax')
+])
+
+model.compile(optimizer='rmsprop',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+model.summary()
+
+
+early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
+
+
+history = model.fit(train_data, train_labels, batch_size=32, epochs=1, validation_split=.2, callbacks=[early_stop])
+
+
+import matplotlib.pyplot as plt
+
+acc = history.history['accuracy']
+val_acc = history.history['val_accuracy']
+loss = history.history['loss']
+val_loss = history.history['val_loss']
+epochs = range(1, len(acc) + 1)
+
+plt.plot(epochs, acc, 'bo', label='Training acc')
+plt.plot(epochs, val_acc, 'b', label='Validation acc')
+plt.title('Training and validation accuracy')
+plt.legend()
+
+plt.figure()
+
+plt.plot(epochs, loss, 'bo', label='Training loss')
+plt.plot(epochs, val_loss, 'b', label='Validation loss')
+plt.title('Training and validation loss')
+plt.legend()
+
+plt.show()

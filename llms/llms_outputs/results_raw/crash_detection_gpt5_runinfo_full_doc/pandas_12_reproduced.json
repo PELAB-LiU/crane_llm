@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "agg dict uses integer keys 1,2,3,4 but DataFrame has no columns with those labels; groupby expects column names or callables. This will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The aggregation dict uses integer keys (1,2,3,4) which are not column names in df; pandas will raise a KeyError. Groupby key 'kmeans_cluster' exists, but the requested columns do not.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg dict uses integer keys 1,2,3,4 but df columns are named strings like 'Calories', 'TotalTime', etc.; no such columns exist, so KeyError will occur.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg dict uses integer keys 1,2,3,4 which are not column labels; pandas will raise a KeyError because those columns do not exist. The only integer-like column is 'kmeans_cluster' but it's already used for grouping.",
+    "detection": true
+  },
+  {
+    "reasoning": "The agg dict uses integer column keys (1,2,3,4) but df has no such columns; its columns are named strings like 'Calories', etc., plus 'kmeans_cluster'. This will raise a KeyError.",
+    "detection": true
+  }
+]

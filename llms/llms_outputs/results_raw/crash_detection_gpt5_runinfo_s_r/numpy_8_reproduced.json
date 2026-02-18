@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "evaluate_fitness uses transform_gp_structure to build features from X_train and X_test, but X_train/X_test are 2D arrays with many columns while the GP primitive set expects exactly 2 inputs (arity=2). Calling expr(*row) with more than 2 elements will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "evaluate_fitness uses LogisticRegression expecting 2D arrays, but transform_gp_structure returns 1D arrays; lr.fit(X_train_gp, y_train) will raise a ValueError due to incorrect shape. Also gp.compile expects inputs matching arity=2, but X_train rows are high-dimensional arrays, causing a TypeError in expr(*row).",
+    "detection": true
+  },
+  {
+    "reasoning": "evaluate_fitness uses lr (LogisticRegression) expecting 2D feature arrays, but transform_gp_structure returns 1D arrays; scikit-learn will raise a ValueError when fitting/predicting with wrong shape.",
+    "detection": true
+  },
+  {
+    "reasoning": "evaluate_fitness uses X_train and X_test from earlier, but transform_gp_structure compiles individuals with arity=2 and then calls expr(*row) for each row of X_train. X_train is a 2D ndarray with many features, so each row has far more than 2 values, causing a TypeError: too many positional arguments for the compiled function.",
+    "detection": true
+  },
+  {
+    "reasoning": "evaluate_fitness uses LogisticRegression expecting 2D arrays, but transform_gp_structure returns 1D arrays; scikit-learn will raise a ValueError when fitting/predicting with 1D input.",
+    "detection": true
+  }
+]

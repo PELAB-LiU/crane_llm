@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train_dataset` does not have a `labels` attribute, which will cause an error when trying to compute class weights.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset` does not have a `labels` attribute, which will cause an error when trying to compute class weights.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset` does not have a `labels` attribute, which will cause an error when trying to compute class weights.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset` does not have a `labels` attribute, which will cause an error when trying to compute class weights.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset` does not have a `labels` attribute, which will cause an error when trying to compute class weights.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "LinearRegression.fit expects numeric features/targets, but x and y are object dtype (categorical strings), so fitting will raise a ValueError during conversion to float.",
+    "detection": true
+  },
+  {
+    "reasoning": "LinearRegression.fit expects numeric features, but x and y are object dtype (categorical strings), causing a ValueError during fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y are object-dtype arrays containing categorical/string values (workclass, Salary). LinearRegression expects numeric inputs; fitting with object dtype will raise a ValueError during dtype conversion.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y are numpy arrays of dtype object containing categorical/string values from 'workclass' and 'Salary'; LinearRegression.fit requires numeric arrays and will raise a ValueError during dtype conversion.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y are object-dtype arrays containing categorical/string data (workclass, Salary). LinearRegression.fit expects numeric arrays and will raise a ValueError when converting to float.",
+    "detection": true
+  }
+]

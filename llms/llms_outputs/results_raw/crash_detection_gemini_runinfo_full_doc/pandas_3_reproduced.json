@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `procData` function attempts to join `name_count` onto the input DataFrame twice, first using 'RescuerID' and then 'Name'. The `name_count` Series is indexed by 'Name', so the join on 'RescuerID' will result in a DataFrame with a 'name_count' column that is entirely NaN, as there are no matching 'RescuerID' values in the `name_count` index. The second join on 'Name' will then overwrite this column with the correct values, but the first join is problematic. However, this will not cause a crash, as pandas handles non-matching keys by filling with NaN.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `procData` function attempts to join `name_count` onto the input DataFrame twice, first using 'RescuerID' and then 'Name'. The `name_count` Series is indexed by 'Name', so the join on 'RescuerID' will result in a DataFrame with a 'name_count' column that is entirely NaN, as there is no overlap between the 'RescuerID' values in the input DataFrame and the 'Name' index of `name_count`. This will not cause a crash, but it will lead to incorrect data processing. The second join on 'Name' will correctly populate the 'name_count' column, overwriting the previous NaN values. The `RescuerID` column is dropped at the end of the function, so the initial join on 'RescuerID' is effectively a no-op that doesn't cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `procData` function attempts to join `name_count` onto the input DataFrame twice, first using 'RescuerID' and then 'Name'. The `name_count` Series is indexed by 'Name', so the join on 'RescuerID' will result in a DataFrame with a 'name_count' column that is entirely NaN, as there is no overlap between the 'RescuerID' values in the input DataFrame and the 'Name' index of `name_count`. This will not cause a crash, but it will lead to incorrect data processing. The second join on 'Name' will correctly populate the 'name_count' column, overwriting the previous NaN values. The `RescuerID` column is dropped at the end of the function, so the initial join on 'RescuerID' is effectively a no-op that doesn't impact the final output columns.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `procData` function attempts to join `name_count` onto the input DataFrame twice, first using 'RescuerID' and then 'Name'. The `name_count` Series is indexed by 'Name', so the join on 'RescuerID' will result in a DataFrame with a 'name_count' column that is entirely NaN, as there is no overlap between the 'RescuerID' values in the input DataFrame and the 'Name' index of `name_count`. This will not cause a crash, but it will lead to incorrect data processing. The second join on 'Name' will correctly populate the 'name_count' column, overwriting the previous NaN values. The `RescuerID` column is dropped at the end of the function, so the initial join on 'RescuerID' is effectively a no-op that doesn't impact the final output of the function.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `procData` function attempts to join `name_count` onto the input DataFrame twice, first using 'RescuerID' and then 'Name'. The `name_count` Series is indexed by 'Name', so the join on 'RescuerID' will result in a DataFrame with a 'name_count' column that is entirely NaN, as there are no matching 'RescuerID' values in the `name_count` index. The second join on 'Name' will then overwrite this column with the correct values, but the first join is problematic. However, this will not cause a crash, as pandas handles non-matching keys by filling with NaN.",
+    "detection": false
+  }
+]

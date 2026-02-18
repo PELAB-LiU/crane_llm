@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `mean_absolute_error` function requires both inputs to have the same dtype. However, `y_test` is of type float64 and `y_pred` is of type int64, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `mean_absolute_error` function requires both inputs to have the same dtype. However, `y_test` is of type float64 and `y_pred` is of type int64, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `mean_absolute_error` function requires both inputs to have the same dtype. However, `y_test` is of type float64 and `y_pred` is of type int64, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `mean_absolute_error` function requires both inputs to have the same dtype. However, `y_test` is of type float64 and `y_pred` is of type int64, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `mean_absolute_error` function requires both inputs to have the same dtype. However, `y_test` is of type float64 and `y_pred` is of type int64, which will cause a crash.",
+    "detection": true
+  }
+]

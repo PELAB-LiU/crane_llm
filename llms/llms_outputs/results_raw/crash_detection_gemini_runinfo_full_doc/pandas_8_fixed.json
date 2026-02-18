@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'MSRP' column is currently of object type and contains '$' and ',' characters. The target cell correctly removes these characters and converts the column to a numeric type (float then Int64), which is a valid operation.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column is currently of object type and contains '$' and ',' characters. The target cell correctly removes these characters and converts the column to a numeric type (float then Int64), which is a valid operation.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column is currently of object type and contains '$' and ',' characters. The target cell correctly removes these characters and converts the column to a numeric type (float then Int64), which is a valid operation.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column is currently of object type and contains '$' and ',' characters. The target cell correctly removes these characters and converts the column to a numeric type (float then Int64), which is a valid operation.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column is currently of object type and contains '$' and ',' characters. The target cell correctly removes these characters and converts the column to a numeric type (float then Int64), which is a valid operation.",
+    "detection": false
+  }
+]

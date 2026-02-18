@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "sns and plt and dataset are not defined; calling seaborn functions and plt.show() will raise NameError. Also displot with row and y together is invalid in newer seaborn. Crash is certain due to missing imports/variables.",
+    "detection": true
+  },
+  {
+    "reasoning": "Libraries (sns, plt) and variable 'dataset' are not defined, so the first call to sns.set_context will work if seaborn is imported, but subsequent calls referencing 'dataset' will raise NameError. Also sns is undefined if seaborn wasn't imported.",
+    "detection": true
+  },
+  {
+    "reasoning": "dataset, sns (seaborn), and plt (matplotlib) are not defined, so NameError will occur on first usage. Also some function signatures may be incorrect (e.g., displot with row and y together).",
+    "detection": true
+  },
+  {
+    "reasoning": "Libraries (sns, plt) and variable 'dataset' are not defined; calling seaborn/plt without imports and missing dataset will raise NameError. Also displot with row and y may be invalid. Execution will crash immediately due to undefined names.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns, plt, and dataset are not defined since no prior cells ran; NameError will occur on the first reference (sns or dataset).",
+    "detection": true
+  }
+]

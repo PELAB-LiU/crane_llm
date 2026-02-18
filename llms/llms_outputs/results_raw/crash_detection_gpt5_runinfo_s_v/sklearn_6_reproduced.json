@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "FReg expects the same feature columns as during training, but train_ds had columns with >1 missing dropped independently from test_ds, and test_ds still has NaNs; this will cause a shape mismatch or invalid input error during predict.",
+    "detection": true
+  },
+  {
+    "reasoning": "FReg expects the same feature columns as during training, but test_ds likely differs due to dropped columns and independent label encoding, and it still contains NaNs; this will cause predict to fail (shape mismatch or NaN error).",
+    "detection": true
+  },
+  {
+    "reasoning": "FReg expects the same feature columns as used in training, but test_ds likely has different columns after independent dropping/encoding and still contains NaNs, causing predict to error. Therefore the cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "FReg expects the same feature columns as during training, but test_ds likely differs due to columns dropped for missing values and label encodings fitted separately; also test_ds still has NaNs. This will cause a predict error.",
+    "detection": true
+  },
+  {
+    "reasoning": "FReg expects the same feature set as training, but test_ds still contains NaNs and likely mismatched columns/order after drops/encoding, causing RandomForestRegressor.predict to fail on shape or NaNs. Therefore execution will crash.",
+    "detection": true
+  }
+]

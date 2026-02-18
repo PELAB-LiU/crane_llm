@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "X contains non-numeric columns (e.g., Gender, Profession) which RandomForestRegressor cannot handle without encoding, causing fit to fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "X includes non-numeric columns (e.g., Gender, Profession) which RandomForestRegressor cannot handle without encoding, causing fit() to error. Also potential NaNs in df can cause failure.",
+    "detection": true
+  },
+  {
+    "reasoning": "X contains non-numeric columns like Gender and Profession; RandomForestRegressor requires numeric features, so fitting will raise a ValueError during rf.fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "X includes non-numeric columns (e.g., Gender, Profession) which RandomForestRegressor cannot handle without encoding, causing fit to fail. NaNs may also cause errors if present in features.",
+    "detection": true
+  },
+  {
+    "reasoning": "X contains non-numeric columns (e.g., Gender, Profession). RandomForestRegressor requires numeric features and will raise a ValueError during fit due to string/object dtypes.",
+    "detection": true
+  }
+]

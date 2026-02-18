@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The variable tf_idf has not been defined in any executed cell, so calling toarray() on it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable tf_idf has not been defined in any executed cell, so calling toarray() on it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variable tf_idf has not been defined in any executed cells, so calling toarray() on it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable tf_idf has not been defined in any executed cell, so calling toarray() on it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable tf_idf has not been defined in any executed cell, so calling toarray() on it will raise a NameError.",
+    "detection": true
+  }
+]

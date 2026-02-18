@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model.predict_classes does not exist in current Keras/TensorFlow; also labels are 0/1 from binary dataset, but y is shape (batch,) not one-hot, so argmax on 1D will error. These cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "model was compiled for binary output (sigmoid, label_mode='binary'), but the cell uses deprecated model.predict_classes and np.argmax on y which is float binary labels; predict_classes is removed in TF 2.x and will raise AttributeError. Also labels/y shapes mismatch expectations.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes does not exist in current TensorFlow/Keras and will raise an AttributeError. Also y is binary labels (shape (batch, 1)), so argmax over last axis is invalid for binary label_mode.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes does not exist in current TensorFlow/Keras and will raise an AttributeError; also y is binary labels (not one-hot), so argmax on y will error due to shape mismatch. Either issue can crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes is removed in current TensorFlow/Keras and will raise an AttributeError. Also, labels from test_ds are binary (shape (batch,1)) not one-hot, so argmax on axis=-1 would also be incorrect.",
+    "detection": true
+  }
+]

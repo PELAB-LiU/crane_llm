@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model.predict_classes does not exist in modern Keras; also y has shape (batch,1) for binary labels, so argmax over last axis is invalid. These will raise errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes does not exist in modern TensorFlow/Keras; also labels are 1D floats while y has shape (batch,1), and argmax over axis -1 on (batch,1) yields all zeros. The use of predict_classes will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes does not exist in current Keras/TensorFlow versions and will raise an AttributeError. Additionally, y has shape (batch,1) for binary labels, so np.argmax over axis -1 is invalid for 1D labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes does not exist in modern Keras/TensorFlow and will raise an AttributeError. Also, y has shape (batch,1) for binary labels, so argmax over axis -1 is invalid.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes does not exist in current Keras/TensorFlow versions and will raise an AttributeError. Also y has shape (batch,1) float labels, so argmax over axis -1 is invalid for binary labels.",
+    "detection": true
+  }
+]

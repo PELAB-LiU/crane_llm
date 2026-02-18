@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Installs' column contains string values with '+' and ',' which cannot be directly converted to integers, leading to a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains string values with '+' and ',' which cannot be directly converted to integers, leading to a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains string values with '+' and ',' which cannot be directly converted to integers, leading to a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains string values with '+' and ',' which cannot be directly converted to integers, leading to a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains string values with '+' and ',' which cannot be directly converted to integers, leading to a ValueError.",
+    "detection": true
+  }
+]

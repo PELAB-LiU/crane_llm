@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model inputs expect shape (batch, 50) but train_input tensors have sequence length 172; mismatch will raise shape error. Also batch_size 64 with only 8 samples is fine, but validation_split requires labels provided; labels exist.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects inputs of shape (batch, 50) but train_input tensors have sequence length 172; also batch_size 64 with only 8 samples and validation_split 0.2 may cause issues. Shape mismatch will trigger an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model inputs expect shape (None, 50) but train_input tensors have length 172; also batch_size 64 with only 8 samples and validation_split 0.2 is fine. The input length mismatch will cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects inputs of shape (batch, 50) but train_input tensors have sequence length 172; batch_size 64 with only 8 samples is fine, but the shape mismatch will cause an error. Also validation_split with dict inputs is okay. Crash likely due to input length mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model inputs expect shape (max_len=50), but train_input tensors are length 172; passing mismatched shapes will cause an input shape error. Also batch_size 64 is larger than dataset size 8 but that's allowed; validation_split with tensors dict is okay. The primary issue is sequence length mismatch.",
+    "detection": true
+  }
+]

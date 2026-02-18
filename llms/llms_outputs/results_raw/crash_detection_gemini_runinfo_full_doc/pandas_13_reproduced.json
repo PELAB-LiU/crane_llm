@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'gbr_gs' model is only present in the 'X_train' key's model list, but the 'f_index' list for 'X_2_train' also includes 'gbr_gs'. This will cause an IndexError when trying to access 'f_index[1]' for 'X_2_train' as 'gbr_gs' is not the second element in the 'X_2_train' model list.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'gbr_gs' model is only present in the 'X_train' key's model list, but the 'f_index' list for 'X_2_train' also includes 'gbr_gs'. This will cause an IndexError when trying to access 'f_index[1]' for 'X_2_train' as 'gbr_gs' is not the second element in the 'X_2_train' model list.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'gbr_gs' model is only present in the 'X_train' key's model list, but the 'f_index' list for 'X_2_train' also includes 'gbr_gs'. This will cause an IndexError when trying to access 'f_index[1]' for 'X_2_train' as 'gbr_gs' is not the second element in the 'X_2_train' model list.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'gbr_gs' model is only present in the 'X_train' key's model list, but the 'f_index' list for 'X_2_train' also includes 'gbr_gs'. This will cause an IndexError when trying to access 'f_index[1]' for 'X_2_train' as 'gbr_gs' is not the second element in the 'X_2_train' model list.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'gbr_gs' model is only present in the 'X_train' key's model list, but the 'f_index' list for 'X_2_train' also includes 'gbr_gs'. This will cause an IndexError when trying to access 'f_index[1]' for 'X_2_train' as 'gbr_gs' is not the second element in the 'X_2_train' model list.",
+    "detection": true
+  }
+]

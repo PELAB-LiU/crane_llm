@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model uses SparseCategoricalCrossentropy(from_logits=True) with a softmax output; this mismatch can cause incorrect training but not a crash. Shapes and dtypes of data match the model’s input/output, and batch size divides data without issue.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model uses SparseCategoricalCrossentropy(from_logits=True) but final layer is softmax; this mismatch can cause incorrect training but not a runtime crash. Shapes and dtypes are valid; batch size divides; validation data matches.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model uses SparseCategoricalCrossentropy(from_logits=True) but final layer has softmax, causing a logits/activation mismatch likely to raise an error. Batch/input shapes and dtypes are fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model uses SparseCategoricalCrossentropy(from_logits=True) with a softmax output; from_logits=True expects unnormalized logits and can cause incorrect loss calculation but not an execution error. Input/output shapes and dtypes align, and batch size divides dataset. Likely runs.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model expects input shape (100,100,3) and labels as integers for SparseCategoricalCrossentropy; train/val arrays match shapes and dtypes. Batch size divides samples and epochs set; no obvious shape/type mismatch.",
+    "detection": false
+  }
+]

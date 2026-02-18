@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The PolynomialFeatures transformation will increase the number of features, which is reflected in the change of shape from X to poly_X. This is a normal operation and will not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The PolynomialFeatures transformation will increase the number of features, which is reflected in the change of shape from X to poly_X. This is a normal operation and will not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The PolynomialFeatures transformation will increase the number of features, which is reflected in the change of shape from X to poly_X. This is a normal operation and will not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The PolynomialFeatures transformation will increase the number of features, which is reflected in the change of shape from X to poly_X. This is a normal operation and will not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The PolynomialFeatures transformation will increase the number of features, which is reflected in the change of shape from X to poly_X. This is a normal operation and will not cause a crash.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model input expects 64x64x3 but train/valid/test generators produce 48x48 images; compile itself won't crash, and compute_class_weight uses train_dataset.labels which exist. No execution in this cell uses the mismatched input size.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model input expects 64x64x3 but datasets were created with target_size 48x48; compiling is fine but training later would fail, not this cell. compute_class_weight uses train_dataset.labels which exists per runtime info.",
+    "detection": false
+  },
+  {
+    "reasoning": "model input expects 64x64x3 but datasets are 48x48; however this cell only computes class weights and compiles the model. compute_class_weight expects class indices; train_dataset.labels is integer labels, so it should work. No crash upon compile with given METRICS.",
+    "detection": false
+  },
+  {
+    "reasoning": "train_dataset was created with target_size (48,48) but the model input is (64,64,3), causing a shape mismatch when compiling/training; however, the target cell only computes class weights and compiles the model, which should run without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model input expects (64,64,3) but generators produce (48,48,3); however, this cell only computes class weights and compiles the model, not training, so it won’t hit the shape mismatch. compute_class_weight inputs are valid.",
+    "detection": false
+  }
+]

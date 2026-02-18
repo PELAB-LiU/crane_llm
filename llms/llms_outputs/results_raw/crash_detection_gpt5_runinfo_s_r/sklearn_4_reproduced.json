@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "balanced_accuracy_score expects discrete class labels; preds are float regression outputs from AdaBoostRegressor, likely causing a ValueError when computing the score for classification. However, sklearn will coerce to continuous values but the metric requires labels; this mismatch is likely but not certain to crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects discrete class labels; preds from AdaBoostRegressor are continuous floats, causing a ValueError when computing confusion matrix-based metrics. Thus the call will likely raise due to incompatible types.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects discrete class labels, but preds is float64 regression outputs from AdaBoostRegressor, causing a ValueError about continuous targets. Execution will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects class labels; preds are float regression outputs from AdaBoostRegressor. Passing continuous values with integer y will raise an error due to mismatched label types.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects class labels, but preds is float (regression output) from AdaBoostRegressor, causing a type/format issue. Likely raises ValueError due to continuous predictions.",
+    "detection": true
+  }
+]

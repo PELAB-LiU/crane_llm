@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `run_model` function is called in the target cell but has not been defined in any of the executed cells or the current runtime information, which will lead to a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `run_model` function is called in the target cell but has not been defined in any of the executed cells, which will lead to a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `run_model` function is called in the target cell but has not been defined in any of the executed cells or the current runtime information, which will lead to a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `run_model` function is called in the target cell but has not been defined in any of the executed cells, which will lead to a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `run_model` function is called in the target cell but has not been defined in any of the executed cells or the current runtime information, which will lead to a NameError.",
+    "detection": true
+  }
+]

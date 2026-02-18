@@ -1,0 +1,132 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, accuracy_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+## Cell 2:
+
+df= pd.read_csv("data/iris.csv")
+
+## Cell 3:
+
+X = df.drop("species",axis=1)
+Y = df["species"]
+x_train, x_test , y_train, y_test=train_test_split (X ,Y , test_size=0.25, random_state=42)
+
+## Cell 4:
+
+clf = LogisticRegression()
+clf.fit(x_train, y_train)
+
+## Cell 5:
+
+y_pred = clf.predict(x_test)
+
+# Current relevent runtime information:
+{'__method__plt_show': {'doc_importants': {'notes': '**Saving figures to file '
+                                                    'and showing a window at '
+                                                    'the same time** If you '
+                                                    'want an image file as '
+                                                    'well as a user interface '
+                                                    'window, use '
+                                                    '`.pyplot.savefig` before '
+                                                    '`.pyplot.show`. At the '
+                                                    'end of (a blocking) '
+                                                    '``show()`` the figure is '
+                                                    'closed and thus '
+                                                    'unregistered from pyplot. '
+                                                    'Calling `.pyplot.savefig` '
+                                                    'afterwards would save a '
+                                                    'new and thus empty '
+                                                    'figure. This limitation '
+                                                    'of command order does not '
+                                                    'apply if the show is '
+                                                    'non-blocking or if you '
+                                                    'keep a reference to the '
+                                                    'figure and use '
+                                                    '`.Figure.savefig`. '
+                                                    '**Auto-show in jupyter '
+                                                    'notebooks** The jupyter '
+                                                    'backends (activated via '
+                                                    '``%matplotlib inline``, '
+                                                    '``%matplotlib notebook``, '
+                                                    'or ``%matplotlib '
+                                                    'widget``), call '
+                                                    '``show()`` at the end of '
+                                                    'every cell by default. '
+                                                    "Thus, you usually don't "
+                                                    'have to call it '
+                                                    'explicitly there.'},
+                        'signature': {'parameters': [{'annotation': None,
+                                                      'default': None,
+                                                      'kind': 'VAR_POSITIONAL',
+                                                      'name': 'args',
+                                                      'required': True},
+                                                     {'annotation': None,
+                                                      'default': None,
+                                                      'kind': 'VAR_KEYWORD',
+                                                      'name': 'kwargs',
+                                                      'required': True}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ 'confusion_matrix': {'signature': {'parameters': [{'annotation': None,
+                                                    'default': None,
+                                                    'kind': 'POSITIONAL_OR_KEYWORD',
+                                                    'name': 'y_true',
+                                                    'required': True},
+                                                   {'annotation': None,
+                                                    'default': None,
+                                                    'kind': 'POSITIONAL_OR_KEYWORD',
+                                                    'name': 'y_pred',
+                                                    'required': True},
+                                                   {'annotation': None,
+                                                    'default': 'None',
+                                                    'kind': 'KEYWORD_ONLY',
+                                                    'name': 'labels',
+                                                    'required': False},
+                                                   {'annotation': None,
+                                                    'default': 'None',
+                                                    'kind': 'KEYWORD_ONLY',
+                                                    'name': 'sample_weight',
+                                                    'required': False},
+                                                   {'annotation': None,
+                                                    'default': 'None',
+                                                    'kind': 'KEYWORD_ONLY',
+                                                    'name': 'normalize',
+                                                    'required': False}],
+                                    'return_annotation': None},
+                      'type': "<class 'function'>"},
+ 'plt': {'type': "<class 'module'>"},
+ 'y_pred': {'dtype': 'object',
+            'execution_cell_source': {'cellno': 9, 'lineno': 1},
+            'shape': (38,),
+            'type': 'numpy.ndarray',
+            'value_info': {'num_unique': 3,
+                           'unique_values': ['versicolor',
+                                             'setosa',
+                                             'virginica'],
+                           'value_type': 'categorical or object'}},
+ 'y_test': {'dtype': 'object',
+            'has_nan': False,
+            'length': 38,
+            'type': 'pandas.core.series.Series',
+            'value_info': {'num_unique': 3,
+                           'unique_values': ['versicolor',
+                                             'setosa',
+                                             'virginica'],
+                           'value_type': 'categorical or object'}}}
+# Target Cell:
+
+from sklearn import metrics
+confusion_matrix = metrics.confusion_matrix(y_test , y_pred)
+
+cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix , display_labels=[False,True])
+
+cm_display.plot()
+plt.show()

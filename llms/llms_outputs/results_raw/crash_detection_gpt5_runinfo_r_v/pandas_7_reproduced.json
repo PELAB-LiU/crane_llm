@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Column 'released' contains some missing values (has_nan True), and splitting/astype(int) on strings like 'nan' will raise a ValueError when converting to int.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'released' contains some NaN values; converting strings split to int will fail on 'nan'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'released' column contains some NaN values; converting strings like 'nan' split to 'nan' then astype('int') will raise a ValueError. Also if any entry is non-year or empty, conversion fails.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'released' exists with date-like strings; splitting by '-' and casting to int should succeed even if some are NaN since str(NaN) becomes 'nan', which will fail to int. Presence of NaNs indicated, so int() on 'nan' would raise ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "If any released value is NaN or non-numeric after splitting, astype('int') will raise a ValueError. Dataset has NaNs present.",
+    "detection": true
+  }
+]

@@ -1,0 +1,281 @@
+# Executed Cells:
+## Cell 1:
+
+import datetime as dt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from matplotlib import pyplot as plt
+
+import warnings
+warnings.simplefilter(action="ignore")
+
+pd.set_option('display.max_columns',1000)
+pd.set_option('display.width', 500)
+pd.set_option('display.float_format',lambda x : '%.2f' % x)
+
+## Cell 2:
+
+df_ = pd.read_csv("data/dataset.csv", compression="gzip")
+df = df_.copy()
+df.head()
+
+## Cell 3:
+
+def grab_col_names(dataframe, cat_th=10, car_th=20):
+
+    cat_cols = [col for col in dataframe.columns if dataframe[col].dtypes == "O"]
+    num_but_cat = [col for col in dataframe.columns if dataframe[col].nunique() < cat_th and
+                   dataframe[col].dtypes != "O"]
+    cat_but_car = [col for col in dataframe.columns if dataframe[col].nunique() > car_th and
+                   dataframe[col].dtypes == "O"]
+    cat_cols = cat_cols + num_but_cat
+    cat_cols = [col for col in cat_cols if col not in cat_but_car]
+
+
+    num_cols = [col for col in dataframe.columns if dataframe[col].dtypes != "O"]
+    num_cols = [col for col in num_cols if col not in num_but_cat]
+
+    print(f"Observations: {dataframe.shape[0]}")
+    print(f"Variables: {dataframe.shape[1]}")
+    print(f'cat_cols: {len(cat_cols)}')
+    print(f'num_cols: {len(num_cols)}')
+    print(f'cat_but_car: {len(cat_but_car)}')
+    print(f'num_but_cat: {len(num_but_cat)}')
+    return cat_cols, num_cols, cat_but_car
+
+## Cell 4:
+
+cat_cols, num_cols, num_but_cat = grab_col_names(df)
+
+## Cell 5:
+
+def outlier_thresholds(dataframe, col_name, q1=0.01, q3=0.99):
+    quartile1= dataframe[col_name].quantile(q1)
+    quartile3= dataframe[col_name].quantile(q3)
+    interquantile_range = quartile3 -quartile1
+    up_limit= quartile3 +1.5 * interquantile_range
+    low_limit= quartile1 -1.5 * interquantile_range
+    return low_limit, up_limit
+
+## Cell 6:
+
+def replace_with_thresholds(dataframe, variable):
+    low_limit, up_limit = outlier_thresholds(dataframe, variable)
+    dataframe.loc[(dataframe[variable] < low_limit), variable] = low_limit
+    dataframe.loc[(dataframe[variable] > up_limit), variable] = up_limit
+
+for col in num_cols:
+    replace_with_thresholds(df, col)
+
+## Cell 7:
+
+def check_outlier(dataframe, col_name):
+    low_limit, up_limit = outlier_thresholds(dataframe, col_name)
+    if dataframe[(dataframe[col_name] > up_limit) | (dataframe[col_name] < low_limit)].any(axis=None):
+        return True
+    else:
+        return False
+
+check_outlier(df,num_cols)
+
+## Cell 8:
+
+df= df.iloc[:,1:]
+
+## Cell 9:
+
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import MinMaxScaler
+from yellowbrick.cluster import KElbowVisualizer
+from scipy.cluster.hierarchy import linkage
+from scipy.cluster.hierarchy import dendrogram
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.model_selection import cross_val_score, GridSearchCV
+from sklearn.preprocessing import LabelEncoder
+from sklearn.cluster import AgglomerativeClustering
+
+## Cell 10:
+
+cat_cols, num_cols, num_but_cat = grab_col_names(df)
+
+## Cell 11:
+
+df2=df.copy()
+
+## Cell 12:
+
+sc = MinMaxScaler((0, 1))
+df2[num_cols] = sc.fit_transform(df2[num_cols])
+
+## Cell 13:
+
+kmeans = KMeans(n_clusters=30, n_init="auto").fit(df2[["TotalTime","Calories","SugarContent"]])
+
+## Cell 14:
+
+clusters_kmeans = kmeans.labels_
+clusters_kmeans
+
+## Cell 15:
+
+df["kmeans_cluster"] = clusters_kmeans
+df["kmeans_cluster"]= df["kmeans_cluster"] + 1
+df.head()
+
+# Current relevent runtime information:
+{'__method__df_groupby': {'context': {'public_attributes': []},
+                          'doc_importants': {'notes': 'See the `user guide '
+                                                      '<https://pandas.pydata.org/pandas-docs/stable/groupby.html>`__ '
+                                                      'for more detailed usage '
+                                                      'and examples, including '
+                                                      'splitting an object '
+                                                      'into groups, iterating '
+                                                      'through groups, '
+                                                      'selecting a group, '
+                                                      'aggregation, and more.'},
+                          'signature': {'parameters': [{'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'by',
+                                                        'required': False},
+                                                       {'annotation': "'Axis | "
+                                                                      "lib.NoDefault'",
+                                                        'default': '<no_default>',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'axis',
+                                                        'required': False},
+                                                       {'annotation': "'IndexLabel "
+                                                                      "| None'",
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'level',
+                                                        'required': False},
+                                                       {'annotation': "'bool'",
+                                                        'default': 'True',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'as_index',
+                                                        'required': False},
+                                                       {'annotation': "'bool'",
+                                                        'default': 'True',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'sort',
+                                                        'required': False},
+                                                       {'annotation': "'bool'",
+                                                        'default': 'True',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'group_keys',
+                                                        'required': False},
+                                                       {'annotation': "'bool | "
+                                                                      "lib.NoDefault'",
+                                                        'default': '<no_default>',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'observed',
+                                                        'required': False},
+                                                       {'annotation': "'bool'",
+                                                        'default': 'True',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'dropna',
+                                                        'required': False}],
+                                        'return_annotation': "'DataFrameGroupBy'"},
+                          'type': "<class 'method'>"},
+ 'df': {'execution_cell_source': {'cellno': 38, 'lineno': 1},
+        'has_nan': False,
+        'per_column': {'Calories': {'dtype': 'float64',
+                                    'num_unique': 10600,
+                                    'type': 'continuous',
+                                    'value_range': (0.0, 1993.8)},
+                       'CarbohydrateContent': {'dtype': 'float64',
+                                               'num_unique': 2101,
+                                               'type': 'continuous',
+                                               'value_range': (0.0, 269.25)},
+                       'CholesterolContent': {'dtype': 'float64',
+                                              'num_unique': 2985,
+                                              'type': 'continuous',
+                                              'value_range': (0.0, 299.9)},
+                       'CookTime': {'dtype': 'int64',
+                                    'num_unique': 285,
+                                    'type': 'continuous',
+                                    'value_range': (0, 1200)},
+                       'FatContent': {'dtype': 'float64',
+                                      'num_unique': 913,
+                                      'type': 'continuous',
+                                      'value_range': (0.0, 98.9)},
+                       'FiberContent': {'dtype': 'float64',
+                                        'num_unique': 396,
+                                        'type': 'continuous',
+                                        'value_range': (0.0, 39.9)},
+                       'Name': {'dtype': 'object',
+                                'example_values': ['Tunisian Chakchouka',
+                                                   'Flax Pizza Crust',
+                                                   'Zesty Southwest Burg...',
+                                                   'Sherry Cherry Tomato...',
+                                                   'Creamy White Wine &a...'],
+                                'num_unique': 322226,
+                                'type': 'categorical'},
+                       'PrepTime': {'dtype': 'int64',
+                                    'num_unique': 167,
+                                    'type': 'continuous',
+                                    'value_range': (0, 600)},
+                       'ProteinContent': {'dtype': 'float64',
+                                          'num_unique': 1029,
+                                          'type': 'continuous',
+                                          'value_range': (0.0, 142.5)},
+                       'RecipeIngredientParts': {'dtype': 'object',
+                                                 'example_values': ['c("brown '
+                                                                    'sugar '
+                                                                    'subst...',
+                                                                    'c("whole '
+                                                                    'wheat '
+                                                                    'flour...',
+                                                                    'c("chicken '
+                                                                    'breasts",...',
+                                                                    'c("butter", '
+                                                                    '"applesa...',
+                                                                    'c("ground '
+                                                                    'beef", '
+                                                                    '"on...'],
+                                                 'num_unique': 358137,
+                                                 'type': 'categorical'},
+                       'RecipeInstructions': {'dtype': 'object',
+                                              'example_values': ['c("In mixer, '
+                                                                 'beat un...',
+                                                                 'c("Preheat '
+                                                                 'oven to 3...',
+                                                                 'c("Preheat '
+                                                                 'oven to 3...',
+                                                                 'c("Preheat '
+                                                                 'oven to 3...',
+                                                                 'c("Hull the '
+                                                                 'strawber...'],
+                                              'num_unique': 373978,
+                                              'type': 'categorical'},
+                       'SaturatedFatContent': {'dtype': 'float64',
+                                               'num_unique': 130,
+                                               'type': 'continuous',
+                                               'value_range': (0.0, 12.9)},
+                       'SodiumContent': {'dtype': 'float64',
+                                         'num_unique': 20731,
+                                         'type': 'continuous',
+                                         'value_range': (0.0, 2299.8)},
+                       'SugarContent': {'dtype': 'float64',
+                                        'num_unique': 400,
+                                        'type': 'continuous',
+                                        'value_range': (0.0, 39.9)},
+                       'TotalTime': {'dtype': 'float64',
+                                     'num_unique': 641,
+                                     'type': 'continuous',
+                                     'value_range': (0.0, 1834.5)},
+                       'kmeans_cluster': {'dtype': 'int32',
+                                          'num_unique': 30,
+                                          'type': 'continuous',
+                                          'value_range': (1, 30)}},
+        'shape': (375703, 16),
+        'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+df.groupby('kmeans_cluster').agg({1: ['count','mean', 'median', 'sum'],
+                                    2: ['count','mean', 'median', 'sum'],
+                                    3: ['count','mean', 'median', 'sum'],
+                                    4: ['count','mean','median', 'sum']})

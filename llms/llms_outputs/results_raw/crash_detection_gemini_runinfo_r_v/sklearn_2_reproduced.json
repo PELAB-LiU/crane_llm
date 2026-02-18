@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, as indicated by 'is_fitted': False in the runtime information. Attempting to call 'predict' on an unfitted model will raise an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, as indicated by 'is_fitted': False in the runtime information. Attempting to call 'predict' on an unfitted model will raise an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, as indicated by 'is_fitted': False in the runtime information. Attempting to call 'predict' on an unfitted model will raise an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, so calling predict on it will raise an error. The `grid_search.fit(X, y)` call fits the `grid_search` object, not the `DTRmodel` directly.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, so calling predict on it will raise an error. The `grid_search.fit(X, y)` call fits the `grid_search` object, not the `DTRmodel` directly.",
+    "detection": true
+  }
+]

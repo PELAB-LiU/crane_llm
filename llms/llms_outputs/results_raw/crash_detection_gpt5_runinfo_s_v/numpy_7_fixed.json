@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train_images etc. are shaped (N,32,32,3). Code moves axis to (N,3,32,32) before fitting Keras Conv2D which expects channels_last (32,32,3), causing shape mismatch error. Also History accesses 'accuracy' metric key may be 'acc' in some Keras versions, but primary crash is wrong input shape.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_images etc. are shaped (N,32,32,3). Code moves axes to channels-last, then later inside the else branch moves axes again to channels-first only if no saved model, causing mismatch with Keras Conv2D expecting input_shape (32,32,3). This will likely cause a shape error at model.fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The code moves image axes twice: first to channels-last (NHWC) then again to channels-first (NCHW) inside the else block, while the Conv2D model expects input_shape=(32,32,3) (channels-last). This will cause a shape mismatch error during model.fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The code reshapes image data inconsistently: it first sets Keras Conv2D input_shape as channels-last (32,32,3), but later moves axes to channels-first (N, C, H, W) before training, causing a shape mismatch during model.fit/predict. This will raise an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras Conv2D expects channels_last (32,32,3) given input_shape, but code moves axes to channels_first (N,3,32,32) right before training, causing shape mismatch. Also train_labels etc. are shaped (N,1,10) due to to_categorical on (N,1), which can misalign.",
+    "detection": true
+  }
+]

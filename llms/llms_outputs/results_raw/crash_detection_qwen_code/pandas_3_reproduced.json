@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The function `procData` is applied to both `train` and `test` datasets. However, the `RescuerID` encoder is fitted only on the `train` dataset, which may lead to unknown categories in the `test` dataset causing a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `procData` is applied to both `train` and `test` datasets. However, the `RescuerID` encoder is fitted only on the `train` dataset, which may lead to unknown categories in the `test` dataset causing a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `procData` is applied to both `train` and `test` datasets. However, the `RescuerID` encoder is fitted only on the `train` dataset, which may lead to unknown categories in the `test` dataset causing a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `procData` is applied to both `train` and `test` datasets. However, the `RescuerID` encoder is fitted only on the `train` dataset, which may lead to unknown categories in the `test` dataset causing a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `procData` is applied to both `train` and `test` datasets. However, the `RescuerID` encoder is fitted only on the `train` dataset, which may lead to unknown categories in the `test` dataset causing a crash.",
+    "detection": true
+  }
+]

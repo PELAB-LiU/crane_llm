@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "y_pred is not defined before being used to compute MAE, so referencing it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_pred is not defined before being used in mean_absolute_error, so this will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_pred is not defined before being used to compute mean_absolute_error, causing a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_pred is not defined before being used to compute MAE, so referencing it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_pred is not defined before being used to compute mean_absolute_error, causing a NameError.",
+    "detection": true
+  }
+]

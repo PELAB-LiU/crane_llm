@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "StandardScaler.fit_transform requires numeric input; after get_dummies on all columns (including target), shapes of train and test differ drastically (18532 vs 56 features), so scaler fitted on train cannot transform test due to feature mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "StandardScaler.fit_transform requires numeric input; after get_dummies on all columns including target/greek columns, train_df has 18,532 columns while test_df has 56, causing a shape mismatch when applying the fitted scaler to test_df.",
+    "detection": true
+  },
+  {
+    "reasoning": "StandardScaler requires numeric input; after get_dummies on all columns, train_df and test_df are numeric. However, train_df and test_df now have different numbers of columns (18532 vs 56), so scaler fitted on train_df cannot transform test_df due to mismatched feature count.",
+    "detection": true
+  },
+  {
+    "reasoning": "StandardScaler expects numeric inputs; after get_dummies on all columns (including target), both DataFrames should be numeric. Shapes differ but transform handles feature mismatch if columns aligned beforehand; however, columns were dummified independently, so feature sets differ, causing scaler.transform to raise shape mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "StandardScaler requires numeric input; after get_dummies the DataFrames are numeric. Fit on train and transform on test will work since both are dense arrays. No evident crash.",
+    "detection": false
+  }
+]

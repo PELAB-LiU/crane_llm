@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model is compiled with `SparseCategoricalCrossentropy(from_logits=True)` and the final dense layer has a 'softmax' activation. Using `from_logits=True` with a 'softmax' activation is redundant and can lead to numerical instability or incorrect loss calculations, which might cause a crash or unexpected behavior during training.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is compiled with `SparseCategoricalCrossentropy(from_logits=True)`, which expects integer labels. However, the `train_labels` and `val_labels` arrays contain float values, which will cause a crash during training.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is compiled with `SparseCategoricalCrossentropy(from_logits=True)` and the final dense layer has a 'softmax' activation. Using `from_logits=True` with a 'softmax' activation is redundant and can lead to numerical instability or incorrect loss calculations, which might cause a crash or unexpected behavior during training.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is compiled with `SparseCategoricalCrossentropy(from_logits=True)`, which expects integer labels. However, the `train_labels` and `val_labels` arrays contain float values, which will cause a crash during training.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model is compiled with `SparseCategoricalCrossentropy(from_logits=True)` and the final dense layer has a 'softmax' activation. Using `from_logits=True` with a 'softmax' activation is redundant and can lead to numerical instability or incorrect loss calculations, which might cause a crash or unexpected behavior during training.",
+    "detection": true
+  }
+]

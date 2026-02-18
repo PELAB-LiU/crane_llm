@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `plot_pacf` function requires `lags` to be at least 1. Given `len(residuals)` is 92, `max_pacf_lags` will be `92 // 2 - 1 = 46 - 1 = 45`, which is a valid positive integer. Therefore, the `plot_pacf` function will not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `plot_pacf` function requires `lags` to be at least 1. Given `len(residuals)` is 92, `max_pacf_lags` will be `92 // 2 - 1 = 46 - 1 = 45`, which is a valid positive integer. Therefore, the `plot_pacf` function will not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `plot_pacf` function requires `lags` to be at least 1. Given `len(residuals)` is 92, `max_pacf_lags` will be `92 // 2 - 1 = 46 - 1 = 45`, which is a valid positive integer. Therefore, the cell will not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `plot_pacf` function requires `lags` to be at least 1. Given `len(residuals)` is 92, `max_pacf_lags` will be `92 // 2 - 1 = 46 - 1 = 45`, which is a valid positive integer. Therefore, the `plot_pacf` function will not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `plot_pacf` function requires `lags` to be at least 1. Given `len(residuals)` is 92, `max_pacf_lags` will be `92 // 2 - 1 = 46 - 1 = 45`, which is a valid positive integer. Therefore, the cell will not crash.",
+    "detection": false
+  }
+]

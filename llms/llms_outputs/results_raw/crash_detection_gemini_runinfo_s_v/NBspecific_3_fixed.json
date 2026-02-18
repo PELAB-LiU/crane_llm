@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The code calculates F-statistics and its p-value, then plots the actual vs. fitted values. All necessary variables (X_test, y_test, yFit) are defined and have compatible shapes, and the statistical functions and plotting library are imported.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to calculate F-statistics and plot the sample and fitting data. All necessary variables (X_test, y_test, yFit) are defined and have compatible shapes, and the statistical functions and plotting library are imported.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to calculate F-statistics and plot the sample and fitting data. All necessary variables (X_test, y_test, yFit) are defined and have compatible shapes, and the statistical functions and plotting library are imported.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to calculate F-statistics and plot the sample and fitting data. All necessary variables (X_test, y_test, yFit) are defined and have compatible shapes, and the statistical functions and plotting library are imported.",
+    "detection": false
+  },
+  {
+    "reasoning": "The code calculates F-statistics and its p-value, then plots the actual vs. fitted values. All necessary variables (X_test, y_test, yFit) are defined and have compatible shapes, and the statistical functions and plotting library are imported.",
+    "detection": false
+  }
+]

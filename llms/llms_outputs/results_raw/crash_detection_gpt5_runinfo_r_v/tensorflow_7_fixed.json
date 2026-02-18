@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Batch size 64 with only 10 samples and validation_split=0.2 is allowed; Keras accepts dict inputs matching model inputs. Labels are 0-2 integers. No shape/type mismatch evident.",
+    "detection": false
+  },
+  {
+    "reasoning": "Batch size 64 with only 10 samples and validation_split=0.2 is fine; labels are 0-2 and loss expects sparse ints. Inputs match model names. No obvious shape/type issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "model expects inputs matching tokenizer order [input_ids, attention_mask, token_type_ids], but keys used are 'input_word_ids', causing a KeyError when mapping dict inputs; also batch_size 64 > samples 10 is fine. Likely crash due to input names mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "train has only 10 samples but batch_size is 64; Keras can handle this by forming a smaller last batch. Inputs and labels shapes are compatible and model is built. Not certain of a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "Batch size 64 exceeds dataset size 10 but Keras supports this; inputs/labels shapes align (10 samples, 3-class softmax with sparse_categorical_crossentropy). Validation split 0.2 yields valid splits. No clear error expected.",
+    "detection": false
+  }
+]

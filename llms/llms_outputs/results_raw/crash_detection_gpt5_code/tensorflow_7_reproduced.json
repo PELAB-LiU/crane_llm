@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Batch size 64 with only 8 samples and validation_split=0.2 is valid. However, inputs built with variable length are not padded/truncated to max_len=50 expected by the model, causing shape mismatch when feeding to model.fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "BERT inputs built via bert_encode have varying sequence lengths, but the model expects fixed shape (max_len=50). Passing ragged/padded tensors without padding/truncation to length 50 will cause shape mismatch when feeding model.fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects inputs of shape (max_len=50), but bert_encode returns variable-length tensors without padding/truncation to 50, causing shape mismatch. Also batch_size 64 with only 8 samples is fine but validation_split with labels ok.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_input tensors are padded to varying lengths from bert_encode, but the model expects fixed max_len=50; shapes will mismatch causing an error. Also batch_size 64 with only 8 samples is fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model inputs expect fixed length (max_len=50), but bert_encode returns tensors padded to the longest sequence in the batch, likely exceeding 50; shapes will mismatch and cause an error during fit.",
+    "detection": true
+  }
+]

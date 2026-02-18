@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "X is a DataFrame with 12 columns; X_train is a NumPy array with matching second dimension, so constructing a DataFrame with X.columns is valid. Joining with Y_train as a single-column DataFrame of matching row count will succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "X is a DataFrame with columns available; X_train is a NumPy array of matching width (12). Converting X_train to DataFrame with X.columns and joining Y_train as a DataFrame will succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "X_train is a NumPy array of shape (3680, 12) and X has 12 columns; converting to DataFrame with X.columns will work. Y_train is (3680,) and can be made a single-column DataFrame then joined by index.",
+    "detection": false
+  },
+  {
+    "reasoning": "X_train is a NumPy array and X is a DataFrame with 12 columns; creating a DataFrame with X.columns will align. Y_train is a 1D array and can be converted to a single-column DataFrame. Join on index will work since both have same number of rows (3680).",
+    "detection": false
+  },
+  {
+    "reasoning": "X is a DataFrame, but X_train is a NumPy array; attempting to use X.columns will fail because X_train has no link to X's columns attribute in this scope. However, X.columns is available from X, so columns = X.columns is valid. The join requires matching indices; newly created DataFrames will have default indices and will align correctly. No crash expected.",
+    "detection": false
+  }
+]

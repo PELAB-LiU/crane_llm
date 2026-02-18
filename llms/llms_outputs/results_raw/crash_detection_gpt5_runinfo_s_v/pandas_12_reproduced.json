@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "agg is mapping integer keys 1,2,3,4 to column labels, but df has string column names; this will raise a KeyError for missing columns.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg is given integer keys (1,2,3,4) but the DataFrame columns are named strings like 'Calories', 'TotalTime', etc.; these integers are not valid column labels, causing a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg is using integer keys 1,2,3,4, but df columns are named strings like 'Calories', 'TotalTime', and 'kmeans_cluster'. Using nonexistent column labels will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg uses integer keys that don't match any column labels; DataFrame columns are strings like 'Calories', etc., so KeyError will be raised.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg dict uses integer keys 1,2,3,4 which are not valid column names; DataFrame has named columns, so KeyError will occur.",
+    "detection": true
+  }
+]

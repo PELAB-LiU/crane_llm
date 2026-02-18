@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model.compile does not accept class_weight; it belongs to model.fit. Passing class_weight to compile will raise a TypeError for unexpected keyword argument.",
+    "detection": true
+  },
+  {
+    "reasoning": "model input expects (64,64,3) but datasets produce (48,48,3); however this cell only computes class weights and calls model.compile. Passing class_weight to compile is valid and doesn’t use dataset shapes. compute_class_weight uses train_dataset.labels which exist. No crash expected here.",
+    "detection": false
+  },
+  {
+    "reasoning": "model.compile does not accept class_weight; class_weight is only for model.fit. Passing it to compile will raise a TypeError for unexpected keyword argument.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.compile does not accept class_weight; class_weight is only used in model.fit, so passing it to compile will raise an unexpected keyword argument error.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.compile does not accept class_weight; it belongs to model.fit. Passing class_weight to compile will raise a TypeError. Other lines compute weights fine.",
+    "detection": true
+  }
+]

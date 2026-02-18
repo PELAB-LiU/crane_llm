@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `toolbox.mutate` function is called without the `pset` argument, which is required by the `gp.mutUniform` function it wraps. Although `pset` has a default value in the `toolbox.mutate` partial, it is not correctly passed when `toolbox.mutate` is called, leading to a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `toolbox.mutate` function is called without the `pset` argument, which is required by the `gp.mutUniform` function it wraps. Although `pset` has a default value in the `toolbox.mutate` partial, it is not correctly passed when `toolbox.mutate` is called, leading to a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `toolbox.mutate` function is called without the `pset` argument, which is required by the `gp.mutUniform` function it wraps. Although `pset` has a default value in the `toolbox.mutate` partial, it is not correctly passed when `toolbox.mutate` is called, leading to a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `toolbox.mutate` function is called without the `pset` argument, which is required by the `gp.mutUniform` function it wraps. Although `pset` has a default value in the `toolbox.mutate` partial, it is not correctly passed when `toolbox.mutate` is called, leading to a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `toolbox.mutate` function is called without the `pset` argument, which is required by the `gp.mutUniform` function it wraps. Although `pset` has a default value in the `toolbox.mutate` partial, it is not correctly passed when `toolbox.mutate` is called, leading to a TypeError.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train expects each batch to be (cx, cy) tensors used in model and loss, but st_train yields (X, labels) where labels are Python ints, not one-hot tensors matching model output shape, causing shape/type mismatch in loss computation.",
+    "detection": true
+  },
+  {
+    "reasoning": "train() expects each batch to be (cx, cy), but st_train yields (x, y) where y are scalar labels; the model outputs shape [batch,2], while cy is a list/tensor of ints, causing shape/type mismatch in loss computation.",
+    "detection": true
+  },
+  {
+    "reasoning": "In Dataset class, __getitem__ uses len(self.mx - self.X[index]) causing TypeError when subtracting tensors from an int; this will occur during DataLoader iteration inside train().",
+    "detection": true
+  },
+  {
+    "reasoning": "train iterates over batches expecting tuples (cx, cy), but st_train yields (x, y) where y are scalar labels, not the large one-hot tensors cy previously used; model outputs shape [batch,2] while cy will be shape [batch] causing broadcast/shape mismatch in loss (cy - outputs). Likely runtime error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The train function expects batches of (cx, cy) tensors and computes (cy - outputs), but st_train yields labels as Python ints/lists, not one-hot tensors matching model output shape, causing a shape/type mismatch in loss computation.",
+    "detection": true
+  }
+]

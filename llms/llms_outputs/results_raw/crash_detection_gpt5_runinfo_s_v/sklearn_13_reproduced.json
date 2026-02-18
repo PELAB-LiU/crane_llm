@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "x is a single categorical column ('workclass') with string values; scikit-learn's LinearRegression expects numeric features and will raise a ValueError when encountering strings.",
+    "detection": true
+  },
+  {
+    "reasoning": "x contains categorical strings (workclass) and y is also non-numeric labels; LinearRegression.fit expects numeric arrays, so it will raise a ValueError during conversion.",
+    "detection": true
+  },
+  {
+    "reasoning": "x contains non-numeric categorical values from df.workclass; LinearRegression.fit requires numeric features and will raise a ValueError when encountering strings. y is fine but x will cause the crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "x contains a categorical 'workclass' column as strings; LinearRegression.fit expects numeric features and will raise a ValueError when encountering non-numeric data.",
+    "detection": true
+  },
+  {
+    "reasoning": "x is a single categorical/text column (workclass) reshaped to 2D; LinearRegression requires numeric features and will attempt to convert strings to float, causing a ValueError.",
+    "detection": true
+  }
+]

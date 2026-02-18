@@ -1,0 +1,410 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import pearsonr, spearmanr, kendalltau,f_oneway
+sns.set(rc={'figure.figsize':(10, 8)});
+
+## Cell 2:
+
+df = pd.read_csv('data/bank-additional-full.csv', sep=';')
+
+## Cell 3:
+
+df['y'] = df['y'].map({"no":0,"yes":1})
+df['contact'] = df['contact'].map({"cellular":0,"telephone":1})
+df1 = pd.get_dummies(df, columns=['job','marital','education','default','housing','loan','month','day_of_week','poutcome'])
+df1.head(6).T
+
+## Cell 4:
+
+from sklearn.model_selection import train_test_split
+X_train, X_valid, y_train, y_valid = train_test_split(df1.drop('y', axis=1),
+                                                      df1['y'],
+                                                      test_size=0.25,
+                                                      random_state=42)
+
+## Cell 5:
+
+from sklearn.linear_model import LogisticRegression
+log_reg = LogisticRegression()
+log_reg.fit(X_train, y_train)
+y_pred = log_reg.predict(X_valid)
+
+from sklearn.metrics import accuracy_score
+print(accuracy_score(y_valid, y_pred))
+
+## Cell 6:
+
+from sklearn.metrics import precision_score, recall_score, f1_score
+print('Precision:', precision_score(y_valid, y_pred))
+print('Recall:', recall_score(y_valid, y_pred))
+print('F1 score:', f1_score(y_valid, y_pred))
+
+# Current relevent runtime information:
+{'LogisticRegression': {'doc_importants': {'notes': 'The underlying C '
+                                                    'implementation uses a '
+                                                    'random number generator '
+                                                    'to select features when '
+                                                    'fitting the model. It is '
+                                                    'thus not uncommon, to '
+                                                    'have slightly different '
+                                                    'results for the same '
+                                                    'input data. If that '
+                                                    'happens, try with a '
+                                                    'smaller tol parameter. '
+                                                    'Predict output may not '
+                                                    'match that of standalone '
+                                                    'liblinear in certain '
+                                                    'cases. See '
+                                                    ':ref:`differences from '
+                                                    'liblinear '
+                                                    '<liblinear_differences>` '
+                                                    'in the narrative '
+                                                    'documentation.'},
+                        'signature': {'parameters': [{'annotation': None,
+                                                      'default': "'l2'",
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'penalty',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'False',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'dual',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '0.0001',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'tol',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '1.0',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'C',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'True',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'fit_intercept',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '1',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'intercept_scaling',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'class_weight',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'random_state',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': "'lbfgs'",
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'solver',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '100',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'max_iter',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': "'auto'",
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'multi_class',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '0',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'verbose',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'False',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'warm_start',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'n_jobs',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'l1_ratio',
+                                                      'required': False}],
+                                      'return_annotation': None},
+                        'type': "<class 'type'>"},
+ 'X_train': {'has_nan': False,
+             'per_column_max_20': {'age': {'dtype': 'int64',
+                                              'num_unique': 77,
+                                              'type': 'continuous',
+                                              'value_range': (17, 98)},
+                                      'campaign': {'dtype': 'int64',
+                                                   'num_unique': 40,
+                                                   'type': 'continuous',
+                                                   'value_range': (1, 43)},
+                                      'cons.conf.idx': {'dtype': 'float64',
+                                                        'num_unique': 26,
+                                                        'type': 'continuous',
+                                                        'value_range': (-50.8,
+                                                                        -26.9)},
+                                      'cons.price.idx': {'dtype': 'float64',
+                                                         'num_unique': 26,
+                                                         'type': 'continuous',
+                                                         'value_range': (92.201,
+                                                                         94.767)},
+                                      'contact': {'dtype': 'int64',
+                                                  'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0, 1)},
+                                      'duration': {'dtype': 'int64',
+                                                   'num_unique': 1448,
+                                                   'type': 'continuous',
+                                                   'value_range': (0, 4918)},
+                                      'emp.var.rate': {'dtype': 'float64',
+                                                       'num_unique': 10,
+                                                       'type': 'continuous',
+                                                       'value_range': (-3.4,
+                                                                       1.4)},
+                                      'euribor3m': {'dtype': 'float64',
+                                                    'num_unique': 312,
+                                                    'type': 'continuous',
+                                                    'value_range': (0.634,
+                                                                    5.045)},
+                                      'job_admin.': {'dtype': 'bool',
+                                                     'num_unique': 2,
+                                                     'type': 'binary',
+                                                     'value_range': (False,
+                                                                     True)},
+                                      'job_blue-collar': {'dtype': 'bool',
+                                                          'num_unique': 2,
+                                                          'type': 'binary',
+                                                          'value_range': (False,
+                                                                          True)},
+                                      'job_entrepreneur': {'dtype': 'bool',
+                                                           'num_unique': 2,
+                                                           'type': 'binary',
+                                                           'value_range': (False,
+                                                                           True)},
+                                      'job_housemaid': {'dtype': 'bool',
+                                                        'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (False,
+                                                                        True)},
+                                      'job_management': {'dtype': 'bool',
+                                                         'num_unique': 2,
+                                                         'type': 'binary',
+                                                         'value_range': (False,
+                                                                         True)},
+                                      'job_retired': {'dtype': 'bool',
+                                                      'num_unique': 2,
+                                                      'type': 'binary',
+                                                      'value_range': (False,
+                                                                      True)},
+                                      'job_self-employed': {'dtype': 'bool',
+                                                            'num_unique': 2,
+                                                            'type': 'binary',
+                                                            'value_range': (False,
+                                                                            True)},
+                                      'job_services': {'dtype': 'bool',
+                                                       'num_unique': 2,
+                                                       'type': 'binary',
+                                                       'value_range': (False,
+                                                                       True)},
+                                      'job_student': {'dtype': 'bool',
+                                                      'num_unique': 2,
+                                                      'type': 'binary',
+                                                      'value_range': (False,
+                                                                      True)},
+                                      'nr.employed': {'dtype': 'float64',
+                                                      'num_unique': 11,
+                                                      'type': 'continuous',
+                                                      'value_range': (4963.6,
+                                                                      5228.1)},
+                                      'pdays': {'dtype': 'int64',
+                                                'num_unique': 26,
+                                                'type': 'continuous',
+                                                'value_range': (0, 999)},
+                                      'previous': {'dtype': 'int64',
+                                                   'num_unique': 8,
+                                                   'type': 'categorical_numeric',
+                                                   'value_range': (0, 7)}},
+             'shape': (30891, 62),
+             'type': 'pandas.core.frame.DataFrame'},
+ 'X_valid': {'has_nan': False,
+             'per_column_max_20': {'age': {'dtype': 'int64',
+                                              'num_unique': 73,
+                                              'type': 'continuous',
+                                              'value_range': (17, 94)},
+                                      'campaign': {'dtype': 'int64',
+                                                   'num_unique': 36,
+                                                   'type': 'continuous',
+                                                   'value_range': (1, 56)},
+                                      'cons.conf.idx': {'dtype': 'float64',
+                                                        'num_unique': 26,
+                                                        'type': 'continuous',
+                                                        'value_range': (-50.8,
+                                                                        -26.9)},
+                                      'cons.price.idx': {'dtype': 'float64',
+                                                         'num_unique': 26,
+                                                         'type': 'continuous',
+                                                         'value_range': (92.201,
+                                                                         94.767)},
+                                      'contact': {'dtype': 'int64',
+                                                  'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0, 1)},
+                                      'duration': {'dtype': 'int64',
+                                                   'num_unique': 1111,
+                                                   'type': 'continuous',
+                                                   'value_range': (2, 3509)},
+                                      'emp.var.rate': {'dtype': 'float64',
+                                                       'num_unique': 10,
+                                                       'type': 'continuous',
+                                                       'value_range': (-3.4,
+                                                                       1.4)},
+                                      'euribor3m': {'dtype': 'float64',
+                                                    'num_unique': 276,
+                                                    'type': 'continuous',
+                                                    'value_range': (0.634,
+                                                                    5.045)},
+                                      'job_admin.': {'dtype': 'bool',
+                                                     'num_unique': 2,
+                                                     'type': 'binary',
+                                                     'value_range': (False,
+                                                                     True)},
+                                      'job_blue-collar': {'dtype': 'bool',
+                                                          'num_unique': 2,
+                                                          'type': 'binary',
+                                                          'value_range': (False,
+                                                                          True)},
+                                      'job_entrepreneur': {'dtype': 'bool',
+                                                           'num_unique': 2,
+                                                           'type': 'binary',
+                                                           'value_range': (False,
+                                                                           True)},
+                                      'job_housemaid': {'dtype': 'bool',
+                                                        'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (False,
+                                                                        True)},
+                                      'job_management': {'dtype': 'bool',
+                                                         'num_unique': 2,
+                                                         'type': 'binary',
+                                                         'value_range': (False,
+                                                                         True)},
+                                      'job_retired': {'dtype': 'bool',
+                                                      'num_unique': 2,
+                                                      'type': 'binary',
+                                                      'value_range': (False,
+                                                                      True)},
+                                      'job_self-employed': {'dtype': 'bool',
+                                                            'num_unique': 2,
+                                                            'type': 'binary',
+                                                            'value_range': (False,
+                                                                            True)},
+                                      'job_services': {'dtype': 'bool',
+                                                       'num_unique': 2,
+                                                       'type': 'binary',
+                                                       'value_range': (False,
+                                                                       True)},
+                                      'job_student': {'dtype': 'bool',
+                                                      'num_unique': 2,
+                                                      'type': 'binary',
+                                                      'value_range': (False,
+                                                                      True)},
+                                      'nr.employed': {'dtype': 'float64',
+                                                      'num_unique': 11,
+                                                      'type': 'continuous',
+                                                      'value_range': (4963.6,
+                                                                      5228.1)},
+                                      'pdays': {'dtype': 'int64',
+                                                'num_unique': 24,
+                                                'type': 'continuous',
+                                                'value_range': (0, 999)},
+                                      'previous': {'dtype': 'int64',
+                                                   'num_unique': 7,
+                                                   'type': 'categorical_numeric',
+                                                   'value_range': (0, 6)}},
+             'shape': (10297, 62),
+             'type': 'pandas.core.frame.DataFrame'},
+ 'f1_score': {'doc_importants': {'notes': 'When ``true positive + false '
+                                          'positive == 0``, precision is '
+                                          'undefined. When ``true positive + '
+                                          'false negative == 0``, recall is '
+                                          'undefined. In such cases, by '
+                                          'default the metric will be set to '
+                                          '0, as will f-score, and '
+                                          '``UndefinedMetricWarning`` will be '
+                                          'raised. This behavior can be '
+                                          'modified with ``zero_division``.'},
+              'signature': {'parameters': [{'annotation': None,
+                                            'default': None,
+                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                            'name': 'y_true',
+                                            'required': True},
+                                           {'annotation': None,
+                                            'default': None,
+                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                            'name': 'y_pred',
+                                            'required': True},
+                                           {'annotation': None,
+                                            'default': 'None',
+                                            'kind': 'KEYWORD_ONLY',
+                                            'name': 'labels',
+                                            'required': False},
+                                           {'annotation': None,
+                                            'default': '1',
+                                            'kind': 'KEYWORD_ONLY',
+                                            'name': 'pos_label',
+                                            'required': False},
+                                           {'annotation': None,
+                                            'default': "'binary'",
+                                            'kind': 'KEYWORD_ONLY',
+                                            'name': 'average',
+                                            'required': False},
+                                           {'annotation': None,
+                                            'default': 'None',
+                                            'kind': 'KEYWORD_ONLY',
+                                            'name': 'sample_weight',
+                                            'required': False},
+                                           {'annotation': None,
+                                            'default': "'warn'",
+                                            'kind': 'KEYWORD_ONLY',
+                                            'name': 'zero_division',
+                                            'required': False}],
+                            'return_annotation': None},
+              'type': "<class 'function'>"},
+ 'y_pred': {'dtype': 'int64',
+            'execution_cell_source': {'cellno': 9, 'lineno': 4},
+            'has_nan': False,
+            'shape': (10297,),
+            'type': 'numpy.ndarray',
+            'value_info': {'unique_values': [0, 1], 'value_type': 'binary'},
+            'value_range': (0, 1)},
+ 'y_train': {'dtype': 'int64',
+             'has_nan': False,
+             'length': 30891,
+             'type': 'pandas.core.series.Series',
+             'value_info': {'unique_values': [0, 1], 'value_type': 'binary'}},
+ 'y_valid': {'dtype': 'int64',
+             'has_nan': False,
+             'length': 10297,
+             'type': 'pandas.core.series.Series',
+             'value_info': {'unique_values': [0, 1], 'value_type': 'binary'}}}
+# Target Cell:
+
+
+log_reg2 = LogisticRegression(max_iter=1000, solver='liblinear', penalty='elasticnet')
+log_reg2.fit(X_train, y_train)
+y_pred = log_reg2.predict(X_valid)
+
+print('F1 score:', f1_score(y_valid, y_pred, average = "weighted"))

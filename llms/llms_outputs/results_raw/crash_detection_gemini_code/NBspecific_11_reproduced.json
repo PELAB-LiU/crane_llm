@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'adv' variable has a shape of (3, 224, 224), which is not directly displayable by `plt.imshow()` as it expects (M, N) or (M, N, 3) or (M, N, 4). The image needs to be transposed to (224, 224, 3) before plotting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'adv' variable has a shape of (3, 224, 224), which is not directly displayable by `plt.imshow()` as it expects (M, N) or (M, N, 3) or (M, N, 4). The image needs to be transposed to (224, 224, 3) before plotting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'adv' variable has a shape of (3, 224, 224), which is not directly displayable by `plt.imshow()` as it expects (M, N) or (M, N, 3) or (M, N, 4). The image needs to be transposed to (224, 224, 3) before plotting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'adv' variable has a shape of (3, 224, 224), which is not directly displayable by `plt.imshow()` as it expects (M, N) or (M, N, 3) or (M, N, 4). The image needs to be transposed to (224, 224, 3) before plotting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'adv' variable has a shape of (3, 224, 224), which is not directly displayable by `plt.imshow()` as it expects (M, N) or (M, N, 3) or (M, N, 4). The image needs to be transposed to (224, 224, 3) before plotting.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "StandardScaler expects numeric arrays; after get_dummies both DataFrames are boolean which can be cast to numeric, so fit_transform and transform should work. Shapes differ but that is allowed across fit/transform.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler requires numeric array-like; after get_dummies both DataFrames are boolean which can be cast to numeric, but train_df and test_df have mismatched columns (18532 vs 56), so transform will raise a feature number mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "StandardScaler expects numeric input, but train_df/test_df are full of boolean dummy columns; scikit-learn can handle boolean as numeric. Shapes are consistent, no NaNs. Transform should work.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler expects numeric input; after get_dummies, data is boolean which is castable to numeric, but train_df and test_df have mismatched columns (18532 vs 56), causing scaler.transform to fail due to different feature counts.",
+    "detection": true
+  },
+  {
+    "reasoning": "StandardScaler expects numeric input; after get_dummies both DataFrames are boolean which can be cast to numeric, and shapes align for transform. No NaNs present, so fit_transform and transform should succeed.",
+    "detection": false
+  }
+]

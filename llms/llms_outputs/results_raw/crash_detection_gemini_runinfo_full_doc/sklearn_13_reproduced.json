@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'x' array, which is used as input to LinearRegression.fit(), has an 'object' dtype. LinearRegression expects numerical input, so this will cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'x' array, which is used as input to LinearRegression.fit(), has an 'object' dtype. LinearRegression expects numerical input, so this will cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'x' array, which is used as input to LinearRegression.fit(), has an 'object' dtype. LinearRegression expects numerical input, so this will cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'x' array, which is used as input to LinearRegression.fit(), has an 'object' dtype. LinearRegression expects numerical input, so this will cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'x' array, which is used as input to LinearRegression.fit(), has an 'object' dtype. LinearRegression expects numerical input, so this will cause an error.",
+    "detection": true
+  }
+]

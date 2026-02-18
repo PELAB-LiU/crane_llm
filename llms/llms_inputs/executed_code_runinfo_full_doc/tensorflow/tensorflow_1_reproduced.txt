@@ -1,0 +1,225 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras import layers
+from matplotlib import pyplot as plt
+
+## Cell 2:
+
+import pathlib
+data_dir = 'data/web_scraped_small'
+data_dir = pathlib.Path(data_dir).with_suffix('')
+
+## Cell 3:
+
+image_count = len(list(data_dir.glob('*/*.jpg')))
+image_count
+
+## Cell 4:
+
+import PIL
+princess = list(data_dir.glob('princess/*'))
+PIL.Image.open(str(princess[1]))
+
+## Cell 5:
+
+image_height, image_width = PIL.Image.open(str(princess[1])).size
+batch_size,epochs = 64,10
+
+## Cell 6:
+
+train_ds = tf.keras.utils.image_dataset_from_directory(
+    data_dir,
+    validation_split=0.2,
+    subset='training',
+    image_size=(image_height, image_width),
+    seed = 1,
+    shuffle=True,
+    batch_size=batch_size
+)
+
+## Cell 7:
+
+val_ds = tf.keras.utils.image_dataset_from_directory(
+    data_dir,
+    validation_split=0.2,
+    subset='validation',
+    image_size=(image_height, image_width),
+    seed = 1,
+    shuffle=True,
+    batch_size=batch_size
+)
+
+## Cell 8:
+
+normalization_layer = layers.Rescaling(1./255)
+
+## Cell 9:
+
+from tensorflow import keras
+data_augmentation = keras.Sequential(
+  [
+    layers.RandomFlip("horizontal",
+                      input_shape=(image_height,
+                                  image_width,
+                                  3)),
+    layers.RandomRotation(0.1),
+    layers.RandomZoom(0.1),
+  ]
+)
+
+## Cell 10:
+
+num_of_classes = len(train_ds.class_names)
+num_of_classes
+
+## Cell 11:
+
+model = Sequential([
+  data_augmentation,
+  normalization_layer,
+  layers.Conv2D(16, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Conv2D(32, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Conv2D(64, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Dropout(0.2),
+  layers.Flatten(),
+  layers.Dense(128, activation='relu'),
+  layers.Dense(num_of_classes, name="outputs")
+])
+
+## Cell 12:
+
+model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
+
+# Current relevent runtime information:
+{'__method__model_fit': {'context': {'public_attributes': ['activity_regularizer',
+                                                           'autocast',
+                                                           'build',
+                                                           'built',
+                                                           'compiled',
+                                                           'loss',
+                                                           'name',
+                                                           'optimizer',
+                                                           'predict_function',
+                                                           'steps_per_execution',
+                                                           'stop_training',
+                                                           'supports_jit',
+                                                           'test_function',
+                                                           'train_function']},
+                         'signature': {'parameters': [{'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'x',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'y',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'batch_size',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': '1',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'epochs',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': "'auto'",
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'verbose',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'callbacks',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': '0.0',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'validation_split',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'validation_data',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'True',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'shuffle',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'class_weight',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'sample_weight',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': '0',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'initial_epoch',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'steps_per_epoch',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'validation_steps',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'validation_batch_size',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': '1',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'validation_freq',
+                                                       'required': False}],
+                                       'return_annotation': None},
+                         'type': "<class 'method'>"},
+ 'model': {'execution_cell_source': {'cellno': 14, 'lineno': 1},
+           'signature': {'parameters': [{'annotation': None,
+                                         'default': None,
+                                         'kind': 'VAR_POSITIONAL',
+                                         'name': 'args',
+                                         'required': True},
+                                        {'annotation': None,
+                                         'default': None,
+                                         'kind': 'VAR_KEYWORD',
+                                         'name': 'kwargs',
+                                         'required': True}],
+                         'return_annotation': None},
+           'type': "<class 'keras.src.models.sequential.Sequential'>"},
+ 'train_ds': {'element_spec': '(TensorSpec(shape=(None, 600, 472, 3), '
+                              'dtype=tf.float32, name=None), '
+                              'TensorSpec(shape=(None,), dtype=tf.int32, '
+                              'name=None))',
+              'execution_cell_source': {'cellno': 7, 'lineno': 1},
+              'type': 'tensorflow.python.data.ops.prefetch_op._PrefetchDataset'},
+ 'val_ds': {'element_spec': '(TensorSpec(shape=(None, 600, 472, 3), '
+                            'dtype=tf.float32, name=None), '
+                            'TensorSpec(shape=(None,), dtype=tf.int32, '
+                            'name=None))',
+            'execution_cell_source': {'cellno': 8, 'lineno': 1},
+            'type': 'tensorflow.python.data.ops.prefetch_op._PrefetchDataset'}}
+# Target Cell:
+
+history = model.fit(train_ds,validation_data=val_ds, epochs=1)

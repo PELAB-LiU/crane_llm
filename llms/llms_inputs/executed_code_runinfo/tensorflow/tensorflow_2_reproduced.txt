@@ -1,0 +1,100 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy
+import matplotlib.pyplot as plt
+import os
+
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+## Cell 2:
+
+src_path_train = 'data_small/training_set'
+src_path_test = 'data_small/test_set'
+
+train_datagen = ImageDataGenerator(
+        rescale = 1 / 255.0,
+
+        validation_split = 0.20)
+
+test_datagen = ImageDataGenerator(rescale = 1 / 255.0)
+
+## Cell 3:
+
+batch_size = 30
+train_generator = train_datagen.flow_from_directory(
+    directory= src_path_train,
+    target_size= (223, 223),
+    color_mode= "rgb",
+    batch_size= batch_size,
+    class_mode= "categorical",
+    subset= 'training',
+    shuffle= True,
+    seed= 40
+)
+valid_generator = train_datagen.flow_from_directory(
+    directory= src_path_train,
+    target_size= (223, 223),
+    color_mode= "rgb",
+    batch_size= batch_size,
+    class_mode= "categorical",
+    subset= 'validation',
+    shuffle= True,
+    seed= 40
+)
+
+## Cell 4:
+
+test_generator = test_datagen.flow_from_directory(
+    directory=src_path_test,
+    target_size=(223, 223),
+    color_mode="rgb",
+    batch_size=1,
+    class_mode="categorical",
+    shuffle=False,
+    seed=40
+)
+
+# Current relevent runtime information:
+{'test_generator': {'batch_size': 1,
+                    'execution_cell_source': {'cellno': 4, 'lineno': 1},
+                    'image_shape': (223, 223, 3),
+                    'n_samples': 8,
+                    'num_classes': 2,
+                    'target_size': (223, 223),
+                    'type': '<class '
+                            "'keras.src.legacy.preprocessing.image.DirectoryIterator'>"},
+ 'train_generator': {'batch_size': 30,
+                     'execution_cell_source': {'cellno': 3, 'lineno': 2},
+                     'image_shape': (223, 223, 3),
+                     'n_samples': 8,
+                     'num_classes': 2,
+                     'target_size': (223, 223),
+                     'type': '<class '
+                             "'keras.src.legacy.preprocessing.image.DirectoryIterator'>"},
+ 'valid_generator': {'batch_size': 30,
+                     'execution_cell_source': {'cellno': 3, 'lineno': 12},
+                     'image_shape': (223, 223, 3),
+                     'n_samples': 2,
+                     'num_classes': 2,
+                     'target_size': (223, 223),
+                     'type': '<class '
+                             "'keras.src.legacy.preprocessing.image.DirectoryIterator'>"}}
+# Target Cell:
+
+def prepare_model():
+    model = Sequential()
+    model.add(Conv2D(32,kernel_size=(3,3),activation='relu',input_shape=(100, 100, 3)))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Flatten())
+    model.add(Dense(16, activation='relu'))
+    model.add(Dense(2, activation='softmax'))
+    model.compile(loss="categorical_crossentropy",optimizer="adam",metrics=['accuracy'])
+    return model
+model = prepare_model()
+model.fit(train_generator,
+                    validation_data = valid_generator,
+                    epochs=5)
+model.evaluate(test_generator)

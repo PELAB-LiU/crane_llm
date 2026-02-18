@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "matplotlib.pyplot.scatter is 2D and does not accept a third positional array or zlabel; also plt.zlabel does not exist. This will raise errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "matplotlib.pyplot.scatter does not accept a third positional array for z; 3D plotting requires Axes3D with ax.scatter and plt.zlabel doesn't exist. This will raise errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "plt.scatter in 2D does not accept a third positional coordinate or zlabel; also matplotlib has no plt.zlabel. This will raise errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "matplotlib.pyplot.scatter does not accept a third positional array for z; also plt.zlabel does not exist. This will raise errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "matplotlib.pyplot.scatter does not accept a third positional array for z without a 3D Axes, and plt.zlabel does not exist. This will raise errors (missing 3D projection and AttributeError for zlabel).",
+    "detection": true
+  }
+]

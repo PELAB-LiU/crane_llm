@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The Sequential model with a HuggingFaceLayer expects tensor dict inputs (e.g., input_ids, attention_mask), but train_data is a pandas Series of raw text, so input shape/type mismatch will raise an error during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The Sequential model expects tensor inputs matching the BERT model's required dict of token ids/attention masks, but train_data is a pandas Series of raw strings; this input shape/type mismatch will raise an error during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras Sequential with a HuggingFace TFAutoModel first layer expects dict/tensor inputs (input_ids, attention_mask), but fit is given raw text Series; input shape mismatch will raise an error before training.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects tokenized tensor inputs matching BERT’s signature, but fit() is given raw text Series and labels; input shape/type mismatch will raise an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The Sequential model's first layer is a HuggingFace BERT that expects tokenized tensor inputs (dict of input_ids, attention_mask, etc.), but fit is given raw text Series and labels; input shape/type mismatch will raise an error.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model_predict updates w using dw.T, causing w shape to become (1,4) instead of expected (4,1). Subsequent np.dot(w, X_tr_arr.T) expects w as (4,1) for broadcasting with X_tr_arr.T (4,75), leading to shape mismatch or incorrect operations.",
+    "detection": true
+  },
+  {
+    "reasoning": "model_predict updates w using dw.T causing w shape (1,n_features) while later sigmoid_activation expects w (1,n_features) with X.T shape (4,75); however model_predict internally uses model_optimize from Cell 14 which expects w shape (n_features,1) with X shape (75,4), so initial w from weightInitialization is (1,4) causing shape misalignment in np.dot(X, w). This will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "model_predict uses model_optimize from Cell 14, which expects w shape (n_features,1) and updates w without transpose, but Target Cell initializes w as shape (1,n_features) from weightInitialization, causing shape mismatch during np.dot(X, w).",
+    "detection": true
+  },
+  {
+    "reasoning": "model_predict updates w using dw.T while model_optimize (overwritten) returns dw of shape (4,1); w from weightInitialization is (1,4), causing a shape mismatch when computing sigmoid_activation(np.dot(w, X.T)+b) where w is (4,1) vs expected (1,4). This will raise a ValueError in np.dot.",
+    "detection": true
+  },
+  {
+    "reasoning": "model_predict updates w using dw.T, producing w shaped (1, n_features) whereas model_optimize (in Cell 14) expects w shape (n_features, 1); this causes a shape mismatch in np.dot(X, w) and will crash.",
+    "detection": true
+  }
+]

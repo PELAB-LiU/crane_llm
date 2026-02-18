@@ -1,0 +1,780 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA, TruncatedSVD
+import matplotlib.patches as mpatches
+import time
+import plotly.figure_factory as ff
+from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+import collections
+
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from imblearn.pipeline import make_pipeline as imbalanced_make_pipeline
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import NearMiss
+from imblearn.metrics import classification_report_imbalanced
+from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, accuracy_score, classification_report
+from collections import Counter
+from sklearn.model_selection import KFold, StratifiedKFold
+import warnings
+warnings.filterwarnings("ignore")
+
+
+## Cell 2:
+
+df = pd.read_csv('data/creditcard.csv')
+df.head()
+
+## Cell 3:
+
+data_df = df.copy()
+data_df['Hour'] = data_df['Time'].apply(lambda x: np.floor(x / 3600))
+
+tmp = data_df.groupby(['Hour', 'Class'])['Amount'].aggregate(['min', 'max', 'count', 'sum', 'mean', 'median', 'var']).reset_index()
+data_df_1 = pd.DataFrame(tmp)
+data_df_1.columns = ['Hour', 'Class', 'Min', 'Max', 'Transactions', 'Sum', 'Mean', 'Median', 'Var']
+data_df_1.head()
+
+# Current relevent runtime information:
+{'__method__data_df_columns': {'type': '<class '
+                                       "'pandas.core.indexes.base.Index'>"},
+ '__method__data_df_loc': {'signature': {'parameters': [{'annotation': "'Axis "
+                                                                       '| '
+                                                                       "None'",
+                                                         'default': 'None',
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'axis',
+                                                         'required': False}],
+                                         'return_annotation': "'Self'"},
+                           'type': '<class '
+                                   "'pandas.core.indexing._LocIndexer'>"},
+ '__method__plt_figure': {'doc_importants': {'notes': 'A newly created figure '
+                                                      'is passed to the '
+                                                      '`~.FigureCanvasBase.new_manager` '
+                                                      'method or the '
+                                                      '`new_figure_manager` '
+                                                      'function provided by '
+                                                      'the current backend, '
+                                                      'which install a canvas '
+                                                      'and a manager on the '
+                                                      'figure. Once this is '
+                                                      'done, '
+                                                      ':rc:`figure.hooks` are '
+                                                      'called, one at a time, '
+                                                      'on the figure; these '
+                                                      'hooks allow arbitrary '
+                                                      'customization of the '
+                                                      'figure (e.g., attaching '
+                                                      'callbacks) or of '
+                                                      'associated elements '
+                                                      '(e.g., modifying the '
+                                                      'toolbar).  See '
+                                                      ':doc:`/gallery/user_interfaces/mplcvd` '
+                                                      'for an example of '
+                                                      'toolbar customization. '
+                                                      'If you are creating '
+                                                      'many figures, make sure '
+                                                      'you explicitly call '
+                                                      '`.pyplot.close` on the '
+                                                      'figures you are not '
+                                                      'using, because this '
+                                                      'will enable pyplot to '
+                                                      'properly clean up the '
+                                                      'memory. '
+                                                      '`~matplotlib.rcParams` '
+                                                      'defines the default '
+                                                      'values, which can be '
+                                                      'modified in the '
+                                                      'matplotlibrc file.'},
+                          'signature': {'parameters': [{'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'num',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'figsize',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'dpi',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'facecolor',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'edgecolor',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'True',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'frameon',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': '<class '
+                                                                   "'matplotlib.figure.Figure'>",
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'FigureClass',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'False',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'clear',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ '__method__plt_show': {'doc_importants': {'notes': '**Saving figures to file '
+                                                    'and showing a window at '
+                                                    'the same time** If you '
+                                                    'want an image file as '
+                                                    'well as a user interface '
+                                                    'window, use '
+                                                    '`.pyplot.savefig` before '
+                                                    '`.pyplot.show`. At the '
+                                                    'end of (a blocking) '
+                                                    '``show()`` the figure is '
+                                                    'closed and thus '
+                                                    'unregistered from pyplot. '
+                                                    'Calling `.pyplot.savefig` '
+                                                    'afterwards would save a '
+                                                    'new and thus empty '
+                                                    'figure. This limitation '
+                                                    'of command order does not '
+                                                    'apply if the show is '
+                                                    'non-blocking or if you '
+                                                    'keep a reference to the '
+                                                    'figure and use '
+                                                    '`.Figure.savefig`. '
+                                                    '**Auto-show in jupyter '
+                                                    'notebooks** The jupyter '
+                                                    'backends (activated via '
+                                                    '``%matplotlib inline``, '
+                                                    '``%matplotlib notebook``, '
+                                                    'or ``%matplotlib '
+                                                    'widget``), call '
+                                                    '``show()`` at the end of '
+                                                    'every cell by default. '
+                                                    "Thus, you usually don't "
+                                                    'have to call it '
+                                                    'explicitly there.'},
+                        'signature': {'parameters': [{'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'block',
+                                                      'required': False}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ '__method__plt_subplot': {'doc_importants': {'notes': 'Creating a new Axes '
+                                                       'will delete any '
+                                                       'preexisting Axes that '
+                                                       'overlaps with it '
+                                                       'beyond sharing a '
+                                                       'boundary:: import '
+                                                       'matplotlib.pyplot as '
+                                                       'plt # plot a line, '
+                                                       'implicitly creating a '
+                                                       'subplot(111) '
+                                                       'plt.plot([1, 2, 3]) # '
+                                                       'now create a subplot '
+                                                       'which represents the '
+                                                       'top plot of a grid # '
+                                                       'with 2 rows and 1 '
+                                                       'column. Since this '
+                                                       'subplot will overlap '
+                                                       'the # first, the plot '
+                                                       '(and its axes) '
+                                                       'previously created, '
+                                                       'will be removed '
+                                                       'plt.subplot(211) If '
+                                                       'you do not want this '
+                                                       'behavior, use the '
+                                                       '`.Figure.add_subplot` '
+                                                       'method or the '
+                                                       '`.pyplot.axes` '
+                                                       'function instead. If '
+                                                       'no *kwargs* are passed '
+                                                       'and there exists an '
+                                                       'Axes in the location '
+                                                       'specified by *args* '
+                                                       'then that Axes will be '
+                                                       'returned rather than a '
+                                                       'new Axes being '
+                                                       'created. If *kwargs* '
+                                                       'are passed and there '
+                                                       'exists an Axes in the '
+                                                       'location specified by '
+                                                       '*args*, the projection '
+                                                       'type is the same, and '
+                                                       'the *kwargs* match '
+                                                       'with the existing '
+                                                       'Axes, then the '
+                                                       'existing Axes is '
+                                                       'returned.  Otherwise a '
+                                                       'new Axes is created '
+                                                       'with the specified '
+                                                       'parameters.  We save a '
+                                                       'reference to the '
+                                                       '*kwargs* which we use '
+                                                       'for this comparison.  '
+                                                       'If any of the values '
+                                                       'in *kwargs* are '
+                                                       'mutable we will not '
+                                                       'detect the case where '
+                                                       'they are mutated. In '
+                                                       'these cases we suggest '
+                                                       'using '
+                                                       '`.Figure.add_subplot` '
+                                                       'and the explicit Axes '
+                                                       'API rather than the '
+                                                       'implicit pyplot API.'},
+                           'signature': {'parameters': [{'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'VAR_POSITIONAL',
+                                                         'name': 'args',
+                                                         'required': True},
+                                                        {'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'VAR_KEYWORD',
+                                                         'name': 'kwargs',
+                                                         'required': True}],
+                                         'return_annotation': None},
+                           'type': "<class 'function'>"},
+ '__method__plt_subplots': {'signature': {'parameters': [{'annotation': None,
+                                                          'default': '1',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'nrows',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '1',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'ncols',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'False',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'sharex',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'False',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'sharey',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'True',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'squeeze',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'width_ratios',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'height_ratios',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'subplot_kw',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'gridspec_kw',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': None,
+                                                          'kind': 'VAR_KEYWORD',
+                                                          'name': 'fig_kw',
+                                                          'required': True}],
+                                          'return_annotation': None},
+                            'type': "<class 'function'>"},
+ '__method__plt_tick_params': {'signature': {'parameters': [{'annotation': None,
+                                                             'default': "'both'",
+                                                             'kind': 'POSITIONAL_OR_KEYWORD',
+                                                             'name': 'axis',
+                                                             'required': False},
+                                                            {'annotation': None,
+                                                             'default': None,
+                                                             'kind': 'VAR_KEYWORD',
+                                                             'name': 'kwargs',
+                                                             'required': True}],
+                                             'return_annotation': None},
+                               'type': "<class 'function'>"},
+ '__method__plt_xlabel': {'signature': {'parameters': [{'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'xlabel',
+                                                        'required': True},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'fontdict',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'labelpad',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'loc',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ '__method__plt_xticks': {'doc_importants': {'notes': 'Calling this function '
+                                                      'with no arguments (e.g. '
+                                                      '``xticks()``) is the '
+                                                      'pyplot equivalent of '
+                                                      'calling '
+                                                      '`~.Axes.get_xticks` and '
+                                                      '`~.Axes.get_xticklabels` '
+                                                      'on the current axes. '
+                                                      'Calling this function '
+                                                      'with arguments is the '
+                                                      'pyplot equivalent of '
+                                                      'calling '
+                                                      '`~.Axes.set_xticks` and '
+                                                      '`~.Axes.set_xticklabels` '
+                                                      'on the current axes.'},
+                          'signature': {'parameters': [{'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'ticks',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'labels',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'False',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'minor',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ '__method__sns_kdeplot': {'doc_importants': {'notes': 'The *bandwidth*, or '
+                                                       'standard deviation of '
+                                                       'the smoothing kernel, '
+                                                       'is an important '
+                                                       'parameter. '
+                                                       'Misspecification of '
+                                                       'the bandwidth can '
+                                                       'produce a distorted '
+                                                       'representation of the '
+                                                       'data. Much like the '
+                                                       'choice of bin width in '
+                                                       'a histogram, an '
+                                                       'over-smoothed curve '
+                                                       'can erase true '
+                                                       'features of a '
+                                                       'distribution, while an '
+                                                       'under-smoothed curve '
+                                                       'can create false '
+                                                       'features out of random '
+                                                       'variability. The '
+                                                       'rule-of-thumb that '
+                                                       'sets the default '
+                                                       'bandwidth works best '
+                                                       'when the true '
+                                                       'distribution is '
+                                                       'smooth, unimodal, and '
+                                                       'roughly bell-shaped. '
+                                                       'It is always a good '
+                                                       'idea to check the '
+                                                       'default behavior by '
+                                                       'using ``bw_adjust`` to '
+                                                       'increase or decrease '
+                                                       'the amount of '
+                                                       'smoothing. Because the '
+                                                       'smoothing algorithm '
+                                                       'uses a Gaussian '
+                                                       'kernel, the estimated '
+                                                       'density curve can '
+                                                       'extend to values that '
+                                                       'do not make sense for '
+                                                       'a particular dataset. '
+                                                       'For example, the curve '
+                                                       'may be drawn over '
+                                                       'negative values when '
+                                                       'smoothing data that '
+                                                       'are naturally '
+                                                       'positive. The ``cut`` '
+                                                       'and ``clip`` '
+                                                       'parameters can be used '
+                                                       'to control the extent '
+                                                       'of the curve, but '
+                                                       'datasets that have '
+                                                       'many observations '
+                                                       'close to a natural '
+                                                       'boundary may be better '
+                                                       'served by a different '
+                                                       'visualization method. '
+                                                       'Similar considerations '
+                                                       'apply when a dataset '
+                                                       'is naturally discrete '
+                                                       'or "spiky" (containing '
+                                                       'many repeated '
+                                                       'observations of the '
+                                                       'same value). Kernel '
+                                                       'density estimation '
+                                                       'will always produce a '
+                                                       'smooth curve, which '
+                                                       'would be misleading in '
+                                                       'these situations. The '
+                                                       'units on the density '
+                                                       'axis are a common '
+                                                       'source of confusion. '
+                                                       'While kernel density '
+                                                       'estimation produces a '
+                                                       'probability '
+                                                       'distribution, the '
+                                                       'height of the curve at '
+                                                       'each point gives a '
+                                                       'density, not a '
+                                                       'probability. A '
+                                                       'probability can be '
+                                                       'obtained only by '
+                                                       'integrating the '
+                                                       'density across a '
+                                                       'range. The curve is '
+                                                       'normalized so that the '
+                                                       'integral over all '
+                                                       'possible values is 1, '
+                                                       'meaning that the scale '
+                                                       'of the density axis '
+                                                       'depends on the data '
+                                                       'values.'},
+                           'signature': {'parameters': [{'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'data',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'x',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'y',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'hue',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'weights',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'palette',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'hue_order',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'hue_norm',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'color',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'fill',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': "'layer'",
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'multiple',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'True',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'common_norm',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'False',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'common_grid',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'False',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'cumulative',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': "'scott'",
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'bw_method',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '1',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'bw_adjust',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'True',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'warn_singular',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'log_scale',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '10',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'levels',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '0.05',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'thresh',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '200',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'gridsize',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '3',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'cut',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'clip',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'True',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'legend',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'False',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'cbar',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'cbar_ax',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'cbar_kws',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'ax',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'VAR_KEYWORD',
+                                                         'name': 'kwargs',
+                                                         'required': True}],
+                                         'return_annotation': None},
+                           'type': "<class 'function'>"},
+ '__method__sns_set_style': {'signature': {'parameters': [{'annotation': None,
+                                                           'default': 'None',
+                                                           'kind': 'POSITIONAL_OR_KEYWORD',
+                                                           'name': 'style',
+                                                           'required': False},
+                                                          {'annotation': None,
+                                                           'default': 'None',
+                                                           'kind': 'POSITIONAL_OR_KEYWORD',
+                                                           'name': 'rc',
+                                                           'required': False}],
+                                           'return_annotation': None},
+                             'type': "<class 'function'>"},
+ 'data_df': {'execution_cell_source': {'cellno': 7, 'lineno': 1},
+             'has_nan': False,
+             'per_column_max_20': {'Time': {'dtype': 'float64',
+                                               'num_unique': 124592,
+                                               'type': 'continuous',
+                                               'value_range': (0.0, 172792.0)},
+                                      'V1': {'dtype': 'float64',
+                                             'num_unique': 275663,
+                                             'type': 'continuous',
+                                             'value_range': (-56.407509631329,
+                                                             2.45492999121121)},
+                                      'V10': {'dtype': 'float64',
+                                              'num_unique': 275663,
+                                              'type': 'continuous',
+                                              'value_range': (-24.5882624372475,
+                                                              23.7451361206545)},
+                                      'V11': {'dtype': 'float64',
+                                              'num_unique': 275663,
+                                              'type': 'continuous',
+                                              'value_range': (-4.79747346479757,
+                                                              12.0189131816199)},
+                                      'V12': {'dtype': 'float64',
+                                              'num_unique': 275663,
+                                              'type': 'continuous',
+                                              'value_range': (-18.6837146333443,
+                                                              7.8483920756446)},
+                                      'V13': {'dtype': 'float64',
+                                              'num_unique': 275663,
+                                              'type': 'continuous',
+                                              'value_range': (-5.79188120632084,
+                                                              7.12688295859376)},
+                                      'V14': {'dtype': 'float64',
+                                              'num_unique': 275663,
+                                              'type': 'continuous',
+                                              'value_range': (-19.2143254902614,
+                                                              10.5267660517847)},
+                                      'V15': {'dtype': 'float64',
+                                              'num_unique': 275663,
+                                              'type': 'continuous',
+                                              'value_range': (-4.49894467676621,
+                                                              8.87774159774277)},
+                                      'V16': {'dtype': 'float64',
+                                              'num_unique': 275663,
+                                              'type': 'continuous',
+                                              'value_range': (-14.1298545174931,
+                                                              17.3151115176278)},
+                                      'V17': {'dtype': 'float64',
+                                              'num_unique': 275663,
+                                              'type': 'continuous',
+                                              'value_range': (-25.1627993693248,
+                                                              9.25352625047285)},
+                                      'V18': {'dtype': 'float64',
+                                              'num_unique': 275663,
+                                              'type': 'continuous',
+                                              'value_range': (-9.49874592104677,
+                                                              5.04106918541184)},
+                                      'V19': {'dtype': 'float64',
+                                              'num_unique': 275663,
+                                              'type': 'continuous',
+                                              'value_range': (-7.21352743017759,
+                                                              5.59197142733558)},
+                                      'V2': {'dtype': 'float64',
+                                             'num_unique': 275663,
+                                             'type': 'continuous',
+                                             'value_range': (-72.7157275629303,
+                                                             22.0577289904909)},
+                                      'V3': {'dtype': 'float64',
+                                             'num_unique': 275663,
+                                             'type': 'continuous',
+                                             'value_range': (-48.3255893623954,
+                                                             9.38255843282114)},
+                                      'V4': {'dtype': 'float64',
+                                             'num_unique': 275663,
+                                             'type': 'continuous',
+                                             'value_range': (-5.68317119816995,
+                                                             16.8753440335975)},
+                                      'V5': {'dtype': 'float64',
+                                             'num_unique': 275663,
+                                             'type': 'continuous',
+                                             'value_range': (-113.743306711146,
+                                                             34.8016658766686)},
+                                      'V6': {'dtype': 'float64',
+                                             'num_unique': 275663,
+                                             'type': 'continuous',
+                                             'value_range': (-26.1605059358433,
+                                                             73.3016255459646)},
+                                      'V7': {'dtype': 'float64',
+                                             'num_unique': 275663,
+                                             'type': 'continuous',
+                                             'value_range': (-43.5572415712451,
+                                                             120.589493945238)},
+                                      'V8': {'dtype': 'float64',
+                                             'num_unique': 275663,
+                                             'type': 'continuous',
+                                             'value_range': (-73.2167184552674,
+                                                             20.0072083651213)},
+                                      'V9': {'dtype': 'float64',
+                                             'num_unique': 275663,
+                                             'type': 'continuous',
+                                             'value_range': (-13.4340663182301,
+                                                             15.5949946071278)}},
+             'shape': (284807, 32),
+             'type': 'pandas.core.frame.DataFrame'},
+ 'i': {'type': "<class 'str'>", 'value': 'DAYS_ID_PUBLISH'},
+ 'plt': {'type': "<class 'module'>"},
+ 'sns': {'type': "<class 'module'>"}}
+# Target Cell:
+
+var = data_df.columns.values
+
+i = 0
+
+
+
+
+t0 = data_df.loc[data_df['Class'] == 0]
+t1 = data_df.loc[data_df['Class'] == 1]
+
+sns.set_style('whitegrid')
+plt.figure()
+fig, ax = plt.subplots(8,4,figsize=(16,28))
+
+for feature in var:
+    i += 1
+    plt.subplot(8,4,i)
+    sns.kdeplot(t0[feature], bw=0.5,label="Class = 0");
+    sns.kdeplot(t1[feature], bw=0.5,label="Class = 1");
+    plt.xlabel(feature, fontsize=12)
+    locs, labels = plt.xticks()
+    plt.tick_params(axis='both', which='major', labelsize=12)
+plt.show();

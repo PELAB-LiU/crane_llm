@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Keras history uses 'accuracy' and 'val_accuracy', not 'acc'/'val_acc'. Accessing history.history['acc'] and ['val_acc'] will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "History metrics use 'accuracy' and 'val_accuracy', not 'acc'/'val_acc'. Accessing missing keys will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras History stores 'accuracy' and 'val_accuracy', not 'acc'/'val_acc'. Accessing history.history['acc'] and ['val_acc'] will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "History contains metrics: accuracy, loss, val_accuracy, val_loss; but the code indexes 'acc' and 'val_acc', which don't exist and will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "History metrics use 'accuracy' and 'val_accuracy', not 'acc'/'val_acc', so indexing those keys will raise KeyError. Also plt.plot has no 'axes' kwarg but it's ignored here since using ax[0].plot; the main crash is missing keys.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `sns.barplot` function in recent versions of Seaborn expects 'x' and 'y' arguments to be passed as keyword arguments, not positional arguments. Passing them positionally will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sns.barplot` function in recent versions of Seaborn expects 'x' and 'y' arguments to be passed as keyword arguments, not positional arguments. Passing them positionally will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sns.barplot` function in the current version of Seaborn (0.12.0 and above) expects keyword arguments for `x` and `y`. Passing positional arguments as done in the target cell will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sns.barplot` function in the current version of Seaborn (0.12.0 and above) expects keyword arguments for `x` and `y`. Passing positional arguments as done in the target cell will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sns.barplot` function in recent versions of Seaborn expects 'x' and 'y' arguments to be passed as keyword arguments, not positional arguments. Passing them positionally will raise a TypeError.",
+    "detection": true
+  }
+]

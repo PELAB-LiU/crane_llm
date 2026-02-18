@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Two different model_optimize functions exist; model_predict calls the second one that expects column-vector Y. But y_tr_arr and y_ts_arr are 2D with shape (m,1), so shapes align. However, weightInitialization returns w shape (1,n), while model_predict updates w using dw.T where dw is (n,1), causing w to become (1,n) - (lr*(1,n)) which is fine. The computations use np.dot(w, X.T) expecting (1,n)x(n,m)->(1,m); works. No clear runtime error is certain.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_predict updates w using dw.T but dw shape from current model_optimize (Cell 14) is (n_features,1) while initial w from weightInitialization (Cell 11) is (1,n_features); mixed conventions cause shape misalignment in np.dot and updates, leading to a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "model_predict uses model_optimize from Cell 14 expecting X shape (m, n) and Y shape (m,1) with w shape (n,1), but weightInitialization returns w with shape (1,n) and b scalar, causing shape misalignment during np.dot and gradient steps.",
+    "detection": true
+  },
+  {
+    "reasoning": "There are two different model_optimize definitions; the later one expects column-vector Y and returns dw shape (n_features,1), but model_predict uses the earlier training flow expecting shapes compatible with w as (1,n_features) and performs dw.T, causing shape mismatches when updating and later in dot operations.",
+    "detection": true
+  },
+  {
+    "reasoning": "Two different model_optimize definitions exist; model_predict uses the second one expecting column-vector Y, but y_tr_arr is a 2D array of shape (n,1) and w from weightInitialization is (1, n_features) causing shape mismatches (dw shape and transpose usage) leading to broadcasting errors during updates or dot products.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "X_train, X_test, y_train, y_test are not defined in prior cells; only X and y exist. This will raise a NameError when fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train, X_test, y_train, y_test are not defined; only X and y exist. This will raise a NameError when fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train, X_test, y_train, and y_test are not defined in the executed cells before fitting the model.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train, X_test, y_train, y_test are not defined in prior cells; also XGBClassifier with GPU may fail if no GPU, but primary issue is missing variables. This will raise a NameError on fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variables X_train, X_test, y_train, y_test were never defined (no train_test_split run), so fit will reference undefined names. Also xgboost may not be installed or GPU not available, but the certain error is missing train/test variables.",
+    "detection": true
+  }
+]

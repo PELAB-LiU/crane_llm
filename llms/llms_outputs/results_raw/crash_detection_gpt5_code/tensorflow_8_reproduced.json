@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model expects 3-channel inputs (shape (75,75,3)) but X was loaded as grayscale (shape (...,75,75,1)), causing a shape mismatch during training.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model input expects 3-channel images (shape set to (size, size, 3)), but X was loaded in grayscale (1 channel). This channel mismatch will cause a shape error at training.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model input expects 3 channels but images were loaded as grayscale (1 channel), causing a shape mismatch when fitting. This will raise an error at training start.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects 3-channel input (Input shape (size, size, 3)), but images were loaded as grayscale (1 channel); this channel mismatch will raise a shape error when fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model input expects 3-channel images, but X was loaded in grayscale (1 channel), causing a shape mismatch when fitting. This will raise an error at training start.",
+    "detection": true
+  }
+]

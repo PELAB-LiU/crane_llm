@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model builds modules using existing classes and uses vocab methods that exist; device is defined. No undefined variables or shape mismatches are evident during instantiation since forward isn't executed.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model uses vocab.label_size (method) without calling it when defining nn.Linear, passing a function object instead of int will crash. Also self.to(device) uses undefined 'device' in this scope unless global; but primary certain error is wrong type for out features.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model uses vocab.label_size and vocab.word_size; vocab is defined. All modules and variables (device, classes) exist. No obvious shape/type errors without executing. Not certain of a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model.__init__ uses vocab.label_size without calling method: it passes function object to nn.Linear out_features, causing a TypeError. Therefore it will crash on constructing Linear.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model.__init__ uses vocab.label_size but vocab.label_size is a method and is not called, passing a method object to nn.Linear out_features causes a TypeError. Therefore it will crash during initialization.",
+    "detection": true
+  }
+]

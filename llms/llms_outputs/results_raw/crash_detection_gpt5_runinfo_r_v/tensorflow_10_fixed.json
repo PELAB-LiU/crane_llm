@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train_hg contains only the train split; labels and features exist, but arrays from Dataset columns will be lists of lists with fixed length 128, convertible to numpy. Model expects inputs dict with input_ids and attention_mask and label as y. No obvious type/shape mismatch. Should run.",
+    "detection": false
+  },
+  {
+    "reasoning": "train_hg contains only the training split but is built from train_df which has fewer rows than the full processed set; however shapes align since inputs come from train_hg. The model expects input_ids and attention_mask length 128 which matches tokenizer settings, and labels are 0/1; compile and fit signatures are correct.",
+    "detection": false
+  },
+  {
+    "reasoning": "train_hg was created from a pandas DataFrame with Python lists in columns; converting train_hg['input_ids'] to np.array yields an object-dtype ragged array that Keras cannot handle for the fixed shape Input, causing a shape/type error in model.fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_hg contains only first 1000 processed samples with max_length=128; converting lists to np.array yields shape (N,128). However, the model expects inputs for both train and validation? Not required. The main issue: TensorFlow model requires matching data lengths; those match. No obvious type/shape mismatch, so unlikely to crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "train_hg was built from only 80% (train_df) of processed_data, but x/y use train_hg while the model expects arrays matching all entries; that is fine. However, train_hg['input_ids'] elements are lists length 128; np.array will create an array of dtype object unless uniform; likely uniform so OK. Shapes align with inputs. No obvious missing keys. Should run.",
+    "detection": false
+  }
+]

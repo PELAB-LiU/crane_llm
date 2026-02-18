@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Seaborn's violinplot expects either data as a keyword argument or explicit x/y arrays; calling sns.violinplot(df, x='species') will be interpreted as a positional mapping for 'x' and likely cause a TypeError. However, behavior may vary by version, so it's not certain.",
+    "detection": false
+  },
+  {
+    "reasoning": "Seaborn's violinplot expects the DataFrame to be passed via the data keyword; passing df as the first positional argument is interpreted as x and is invalid alongside x='species', causing a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Seaborn's violinplot signature is violinplot(data=None, *, x=None, y=None, ...). Passing df as first positional arg is valid for 'data', and x='species' exists in df. No type issues apparent.",
+    "detection": false
+  },
+  {
+    "reasoning": "In recent seaborn versions, violinplot expects data as a keyword argument (data=df). Passing the DataFrame as the first positional argument will raise a TypeError due to signature mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "Seaborn's violinplot expects the DataFrame to be passed as the 'data' keyword or as the first positional argument without other positional arguments; here it is passed positionally along with keyword x, which is valid in recent seaborn versions. Uncertain about version-specific API; cannot be certain it will crash.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Column 'Installs' in Google Play Store datasets typically contains non-numeric characters like '+' and ',', so direct astype('int') will raise a ValueError during conversion.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Installs' in Google Play Store datasets typically contains strings with commas and '+' signs (e.g., '1,000+'), which cannot be directly cast to int without cleaning. This likely raises a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Google Play Store 'Installs' column typically contains strings with '+' and ',' (e.g., '1,000+'), which cannot be directly cast to int without cleaning, causing a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column in Google Play Store datasets typically contains strings with commas and '+' (e.g., '1,000+'), which cannot be directly cast to int and will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Installs' in Google Play Store datasets typically contains strings with commas and '+' (e.g., '1,000+'), which cannot be directly cast to int without cleaning. This likely raises a ValueError.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The arrays `x` and `y` are empty, which will cause `train_test_split` to fail as there are no elements to split.",
+    "detection": true
+  },
+  {
+    "reasoning": "The arrays `x` and `y` are empty, which will cause `train_test_split` to fail as there are no elements to split.",
+    "detection": true
+  },
+  {
+    "reasoning": "The arrays `x` and `y` are empty, which will cause `train_test_split` to fail as there are no elements to split.",
+    "detection": true
+  },
+  {
+    "reasoning": "The arrays `x` and `y` are empty, which will cause `train_test_split` to fail as there are no elements to split.",
+    "detection": true
+  },
+  {
+    "reasoning": "The arrays `x` and `y` are empty, which will cause `train_test_split` to fail as there are no elements to split.",
+    "detection": true
+  }
+]

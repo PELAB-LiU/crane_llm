@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell references variables 'sns', 'dataset', and 'plt' which have not been defined or imported. Without these definitions, the cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell references variables 'sns', 'dataset', and 'plt' which have not been defined or imported. Without these definitions, the cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell references variables 'sns', 'dataset', and 'plt' which have not been defined or imported. Without these definitions, the cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell references variables 'sns', 'dataset', and 'plt' which have not been defined or imported. Without these definitions, the cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell references variables 'sns', 'dataset', and 'plt' which have not been defined or imported. Without these definitions, the cell will crash.",
+    "detection": true
+  }
+]

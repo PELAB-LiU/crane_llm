@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "cat_feat includes columns in x_train/x_test that are currently strings ('0'/'1' or float-like strings like '18.0'); astype('int') on values like '18.0' will raise ValueError. Policy_Sales_Channel and Region_Code contain such values.",
+    "detection": true
+  },
+  {
+    "reasoning": "cat_feat includes columns that exist in x_train/x_test and are currently strings of '0'/'1' or numeric-like; astype('int') will succeed without NaNs. No missing columns indicated.",
+    "detection": false
+  },
+  {
+    "reasoning": "cat_feat includes columns like Policy_Sales_Channel and Region_Code, which exist in x_train/x_test but are currently strings; astype('int') on stringified numerics like '18.0' will raise ValueError due to decimal point.",
+    "detection": true
+  },
+  {
+    "reasoning": "cat_feat includes columns Region_Code and Policy_Sales_Channel which are float-like in x_train/x_test; astype('int') will work by truncating, but Gender, Driving_License, etc. are strings currently and can convert to int since values are '0'/'1'. All columns listed exist in x_train/x_test.",
+    "detection": false
+  },
+  {
+    "reasoning": "cat_feat includes columns that exist in x_train/x_test and are currently strings ('0'/'1' or numeric-like); astype('int') on these string numerics will succeed. No NaNs present.",
+    "detection": false
+  }
+]

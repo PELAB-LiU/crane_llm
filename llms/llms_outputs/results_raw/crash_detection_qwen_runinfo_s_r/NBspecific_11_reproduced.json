@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The variable `adv` has a shape of (3, 224, 224), which is in the format (channels, height, width). However, `plt.imshow` expects the channels to be the last dimension. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `adv` has a shape of (3, 224, 224), which is in the format (channels, height, width). However, `plt.imshow` expects the channels to be the last dimension. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `adv` has a shape of (3, 224, 224), which is in the format (channels, height, width). However, `plt.imshow` expects the channels to be the last dimension. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `adv` has a shape of (3, 224, 224), which is in the format (channels, height, width). However, `plt.imshow` expects the channels to be the last dimension. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `adv` has a shape of (3, 224, 224), which is in the format (channels, height, width). However, `plt.imshow` expects the channels to be the last dimension. This mismatch will cause a crash.",
+    "detection": true
+  }
+]

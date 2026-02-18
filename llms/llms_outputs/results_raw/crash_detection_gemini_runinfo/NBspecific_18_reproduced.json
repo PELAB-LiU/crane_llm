@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The variable 'y_pred' is used in the target cell but has not been defined or assigned a value in the executed cells or current runtime information, which will lead to a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'y_pred' is used in the target cell but has not been defined or assigned a value in the preceding executed cells or the current runtime information, which will lead to a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'y_pred' is used in the target cell but has not been defined or assigned a value in the executed cells or current runtime information, which will lead to a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'y_pred' is used in the target cell but has not been defined or assigned a value in the preceding executed cells or the current runtime information, which will lead to a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'y_pred' is used in the target cell but has not been defined or assigned a value in the preceding executed cells or the current runtime information, which will lead to a NameError.",
+    "detection": true
+  }
+]

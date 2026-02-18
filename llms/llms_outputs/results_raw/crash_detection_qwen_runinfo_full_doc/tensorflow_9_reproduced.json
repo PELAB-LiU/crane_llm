@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `bert_model` is an instance of `transformers.models.bert.modeling_bert.BertModel`, which is not compatible with `tf.keras.utils.plot_model` as it is designed for TensorFlow models, not PyTorch models.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is an instance of `transformers.models.bert.modeling_bert.BertModel`, which is not compatible with `tf.keras.utils.plot_model` as it is designed for TensorFlow models, not PyTorch models.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is an instance of `transformers.models.bert.modeling_bert.BertModel`, which is not compatible with `tf.keras.utils.plot_model` as it is designed for TensorFlow models, not PyTorch models.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is an instance of `transformers.models.bert.modeling_bert.BertModel`, which is not compatible with `tf.keras.utils.plot_model` as it is designed for TensorFlow models, not PyTorch models.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is an instance of `transformers.models.bert.modeling_bert.BertModel`, which is not compatible with `tf.keras.utils.plot_model` as it is designed for TensorFlow models, not PyTorch models.",
+    "detection": true
+  }
+]

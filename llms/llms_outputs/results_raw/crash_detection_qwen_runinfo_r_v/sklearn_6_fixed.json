@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model FReg is fitted and ready to predict. The test_ds DataFrame has no NaN values and matches the feature set of the training data, ensuring compatibility with the model. The predictions are then correctly formatted into a DataFrame with IDs and predictions.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model FReg is fitted and ready to predict. The test_ds DataFrame has no NaN values and matches the feature set of the training data, ensuring compatibility with the model. The predictions are then correctly formatted into a DataFrame with IDs and predictions.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model FReg is fitted and ready to predict. The test_ds DataFrame has no NaN values and matches the feature set of the training data, ensuring compatibility with the model. The predictions are then correctly formatted into a DataFrame with IDs and predictions.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model FReg is fitted and ready to predict. The test_ds DataFrame has no NaN values and matches the feature set of the training data, ensuring compatibility with the model. The predictions are then correctly formatted into a DataFrame with IDs and predictions.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model FReg is fitted and ready to predict. The test_ds DataFrame has no NaN values and matches the feature set of the training data, ensuring compatibility with the model. The predictions are then correctly formatted into a DataFrame with IDs and predictions.",
+    "detection": false
+  }
+]

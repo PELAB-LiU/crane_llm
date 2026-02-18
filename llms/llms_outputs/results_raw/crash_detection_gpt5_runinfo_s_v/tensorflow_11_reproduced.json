@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model outputs 5 sigmoid units with categorical_crossentropy but the data generators have 2 classes; this mismatch in number of classes will cause a shape error during training.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs 5 classes (Dense(5)) but generators report 2 classes; categorical_crossentropy expects matching dimensions, causing a shape mismatch during training.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs 5 sigmoid classes but generators have 2 classes with categorical_crossentropy; mismatch between model output shape (5) and targets (2) will cause a shape error during training.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs 5 sigmoid units but generators have 2 classes (categorical), causing a shape mismatch with categorical_crossentropy/labels. This will likely raise an error during training.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs 5 units but generators have 2 classes; with categorical_crossentropy this shape mismatch will raise an error during training.",
+    "detection": true
+  }
+]

@@ -1,0 +1,275 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+from pprint import pprint
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import holoviews as hv
+hv.extension('bokeh', 'matplotlib', logo=False)
+
+
+import warnings
+warnings.filterwarnings('ignore')
+
+## Cell 2:
+
+df=pd.read_csv('data/hmeq.csv')
+df.head()
+
+## Cell 3:
+
+df.loc[df.BAD == 1, 'STATUS'] = 'DEFAULT'
+df.loc[df.BAD == 0, 'STATUS'] = 'PAID'
+
+# Current relevent runtime information:
+{'__method__df_groupby': {'context': {'public_attributes': []},
+                          'doc_importants': {'notes': 'See the `user guide '
+                                                      '<https://pandas.pydata.org/pandas-docs/stable/groupby.html>`__ '
+                                                      'for more detailed usage '
+                                                      'and examples, including '
+                                                      'splitting an object '
+                                                      'into groups, iterating '
+                                                      'through groups, '
+                                                      'selecting a group, '
+                                                      'aggregation, and more.'},
+                          'signature': {'parameters': [{'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'by',
+                                                        'required': False},
+                                                       {'annotation': "'Axis | "
+                                                                      "lib.NoDefault'",
+                                                        'default': '<no_default>',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'axis',
+                                                        'required': False},
+                                                       {'annotation': "'IndexLabel "
+                                                                      "| None'",
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'level',
+                                                        'required': False},
+                                                       {'annotation': "'bool'",
+                                                        'default': 'True',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'as_index',
+                                                        'required': False},
+                                                       {'annotation': "'bool'",
+                                                        'default': 'True',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'sort',
+                                                        'required': False},
+                                                       {'annotation': "'bool'",
+                                                        'default': 'True',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'group_keys',
+                                                        'required': False},
+                                                       {'annotation': "'bool | "
+                                                                      "lib.NoDefault'",
+                                                        'default': '<no_default>',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'observed',
+                                                        'required': False},
+                                                       {'annotation': "'bool'",
+                                                        'default': 'True',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'dropna',
+                                                        'required': False}],
+                                        'return_annotation': "'DataFrameGroupBy'"},
+                          'type': "<class 'method'>"},
+ '__method__hv_Dimension': {'signature': {'parameters': [{'annotation': None,
+                                                          'default': None,
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'spec',
+                                                          'required': True},
+                                                         {'annotation': None,
+                                                          'default': None,
+                                                          'kind': 'VAR_KEYWORD',
+                                                          'name': 'params',
+                                                          'required': True}],
+                                          'return_annotation': None},
+                            'type': '<class '
+                                    "'param.parameterized.ParameterizedMetaclass'>"},
+ '__method__hv_Histogram': {'signature': {'parameters': [{'annotation': None,
+                                                          'default': None,
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'data',
+                                                          'required': True},
+                                                         {'annotation': None,
+                                                          'default': None,
+                                                          'kind': 'VAR_KEYWORD',
+                                                          'name': 'params',
+                                                          'required': True}],
+                                          'return_annotation': None},
+                            'type': '<class '
+                                    "'holoviews.core.data.PipelineMeta'>"},
+ '__method__hv_HoloMap': {'signature': {'parameters': [{'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'initial_items',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'kdims',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'group',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'label',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'params',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': '<class '
+                                  "'param.parameterized.ParameterizedMetaclass'>"},
+ '__method__np_histogram': {'doc_importants': {'notes': 'All but the last '
+                                                        '(righthand-most) bin '
+                                                        'is half-open.  In '
+                                                        'other words, if '
+                                                        '`bins` is:: [1, 2, 3, '
+                                                        '4] then the first bin '
+                                                        'is ``[1, 2)`` '
+                                                        '(including 1, but '
+                                                        'excluding 2) and the '
+                                                        'second ``[2, 3)``.  '
+                                                        'The last bin, '
+                                                        'however, is ``[3, '
+                                                        '4]``, which '
+                                                        '*includes* 4.'},
+                            'signature': {'parameters': [{'annotation': None,
+                                                          'default': None,
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'a',
+                                                          'required': True},
+                                                         {'annotation': None,
+                                                          'default': '10',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'bins',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'range',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'density',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'weights',
+                                                          'required': False}],
+                                          'return_annotation': None},
+                            'type': "<class 'numpy._ArrayFunctionDispatcher'>"},
+ 'df': {'execution_cell_source': {'cellno': 1, 'lineno': 1},
+        'has_nan': True,
+        'per_column': {'BAD': {'dtype': 'int64',
+                               'num_unique': 2,
+                               'type': 'binary',
+                               'value_range': (0, 1)},
+                       'CLAGE': {'dtype': 'float64',
+                                 'num_unique': 5314,
+                                 'type': 'continuous',
+                                 'value_range': (0.0, 1168.2335609)},
+                       'CLNO': {'dtype': 'float64',
+                                'num_unique': 62,
+                                'type': 'continuous',
+                                'value_range': (0.0, 71.0)},
+                       'DEBTINC': {'dtype': 'float64',
+                                   'num_unique': 4693,
+                                   'type': 'continuous',
+                                   'value_range': (0.5244992154, 203.31214869)},
+                       'DELINQ': {'dtype': 'float64',
+                                  'num_unique': 14,
+                                  'type': 'continuous',
+                                  'value_range': (0.0, 15.0)},
+                       'DEROG': {'dtype': 'float64',
+                                 'num_unique': 11,
+                                 'type': 'continuous',
+                                 'value_range': (0.0, 10.0)},
+                       'JOB': {'dtype': 'object',
+                               'example_values': ['Mgr',
+                                                  'Sales',
+                                                  'Self',
+                                                  'ProfExe',
+                                                  'Other'],
+                               'num_unique': 6,
+                               'type': 'categorical'},
+                       'LOAN': {'dtype': 'int64',
+                                'num_unique': 540,
+                                'type': 'continuous',
+                                'value_range': (1100, 89900)},
+                       'MORTDUE': {'dtype': 'float64',
+                                   'num_unique': 5053,
+                                   'type': 'continuous',
+                                   'value_range': (2063.0, 399550.0)},
+                       'NINQ': {'dtype': 'float64',
+                                'num_unique': 16,
+                                'type': 'continuous',
+                                'value_range': (0.0, 17.0)},
+                       'REASON': {'dtype': 'object',
+                                  'num_unique': 2,
+                                  'type': 'categorical',
+                                  'unique_values': ['HomeImp', 'DebtCon']},
+                       'STATUS': {'dtype': 'object',
+                                  'num_unique': 2,
+                                  'type': 'categorical',
+                                  'unique_values': ['DEFAULT', 'PAID']},
+                       'VALUE': {'dtype': 'float64',
+                                 'num_unique': 5381,
+                                 'type': 'continuous',
+                                 'value_range': (8000.0, 855909.0)},
+                       'YOJ': {'dtype': 'float64',
+                               'num_unique': 99,
+                               'type': 'continuous',
+                               'value_range': (0.0, 41.0)}},
+        'shape': (5960, 14),
+        'type': 'pandas.core.frame.DataFrame'},
+ 'hv': {'type': "<class 'module'>"},
+ 'np': {'type': "<class 'module'>"}}
+# Target Cell:
+
+
+
+g = df.groupby('STATUS')
+
+cols = ['LOAN',
+        'MORTDUE',
+        'VALUE',
+        'YOJ',
+        'DEROG',
+        'DELINQ',
+        'CLAGE',
+        'NINQ',
+        'CLNO']
+dd={}
+
+
+for col in cols:
+
+    freq, edges = np.histogram(df[col].values)
+    dd[col] = hv.Histogram((edges, freq), label='ALL Loans').redim.label(x=' ')
+
+    freq, edges = np.histogram(g.get_group('PAID')[col].values, bins=edges)
+    dd[col] *= hv.Histogram((edges, freq), label='PAID Loans').redim.label(x=' ')
+
+    freq, edges = np.histogram(g.get_group('DEFAULT')[col].values, bins=edges)
+    dd[col] *= hv.Histogram((edges, freq), label='DEFAULT Loans' ).redim.label(x=' ')
+
+var = [*dd]
+kdims=hv.Dimension(('var', 'Variable'), values=var)
+hv.HoloMap(dd, kdims=kdims)

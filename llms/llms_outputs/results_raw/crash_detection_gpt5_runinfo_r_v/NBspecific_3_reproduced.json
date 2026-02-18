@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "yFit is predictions on X_train, but the cell compares/plots against y_test and computes SSE with y_test - yFit, causing a shape mismatch and broadcasting error. Thus it will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit is predictions on X_train, but the code compares it to y_test and uses it in SSE and plotting; shape mismatch between y_test and yFit will raise a ValueError in array operations.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit is from training predictions and likely length != y_test length; operations (y_test - yFit) will raise a broadcasting error. Also F-test uses mismatched sums.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit has length equal to X_train/y_train, but the code compares it to y_test and uses n = X_test.shape[0], causing shape mismatch in SSE and plotting. This will raise a ValueError due to incompatible lengths.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit is predictions on X_train, but the target cell compares y_test and yFit and uses n = X_test.shape[0]; lengths mismatch will cause broadcasting error in SSE and plotting. Thus it will crash.",
+    "detection": true
+  }
+]

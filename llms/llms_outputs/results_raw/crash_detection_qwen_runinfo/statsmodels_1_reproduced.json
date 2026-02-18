@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `sm.qqplot` function expects the `line` parameter to be a string, not an integer. The value `line=45` is incorrect and will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function expects the `line` parameter to be a string, not an integer. The value `line=45` is incorrect and will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function expects the `line` parameter to be a string, not an integer. The value `line=45` is incorrect and will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function expects the `line` parameter to be a string, not an integer. The value `line=45` is incorrect and will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function expects the `line` parameter to be a string, not an integer. The value `line=45` is incorrect and will cause a crash.",
+    "detection": true
+  }
+]

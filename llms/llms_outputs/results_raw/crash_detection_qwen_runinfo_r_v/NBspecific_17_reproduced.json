@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `PolynomialFeatures` transformation with `degree=1` and `interaction_only=True` should not cause a crash given that `X` is a DataFrame without NaN values and is compatible with the transformation.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `PolynomialFeatures` transformation with `degree=1` and `interaction_only=True` should not cause a crash given that `X` is a DataFrame without NaN values and the provided shape information.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `PolynomialFeatures` transformation with `degree=1` and `interaction_only=True` should not cause a crash given that `X` is a DataFrame without NaN values and the provided shape information.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `PolynomialFeatures` transformation with `degree=1` and `interaction_only=True` should not cause a crash given that `X` is a DataFrame without NaN values and the provided shape information.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `PolynomialFeatures` transformation with `degree=1` and `interaction_only=True` should not cause a crash given that `X` is a DataFrame without NaN values and the provided shape information.",
+    "detection": false
+  }
+]

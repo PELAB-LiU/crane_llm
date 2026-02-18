@@ -1,0 +1,129 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import missingno
+
+## Cell 2:
+
+train_df = pd.read_csv("data/train.csv",index_col='Id')
+test_df = pd.read_csv("data/test.csv",index_col='Id')
+
+## Cell 3:
+
+data=pd.concat([train_df, test_df], axis=0)
+cols=data.columns[data.isna().any()].tolist()
+missingvalue=pd.DataFrame(data[cols].isna().sum(), columns=['Number_missing'])
+missingvalue['Percentage_missing']=np.round(100*missingvalue['Number_missing']/len(data),2)
+missingvalue
+
+# Current relevent runtime information:
+{'__method__data_columns': {'type': "<class 'pandas.core.indexes.base.Index'>"},
+ '__method__data_drop': {'type': "<class 'method'>"},
+ '__method__data_dtypes': {'dtype': 'object',
+                           'has_nan': False,
+                           'type': 'pandas.core.series.Series',
+                           'value_info': {'num_unique': 3,
+                                          'unique_values': [dtype('int64'),
+                                                            dtype('O'),
+                                                            dtype('float64')]}},
+ 'data': {'has_nan': True,
+          'per_column_max_20': {'Alley': {'num_unique': 2,
+                                             'unique_values': ['Grvl', 'Pave']},
+                                   'BldgType': {'num_unique': 5,
+                                                'unique_values': ['1Fam',
+                                                                  '2fmCon',
+                                                                  'Duplex',
+                                                                  'TwnhsE',
+                                                                  'Twnhs']},
+                                   'Condition1': {'example_values': ['PosN',
+                                                                     'RRNn',
+                                                                     'PosA',
+                                                                     'Artery',
+                                                                     'Feedr'],
+                                                  'num_unique': 9},
+                                   'Condition2': {'example_values': ['Norm',
+                                                                     'PosN',
+                                                                     'RRAn',
+                                                                     'RRAe',
+                                                                     'RRNn'],
+                                                  'num_unique': 8},
+                                   'HouseStyle': {'example_values': ['2.5Fin',
+                                                                     '2.5Unf',
+                                                                     '2Story',
+                                                                     'SFoyer',
+                                                                     '1.5Fin'],
+                                                  'num_unique': 8},
+                                   'LandContour': {'num_unique': 4,
+                                                   'unique_values': ['Lvl',
+                                                                     'Bnk',
+                                                                     'Low',
+                                                                     'HLS']},
+                                   'LandSlope': {'num_unique': 3,
+                                                 'unique_values': ['Gtl',
+                                                                   'Mod',
+                                                                   'Sev']},
+                                   'LotArea': {'num_unique': 1951,
+                                               'value_range': (1300, 215245)},
+                                   'LotConfig': {'num_unique': 5,
+                                                 'unique_values': ['Inside',
+                                                                   'FR2',
+                                                                   'Corner',
+                                                                   'CulDSac',
+                                                                   'FR3']},
+                                   'LotFrontage': {'num_unique': 128,
+                                                   'value_range': (21.0,
+                                                                   313.0)},
+                                   'LotShape': {'num_unique': 4,
+                                                'unique_values': ['Reg',
+                                                                  'IR1',
+                                                                  'IR2',
+                                                                  'IR3']},
+                                   'MSSubClass': {'num_unique': 16,
+                                                  'value_range': (20, 190)},
+                                   'MSZoning': {'num_unique': 5,
+                                                'unique_values': ['RL',
+                                                                  'RM',
+                                                                  'C (all)',
+                                                                  'FV',
+                                                                  'RH']},
+                                   'Neighborhood': {'example_values': ['NWAmes',
+                                                                       'Sawyer',
+                                                                       'NoRidge',
+                                                                       'ClearCr',
+                                                                       'SWISU'],
+                                                    'num_unique': 25},
+                                   'OverallCond': {'num_unique': 9,
+                                                   'value_range': (1, 9)},
+                                   'OverallQual': {'num_unique': 10,
+                                                   'value_range': (1, 10)},
+                                   'Street': {'num_unique': 2,
+                                              'unique_values': ['Pave',
+                                                                'Grvl']},
+                                   'Utilities': {'num_unique': 2,
+                                                 'unique_values': ['AllPub',
+                                                                   'NoSeWa']},
+                                   'YearBuilt': {'num_unique': 118,
+                                                 'value_range': (1872, 2010)},
+                                   'YearRemodAdd': {'num_unique': 61,
+                                                    'value_range': (1950,
+                                                                    2010)}},
+          'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+cat=[]
+num=[]
+a=0
+x=list(data.columns.values)
+for b in data.dtypes:
+    if b == 'object':
+        cat.append(x[a])
+    else:
+        num.append(x[a])
+    a=a+1
+
+
+data.drop(['LotFrontage','Alley','FireplaceQu','PoolQC','Fence', 'MiscFeature'], axis=1, inplace=True)

@@ -1,0 +1,76 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+## Cell 2:
+
+df= pd.read_csv(r'data/Retailsales.csv')
+df=df.drop(columns='Unnamed: 0')
+df.head()
+
+## Cell 3:
+
+df=df.dropna(how='all')
+df
+
+# Current relevent runtime information:
+{'df': {'has_nan': False,
+        'per_column': {'Order Date': {'example_values': ['04/19/19 18:55',
+                                                         '12/19/19 08:42',
+                                                         '10/27/19 19:06',
+                                                         '08/07/19 17:58',
+                                                         '11/06/19 15:10'],
+                                      'num_unique': 142396},
+                       'Order ID': {'example_values': ['147583',
+                                                       '227802',
+                                                       '224092',
+                                                       '223490',
+                                                       '189984'],
+                                    'num_unique': 178438},
+                       'Price Each': {'example_values': ['11.99',
+                                                         '600',
+                                                         '389.99',
+                                                         '11.95',
+                                                         '600.0'],
+                                      'num_unique': 24},
+                       'Product': {'example_values': ['iPhone',
+                                                      'ThinkPad Laptop',
+                                                      'Vareebadd Phone',
+                                                      'LG Dryer',
+                                                      'Product'],
+                                   'num_unique': 20},
+                       'Purchase Address': {'example_values': ['270 Hickory '
+                                                               'St, San ...',
+                                                               '50 Lake St, '
+                                                               'Seattle,...',
+                                                               '384 Hill St, '
+                                                               'New Yor...',
+                                                               '867 Madison '
+                                                               'St, San ...',
+                                                               '720 Highland '
+                                                               'St, Bos...'],
+                                            'num_unique': 140788},
+                       'Quantity Ordered': {'example_values': ['8',
+                                                               '9',
+                                                               '2',
+                                                               '3',
+                                                               '7'],
+                                            'num_unique': 10}},
+        'shape': (186305, 6)}}
+# Target Cell:
+
+
+
+df["Order ID"] = pd.to_numeric(df["Order ID"], errors="coerce")
+df = df.dropna(subset=["Order ID"])
+

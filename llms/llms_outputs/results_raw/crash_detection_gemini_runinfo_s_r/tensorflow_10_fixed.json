@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model expects 'input_ids' and 'attention_mask' as inputs, which are correctly provided from 'train_hg'. The labels are also correctly extracted from 'train_hg'. All necessary components for model compilation and fitting are present and correctly formatted.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model expects 'input_ids' and 'attention_mask' as inputs, which are correctly provided from 'train_hg'. The labels are also correctly extracted from 'train_hg'. All necessary components for model compilation and fitting are present and correctly formatted.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model expects 'input_ids' and 'attention_mask' as inputs, which are correctly provided from 'train_hg'. The labels are also correctly extracted from 'train_hg'. All necessary components for model compilation and fitting are present and correctly formatted.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model expects 'input_ids' and 'attention_mask' as inputs, which are correctly provided from 'train_hg'. The labels are also correctly extracted from 'train_hg'. All necessary components for model compilation and fitting are present and correctly formatted.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model expects 'input_ids' and 'attention_mask' as inputs, which are correctly provided from 'train_hg'. The labels are also correctly extracted from 'train_hg'. All necessary components for model compilation and fitting are present and correctly formatted.",
+    "detection": false
+  }
+]

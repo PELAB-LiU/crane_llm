@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "balanced_accuracy_score expects class labels; preds are continuous floats from AdaBoostRegressor, leading to a ValueError due to mismatched types/invalid labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects classification labels or probabilities with y_true; preds are continuous from AdaBoostRegressor, but function will still compute treating preds as continuous and y_test as binary. It won’t raise an exception.",
+    "detection": false
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects discrete labels; preds are continuous floats from AdaBoostRegressor, causing a ValueError due to mismatched label types. Thus the cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects discrete labels; preds are continuous floats from AdaBoostRegressor, which may cause a ValueError unless they are valid label values. Not certain it will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "balanced_accuracy_score for classification expects discrete labels, but preds are continuous floats from AdaBoostRegressor, causing a ValueError due to inconsistent input types/shapes for classification metric.",
+    "detection": true
+  }
+]

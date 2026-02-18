@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multi-class labels for both `y_true` and `y_pred`. However, `preds` contains continuous values (float64) between 0.089 and 1.0, which are not valid labels for this metric, leading to a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multi-class labels for both `y_true` and `y_pred`. However, `preds` contains continuous values (float64) between 0.089 and 1.0, which are not valid labels for this metric, leading to a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multi-class labels for `y_pred`, but `preds` contains continuous values between 0.089 and 1.0, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multi-class labels for `y_pred`, but `preds` contains continuous values between 0.089 and 1.0, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multi-class labels for `y_pred`, but `preds` contains continuous values between 0.089 and 1.0, which will cause a ValueError.",
+    "detection": true
+  }
+]

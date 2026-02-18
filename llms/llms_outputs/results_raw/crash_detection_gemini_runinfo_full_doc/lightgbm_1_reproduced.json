@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'find_out_params_model' function is designed to be optimized by Optuna, but it appends scores to a global list 'scores' without clearing it for each new trial. This will lead to an accumulation of scores across trials, making the optimization objective incorrect.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'find_out_params_model' function is designed to be optimized by Optuna, but it appends scores to a global list 'scores' without clearing it for each new trial. This will lead to an accumulation of scores across trials, making the optimization objective incorrect.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'find_out_params_model' function is designed to be optimized by Optuna, but it appends scores to a global list 'scores' without clearing it for each new trial. This will lead to an accumulation of scores across trials, making the optimization objective incorrect.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'find_out_params_model' function is designed to be optimized by Optuna, but it appends scores to a global list 'scores' without clearing it for each new trial. This will lead to an accumulation of scores across trials, making the optimization objective incorrect.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'find_out_params_model' function is designed to be optimized by Optuna, but it appends scores to a global list 'scores' without clearing it for each new trial. This will lead to an accumulation of scores across trials, making the optimization objective incorrect.",
+    "detection": true
+  }
+]

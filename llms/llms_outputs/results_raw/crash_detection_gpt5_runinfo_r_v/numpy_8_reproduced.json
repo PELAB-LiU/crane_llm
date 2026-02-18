@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "evaluate_fitness uses X_train and X_test from a scaler output (NumPy arrays) but transform_gp_structure compiles a function expecting 2 inputs (pset arity=2) and calls expr(*row) where row has many features, causing a mismatch in function arguments.",
+    "detection": true
+  },
+  {
+    "reasoning": "evaluate_fitness uses lr.fit on X_train_gp created from gp expressions, but lr is a LogisticRegression expecting 2D arrays; transform_gp_structure returns a 1D array per individual, causing shape mismatch errors. Also deap.gp.compile expects exact arity=2 input but X_train is scaled 2D with many features, so expr(*row) will pass too many arguments.",
+    "detection": true
+  },
+  {
+    "reasoning": "toolbox.clone is not registered, so calling toolbox.clone in map(toolbox.clone, offspring) will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "evaluate_fitness uses X_train/X_test as arrays but transform_gp_structure compiles individuals with pset of arity 2 and then calls expr(*row); rows from transformed/scaled X have many features, causing a mismatch in number of arguments and a TypeError. Hence it will crash on first fitness evaluation.",
+    "detection": true
+  },
+  {
+    "reasoning": "toolbox.clone is not registered; calling toolbox.clone in map(toolbox.clone, offspring) will raise an AttributeError. Also evaluate_fitness uses lr.predict_proba on transformed 1D features which mismatches lr trained on multi-dimensional X.",
+    "detection": true
+  }
+]

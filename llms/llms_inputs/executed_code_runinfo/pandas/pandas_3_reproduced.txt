@@ -1,0 +1,259 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import os
+import numpy as np
+from sklearn.model_selection import KFold
+from sklearn.preprocessing import LabelEncoder
+import sklearn.metrics
+
+train = pd.read_csv('data/train.csv.zip', index_col="PetID")
+test = pd.read_csv('data/test.csv.zip', index_col="PetID")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Cell 2:
+
+name_count = train["Name"].value_counts().rename("name_count")
+RescuerID = LabelEncoder().fit(train["RescuerID"])
+
+def procData(data, name_count, RescuerID):
+
+    data = data.join(name_count, on ="RescuerID")
+    data["RescuerID"] = RescuerID.transform(data["RescuerID"])
+    data["RescuerID"] = data["RescuerID"].fillna(-1)
+
+
+    data["NameNull"] = data["Name"].isnull()
+    data["NameLen"] = data["Name"].fillna("").str.len()
+    data["SinNombre"] = data["Name"].str.lower().replace(" ", "") == "nonameyet"
+    data = data.join(name_count, on="Name")
+    data["name_count"] = data["name_count"].fillna(0)
+
+    data = data.drop(["Name", "RescuerID", "Description"], axis=1)
+    return data
+
+# Current relevent runtime information:
+{'RescuerID': {'class_name': 'LabelEncoder',
+               'classes_dtype': dtype('O'),
+               'execution_cell_source': {'cellno': 2, 'lineno': 2},
+               'fitted_attributes': {'n_features_in_': None,
+                                     'n_outputs_': None},
+               'is_fitted': True,
+               'module': 'sklearn.preprocessing._label',
+               'n_classes': 5595,
+               'type': "<class 'sklearn.preprocessing._label.LabelEncoder'>"},
+ 'name_count': {'dtype': 'int64',
+                'execution_cell_source': {'cellno': 2, 'lineno': 1},
+                'has_nan': False,
+                'length': 9059,
+                'type': 'pandas.core.series.Series',
+                'value_info': {'value_range': (1, 66),
+                               'value_type': 'continuous'}},
+ 'procData': {'execution_cell_source': {'cellno': 2, 'lineno': 4},
+              'type': "<class 'function'>"},
+ 'test': {'execution_cell_source': {'cellno': 1, 'lineno': 9},
+          'has_nan': True,
+          'per_column_max_20': {'Age': {'dtype': 'int64',
+                                           'num_unique': 71,
+                                           'type': 'continuous',
+                                           'value_range': (0, 156)},
+                                   'Breed1': {'dtype': 'int64',
+                                              'num_unique': 118,
+                                              'type': 'continuous',
+                                              'value_range': (2, 307)},
+                                   'Breed2': {'dtype': 'int64',
+                                              'num_unique': 92,
+                                              'type': 'continuous',
+                                              'value_range': (0, 307)},
+                                   'Color1': {'dtype': 'int64',
+                                              'num_unique': 7,
+                                              'type': 'categorical_numeric',
+                                              'value_range': (1, 7)},
+                                   'Color2': {'dtype': 'int64',
+                                              'num_unique': 7,
+                                              'type': 'categorical_numeric',
+                                              'value_range': (0, 7)},
+                                   'Color3': {'dtype': 'int64',
+                                              'num_unique': 6,
+                                              'type': 'categorical_numeric',
+                                              'value_range': (0, 7)},
+                                   'Dewormed': {'dtype': 'int64',
+                                                'num_unique': 3,
+                                                'type': 'categorical_numeric',
+                                                'value_range': (1, 3)},
+                                   'Fee': {'dtype': 'int64',
+                                           'num_unique': 41,
+                                           'type': 'continuous',
+                                           'value_range': (0, 1500)},
+                                   'FurLength': {'dtype': 'int64',
+                                                 'num_unique': 3,
+                                                 'type': 'categorical_numeric',
+                                                 'value_range': (1, 3)},
+                                   'Gender': {'dtype': 'int64',
+                                              'num_unique': 3,
+                                              'type': 'categorical_numeric',
+                                              'value_range': (1, 3)},
+                                   'Health': {'dtype': 'int64',
+                                              'num_unique': 3,
+                                              'type': 'categorical_numeric',
+                                              'value_range': (1, 3)},
+                                   'MaturitySize': {'dtype': 'int64',
+                                                    'num_unique': 4,
+                                                    'type': 'categorical_numeric',
+                                                    'value_range': (1, 4)},
+                                   'Name': {'dtype': 'object',
+                                            'example_values': ['LUCKY',
+                                                               'Female Kitten',
+                                                               'Pipo',
+                                                               'Little Sandy',
+                                                               'Sabra'],
+                                            'num_unique': 2750,
+                                            'type': 'categorical'},
+                                   'Quantity': {'dtype': 'int64',
+                                                'num_unique': 16,
+                                                'type': 'continuous',
+                                                'value_range': (1, 20)},
+                                   'RescuerID': {'dtype': 'object',
+                                                 'example_values': ['f25d6c89516c4a0538f5...',
+                                                                    'b8612f35ec1ddfc48741...',
+                                                                    '2cf57fe0d221d71e3d55...',
+                                                                    '723d408dd3017416249d...',
+                                                                    '395f54374573b8860576...'],
+                                                 'num_unique': 1518,
+                                                 'type': 'categorical'},
+                                   'State': {'dtype': 'int64',
+                                             'num_unique': 15,
+                                             'type': 'continuous',
+                                             'value_range': (41324, 41415)},
+                                   'Sterilized': {'dtype': 'int64',
+                                                  'num_unique': 3,
+                                                  'type': 'categorical_numeric',
+                                                  'value_range': (1, 3)},
+                                   'Type': {'dtype': 'int64',
+                                            'num_unique': 2,
+                                            'type': 'categorical_numeric',
+                                            'value_range': (1, 2)},
+                                   'Vaccinated': {'dtype': 'int64',
+                                                  'num_unique': 3,
+                                                  'type': 'categorical_numeric',
+                                                  'value_range': (1, 3)},
+                                   'VideoAmt': {'dtype': 'int64',
+                                                'num_unique': 8,
+                                                'type': 'categorical_numeric',
+                                                'value_range': (0, 8)}},
+          'shape': (3972, 22),
+          'type': 'pandas.core.frame.DataFrame'},
+ 'train': {'execution_cell_source': {'cellno': 1, 'lineno': 8},
+           'has_nan': True,
+           'per_column_max_20': {'Age': {'dtype': 'int64',
+                                            'num_unique': 106,
+                                            'type': 'continuous',
+                                            'value_range': (0, 255)},
+                                    'Breed1': {'dtype': 'int64',
+                                               'num_unique': 176,
+                                               'type': 'continuous',
+                                               'value_range': (0, 307)},
+                                    'Breed2': {'dtype': 'int64',
+                                               'num_unique': 135,
+                                               'type': 'continuous',
+                                               'value_range': (0, 307)},
+                                    'Color1': {'dtype': 'int64',
+                                               'num_unique': 7,
+                                               'type': 'categorical_numeric',
+                                               'value_range': (1, 7)},
+                                    'Color2': {'dtype': 'int64',
+                                               'num_unique': 7,
+                                               'type': 'categorical_numeric',
+                                               'value_range': (0, 7)},
+                                    'Color3': {'dtype': 'int64',
+                                               'num_unique': 6,
+                                               'type': 'categorical_numeric',
+                                               'value_range': (0, 7)},
+                                    'Dewormed': {'dtype': 'int64',
+                                                 'num_unique': 3,
+                                                 'type': 'categorical_numeric',
+                                                 'value_range': (1, 3)},
+                                    'Fee': {'dtype': 'int64',
+                                            'num_unique': 74,
+                                            'type': 'continuous',
+                                            'value_range': (0, 3000)},
+                                    'FurLength': {'dtype': 'int64',
+                                                  'num_unique': 3,
+                                                  'type': 'categorical_numeric',
+                                                  'value_range': (1, 3)},
+                                    'Gender': {'dtype': 'int64',
+                                               'num_unique': 3,
+                                               'type': 'categorical_numeric',
+                                               'value_range': (1, 3)},
+                                    'Health': {'dtype': 'int64',
+                                               'num_unique': 3,
+                                               'type': 'categorical_numeric',
+                                               'value_range': (1, 3)},
+                                    'MaturitySize': {'dtype': 'int64',
+                                                     'num_unique': 4,
+                                                     'type': 'categorical_numeric',
+                                                     'value_range': (1, 4)},
+                                    'Name': {'dtype': 'object',
+                                             'example_values': ['Shadow 11',
+                                                                'Siyam, '
+                                                                'Wallace, '
+                                                                'Pira...',
+                                                                'Brindle',
+                                                                'Dreamer',
+                                                                'Pince'],
+                                             'num_unique': 9059,
+                                             'type': 'categorical'},
+                                    'Quantity': {'dtype': 'int64',
+                                                 'num_unique': 19,
+                                                 'type': 'continuous',
+                                                 'value_range': (1, 20)},
+                                    'RescuerID': {'dtype': 'object',
+                                                  'example_values': ['85328291688729c418d7...',
+                                                                     '664227141165f5ebfdb4...',
+                                                                     '6069a6cfd14c456ee9a1...',
+                                                                     '25ffbc24380d24f303b6...',
+                                                                     'e937db0eab552f7c327c...'],
+                                                  'num_unique': 5595,
+                                                  'type': 'categorical'},
+                                    'State': {'dtype': 'int64',
+                                              'num_unique': 14,
+                                              'type': 'continuous',
+                                              'value_range': (41324, 41415)},
+                                    'Sterilized': {'dtype': 'int64',
+                                                   'num_unique': 3,
+                                                   'type': 'categorical_numeric',
+                                                   'value_range': (1, 3)},
+                                    'Type': {'dtype': 'int64',
+                                             'num_unique': 2,
+                                             'type': 'categorical_numeric',
+                                             'value_range': (1, 2)},
+                                    'Vaccinated': {'dtype': 'int64',
+                                                   'num_unique': 3,
+                                                   'type': 'categorical_numeric',
+                                                   'value_range': (1, 3)},
+                                    'VideoAmt': {'dtype': 'int64',
+                                                 'num_unique': 9,
+                                                 'type': 'categorical_numeric',
+                                                 'value_range': (0, 8)}},
+           'shape': (14993, 23),
+           'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+train = procData(train, name_count, RescuerID)
+test = procData(test, name_count, RescuerID)

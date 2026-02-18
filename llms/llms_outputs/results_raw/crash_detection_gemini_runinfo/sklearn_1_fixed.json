@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects. It is typically accessed after iterating through the dataset or by using `train_dataset.classes` if the labels are needed for `compute_class_weight`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects. It is typically accessed after iterating through the dataset or by using `train_dataset.classes` if the labels are needed for `compute_class_weight`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects. It is typically accessed after iterating through the dataset or by using `train_dataset.classes` if the labels are needed for `compute_class_weight`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects. It is typically accessed after iterating through the dataset or by using `train_dataset.classes` if the `class_mode` is 'sparse' or 'categorical'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects. It is typically accessed after iterating through the dataset or by using `train_dataset.classes` if the labels are needed for `compute_class_weight`.",
+    "detection": true
+  }
+]

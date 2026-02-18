@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "LabelEncoder is applied separately to workclass and Salary, which is fine. Shapes are (15060,1). LinearRegression.fit expects y as 1D array; passing (15060,1) generally works as it will be converted to 1D or 2D, and scikit-learn accepts both. No missing values and numeric after encoding, so fit should run.",
+    "detection": false
+  },
+  {
+    "reasoning": "LabelEncoder returns 1D arrays which are reshaped correctly; LinearRegression.fit expects y as 1D but passing 2D (n_samples,1) is accepted and reshaped internally by scikit-learn. All inputs have matching lengths and no NaNs.",
+    "detection": false
+  },
+  {
+    "reasoning": "LabelEncoder returns 1D arrays; reshaping to (-1,1) yields 2D arrays. LinearRegression.fit expects y as 1D array, but y is 2D, causing a ValueError. Also, using same LabelEncoder for both columns is odd but not crashing. Crash likely due to y shape.",
+    "detection": true
+  },
+  {
+    "reasoning": "LabelEncoder is reused for both features and target, which is allowed; shapes align and LinearRegression.fit accepts y of shape (n,1). No missing values and numeric arrays produced.",
+    "detection": false
+  },
+  {
+    "reasoning": "LabelEncoder creates integer labels; LinearRegression.fit expects y as 1D array, but y is reshaped to (n,1). scikit-learn will raise a DataConversionWarning but still accepts 2D y for regression; fit will run. No missing values; shapes align.",
+    "detection": false
+  }
+]

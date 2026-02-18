@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model.fit` method expects numerical input for `x` (train_data) and `y` (train_labels), but `train_data` is a pandas Series of strings (sentences) and `train_labels` is a pandas Series of floats. The model expects tokenized numerical input, not raw text.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.fit` method expects numerical input for `x` (train_data) and `y` (train_labels), but `train_data` is a pandas Series of strings (sentences) and `train_labels` is a pandas Series of floats. The model expects tokenized numerical input, not raw text.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.fit` method expects numerical input for `x` (train_data) and `y` (train_labels), but `train_data` is a pandas Series of strings (sentences) and `train_labels` is a pandas Series of floats. The model expects tokenized numerical input, not raw text.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.fit` method expects numerical input for `x` (train_data) and `y` (train_labels), but `train_data` is a pandas Series of strings (sentences) and `train_labels` is a pandas Series of floats. The model expects tokenized numerical input, not raw text.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.fit` method expects numerical input for `x` (train_data) and `y` (train_labels), but `train_data` is a pandas Series of strings (sentences) and `train_labels` is a pandas Series of floats. The model expects tokenized numerical input, not raw text.",
+    "detection": true
+  }
+]

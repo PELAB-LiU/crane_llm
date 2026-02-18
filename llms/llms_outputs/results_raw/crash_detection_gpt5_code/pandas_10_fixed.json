@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "str.replace with '+' will raise a regex error because '+' is a special regex char; needs regex=False or escaped '\\+'.",
+    "detection": true
+  },
+  {
+    "reasoning": "Using str.replace with '+' without regex=False treats '+' as a regex quantifier, causing a regex error. This will likely raise a ValueError or warning and not behave as intended.",
+    "detection": true
+  },
+  {
+    "reasoning": "str.replace with '+' will raise a regex error because '+' is a regex quantifier; needs regex=False or escaped '+'.",
+    "detection": true
+  },
+  {
+    "reasoning": "str.replace with a literal '+' in pandas uses regex by default, where '+' is a special character; missing regex=False can cause a regex error. Also, some rows may have non-numeric values after cleaning, causing astype('int') to fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "str.replace with '+' will raise a regex error unless regex=False is set; without it, '+' is a special regex char. This likely causes a crash.",
+    "detection": true
+  }
+]

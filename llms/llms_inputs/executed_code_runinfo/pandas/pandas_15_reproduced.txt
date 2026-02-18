@@ -1,0 +1,158 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+## Cell 2:
+
+train=pd.read_csv('data/train.csv')
+test=pd.read_csv('data/test.csv')
+submission=pd.read_csv('data/sample_submission.csv')
+
+## Cell 3:
+
+hmv_col=[]
+for col in train.columns:
+    if train[col].isnull().sum()/train.shape[0] > 0.46:
+
+        hmv_col.append(col)
+
+
+print('\nColumns that have high number of missing values: ', hmv_col)
+print("No of column before dropping high missing values column: ",len(train.columns))
+
+train.drop(hmv_col,axis=1,inplace=True)
+test.drop(hmv_col,axis=1,inplace=True)
+print("No of columns after dropping high missing value column: ",len(train.columns))
+
+# Current relevent runtime information:
+{'__method__test_drop': {'type': "<class 'method'>"},
+ 'test': {'execution_cell_source': {'cellno': 1, 'lineno': 2},
+          'has_nan': True,
+          'per_column_max_20': {'BldgType': {'dtype': 'object',
+                                                'num_unique': 5,
+                                                'type': 'categorical',
+                                                'unique_values': ['1Fam',
+                                                                  'TwnhsE',
+                                                                  'Twnhs',
+                                                                  'Duplex',
+                                                                  '2fmCon']},
+                                   'Condition1': {'dtype': 'object',
+                                                  'example_values': ['RRAe',
+                                                                     'RRAn',
+                                                                     'RRNe',
+                                                                     'Artery',
+                                                                     'Feedr'],
+                                                  'num_unique': 9,
+                                                  'type': 'categorical'},
+                                   'Condition2': {'dtype': 'object',
+                                                  'num_unique': 5,
+                                                  'type': 'categorical',
+                                                  'unique_values': ['Norm',
+                                                                    'Feedr',
+                                                                    'PosA',
+                                                                    'PosN',
+                                                                    'Artery']},
+                                   'HouseStyle': {'dtype': 'object',
+                                                  'example_values': ['2Story',
+                                                                     'SFoyer',
+                                                                     '1.5Fin',
+                                                                     '1.5Unf',
+                                                                     '2.5Unf'],
+                                                  'num_unique': 7,
+                                                  'type': 'categorical'},
+                                   'Id': {'dtype': 'int64',
+                                          'num_unique': 1459,
+                                          'type': 'continuous',
+                                          'value_range': (1461, 2919)},
+                                   'LandContour': {'dtype': 'object',
+                                                   'num_unique': 4,
+                                                   'type': 'categorical',
+                                                   'unique_values': ['Lvl',
+                                                                     'HLS',
+                                                                     'Bnk',
+                                                                     'Low']},
+                                   'LandSlope': {'dtype': 'object',
+                                                 'num_unique': 3,
+                                                 'type': 'categorical',
+                                                 'unique_values': ['Gtl',
+                                                                   'Mod',
+                                                                   'Sev']},
+                                   'LotArea': {'dtype': 'int64',
+                                               'num_unique': 1106,
+                                               'type': 'continuous',
+                                               'value_range': (1470, 56600)},
+                                   'LotConfig': {'dtype': 'object',
+                                                 'num_unique': 5,
+                                                 'type': 'categorical',
+                                                 'unique_values': ['Inside',
+                                                                   'Corner',
+                                                                   'FR2',
+                                                                   'CulDSac',
+                                                                   'FR3']},
+                                   'LotFrontage': {'dtype': 'float64',
+                                                   'num_unique': 115,
+                                                   'type': 'continuous',
+                                                   'value_range': (21.0,
+                                                                   200.0)},
+                                   'LotShape': {'dtype': 'object',
+                                                'num_unique': 4,
+                                                'type': 'categorical',
+                                                'unique_values': ['Reg',
+                                                                  'IR1',
+                                                                  'IR2',
+                                                                  'IR3']},
+                                   'MSSubClass': {'dtype': 'int64',
+                                                  'num_unique': 16,
+                                                  'type': 'continuous',
+                                                  'value_range': (20, 190)},
+                                   'MSZoning': {'dtype': 'object',
+                                                'num_unique': 5,
+                                                'type': 'categorical',
+                                                'unique_values': ['RH',
+                                                                  'RL',
+                                                                  'RM',
+                                                                  'FV',
+                                                                  'C (all)']},
+                                   'Neighborhood': {'dtype': 'object',
+                                                    'example_values': ['NridgHt',
+                                                                       'BrDale',
+                                                                       'ClearCr',
+                                                                       'Blueste',
+                                                                       'Crawfor'],
+                                                    'num_unique': 25,
+                                                    'type': 'categorical'},
+                                   'OverallCond': {'dtype': 'int64',
+                                                   'num_unique': 9,
+                                                   'type': 'categorical_numeric',
+                                                   'value_range': (1, 9)},
+                                   'OverallQual': {'dtype': 'int64',
+                                                   'num_unique': 10,
+                                                   'type': 'categorical_numeric',
+                                                   'value_range': (1, 10)},
+                                   'Street': {'dtype': 'object',
+                                              'num_unique': 2,
+                                              'type': 'categorical',
+                                              'unique_values': ['Pave',
+                                                                'Grvl']},
+                                   'Utilities': {'dtype': 'object',
+                                                 'num_unique': 1,
+                                                 'type': 'categorical',
+                                                 'unique_values': ['AllPub']},
+                                   'YearBuilt': {'dtype': 'int64',
+                                                 'num_unique': 106,
+                                                 'type': 'continuous',
+                                                 'value_range': (1879, 2010)},
+                                   'YearRemodAdd': {'dtype': 'int64',
+                                                    'num_unique': 61,
+                                                    'type': 'continuous',
+                                                    'value_range': (1950,
+                                                                    2010)}},
+          'shape': (1459, 74),
+          'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+test=test.drop(['Alley','PoolQC','Fence','MiscFeature','Id'],axis=1)

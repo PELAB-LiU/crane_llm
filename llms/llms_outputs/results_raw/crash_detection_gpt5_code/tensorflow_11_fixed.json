@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model outputs 2 classes (Dense(2)) but the generators infer number of classes from labels; if dataset has more than 2 classes, shape mismatch will crash. Uncertain without dataset.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model outputs 2 sigmoid units but the generators produce categorical labels with as many classes as in the dataset; unless there are exactly 2 classes, this causes a shape mismatch with categorical_crossentropy.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs 2 classes but generators produce categorical labels based on dataset; if dataset has !=2 classes, shape mismatch will cause a crash during training.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model outputs 2 classes but generators produce categorical labels based on dataset; if dataset has !=2 classes, mismatch will raise shape error during training. Unclear how many classes exist, so not certain it will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model outputs 2 classes but generators infer number of classes from labels; if dataset has more than 2 classes, shape mismatch will occur. However, without knowing label count, crash is uncertain.",
+    "detection": false
+  }
+]

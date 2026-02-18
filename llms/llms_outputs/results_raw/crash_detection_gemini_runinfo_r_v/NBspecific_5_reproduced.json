@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The column 'num_outbound_cmds' was already dropped from the DataFrame and removed from 'numeric_columns' in the previous cell. Attempting to drop it again or remove it again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' was already dropped from the DataFrame and removed from 'numeric_columns' in the previous cell. Attempting to drop it again or remove it again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' was already dropped from the DataFrame and removed from 'numeric_columns' in the previous cell. Attempting to drop it again or remove it again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' was already dropped from the DataFrame and removed from 'numeric_columns' in the previous cell. Attempting to drop it again or remove it again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' was already dropped from the DataFrame and removed from 'numeric_columns' in the previous cell. Attempting to drop it again or remove it again will raise a KeyError.",
+    "detection": true
+  }
+]

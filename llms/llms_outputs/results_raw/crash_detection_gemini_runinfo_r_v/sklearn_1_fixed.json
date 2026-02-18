@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects and will raise an AttributeError. The `compute_class_weight` function requires direct access to the labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects and will raise an AttributeError. The `compute_class_weight` function requires direct access to the labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects and will raise an AttributeError. The `compute_class_weight` function requires direct access to the labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects and will raise an AttributeError. The `compute_class_weight` function requires direct access to the labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects and will raise an AttributeError. The `compute_class_weight` function requires direct access to the labels.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'test_generator.classes' attribute directly provides the true class labels as integers, which is compatible with 'y_true_classes'. No crash is expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'test_generator.classes' attribute directly provides the true class labels as integers, which is compatible with 'y_true_classes'. No crash is expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'test_generator.classes' attribute directly provides the true class labels as integers, which is compatible with 'y_true_classes'. No crash is expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `test_generator.classes` attribute returns the integer labels for each sample, which are already in the correct format for `y_true_classes`. There is no crash expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `test_generator.classes` attribute returns the integer labels for each sample, which are already in the correct format for `y_true_classes`. There is no crash expected.",
+    "detection": false
+  }
+]

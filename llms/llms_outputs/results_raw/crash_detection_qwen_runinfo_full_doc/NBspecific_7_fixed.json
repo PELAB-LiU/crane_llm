@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The cell attempts to group the DataFrame by 'region' and then get the group for 'Asia Pacific'. However, 'Asia Pacific' is not listed among the unique values for the 'region' column, which are 'World', 'North America', 'Europe', 'Other', and 'Middle East'. This will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to group the DataFrame by 'region' and then get the group for 'Asia Pacific'. However, 'Asia Pacific' is not listed among the unique values for the 'region' column, which are 'World', 'North America', 'Europe', 'Other', and 'Middle East'. This will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to group the DataFrame by 'region' and then get the group for 'Asia Pacific'. However, 'Asia Pacific' is not listed among the unique values for the 'region' column, which are 'World', 'North America', 'Europe', 'Other', and 'Middle East'. This will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to group the DataFrame by 'region' and then get the group for 'Asia Pacific'. However, 'Asia Pacific' is not listed among the unique values for the 'region' column, which are 'World', 'North America', 'Europe', 'Other', and 'Middle East'. This will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell attempts to group the DataFrame by 'region' and then get the group for 'Asia Pacific'. However, 'Asia Pacific' is not listed among the unique values for the 'region' column, which are 'World', 'North America', 'Europe', 'Other', and 'Middle East'. This will result in a KeyError.",
+    "detection": true
+  }
+]

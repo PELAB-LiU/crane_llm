@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model input is 64x64x3 but data generators produce 48x48x3 images; compile won't crash, but later training would. Current cell uses sklearn compute_class_weight with available labels and then compiles; all referenced variables exist and have correct types.",
+    "detection": false
+  },
+  {
+    "reasoning": "train_dataset.labels exists and is int32 with 7 classes; np.unique is available; compute_class_weight expects classes and y; outputs class weights array. model and METRICS are defined. No obvious type/shape issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "train_dataset.labels exists and classes use np.unique on it; sklearn compute_class_weight accepts these. model and METRICS are defined. No type or shape mismatches apparent.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model input shape is (64,64,3) but datasets generate (48,48,3); this mismatch will cause model.compile or later training to fail due to incompatible input shapes. Also METRICS include BinaryAccuracy with categorical labels, which may be inconsistent.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model input expects (64,64,3) but datasets produce (48,48,3); however, this cell only computes class weights and compiles the model without fitting, so no shape mismatch is triggered. compute_class_weight receives valid labels.",
+    "detection": false
+  }
+]

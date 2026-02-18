@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "DTRmodel has not been fitted (is_fitted: False). Calling predict on an unfitted sklearn estimator raises a NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel was never fitted (grid search fit a separate estimator), so calling predict on the unfitted DTRmodel will raise NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel was never fitted; predictions require a fitted estimator, so calling predict will raise NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel was never fitted; predictions were made using best_estimator earlier, not DTRmodel. Calling predict on an unfitted estimator will raise NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel was never fitted; predictions were made using best_estimator instead. Calling predict on an unfitted sklearn estimator raises NotFittedError.",
+    "detection": true
+  }
+]

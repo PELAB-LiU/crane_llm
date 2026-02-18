@@ -1,0 +1,38 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from mpl_toolkits import mplot3d
+import warnings
+
+warnings.filterwarnings('ignore')
+
+## Cell 2:
+
+df=pd.read_csv('data/kdd_train.csv.zip')
+df.head()
+
+## Cell 3:
+
+numeric_columns = []
+categorical_columns = []
+for column in df.columns:
+    if df[column].dtype != 'object':
+        numeric_columns.append(column)
+    else:
+        categorical_columns.append(column)
+
+categorical_columns = categorical_columns[:-1]
+labels=df['labels'].unique()
+
+# Target Cell:
+
+
+
+df.drop(columns='num_outbound_cmds', inplace=True)
+
+
+numeric_columns.remove('num_outbound_cmds')

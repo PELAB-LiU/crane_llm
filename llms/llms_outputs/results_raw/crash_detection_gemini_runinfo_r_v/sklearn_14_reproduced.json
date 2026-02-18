@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type (strings) and have not been numerically encoded. The LinearRegression model cannot fit on non-numeric data, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type (strings) and have not been numerically encoded. The LinearRegression model cannot fit on non-numeric data, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type (strings) and have not been numerically encoded. The LinearRegression model cannot fit on non-numeric data, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type (strings) and have not been numerically encoded. The LinearRegression model cannot fit on non-numeric data, which will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'model' object is an unfitted LinearRegression instance. The 'X_train' and 'y_train' dataframes are valid inputs for the fit method, with no missing values. Therefore, the model should fit successfully.",
+    "detection": false
+  }
+]

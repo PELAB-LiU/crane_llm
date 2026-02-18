@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "custom_dataset.images[1] is a tensor of shape (1,125,125); custom_dataset.labels[0] is a scalar class label tensor, not an image, so plt.imshow on it will raise a TypeError about invalid shape for image data. The first imshow is fine; the second will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "custom_dataset.images[1] is a 3D tensor (1,125,125); slicing [0,:,:] is fine. However, custom_dataset.labels[0] is a scalar tensor (shape ()), which cannot be displayed with imshow expecting 2D or 3D array.",
+    "detection": true
+  },
+  {
+    "reasoning": "custom_dataset.images[1][0,:,:] is a 2D float32 tensor and valid for imshow, but custom_dataset.labels[0] is a scalar int64 tensor; passing a scalar to plt.imshow will raise an error (invalid shape for image data).",
+    "detection": true
+  },
+  {
+    "reasoning": "First imshow uses a 2D tensor slice, which is fine. Second imshow tries to plot a scalar label tensor as an image, which will raise a TypeError since imshow expects 2D/3D array-like, not a 0-dim tensor.",
+    "detection": true
+  },
+  {
+    "reasoning": "custom_dataset.images[1] has shape (1,125,125); indexing [0,:,:] yields 2D array fine. custom_dataset.labels[0] is a scalar tensor (shape ()), which imshow cannot handle as an image, causing a TypeError. Therefore it will crash.",
+    "detection": true
+  }
+]

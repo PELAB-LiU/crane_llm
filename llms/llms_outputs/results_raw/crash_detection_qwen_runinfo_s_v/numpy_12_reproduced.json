@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell will crash because the `test` dataset contains NaN values, which will cause issues when creating the dataset and training the model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell will crash because the `test` dataset contains NaN values, which will cause issues when creating the dataset and training the model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell will crash because the `test` dataset contains NaN values, which will cause issues when creating the dataset and training the model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell will crash because the `test` dataset contains NaN values, which will cause issues when creating the dataset and training the model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell will crash because the `test` dataset contains NaN values, which will cause issues when creating the dataset and training the model.",
+    "detection": true
+  }
+]

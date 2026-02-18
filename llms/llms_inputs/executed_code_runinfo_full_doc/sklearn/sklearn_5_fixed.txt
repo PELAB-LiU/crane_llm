@@ -1,0 +1,236 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, accuracy_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+## Cell 2:
+
+df= pd.read_csv("data/iris.csv")
+
+## Cell 3:
+
+X = df.drop("species",axis=1)
+Y = df["species"]
+x_train, x_test , y_train, y_test=train_test_split (X ,Y , test_size=0.25, random_state=42)
+
+## Cell 4:
+
+clf = LogisticRegression()
+clf.fit(x_train, y_train)
+
+## Cell 5:
+
+y_pred = clf.predict(x_test)
+
+# Current relevent runtime information:
+{'__method__np_concatenate': {'doc_importants': {'notes': 'When one or more of '
+                                                          'the arrays to be '
+                                                          'concatenated is a '
+                                                          'MaskedArray, this '
+                                                          'function will '
+                                                          'return a '
+                                                          'MaskedArray object '
+                                                          'instead of an '
+                                                          'ndarray, but the '
+                                                          'input masks are '
+                                                          '*not* preserved. In '
+                                                          'cases where a '
+                                                          'MaskedArray is '
+                                                          'expected as input, '
+                                                          'use the '
+                                                          'ma.concatenate '
+                                                          'function from the '
+                                                          'masked array module '
+                                                          'instead.'},
+                              'type': '<class '
+                                      "'numpy._ArrayFunctionDispatcher'>"},
+ '__method__np_unique': {'doc_importants': {'notes': 'When an axis is '
+                                                     'specified the subarrays '
+                                                     'indexed by the axis are '
+                                                     'sorted. This is done by '
+                                                     'making the specified '
+                                                     'axis the first dimension '
+                                                     'of the array (move the '
+                                                     'axis to the first '
+                                                     'dimension to keep the '
+                                                     'order of the other axes) '
+                                                     'and then flattening the '
+                                                     'subarrays in C order. '
+                                                     'The flattened subarrays '
+                                                     'are then viewed as a '
+                                                     'structured type with '
+                                                     'each element given a '
+                                                     'label, with the effect '
+                                                     'that we end up with a '
+                                                     '1-D array of structured '
+                                                     'types that can be '
+                                                     'treated in the same way '
+                                                     'as any other 1-D array. '
+                                                     'The result is that the '
+                                                     'flattened subarrays are '
+                                                     'sorted in lexicographic '
+                                                     'order starting with the '
+                                                     'first element. .. '
+                                                     'versionchanged: NumPy '
+                                                     '1.21 If nan values are '
+                                                     'in the input array, a '
+                                                     'single nan is put to the '
+                                                     'end of the sorted unique '
+                                                     'values. Also for complex '
+                                                     'arrays all NaN values '
+                                                     'are considered '
+                                                     'equivalent (no matter '
+                                                     'whether the NaN is in '
+                                                     'the real or imaginary '
+                                                     'part). As the '
+                                                     'representant for the '
+                                                     'returned array the '
+                                                     'smallest one in the '
+                                                     'lexicographical order is '
+                                                     'chosen - see np.sort for '
+                                                     'how the lexicographical '
+                                                     'order is defined for '
+                                                     'complex arrays.'},
+                         'signature': {'parameters': [{'annotation': None,
+                                                       'default': None,
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'ar',
+                                                       'required': True},
+                                                      {'annotation': None,
+                                                       'default': 'False',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'return_index',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'False',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'return_inverse',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'False',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'return_counts',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'axis',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'True',
+                                                       'kind': 'KEYWORD_ONLY',
+                                                       'name': 'equal_nan',
+                                                       'required': False}],
+                                       'return_annotation': None},
+                         'type': "<class 'numpy._ArrayFunctionDispatcher'>"},
+ '__method__plt_show': {'doc_importants': {'notes': '**Saving figures to file '
+                                                    'and showing a window at '
+                                                    'the same time** If you '
+                                                    'want an image file as '
+                                                    'well as a user interface '
+                                                    'window, use '
+                                                    '`.pyplot.savefig` before '
+                                                    '`.pyplot.show`. At the '
+                                                    'end of (a blocking) '
+                                                    '``show()`` the figure is '
+                                                    'closed and thus '
+                                                    'unregistered from pyplot. '
+                                                    'Calling `.pyplot.savefig` '
+                                                    'afterwards would save a '
+                                                    'new and thus empty '
+                                                    'figure. This limitation '
+                                                    'of command order does not '
+                                                    'apply if the show is '
+                                                    'non-blocking or if you '
+                                                    'keep a reference to the '
+                                                    'figure and use '
+                                                    '`.Figure.savefig`. '
+                                                    '**Auto-show in jupyter '
+                                                    'notebooks** The jupyter '
+                                                    'backends (activated via '
+                                                    '``%matplotlib inline``, '
+                                                    '``%matplotlib notebook``, '
+                                                    'or ``%matplotlib '
+                                                    'widget``), call '
+                                                    '``show()`` at the end of '
+                                                    'every cell by default. '
+                                                    "Thus, you usually don't "
+                                                    'have to call it '
+                                                    'explicitly there.'},
+                        'signature': {'parameters': [{'annotation': None,
+                                                      'default': None,
+                                                      'kind': 'VAR_POSITIONAL',
+                                                      'name': 'args',
+                                                      'required': True},
+                                                     {'annotation': None,
+                                                      'default': None,
+                                                      'kind': 'VAR_KEYWORD',
+                                                      'name': 'kwargs',
+                                                      'required': True}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ 'confusion_matrix': {'signature': {'parameters': [{'annotation': None,
+                                                    'default': None,
+                                                    'kind': 'POSITIONAL_OR_KEYWORD',
+                                                    'name': 'y_true',
+                                                    'required': True},
+                                                   {'annotation': None,
+                                                    'default': None,
+                                                    'kind': 'POSITIONAL_OR_KEYWORD',
+                                                    'name': 'y_pred',
+                                                    'required': True},
+                                                   {'annotation': None,
+                                                    'default': 'None',
+                                                    'kind': 'KEYWORD_ONLY',
+                                                    'name': 'labels',
+                                                    'required': False},
+                                                   {'annotation': None,
+                                                    'default': 'None',
+                                                    'kind': 'KEYWORD_ONLY',
+                                                    'name': 'sample_weight',
+                                                    'required': False},
+                                                   {'annotation': None,
+                                                    'default': 'None',
+                                                    'kind': 'KEYWORD_ONLY',
+                                                    'name': 'normalize',
+                                                    'required': False}],
+                                    'return_annotation': None},
+                      'type': "<class 'function'>"},
+ 'np': {'type': "<class 'module'>"},
+ 'plt': {'type': "<class 'module'>"},
+ 'y_pred': {'dtype': 'object',
+            'execution_cell_source': {'cellno': 9, 'lineno': 1},
+            'shape': (38,),
+            'type': 'numpy.ndarray',
+            'value_info': {'num_unique': 3,
+                           'unique_values': ['versicolor',
+                                             'setosa',
+                                             'virginica'],
+                           'value_type': 'categorical or object'}},
+ 'y_test': {'dtype': 'object',
+            'has_nan': False,
+            'length': 38,
+            'type': 'pandas.core.series.Series',
+            'value_info': {'num_unique': 3,
+                           'unique_values': ['versicolor',
+                                             'setosa',
+                                             'virginica'],
+                           'value_type': 'categorical or object'}}}
+# Target Cell:
+
+from sklearn import metrics
+confusion_matrix = metrics.confusion_matrix(y_test , y_pred)
+
+
+
+labels = np.unique(np.concatenate((y_test, y_pred)))
+cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix , display_labels=labels)
+
+cm_display.plot()
+plt.show()

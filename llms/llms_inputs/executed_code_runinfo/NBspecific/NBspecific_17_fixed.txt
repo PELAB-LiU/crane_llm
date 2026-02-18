@@ -1,0 +1,185 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+## Cell 2:
+
+train_df = pd.read_csv('data/train.csv', index_col = "Id")
+test_df = pd.read_csv('data/test.csv', index_col = "Id")
+
+## Cell 3:
+
+
+data_df = pd.concat([train_df, test_df], axis = 0)
+
+## Cell 4:
+
+
+nume_cols = data_df.select_dtypes(include='number')
+nume_cols
+
+## Cell 5:
+
+
+num_filled = nume_cols.fillna(nume_cols.mean())
+
+## Cell 6:
+
+
+cat_cols = data_df.select_dtypes(include='object')
+cat_cols
+
+## Cell 7:
+
+
+cat_filled = cat_cols.fillna(cat_cols.mode().iloc[0])
+
+## Cell 8:
+
+
+cat_enc = pd.get_dummies(cat_filled)
+
+## Cell 9:
+
+
+from sklearn.preprocessing import MinMaxScaler
+
+columns_to_scale = num_filled.drop('SalePrice', axis=1).columns
+
+target = num_filled['SalePrice']
+
+scaler = MinMaxScaler()
+scaled_columns = scaler.fit_transform(num_filled[columns_to_scale])
+
+scaled_df = pd.DataFrame(scaled_columns, columns=columns_to_scale)
+final_df = pd.concat([scaled_df, target.reset_index(drop=True)], axis=1)
+
+## Cell 10:
+
+
+data = pd.concat([final_df.reset_index(drop=True), cat_enc.reset_index(drop=True)], axis = 1)
+
+## Cell 11:
+
+
+target = data['SalePrice']
+features = data.drop('SalePrice', axis=1)
+
+## Cell 12:
+
+
+X      = features[:len(train_df)]
+X_test = features[len(train_df):]
+
+y      = target[:len(train_df)]
+y_test = target[len(train_df):]
+
+## Cell 13:
+
+from sklearn.model_selection import KFold
+from sklearn.linear_model import LinearRegression, Ridge
+from sklearn.metrics import mean_squared_error
+from sklearn.preprocessing import PolynomialFeatures
+
+# Current relevent runtime information:
+{'PolynomialFeatures': {'type': "<class 'type'>"},
+ 'X': {'execution_cell_source': {'cellno': 31, 'lineno': 2},
+       'has_nan': False,
+       'per_column_max_20': {'1stFlrSF': {'dtype': 'float64',
+                                              'num_unique': 753,
+                                              'type': 'continuous',
+                                              'value_range': (0.0,
+                                                              0.9153539172442764)},
+                                 '2ndFlrSF': {'dtype': 'float64',
+                                              'num_unique': 417,
+                                              'type': 'continuous',
+                                              'value_range': (0.0, 1.0)},
+                                 'BsmtFinSF1': {'dtype': 'float64',
+                                                'num_unique': 637,
+                                                'type': 'continuous',
+                                                'value_range': (0.0, 1.0)},
+                                 'BsmtFinSF2': {'dtype': 'float64',
+                                                'num_unique': 144,
+                                                'type': 'continuous',
+                                                'value_range': (0.0,
+                                                                0.9659239842726082)},
+                                 'BsmtFullBath': {'dtype': 'float64',
+                                                  'num_unique': 4,
+                                                  'type': 'continuous',
+                                                  'value_range': (0.0, 1.0)},
+                                 'BsmtHalfBath': {'dtype': 'float64',
+                                                  'num_unique': 3,
+                                                  'type': 'continuous',
+                                                  'value_range': (0.0, 1.0)},
+                                 'BsmtUnfSF': {'dtype': 'float64',
+                                               'num_unique': 780,
+                                               'type': 'continuous',
+                                               'value_range': (0.0, 1.0)},
+                                 'FullBath': {'dtype': 'float64',
+                                              'num_unique': 4,
+                                              'type': 'continuous',
+                                              'value_range': (0.0, 0.75)},
+                                 'GrLivArea': {'dtype': 'float64',
+                                               'num_unique': 861,
+                                               'type': 'continuous',
+                                               'value_range': (0.0, 1.0)},
+                                 'HalfBath': {'dtype': 'float64',
+                                              'num_unique': 3,
+                                              'type': 'continuous',
+                                              'value_range': (0.0, 1.0)},
+                                 'LotArea': {'dtype': 'float64',
+                                             'num_unique': 1073,
+                                             'type': 'continuous',
+                                             'value_range': (0.0,
+                                                             0.9999999999999999)},
+                                 'LotFrontage': {'dtype': 'float64',
+                                                 'num_unique': 111,
+                                                 'type': 'continuous',
+                                                 'value_range': (0.0, 1.0)},
+                                 'LowQualFinSF': {'dtype': 'float64',
+                                                  'num_unique': 24,
+                                                  'type': 'continuous',
+                                                  'value_range': (0.0,
+                                                                  0.537593984962406)},
+                                 'MSSubClass': {'dtype': 'float64',
+                                                'num_unique': 15,
+                                                'type': 'continuous',
+                                                'value_range': (0.0, 1.0)},
+                                 'MasVnrArea': {'dtype': 'float64',
+                                                'num_unique': 328,
+                                                'type': 'continuous',
+                                                'value_range': (0.0, 1.0)},
+                                 'OverallCond': {'dtype': 'float64',
+                                                 'num_unique': 9,
+                                                 'type': 'continuous',
+                                                 'value_range': (0.0, 1.0)},
+                                 'OverallQual': {'dtype': 'float64',
+                                                 'num_unique': 10,
+                                                 'type': 'continuous',
+                                                 'value_range': (0.0, 1.0)},
+                                 'TotalBsmtSF': {'dtype': 'float64',
+                                                 'num_unique': 721,
+                                                 'type': 'continuous',
+                                                 'value_range': (0.0, 1.0)},
+                                 'YearBuilt': {'dtype': 'float64',
+                                               'num_unique': 112,
+                                               'type': 'continuous',
+                                               'value_range': (0.0, 1.0)},
+                                 'YearRemodAdd': {'dtype': 'float64',
+                                                  'num_unique': 61,
+                                                  'type': 'continuous',
+                                                  'value_range': (0.0, 1.0)}},
+       'shape': (1460, 287),
+       'type': 'pandas.core.frame.DataFrame'},
+ '__method__X_shape': {'length': 2, 'type': "<class 'tuple'>"}}
+# Target Cell:
+
+
+poly = PolynomialFeatures(degree=1, interaction_only=True)
+poly_X = poly.fit_transform(X)
+
+X.shape, poly_X.shape

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the `inference` function expects a model to be passed to it. This will result in a TypeError when `inference` tries to call methods on `None`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the `inference` function expects a model to be passed to it. This will result in a TypeError when `inference` tries to call methods on `None`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the `inference` function expects a model to be passed to it. This will result in a TypeError when `inference` tries to call methods on `None`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the `inference` function expects a model to be passed to it. This will result in a TypeError when `inference` tries to call methods on `None`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the `inference` function expects a model to be passed to it. This will result in a TypeError when `inference` tries to call methods on `None`.",
+    "detection": true
+  }
+]

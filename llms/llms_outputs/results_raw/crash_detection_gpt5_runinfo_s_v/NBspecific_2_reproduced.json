@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "X_train has shape (123, 32, 32, 3) but XGBoost expects 2D (n_samples, n_features); y_train has 10 classes while y_test length (1162) mismatches X_test (33 samples), causing downstream errors. Fit will fail due to 4D input.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train/X_test are 4D image tensors, but XGBClassifier expects 2D arrays; y_test length (1162) also mismatches X_test (33), causing shape errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train/X_test are 4D image tensors (32x32x3), while XGBClassifier expects 2D (n_samples, n_features). Also y_test length (1162) mismatches X_test samples (33), causing shape errors. This will raise an error on fit or predict.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train/X_test are 4D image tensors, but XGBClassifier expects 2D (n_samples, n_features). Also y_test length (1162) mismatches X_test samples (33), causing shape errors in fit/predict/score.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train/X_test are 4D image tensors but XGBClassifier expects 2D (n_samples, n_features); also y_test length (1162) mismatches X_test samples (33) leading to shape errors. This will raise an error during fit or predict/accuracy.",
+    "detection": true
+  }
+]

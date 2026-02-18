@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist; the correct attribute is `train_dataset.classes`. Using the wrong attribute will cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist; the correct attribute is `train_dataset.classes`. Using the wrong attribute will cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist; the correct attribute is `train_dataset.classes`. Using the wrong attribute will cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist, as the `labels` attribute is not a part of the `DirectoryIterator` object returned by `flow_from_directory`. This will cause an error when trying to compute class weights.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist, as the `labels` attribute is not a part of the `DirectoryIterator` object returned by `flow_from_directory`. This will cause an error when trying to compute class weights.",
+    "detection": true
+  }
+]

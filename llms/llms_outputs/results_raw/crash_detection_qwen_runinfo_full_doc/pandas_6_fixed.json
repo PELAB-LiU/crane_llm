@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Order ID' column contains non-numeric values, which will be converted to NaN by `pd.to_numeric` with `errors='coerce'`. The subsequent `dropna` operation will remove these rows, but the cell will not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-numeric values, which will be converted to NaN by `pd.to_numeric` with `errors='coerce'`. The subsequent `dropna` operation will remove these rows, but the cell will not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-numeric values, which will be converted to NaN by `pd.to_numeric` with `errors='coerce'`. The subsequent `dropna` operation will remove these rows, but the cell will not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-numeric values, which will be converted to NaN by `pd.to_numeric` with `errors='coerce'`. The subsequent `dropna` operation will remove these rows, but the cell will not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-numeric values, which will be converted to NaN by `pd.to_numeric` with `errors='coerce'`. The subsequent `dropna` operation will remove these rows, but the cell will not crash.",
+    "detection": false
+  }
+]

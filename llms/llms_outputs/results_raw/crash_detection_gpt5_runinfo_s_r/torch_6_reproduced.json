@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "CrossEntropyLoss expects class indices of shape (N,) with float logits, but labels are one-hot float tensors of shape (N,6294), causing a size/type mismatch in loss computation. This will raise a runtime error during loss calculation.",
+    "detection": true
+  },
+  {
+    "reasoning": "CrossEntropyLoss expects class indices (LongTensor) but labels are one-hot FloatTensors of size 6294, causing a dtype/shape mismatch error during loss computation. Additionally, argmax without dim on batched tensors returns a single index over all elements, not per-sample.",
+    "detection": true
+  },
+  {
+    "reasoning": "CrossEntropyLoss expects class indices (LongTensor) but labels are one-hot FloatTensors of size 6294, causing a shape/type mismatch when computing loss. This will raise a runtime error during loss(output, label).",
+    "detection": true
+  },
+  {
+    "reasoning": "CrossEntropyLoss expects class indices (LongTensor) of shape (N,) but labels are one-hot FloatTensors of shape (N,6294), so loss(output, label) will raise a RuntimeError due to target dtype/shape mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "CrossEntropyLoss expects class indices (LongTensor) but labels are one-hot FloatTensors of size 6294, causing a dtype/shape mismatch error during loss computation. This will crash inside run_model when computing loss.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "accuracy_score expects true labels and predicted labels of equal length, but x is a feature matrix and y are labels; shapes mismatch will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects true and predicted labels, but x and y are features and true labels; also shapes (59381,124) vs (59381,) mismatch cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects true labels and predicted labels of equal length, but here x is a feature DataFrame and y is labels; shapes are incompatible, causing a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects ground-truth labels and predicted labels of equal length, but x is a 2D feature matrix and y is labels; shapes are incompatible and will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects true and predicted labels of equal length; here x is a feature matrix and y is labels, so shapes mismatch causing a ValueError.",
+    "detection": true
+  }
+]

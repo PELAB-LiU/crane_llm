@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type (strings) and cannot be directly used by the LinearRegression model, which expects numerical input. This will cause a ValueError during fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type (strings) and cannot be directly used by the LinearRegression model, which expects numerical input. This will cause a ValueError during fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type (strings) and cannot be directly used by the LinearRegression model, which expects numerical input. This will cause a ValueError during fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type (strings) and cannot be directly used by the LinearRegression model, which expects numerical input. This will cause a ValueError during fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type (strings) and cannot be directly used by the LinearRegression model, which expects numerical input. This will cause a ValueError during fitting.",
+    "detection": true
+  }
+]

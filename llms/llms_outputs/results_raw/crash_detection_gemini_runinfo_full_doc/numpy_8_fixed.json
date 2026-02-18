@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `toolbox.clone` method is called with `offspring` as an argument, but `offspring` is a list of `deap.gp.PrimitiveTree` objects, not a single object. The `toolbox.clone` method expects a single individual to clone, not a list.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `toolbox.clone` method is called with `offspring` as an argument, but `offspring` is a list of `deap.gp.PrimitiveTree` objects, not a single object. The `toolbox.clone` method expects a single individual to clone, not an iterable.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `toolbox.clone` method is called with `offspring` as an argument, but `offspring` is a list of `deap.gp.PrimitiveTree` objects, not a single object. The `toolbox.clone` method expects a single individual to clone, not an iterable.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `toolbox.clone` method is called with `offspring` as an argument, but `offspring` is a list of `deap.gp.PrimitiveTree` objects, not a single object. The `toolbox.clone` method expects a single individual to clone, not a list.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `toolbox.clone` method is called with `offspring` as an argument, but `offspring` is a list of `deap.gp.PrimitiveTree` objects, not a single object. The `toolbox.clone` method expects a single individual to clone, not an iterable.",
+    "detection": true
+  }
+]

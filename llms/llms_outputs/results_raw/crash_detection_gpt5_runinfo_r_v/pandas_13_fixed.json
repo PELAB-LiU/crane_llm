@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "GradientBoostingRegressor objects (gbr, gbr2, gbr_gs) do not have feature_importances_, causing an AttributeError when accessed. RandomForestRegressor does, but the loop accesses all models' feature_importances_.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor objects (gbr, gbr2, gbr_gs) do not have feature_importances_, so accessing it will raise an AttributeError. The loop tries to read it for these models.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor does not have feature_importances_ (it uses feature_importances_ only for tree-based ensembles like RandomForest); accessing it will raise an AttributeError. This occurs for gbr and gbr2/gbr_gs.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor does not have feature_importances_ (uses feature_importances_ only for tree-based ensembles; GBRegressor exposes feature_importances_? Actually scikit’s GradientBoostingRegressor does have feature_importances_. However RandomForestRegressor has it too. But gbr2/gbr_gs fitted on X_2_train have 8 features, while fearture_names for X_2_train will be 8 columns; for X_train models have 109 features. All aligned. No NaNs. Loop constructs valid. Should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "GradientBoostingRegressor objects (gbr, gbr2, gbr_gs) do not have feature_importances_, causing an AttributeError when accessed in the loop. RandomForestRegressor does, but the loop hits GBR first.",
+    "detection": true
+  }
+]

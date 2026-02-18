@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "accuracy_score expects true labels and predicted labels of the same shape, but the code passes features x instead of predictions; this will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects true labels and predicted labels (or probabilities), but the target cell passes feature matrix x instead of predictions, causing a shape/type mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects true labels vs predicted labels, but the code passes features x instead of predictions; shapes/types mismatch will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects true labels and predicted labels; passing feature matrix x as the first argument will raise a ValueError due to shape/type mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects true labels and predicted labels of equal length, but the code passes features x instead of predictions, causing a shape/type error.",
+    "detection": true
+  }
+]

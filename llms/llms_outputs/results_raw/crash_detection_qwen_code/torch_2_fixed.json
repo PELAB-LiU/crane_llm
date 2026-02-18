@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the target cell assumes it does and assigns it to `quantized_vit`. This will result in `quantized_vit` being `None`, leading to a crash when trying to use it in the `inference` function.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the target cell assumes it does and assigns it to `quantized_vit`. This will result in `quantized_vit` being `None`, leading to a crash when trying to use it in the `inference` function.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the target cell assumes it does and assigns it to `quantized_vit`. This will result in `quantized_vit` being `None`, leading to a crash when trying to use it in the `inference` function.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the target cell assumes it does and assigns it to `quantized_vit`. This will result in `quantized_vit` being `None`, leading to a crash when trying to use it in the `inference` function.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_quantization` function does not return the quantized model, but the target cell assumes it does and assigns it to `quantized_vit`. This will result in `quantized_vit` being `None`, leading to a crash when trying to use it in the `inference` function.",
+    "detection": true
+  }
+]

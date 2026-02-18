@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "statsmodels.api.qqplot exists and accepts a pandas Series; train['gravity'] is float64 with no NaNs. Passing line=45 and fit=True are valid arguments.",
+    "detection": false
+  },
+  {
+    "reasoning": "train exists and has a 'gravity' float64 column with no NaNs; sm.qqplot accepts a 1D array-like and provided args are valid. Should execute and plot without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "statsmodels.api.qqplot expects the parameter name ‘line’ to accept numeric or ‘45’, and train['gravity'] exists and has no NaNs; fit=True is allowed. Execution should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "statsmodels.api.qqplot accepts data as array-like and line can be 45; train['gravity'] exists with float values and no NaNs. The call should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "sm.qqplot expects a continuous series; train['gravity'] exists with float64 and no NaNs. The provided args are valid; it should plot without error.",
+    "detection": false
+  }
+]

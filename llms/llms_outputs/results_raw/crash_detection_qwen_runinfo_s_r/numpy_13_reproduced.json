@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The function FeatureExtractor is defined and the path variable is a string, which are the required inputs for the function call. There is no indication that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The function FeatureExtractor is defined and the path variable is a string, which are the required inputs for the function call. There is no indication that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The function FeatureExtractor is defined and the path variable is a string, which are the required inputs for the function call. There is no indication that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The function FeatureExtractor is defined and the path variable is a string, which are the required inputs for the function call. There is no indication that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The function FeatureExtractor is defined and the path variable is a string, which are the required inputs for the function call. There is no indication that this will cause a crash.",
+    "detection": false
+  }
+]

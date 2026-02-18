@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "adv has shape (1, 3, 224, 224) from earlier; plt.imshow expects (H, W) or (H, W, 3/4). Passing a 4D array will raise a TypeError about invalid shape.",
+    "detection": true
+  },
+  {
+    "reasoning": "adv is a NumPy array of shape (3, 224, 224) with float values; plt.imshow expects (H, W) or (H, W, 3). This mismatched shape will raise an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "adv has shape (3, 224, 224) but plt.imshow expects (H, W) or (H, W, 3/4). Passing (C, H, W) will raise a TypeError about invalid shape for image data.",
+    "detection": true
+  },
+  {
+    "reasoning": "adv has shape (3, 224, 224) but imshow expects (H, W) or (H, W, 3/4); passing (C, H, W) will raise a TypeError about invalid shape.",
+    "detection": true
+  },
+  {
+    "reasoning": "adv has shape (3, 224, 224) but plt.imshow expects (H, W[, C]); passing CHW will display incorrectly or error. However, Matplotlib can display 2D or 3D arrays; with 3D, it expects last dim as color, so this will likely raise a TypeError about invalid shape.",
+    "detection": true
+  }
+]

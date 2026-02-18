@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Applying str split on NaN becomes 'nan', which can't be converted to float, causing a ValueError during astype('float'). Since the dataframe still has NaNs, this will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "Splitting released dates by '-' and converting to float then pandas Int64 is valid; missing or irregular entries become NaN which pandas Int64 supports. No conflicting types indicated.",
+    "detection": false
+  },
+  {
+    "reasoning": "The code converts 'released' to string, splits by '-', then to float and pandas Int64; if any entries are missing/NaN, str(nan) becomes 'nan' which float('nan') is valid and converts to <NA> in Int64, so it won't crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'released' exists and values look like YYYY-MM-DD; converting to year via split then to float and pandas nullable Int64 should work even with NaNs. No obvious type or missing-column issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "The lambda handles non-string by casting to str, and splitting yields a year-like token; astype('float') then 'Int64' will fail only if some entries become non-numeric like 'nan' which converts to float nan and is allowed when converting to pandas nullable Int64. So it should not crash.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame with the correct shape and no NaN values, matching the features expected by the model.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame with the correct shape and no NaN values, matching the features expected by the model.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame with the correct shape and no NaN values, matching the features expected by the model.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame with the correct shape and no NaN values, matching the features expected by the model.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame with the correct shape and no NaN values, matching the features expected by the model.",
+    "detection": false
+  }
+]

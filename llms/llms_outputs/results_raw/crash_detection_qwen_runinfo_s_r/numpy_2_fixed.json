@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The operation attempts to create a DataFrame from X_train and join it with Y_train. However, X_train is a numpy array and does not retain column names, leading to an error when trying to access X.columns.",
+    "detection": true
+  },
+  {
+    "reasoning": "The operation attempts to create a DataFrame from X_train and join it with Y_train. However, X_train is a numpy array and does not retain column names, leading to an error when trying to access X.columns.",
+    "detection": true
+  },
+  {
+    "reasoning": "The operation attempts to create a DataFrame from X_train and join it with Y_train. However, X_train is a numpy array and does not retain column names, leading to an error when trying to access X.columns.",
+    "detection": true
+  },
+  {
+    "reasoning": "The operation attempts to create a DataFrame from X_train and join it with Y_train. However, X_train is a numpy array and does not retain column names, leading to an error when trying to access X.columns.",
+    "detection": true
+  },
+  {
+    "reasoning": "The operation attempts to create a DataFrame from X_train and join it with Y_train. However, X_train is a numpy array and does not retain column names, leading to an error when trying to access X.columns.",
+    "detection": true
+  }
+]

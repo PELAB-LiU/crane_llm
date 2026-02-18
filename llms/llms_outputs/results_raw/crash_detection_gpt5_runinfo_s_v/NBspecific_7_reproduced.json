@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Column '%percent emission' does not exist in df; sorting by a non-existent column will raise a KeyError. Groupby/get_group on 'Asia Pacific' is valid as 'region' contains that value.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column '%percent emission' likely does not exist in df; grouping by 'region' is fine but sort_values on a missing column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The code groups by 'region' and then tries to sort by a non-existent column '%percent emission'. This will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column '%percent emission' does not exist in df; sorting by a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column '%percent emission' does not appear in df's known columns, so sorting by it will raise a KeyError. Grouping by 'region' with value 'Asia Pacific' is valid.",
+    "detection": true
+  }
+]

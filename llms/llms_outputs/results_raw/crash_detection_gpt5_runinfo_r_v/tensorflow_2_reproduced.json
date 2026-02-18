@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Generators produce 223x223 RGB images, but the model expects input_shape (100, 100, 3), causing a shape mismatch when fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model input_shape is (100,100,3) but generators produce images of size (223,223,3), causing shape mismatch when fitting. This will raise a ValueError about incompatible input size.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects input_shape (100,100,3) but generators yield images resized to (223,223,3), causing a shape mismatch error when fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The generators yield images of size 223x223x3, but the model expects input_shape=(100, 100, 3), causing a shape mismatch at the first Conv2D layer.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input_shape (100,100,3) but the generators produce images of size (223,223,3), causing a shape mismatch when fitting.",
+    "detection": true
+  }
+]

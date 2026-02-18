@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `tf_idf` variable is a csr_matrix, which has a `toarray` method. There is no indication that calling this method will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `tf_idf` variable is a csr_matrix, which has a `toarray` method. There is no indication that calling this method will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `tf_idf` variable is a csr_matrix, which has a `toarray` method. There is no indication that calling this method will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `tf_idf` variable is a csr_matrix, which has a `toarray` method. There is no indication that calling this method will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `tf_idf` variable is a csr_matrix, which has a `toarray` method. There is no indication that calling this method will cause a crash.",
+    "detection": false
+  }
+]

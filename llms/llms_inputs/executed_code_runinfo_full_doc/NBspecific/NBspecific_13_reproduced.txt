@@ -1,0 +1,245 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+from matplotlib import pyplot as plt
+
+## Cell 2:
+
+df = pd.read_csv("data/heart.csv")
+
+# Current relevent runtime information:
+{'DecisionTreeClassifier': {'doc_importants': {'notes': 'The default values '
+                                                        'for the parameters '
+                                                        'controlling the size '
+                                                        'of the trees (e.g. '
+                                                        '``max_depth``, '
+                                                        '``min_samples_leaf``, '
+                                                        'etc.) lead to fully '
+                                                        'grown and unpruned '
+                                                        'trees which can '
+                                                        'potentially be very '
+                                                        'large on some data '
+                                                        'sets. To reduce '
+                                                        'memory consumption, '
+                                                        'the complexity and '
+                                                        'size of the trees '
+                                                        'should be controlled '
+                                                        'by setting those '
+                                                        'parameter values. The '
+                                                        ':meth:`predict` '
+                                                        'method operates using '
+                                                        'the '
+                                                        ':func:`numpy.argmax` '
+                                                        'function on the '
+                                                        'outputs of '
+                                                        ':meth:`predict_proba`. '
+                                                        'This means that in '
+                                                        'case the highest '
+                                                        'predicted '
+                                                        'probabilities are '
+                                                        'tied, the classifier '
+                                                        'will predict the tied '
+                                                        'class with the lowest '
+                                                        'index in '
+                                                        ':term:`classes_`.'},
+                            'signature': {'parameters': [{'annotation': None,
+                                                          'default': "'gini'",
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'criterion',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': "'best'",
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'splitter',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'max_depth',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '2',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'min_samples_split',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '1',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'min_samples_leaf',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '0.0',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'min_weight_fraction_leaf',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'max_features',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'random_state',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'max_leaf_nodes',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '0.0',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'min_impurity_decrease',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'class_weight',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '0.0',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'ccp_alpha',
+                                                          'required': False}],
+                                          'return_annotation': None},
+                            'type': "<class 'abc.ABCMeta'>"},
+ 'X': {'has_nan': False,
+       'per_column_max_20': {'Car_Name_alto 800': {'dtype': 'float64',
+                                                       'num_unique': 2,
+                                                       'type': 'binary',
+                                                       'value_range': (0.0,
+                                                                       1.0)},
+                                 'Car_Name_ciaz': {'dtype': 'float64',
+                                                   'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                                 'Car_Name_dzire': {'dtype': 'float64',
+                                                    'num_unique': 2,
+                                                    'type': 'binary',
+                                                    'value_range': (0.0, 1.0)},
+                                 'Car_Name_ertiga': {'dtype': 'float64',
+                                                     'num_unique': 2,
+                                                     'type': 'binary',
+                                                     'value_range': (0.0, 1.0)},
+                                 'Car_Name_ritz': {'dtype': 'float64',
+                                                   'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                                 'Car_Name_s cross': {'dtype': 'float64',
+                                                      'num_unique': 2,
+                                                      'type': 'binary',
+                                                      'value_range': (0.0,
+                                                                      1.0)},
+                                 'Car_Name_swift': {'dtype': 'float64',
+                                                    'num_unique': 2,
+                                                    'type': 'binary',
+                                                    'value_range': (0.0, 1.0)},
+                                 'Car_Name_sx4': {'dtype': 'float64',
+                                                  'num_unique': 2,
+                                                  'type': 'binary',
+                                                  'value_range': (0.0, 1.0)},
+                                 'Car_Name_sx40': {'dtype': 'float64',
+                                                   'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                                 'Car_Name_sx41': {'dtype': 'float64',
+                                                   'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                                 'Car_Name_sx42': {'dtype': 'float64',
+                                                   'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                                 'Car_Name_sx43': {'dtype': 'float64',
+                                                   'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                                 'Car_Name_sx44': {'dtype': 'float64',
+                                                   'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                                 'Car_Name_sx45': {'dtype': 'float64',
+                                                   'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                                 'Car_Name_sx46': {'dtype': 'float64',
+                                                   'num_unique': 2,
+                                                   'type': 'binary',
+                                                   'value_range': (0.0, 1.0)},
+                                 'Car_Name_vitara brezza': {'dtype': 'float64',
+                                                            'num_unique': 2,
+                                                            'type': 'binary',
+                                                            'value_range': (0.0,
+                                                                            1.0)},
+                                 'Car_Name_wagon r': {'dtype': 'float64',
+                                                      'num_unique': 2,
+                                                      'type': 'binary',
+                                                      'value_range': (0.0,
+                                                                      1.0)},
+                                 'Driven_kms': {'dtype': 'float64',
+                                                'num_unique': 206,
+                                                'type': 'continuous',
+                                                'value_range': (0.0,
+                                                                0.9999999999999999)},
+                                 'Owner': {'dtype': 'int64',
+                                           'num_unique': 3,
+                                           'type': 'categorical_numeric',
+                                           'value_range': (0, 3)},
+                                 'Year': {'dtype': 'float64',
+                                          'num_unique': 16,
+                                          'type': 'continuous',
+                                          'value_range': (-3.6705785271649853,
+                                                          1.516108522089928)}},
+       'shape': (299, 109),
+       'type': 'pandas.core.frame.DataFrame'},
+ 'accuracy_score': {'doc_importants': {'notes': 'In binary classification, '
+                                                'this function is equal to the '
+                                                '`jaccard_score` function.'},
+                    'signature': {'parameters': [{'annotation': None,
+                                                  'default': None,
+                                                  'kind': 'POSITIONAL_OR_KEYWORD',
+                                                  'name': 'y_true',
+                                                  'required': True},
+                                                 {'annotation': None,
+                                                  'default': None,
+                                                  'kind': 'POSITIONAL_OR_KEYWORD',
+                                                  'name': 'y_pred',
+                                                  'required': True},
+                                                 {'annotation': None,
+                                                  'default': 'True',
+                                                  'kind': 'KEYWORD_ONLY',
+                                                  'name': 'normalize',
+                                                  'required': False},
+                                                 {'annotation': None,
+                                                  'default': 'None',
+                                                  'kind': 'KEYWORD_ONLY',
+                                                  'name': 'sample_weight',
+                                                  'required': False}],
+                                  'return_annotation': None},
+                    'type': "<class 'function'>"},
+ 'model': {'signature': {'parameters': [{'annotation': None,
+                                         'default': None,
+                                         'kind': 'VAR_POSITIONAL',
+                                         'name': 'args',
+                                         'required': True},
+                                        {'annotation': None,
+                                         'default': None,
+                                         'kind': 'VAR_KEYWORD',
+                                         'name': 'kwargs',
+                                         'required': True}],
+                         'return_annotation': None},
+           'type': "<class 'torchvision.models.alexnet.AlexNet'>"},
+ 'y': {'dtype': 'float64',
+       'has_nan': False,
+       'length': 299,
+       'type': 'pandas.core.series.Series',
+       'value_info': {'value_range': (0.1, 35.0), 'value_type': 'continuous'}}}
+# Target Cell:
+
+from sklearn.tree import DecisionTreeClassifier
+model = DecisionTreeClassifier()
+model .fit(X,y)
+y_hat = model.predict(X)
+print ( accuracy_score(y_hat,y))

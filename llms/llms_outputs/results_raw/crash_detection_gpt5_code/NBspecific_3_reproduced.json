@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "yFit was computed on X_train but then used against y_test; shapes likely mismatch, causing broadcasting errors in SSE and plotting. Also F-test uses n-m-1 which may be <=0, risking division by zero.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit was computed on X_train but is used against y_test, causing shape mismatch in SSE and plotting. Also F-test uses X_test sizes with yFit from train, likely causing broadcasting errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit was computed on X_train, but the target cell compares y_test with yFit and uses X_test dimensions for F-stat, causing shape mismatch and broadcasting errors in SSE and plotting.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit is predictions on X_train, but the Target Cell compares against y_test and uses n, m from X_test; SSR/SSE and plotting mix train and test lengths, causing shape mismatch errors and invalid dof (n-m-1) possibly negative. This will likely raise broadcasting or dimension errors.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit is predictions on X_train, but later used against y_test and for SSE with mismatched lengths; also SSR uses yFit with yMean from y_test. This will raise a ValueError due to shape mismatch in vector operations and plotting lengths differing.",
+    "detection": true
+  }
+]

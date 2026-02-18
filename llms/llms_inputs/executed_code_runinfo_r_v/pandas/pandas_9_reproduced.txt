@@ -1,0 +1,78 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+df = pd.read_csv("data/IMDb_All_Genres_etf_clean1.csv")
+
+# Current relevent runtime information:
+{'df': {'has_nan': False,
+        'per_column': {'Actors': {'example_values': ['Jack Nicholson, Pier...',
+                                                     'Robert Downey Jr., V...',
+                                                     'Charles Grodin, Bonn...',
+                                                     'Tony Jaa, Nathan Jon...',
+                                                     'Humphrey Bogart, Kat...'],
+                                  'num_unique': 5511},
+                       'Censor': {'example_values': ['UA',
+                                                     '13',
+                                                     'UA 7+',
+                                                     'U/A',
+                                                     'G'],
+                                  'num_unique': 25},
+                       'Director': {'example_values': ['Pawan Kripalani',
+                                                       'Peter Kosminsky',
+                                                       'Ric Roman Waugh',
+                                                       'Chris Appelhans',
+                                                       'William Malone'],
+                                    'num_unique': 2320},
+                       'Movie_Title': {'example_values': ['Fack ju Göhte',
+                                                          'Coneheads',
+                                                          'Ready or Not',
+                                                          'Autumn in New York',
+                                                          'Fido'],
+                                       'num_unique': 5453},
+                       'Rating': {'num_unique': 74, 'value_range': (1.0, 9.3)},
+                       'Runtime(Mins)': {'num_unique': 156,
+                                         'value_range': (45, 321)},
+                       'Total_Gross': {'example_values': ['$29.75M',
+                                                          '$0.33M',
+                                                          '$155.33M',
+                                                          '$35.03M',
+                                                          '$172.96M'],
+                                       'num_unique': 3501},
+                       'Year': {'num_unique': 99, 'value_range': (1920, 2022)},
+                       'main_genre': {'example_values': ['Action',
+                                                         'Mystery',
+                                                         'Fantasy',
+                                                         'Drama',
+                                                         'Animation'],
+                                      'num_unique': 13},
+                       'side_genre': {'example_values': [' Crime,  Romance',
+                                                         ' Mystery',
+                                                         ' Drama,  Sport',
+                                                         ' Drama,  Comedy',
+                                                         ' Drama,  Film-Noir'],
+                                      'num_unique': 144}},
+        'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+clean_df = df[(df["Total Gross (millions)"]!="$0.00M") & (df["Total Gross (millions)"]!="Gross Unkown")].copy()
+clean_df = clean_df[clean_df['Censor']!="(Banned)"]

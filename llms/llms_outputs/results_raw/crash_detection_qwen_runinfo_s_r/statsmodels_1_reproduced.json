@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `sm.qqplot` function does not accept an integer for the `line` parameter. It expects a string such as '45', 'r', or 'q'. Providing an integer will cause a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function does not accept an integer for the `line` parameter. It expects a string such as '45', 'r', or 'q'. Providing an integer will cause a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function does not accept an integer for the `line` parameter. It expects a string such as '45', 'r', or 'q'. Providing an integer will cause a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function does not accept an integer for the `line` parameter. It expects a string such as '45', 'r', or 'q'. Providing an integer will cause a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `sm.qqplot` function does not accept an integer for the `line` parameter. It expects a string such as '45', 'r', or 'q'. Providing an integer will cause a TypeError.",
+    "detection": true
+  }
+]

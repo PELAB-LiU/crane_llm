@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The cell attempts to clean and convert the 'MSRP' column. Given that 'MSRP' contains string values with dollar signs and commas, the regex replacement and conversion to float and then to 'Int64' should work without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The cell attempts to clean and convert the 'MSRP' column. Given that 'MSRP' contains string values with dollar signs and commas, the regex replacement and conversion to float and then to 'Int64' should work without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The cell attempts to clean and convert the 'MSRP' column. Given that 'MSRP' contains string values with dollar signs and commas, the regex replacement and conversion to float and then to 'Int64' should work without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The cell attempts to clean and convert the 'MSRP' column. Given that 'MSRP' contains string values with dollar signs and commas, the regex replacement and conversion to float and then to 'Int64' should work without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The cell attempts to clean and convert the 'MSRP' column. Given that 'MSRP' contains string values with dollar signs and commas, the regex replacement and conversion to float and then to 'Int64' should work without crashing.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model expects input shape (100,100,3) floats, but train_images are grayscale arrays shaped (100,100) without channel dimension and likely dtype uint8; also loss uses from_logits=True with softmax outputs causing a Keras config error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects input shape (100,100,3) but images are grayscale with shape (100,100); also using SparseCategoricalCrossentropy(from_logits=True) with softmax output causes a mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects 3-channel inputs shape (100,100,3) but train_images are 2D grayscale arrays (100,100), causing shape mismatch on fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model input shape is (100,100,3) but images loaded are grayscale arrays shaped (100,100); also loss uses from_logits=True while final layer is softmax. The first will cause an input shape error on fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects input shape (100,100,3) but images were read as grayscale (100,100) and never expanded to 3 channels, so fit will raise a shape mismatch error.",
+    "detection": true
+  }
+]

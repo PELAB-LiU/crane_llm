@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.x and will cause an AttributeError. The correct way to get class predictions is to use `model.predict` and then apply a threshold or `np.argmax` depending on the output layer.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.x and will cause an AttributeError. The correct way to get class predictions is to use `model.predict` and then apply a threshold or `np.argmax` depending on the output layer.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.x and will cause an AttributeError. The correct way to get class predictions is to use `model.predict` and then apply a threshold or `np.argmax` depending on the output layer.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.x and will cause an AttributeError. The correct way to get class predictions is to use `model.predict` and then apply a threshold or `np.argmax` depending on the output layer.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model.predict_classes` method is deprecated in TensorFlow 2.x and will cause an AttributeError. The correct way to get class predictions is to use `model.predict` and then apply a threshold or `np.argmax` depending on the output layer.",
+    "detection": true
+  }
+]

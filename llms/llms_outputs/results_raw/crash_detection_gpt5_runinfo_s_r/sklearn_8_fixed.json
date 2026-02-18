@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "accuracy_score expects (y_true, y_pred). The target cell passes (val_predictions, y), which is reversed but still valid because they have equal lengths and compatible types; it won’t raise an error, just compute accuracy incorrectly. Hence no crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "accuracy_score expects (y_true, y_pred); the arguments are reversed but still valid since both are same length arrays/Series of ints, so it will compute a number without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "accuracy_score expects (y_true, y_pred). Here the arguments are swapped but both are same length and acceptable types, so it will run without error (just computes reversed labels).",
+    "detection": false
+  },
+  {
+    "reasoning": "accuracy_score expects (y_true, y_pred); here arguments are reversed but types/shapes match, so it will compute accuracy (likely low) without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "accuracy_score expects (y_true, y_pred); the arguments are reversed but both arrays are same length and compatible, so it won’t crash and will just compute accuracy incorrectly.",
+    "detection": false
+  }
+]

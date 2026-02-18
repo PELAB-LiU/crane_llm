@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "seaborn.barplot expects keyword arguments x and y (or data with x= and y=). Passing positional Series likely maps to x and y but in recent seaborn versions positional args are deprecated but not crashing. df_train and columns exist; plt.figure is available.",
+    "detection": false
+  },
+  {
+    "reasoning": "sns.barplot expects keyword arguments x= and y= (or data with named columns). Passing positional Series can raise a TypeError in recent seaborn versions. Uncertain across versions, so cannot be certain it will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "sns.barplot is called with positional x and y as arrays/series; this API supports that. df_train and labels column exist without NaNs. Plotting functions available. Unlikely to crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "sns.barplot expects data to be passed via keyword arguments (x=, y=) in recent versions; providing positional arguments may raise a TypeError. However, seaborn still often accepts positional x, y, so a crash is not certain.",
+    "detection": false
+  },
+  {
+    "reasoning": "sns.barplot expects data passed via x= and y= keywords; providing positional Series can raise a TypeError in recent seaborn versions. Not certain it will crash across environments.",
+    "detection": false
+  }
+]

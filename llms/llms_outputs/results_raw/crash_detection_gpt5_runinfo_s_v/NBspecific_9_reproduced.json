@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Row index 10472 was already dropped in a previous cell with inplace=True, so attempting to drop it again will raise a KeyError since the label no longer exists.",
+    "detection": true
+  },
+  {
+    "reasoning": "Row 10472 was already dropped; dropping it again will raise a KeyError since the label no longer exists. Hence execution will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "Row index 10472 was already dropped in a previous cell with inplace=True, so attempting to drop it again will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Row with index 10472 was already dropped in a previous cell with inplace=True, so attempting to drop it again will raise a KeyError since the label no longer exists.",
+    "detection": true
+  },
+  {
+    "reasoning": "Row index 10472 was already dropped in a previous cell; attempting to drop it again will raise a KeyError since the label no longer exists.",
+    "detection": true
+  }
+]

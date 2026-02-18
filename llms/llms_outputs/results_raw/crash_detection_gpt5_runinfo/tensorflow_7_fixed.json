@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Batch size 64 with only 10 samples and validation_split=0.2 is allowed; inputs and labels shapes match (10, max_len) and (10,), and model outputs 3 classes matching labels 0–2. No clear error is certain.",
+    "detection": false
+  },
+  {
+    "reasoning": "Batch size 64 exceeds dataset size 10, but Keras supports this. Inputs match model (10, 172) and labels are 3-class ints with 10 samples; validation_split=0.2 yields valid split. No evident shape/type mismatch.",
+    "detection": false
+  },
+  {
+    "reasoning": "Batch size 64 with only 10 samples and validation_split=0.2 is allowed; labels are 0–2 and loss is sparse_categorical_crossentropy; inputs match model signature. No clear error is evident.",
+    "detection": false
+  },
+  {
+    "reasoning": "Batch size 64 exceeds dataset size 10 but Keras handles it; inputs match model signature and labels have 3 classes. Validation split 0.2 leaves 8/2 samples, which is valid. No obvious type/shape mismatch.",
+    "detection": false
+  },
+  {
+    "reasoning": "Batch size 64 with only 10 samples and validation_split=0.2 is allowed. Input tensors (10, 172) align with model inputs, and labels are in range 0–2 with sparse_categorical_crossentropy. No clear error is evident.",
+    "detection": false
+  }
+]

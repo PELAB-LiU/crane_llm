@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `toolbox.mutate` function is registered with `gp.mutUniform`, which expects a `pset` argument. However, `toolbox.mutate` is called without explicitly passing `pset`, which will cause an error because `gp.mutUniform` requires it.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `toolbox.mutate` function is registered with `gp.mutUniform`, which expects a `pset` argument. However, `toolbox.mutate` is called without explicitly passing `pset`, which will cause an error because `gp.mutUniform` cannot find the `pset` argument in the `toolbox.mutate` call.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `toolbox.mutate` function is registered with `gp.mutUniform`, which expects a `pset` argument. However, `toolbox.mutate` is called without explicitly passing `pset`, which will cause an error because `gp.mutUniform` requires it.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `toolbox.mutate` function is registered with `gp.mutUniform`, which expects a `pset` argument. However, `toolbox.mutate` is called without explicitly passing `pset`, which will cause an error because `gp.mutUniform` requires it.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `toolbox.mutate` function is registered with `gp.mutUniform`, which expects a `pset` argument. However, `toolbox.mutate` is called without explicitly passing `pset`, which will cause an error because `gp.mutUniform` cannot find the `pset` argument in the `toolbox.mutate` call.",
+    "detection": true
+  }
+]

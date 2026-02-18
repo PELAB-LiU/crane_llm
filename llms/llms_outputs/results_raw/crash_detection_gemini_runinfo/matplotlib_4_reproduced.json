@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The labels in `train_ds` are one-hot encoded tensors, not integer indices. Attempting to use a one-hot encoded tensor directly as an index for `class_names` will result in a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The labels in 'train_ds' are one-hot encoded tensors, not integer indices. Attempting to use a one-hot encoded tensor directly as an index for 'class_names' will result in a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The labels in `train_ds` are one-hot encoded tensors, not integer indices. Attempting to use a one-hot encoded tensor directly as an index for `class_names` will result in a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The labels in 'train_ds' are one-hot encoded tensors, not integer indices. Attempting to use a one-hot encoded tensor directly as an index for 'class_names' will result in a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The labels in `train_ds` are one-hot encoded tensors, not integer indices. Attempting to use a one-hot encoded tensor directly as an index for `class_names` will result in a TypeError.",
+    "detection": true
+  }
+]

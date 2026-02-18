@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'labels' tensor contains one-hot encoded vectors, not integer indices. Indexing 'class_names' with a one-hot encoded vector will result in a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'labels' tensor contains one-hot encoded vectors, not integer indices. Attempting to use these vectors directly to index 'class_names' will result in a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'labels' tensor contains one-hot encoded vectors, not integer indices. Attempting to use these vectors directly to index 'class_names' will result in a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'labels' tensor contains one-hot encoded vectors, not integer indices. Indexing 'class_names' with a one-hot encoded vector will result in a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'labels' tensor contains one-hot encoded vectors, not integer indices. Indexing 'class_names' with a one-hot encoded vector will result in a TypeError.",
+    "detection": true
+  }
+]

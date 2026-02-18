@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Residuals length is 92 but lags=180; statsmodels' plot_acf/plot_pacf require lags < n_obs and will raise a ValueError otherwise.",
+    "detection": true
+  },
+  {
+    "reasoning": "Residuals length is 92, but lags=180 exceeds available observations; statsmodels plot_acf/plot_pacf will raise a ValueError about lags being too large.",
+    "detection": true
+  },
+  {
+    "reasoning": "plot_acf/plot_pacf with lags=180 requires lags < n_obs; residuals length is 92, so 180 exceeds allowable lags and will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Residuals length is 92 but lags requested is 180; statsmodels ACF/PACF require lags < nobs and will raise an error for excessive lags.",
+    "detection": true
+  },
+  {
+    "reasoning": "Residuals length is 92, but lags=180 is larger than available observations; statsmodels' plot_acf/plot_pacf will error when lags >= nobs. This will likely raise a ValueError.",
+    "detection": true
+  }
+]

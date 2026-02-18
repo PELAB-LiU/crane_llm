@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "agg is given a dict with integer keys, but DataFrame column labels are strings; using 1,2,3,4 as column names will raise a KeyError. Also agg expects valid column names mapped to functions.",
+    "detection": true
+  },
+  {
+    "reasoning": "The agg dict uses integer keys (1,2,3,4) as column names, but df columns are likely strings/valid names and include 'kmeans_cluster'; integers won't match columns, causing a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg keys 1,2,3,4 are treated as column labels, but the DataFrame columns are likely strings like feature names plus 'kmeans_cluster', not integers, causing a KeyError. Groupby on 'kmeans_cluster' is fine, but aggregation columns won't be found.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg keys 1,2,3,4 refer to column labels, but the DataFrame columns are likely strings and do not include integer-labeled columns, causing a KeyError. Also numeric functions on non-existent columns will fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg keys 1,2,3,4 are treated as column labels, but the DataFrame columns are strings except the newly added 'kmeans_cluster'. Those integer columns likely don't exist, causing a KeyError.",
+    "detection": true
+  }
+]

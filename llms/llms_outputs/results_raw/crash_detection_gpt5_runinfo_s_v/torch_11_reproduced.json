@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train iterates over DataLoader batches yielding (cx, cy). st_train yields batches of 5 elements where each item is (tensor, int). The training loop computes cy - outputs, but cy is a batch of ints, not one-hot or float tensor matching outputs’ shape, causing dtype/shape error in subtraction or broadcasting. This will likely crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "train expects each batch to yield (cx, cy), but st_train yields batches of (X, y) where y are integers, causing tensor ops (cy - outputs) to fail due to shape/type mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "In Dataset.data.__getitem__, dif = len(self.mx - self.X[index]) attempts to subtract a tensor from an int and take len() of the result, which will raise a TypeError before training starts.",
+    "detection": true
+  },
+  {
+    "reasoning": "The train loop expects each batch to be (cx, cy) tensors, but st_train yields (x, y) where y is a list of labels, not the one-hot tensor cy expected by the loss (cy - outputs). This will cause a shape/type mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The train function expects each batch to be a tuple (cx, cy) where cy is a tensor used in loss (cy - outputs). But st_train yields (x, y) where y is a scalar label list (0/1), not a tensor shaped like model outputs; this will cause shape/type mismatch in loss computation.",
+    "detection": true
+  }
+]

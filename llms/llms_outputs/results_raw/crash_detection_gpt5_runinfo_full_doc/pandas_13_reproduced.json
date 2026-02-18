@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "GradientBoostingRegressor does not have feature_importances_ (it uses feature_importances_ only for tree-based ensembles like RandomForest; GBR has it in sklearn but actually GradientBoostingRegressor does have feature_importances_ via trees? Yes, it provides feature_importances_. However rfr_gs was trained on X_2_train (8 features) but included under X_train list, so shapes mismatch when creating DataFrame for X_train (feature_importances_ length 8 vs 109). This will raise a ValueError when constructing DataFrame.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor objects (gbr, gbr2, gbr_gs) do not have attribute feature_importances_; accessing it will raise AttributeError in the loop before DataFrame creation.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor objects (gbr, gbr2, gbr_gs) do not have feature_importances_, so accessing it will raise an AttributeError on the first iteration.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor does not have feature_importances_, so accessing model.feature_importances_ for gbr/gbr2/gbr_gs will raise an AttributeError. RandomForestRegressor has it, but the loop includes the GB models.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor objects (gbr, gbr2, gbr_gs) do not have feature_importances_ but have feature_importances_ only for tree-based ensembles like RandomForest. Accessing model.feature_importances_ for gbr/gbr2/gbr_gs will raise an AttributeError.",
+    "detection": true
+  }
+]

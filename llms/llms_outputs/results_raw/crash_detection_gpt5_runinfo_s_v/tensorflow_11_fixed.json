@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model outputs 2 classes with sigmoid and categorical_crossentropy; generators have 2 classes and batch sizes small but valid. No obvious shape/type mismatches; callbacks and data are set. It should run.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model outputs 2 classes with categorical_crossentropy; generators report num_classes=2. Batch sizes and steps are valid. Callbacks are well-defined. Nothing indicates a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model outputs 2 classes with sigmoid and categorical_crossentropy while generators use class_mode='categorical' with 2 classes; this is compatible. Batch sizes and sample counts are valid. No obvious shape or argument errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model outputs 2 sigmoid units with categorical_crossentropy, which is valid for 2 classes and the generators provide categorical labels; batch/sample sizes are sufficient. No evident shape or config mismatch.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model outputs 2 classes with sigmoid, loss is categorical_crossentropy expecting one-hot labels of 2 classes, and generators are class_mode='categorical' with 2 classes, so shapes align. Steps per epoch inferred from generator; callbacks defined. Should run.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, and attempting to call the predict method on an unfitted model will result in a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, and attempting to call the predict method on an unfitted model will result in a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, and attempting to call the predict method on an unfitted model will result in a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, and attempting to call the predict method on an unfitted model will result in a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, and attempting to call the predict method on an unfitted model will result in a crash.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `balanced_accuracy_score` function requires `y_true` and `y_pred` as inputs, both of which are provided as `y_test` and `preds` respectively. Both `y_test` and `preds` are numpy arrays or pandas Series with no NaN values and contain binary values. Therefore, the function call is expected to execute without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function requires `y_true` and `y_pred` as inputs, both of which are provided as `y_test` and `preds` respectively. Both `y_test` and `preds` are numpy arrays or pandas Series with no NaN values and contain binary values. Therefore, the function call is expected to execute without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function requires `y_true` and `y_pred` as inputs, both of which are provided as `y_test` and `preds` respectively. Both `y_test` and `preds` are numpy arrays or pandas Series with no NaN values and contain binary values. Therefore, the function call is expected to execute without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function requires `y_true` and `y_pred` as inputs, both of which are provided as `y_test` and `preds` respectively. Both `y_test` and `preds` are numpy arrays or pandas Series with no NaN values and contain binary values. Therefore, the function call is expected to execute without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function requires `y_true` and `y_pred` as inputs, both of which are provided as `y_test` and `preds` respectively. Both `y_test` and `preds` are numpy arrays or pandas Series with no NaN values and contain binary values. Therefore, the function call is expected to execute without crashing.",
+    "detection": false
+  }
+]

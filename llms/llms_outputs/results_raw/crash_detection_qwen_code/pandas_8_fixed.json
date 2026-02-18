@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The cell attempts to replace non-numeric characters in the 'MSRP' column and convert it to a numeric type. However, if 'MSRP' contains non-convertible values or missing data, this could raise an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The cell attempts to replace non-numeric characters in the 'MSRP' column and convert it to a numeric type. However, if 'MSRP' contains non-convertible values or missing data, this could raise an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The cell attempts to replace non-numeric characters in the 'MSRP' column and convert it to a numeric type. However, if 'MSRP' contains non-convertible values or missing data, this could raise an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The cell attempts to replace non-numeric characters in the 'MSRP' column and convert it to a numeric type. However, if 'MSRP' contains non-convertible values or missing data, this could raise an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The cell attempts to replace non-numeric characters in the 'MSRP' column and convert it to a numeric type. However, if 'MSRP' contains non-convertible values or missing data, this could raise an error.",
+    "detection": false
+  }
+]

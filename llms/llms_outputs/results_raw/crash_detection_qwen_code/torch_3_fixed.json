@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `target` tensor has an incorrect shape for the loss calculation in the `CustomModelMultichoice` class. The `labels` should be a 1D tensor of class indices, but `target` is a 2D tensor.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `target` tensor has an incorrect shape for the loss calculation in the `CustomModelMultichoice` class. The `labels` should be a 1D tensor of class indices, but `target` is a 2D tensor.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `target` tensor has an incorrect shape for the loss calculation in the `CustomModelMultichoice` class. The `labels` should be a 1D tensor of class indices, but `target` is a 2D tensor.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `target` tensor has an incorrect shape for the loss calculation in the `CustomModelMultichoice` class. The `labels` should be a 1D tensor of class indices, but `target` is a 2D tensor.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `target` tensor has an incorrect shape for the loss calculation in the `CustomModelMultichoice` class. The `labels` should be a 1D tensor of class indices, but `target` is a 2D tensor.",
+    "detection": true
+  }
+]

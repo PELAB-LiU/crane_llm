@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The RandomForestRegressor model `FReg` was fitted with 58 features, but the `test_ds` DataFrame currently has 53 features. This mismatch in the number of features will cause a ValueError when `FReg.predict()` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The RandomForestRegressor model `FReg` was fitted with 58 features, but the `test_ds` DataFrame currently has 53 features. This mismatch in the number of features will cause a ValueError when `FReg.predict()` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The RandomForestRegressor model `FReg` was fitted with 58 features, but the `test_ds` DataFrame currently has 53 features. This mismatch in the number of features will cause a ValueError when `FReg.predict()` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The RandomForestRegressor model `FReg` was fitted with 58 features, but the `test_ds` DataFrame currently has 53 features. This mismatch in the number of features will cause a ValueError when `FReg.predict()` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The RandomForestRegressor model `FReg` was fitted with 58 features, but the `test_ds` DataFrame currently has 53 features. This mismatch in the number of features will cause a ValueError when `FReg.predict()` is called.",
+    "detection": true
+  }
+]

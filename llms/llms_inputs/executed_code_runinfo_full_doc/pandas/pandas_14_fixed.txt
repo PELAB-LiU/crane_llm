@@ -1,0 +1,231 @@
+# Executed Cells:
+## Cell 1:
+
+import tensorflow as tf
+import tensorflow_decision_forests as tfdf
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+## Cell 2:
+
+
+df = pd.read_csv('data/train.csv')
+print("El tamaño del dataset: {}".format(df.shape))
+
+## Cell 3:
+
+df = df.drop(['PassengerId', 'Name'], axis=1)
+df.head(5)
+
+## Cell 4:
+
+df[['Age', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck','RoomService']] = df[['Age', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck','RoomService']].fillna(value=0)
+df.isnull().sum().sort_values(ascending=False)
+
+## Cell 5:
+
+from sklearn.preprocessing import LabelEncoder
+
+le = LabelEncoder()
+
+df['HomePlanet'] = le.fit_transform(df['HomePlanet'])
+df['Cabin'] = le.fit_transform(df['Cabin'])
+df['Destination'] = le.fit_transform(df['Destination'])
+df['CryoSleep'] = le.fit_transform(df['CryoSleep'])
+df['VIP'] = le.fit_transform(df['VIP'])
+df['Transported'] = le.fit_transform(df['Transported'])
+
+print(df)
+
+## Cell 6:
+
+
+df["Age"] = df["Age"].astype(int)
+df["RoomService"] = df["RoomService"].astype(int)
+df["FoodCourt"] = df["FoodCourt"].astype(int)
+df["ShoppingMall"] = df["ShoppingMall"].astype(int)
+df["Spa"] = df["Spa"].astype(int)
+df["VRDeck"] = df["VRDeck"].astype(int)
+
+df.dtypes
+
+# Current relevent runtime information:
+{'__method__plt_show': {'doc_importants': {'notes': '**Saving figures to file '
+                                                    'and showing a window at '
+                                                    'the same time** If you '
+                                                    'want an image file as '
+                                                    'well as a user interface '
+                                                    'window, use '
+                                                    '`.pyplot.savefig` before '
+                                                    '`.pyplot.show`. At the '
+                                                    'end of (a blocking) '
+                                                    '``show()`` the figure is '
+                                                    'closed and thus '
+                                                    'unregistered from pyplot. '
+                                                    'Calling `.pyplot.savefig` '
+                                                    'afterwards would save a '
+                                                    'new and thus empty '
+                                                    'figure. This limitation '
+                                                    'of command order does not '
+                                                    'apply if the show is '
+                                                    'non-blocking or if you '
+                                                    'keep a reference to the '
+                                                    'figure and use '
+                                                    '`.Figure.savefig`. '
+                                                    '**Auto-show in jupyter '
+                                                    'notebooks** The jupyter '
+                                                    'backends (activated via '
+                                                    '``%matplotlib inline``, '
+                                                    '``%matplotlib notebook``, '
+                                                    'or ``%matplotlib '
+                                                    'widget``), call '
+                                                    '``show()`` at the end of '
+                                                    'every cell by default. '
+                                                    "Thus, you usually don't "
+                                                    'have to call it '
+                                                    'explicitly there.'},
+                        'signature': {'parameters': [{'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'block',
+                                                      'required': False}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ '__method__plt_subplots': {'signature': {'parameters': [{'annotation': None,
+                                                          'default': '1',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'nrows',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '1',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'ncols',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'False',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'sharex',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'False',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'sharey',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'True',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'squeeze',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'width_ratios',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'height_ratios',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'subplot_kw',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'gridspec_kw',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': None,
+                                                          'kind': 'VAR_KEYWORD',
+                                                          'name': 'fig_kw',
+                                                          'required': True}],
+                                          'return_annotation': None},
+                            'type': "<class 'function'>"},
+ 'col': {'type': "<class 'str'>", 'value': 'ProteinContent'},
+ 'df': {'execution_cell_source': {'cellno': 20, 'lineno': 1},
+        'has_nan': False,
+        'per_column': {'Age': {'dtype': 'int64',
+                               'num_unique': 80,
+                               'type': 'continuous',
+                               'value_range': (0, 79)},
+                       'Cabin': {'dtype': 'int64',
+                                 'num_unique': 6561,
+                                 'type': 'continuous',
+                                 'value_range': (0, 6560)},
+                       'CryoSleep': {'dtype': 'int64',
+                                     'num_unique': 3,
+                                     'type': 'categorical_numeric',
+                                     'value_range': (0, 2)},
+                       'Destination': {'dtype': 'int64',
+                                       'num_unique': 4,
+                                       'type': 'categorical_numeric',
+                                       'value_range': (0, 3)},
+                       'FoodCourt': {'dtype': 'int64',
+                                     'num_unique': 1507,
+                                     'type': 'continuous',
+                                     'value_range': (0, 29813)},
+                       'HomePlanet': {'dtype': 'int64',
+                                      'num_unique': 4,
+                                      'type': 'categorical_numeric',
+                                      'value_range': (0, 3)},
+                       'RoomService': {'dtype': 'int64',
+                                       'num_unique': 1273,
+                                       'type': 'continuous',
+                                       'value_range': (0, 14327)},
+                       'ShoppingMall': {'dtype': 'int64',
+                                        'num_unique': 1115,
+                                        'type': 'continuous',
+                                        'value_range': (0, 23492)},
+                       'Spa': {'dtype': 'int64',
+                               'num_unique': 1327,
+                               'type': 'continuous',
+                               'value_range': (0, 22408)},
+                       'Transported': {'dtype': 'int64',
+                                       'num_unique': 2,
+                                       'type': 'binary',
+                                       'value_range': (0, 1)},
+                       'VIP': {'dtype': 'int64',
+                               'num_unique': 3,
+                               'type': 'categorical_numeric',
+                               'value_range': (0, 2)},
+                       'VRDeck': {'dtype': 'int64',
+                                  'num_unique': 1306,
+                                  'type': 'continuous',
+                                  'value_range': (0, 24133)}},
+        'shape': (8693, 12),
+        'type': 'pandas.core.frame.DataFrame'},
+ 'i': {'type': "<class 'str'>", 'value': 'DAYS_ID_PUBLISH'},
+ 'plt': {'type': "<class 'module'>"},
+ 'y': {'dtype': 'float64',
+       'has_nan': False,
+       'length': 299,
+       'type': 'pandas.core.series.Series',
+       'value_info': {'value_range': (0.1, 35.0), 'value_type': 'continuous'}}}
+# Target Cell:
+
+
+filas = 2
+col = 5
+
+nombres_col = df[["Cabin", "RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck"]]
+y = df["Age"]
+
+
+N = 50
+fig, axs = plt.subplots(filas, col, figsize=(25, 10))
+
+for i in range(filas):
+    for j in range(col):
+        n = i * col + j
+
+
+        if n < len(nombres_col.columns):
+            axs[i, j].set_title(nombres_col.columns[n])
+            axs[i, j].scatter(df[nombres_col.columns[n]][:N], y[:N])
+
+fig.tight_layout()
+plt.show()

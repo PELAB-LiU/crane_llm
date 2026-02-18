@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "df exists with the referenced columns; string comparisons and boolean indexing are valid. No operations indicate a guaranteed error.",
+    "detection": false
+  },
+  {
+    "reasoning": "df is a valid DataFrame and contains the referenced columns. String comparisons and boolean indexing are safe; no problematic types indicated. Should run without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "Columns referenced exist and df has no NaNs; string comparisons and boolean indexing are valid. Typo in 'Gross Unkown' just yields no matches, not an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "Columns 'Total_Gross' and 'Censor' exist per provided info, and string comparisons are valid; boolean indexing and copy() are standard operations.",
+    "detection": false
+  },
+  {
+    "reasoning": "df exists and columns used (Total_Gross, Censor) are present. Comparisons are valid string comparisons; no NaNs per info. Copy() and boolean indexing are fine.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Keras now uses 'accuracy' and 'val_accuracy' keys, not 'acc'/'val_acc'. Accessing history.history['acc'] and ['val_acc'] will raise KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "history.history uses keys like 'accuracy' and 'val_accuracy', not 'acc'/'val_acc'. Accessing 'acc' and 'val_acc' will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras now uses 'accuracy' and 'val_accuracy' keys; 'acc' and 'val_acc' are absent, so accessing history.history['acc'] and ['val_acc'] will raise KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "history.history uses keys 'accuracy' and 'val_accuracy', not 'acc'/'val_acc'. Accessing missing keys will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Keras now uses 'accuracy' and 'val_accuracy' keys; 'acc' and 'val_acc' are absent, so indexing history.history['acc'] and ['val_acc'] will raise KeyError.",
+    "detection": true
+  }
+]

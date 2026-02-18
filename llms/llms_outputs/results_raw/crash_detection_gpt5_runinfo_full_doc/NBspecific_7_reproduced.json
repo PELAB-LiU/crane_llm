@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The column '%percent emission' does not exist in df (listed columns do not include it), so sort_values will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column '%percent emission' does not exist in df; groupby and get_group are fine, but sort_values on a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column '%percent emission' does not exist in df; sorting by a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DataFrame has columns listed, and '%percent emission' is not among them; sorting by a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DataFrame has no column named '%percent emission' per the provided schema, so sorting by it will raise a KeyError.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train_input` is a dictionary with keys 'input_word_ids', 'input_mask', and 'input_type_ids', which matches the model's input structure. However, the `fit` method expects the input to be a list of arrays, not a dictionary. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_input` is a dictionary with keys 'input_word_ids', 'input_mask', and 'input_type_ids', which matches the model's input structure. However, the `fit` method expects the input to be a list of arrays, not a dictionary. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_input` is a dictionary with keys 'input_word_ids', 'input_mask', and 'input_type_ids', which matches the model's input structure. However, the `fit` method expects the input to be a list of arrays, not a dictionary. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_input` is a dictionary with keys 'input_word_ids', 'input_mask', and 'input_type_ids', which matches the model's input structure. However, the `fit` method expects the input to be a list of arrays, not a dictionary. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_input` is a dictionary with keys 'input_word_ids', 'input_mask', and 'input_type_ids', which matches the model's input structure. However, the `fit` method expects the input to be a list of arrays, not a dictionary. This mismatch will cause a crash.",
+    "detection": true
+  }
+]

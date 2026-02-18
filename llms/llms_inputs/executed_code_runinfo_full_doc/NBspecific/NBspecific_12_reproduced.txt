@@ -1,0 +1,542 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+class DataLoader:
+
+
+
+
+
+    def __init__(self):
+        self.train = pd.read_csv("data/playground-series-s3e24/train.csv.zip",index_col = 'id')
+        self.test = pd.read_csv( "data/playground-series-s3e24/test.csv.zip",index_col = 'id')
+        self.original = pd.read_csv("data/smoker-status-prediction-using-biosignals/train_dataset.csv.zip")
+
+    def _classifydataset(self)->None:
+        self.train["Source"] = 1
+        self.test["Source"] = 1
+        self.original["Source"] = 0
+    """
+    As we can see from the description all
+    values should be numeric in nature but cols
+    'uniq_Op','uniq_Opnd','total_Op','total_Opnd','branchCount' are object type
+    we will replace all non numeric values with np.nan
+    """
+
+
+
+
+
+
+
+
+
+
+
+
+    def join(self)-> pd.DataFrame:
+        self.df = pd.concat([self.train,self.original],axis = 0,ignore_index = True)
+        self.df = self.df.drop_duplicates()
+        self.df.index = np.arange(len(self.df))
+        self.df.index.name = 'id'
+        return self.df
+
+    def variables(self):
+        self.numvars = [i for i in pp.train.columns if pp.train[i].nunique() > 10]
+        self.catvars = list(set(self.train.columns) - set(self.numvars))
+        return (self.numvars, self.catvars)
+
+    def execute(self):
+        self. _classifydataset()
+
+        self.join()
+        return self
+
+    def information(self,type):
+        if type == 'train':
+            return summary(self.train)
+        elif type == 'test':
+            return summary(self.test)
+        elif type == 'original':
+            return summary(self.df)
+        else:
+            return -1
+
+
+def summary(df: pd.DataFrame)-> pd.DataFrame:
+    summary = pd.DataFrame(df.dtypes,columns=['dtype'])
+    summary["#Missing"] = df.isna().sum().values
+    summary["%Missing"] = summary["#Missing"]/len(df) * 100
+    summary["nuniques"] = df.nunique().values
+    summary["type"] = df.dtypes
+    return summary
+
+## Cell 3:
+
+pp = DataLoader()
+pp.execute()
+pp.train.head()
+
+# Current relevent runtime information:
+{'__method__plt_subplots': {'signature': {'parameters': [{'annotation': None,
+                                                          'default': '1',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'nrows',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '1',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'ncols',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'False',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'sharex',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'False',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'sharey',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'True',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'squeeze',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'width_ratios',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'height_ratios',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'subplot_kw',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'gridspec_kw',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': None,
+                                                          'kind': 'VAR_KEYWORD',
+                                                          'name': 'fig_kw',
+                                                          'required': True}],
+                                          'return_annotation': None},
+                            'type': "<class 'function'>"},
+ '__method__plt_tight_layout': {'signature': {'parameters': [{'annotation': None,
+                                                              'default': '1.08',
+                                                              'kind': 'KEYWORD_ONLY',
+                                                              'name': 'pad',
+                                                              'required': False},
+                                                             {'annotation': None,
+                                                              'default': 'None',
+                                                              'kind': 'KEYWORD_ONLY',
+                                                              'name': 'h_pad',
+                                                              'required': False},
+                                                             {'annotation': None,
+                                                              'default': 'None',
+                                                              'kind': 'KEYWORD_ONLY',
+                                                              'name': 'w_pad',
+                                                              'required': False},
+                                                             {'annotation': None,
+                                                              'default': 'None',
+                                                              'kind': 'KEYWORD_ONLY',
+                                                              'name': 'rect',
+                                                              'required': False}],
+                                              'return_annotation': None},
+                                'type': "<class 'function'>"},
+ '__method__plt_xlabel': {'signature': {'parameters': [{'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'xlabel',
+                                                        'required': True},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'fontdict',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'labelpad',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'loc',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ '__method__pp_train': {'has_nan': False,
+                        'per_column_max_20': {'ALT': {'dtype': 'int64',
+                                                         'num_unique': 188,
+                                                         'type': 'continuous',
+                                                         'value_range': (1,
+                                                                         2914)},
+                                                 'AST': {'dtype': 'int64',
+                                                         'num_unique': 140,
+                                                         'type': 'continuous',
+                                                         'value_range': (6,
+                                                                         778)},
+                                                 'Cholesterol': {'dtype': 'int64',
+                                                                 'num_unique': 227,
+                                                                 'type': 'continuous',
+                                                                 'value_range': (77,
+                                                                                 393)},
+                                                 'HDL': {'dtype': 'int64',
+                                                         'num_unique': 108,
+                                                         'type': 'continuous',
+                                                         'value_range': (9,
+                                                                         136)},
+                                                 'LDL': {'dtype': 'int64',
+                                                         'num_unique': 222,
+                                                         'type': 'continuous',
+                                                         'value_range': (1,
+                                                                         1860)},
+                                                 'Urine protein': {'dtype': 'int64',
+                                                                   'num_unique': 6,
+                                                                   'type': 'categorical_numeric',
+                                                                   'value_range': (1,
+                                                                                   6)},
+                                                 'age': {'dtype': 'int64',
+                                                         'num_unique': 18,
+                                                         'type': 'continuous',
+                                                         'value_range': (20,
+                                                                         85)},
+                                                 'eyesight(left)': {'dtype': 'float64',
+                                                                    'num_unique': 20,
+                                                                    'type': 'continuous',
+                                                                    'value_range': (0.1,
+                                                                                    9.9)},
+                                                 'eyesight(right)': {'dtype': 'float64',
+                                                                     'num_unique': 17,
+                                                                     'type': 'continuous',
+                                                                     'value_range': (0.1,
+                                                                                     9.9)},
+                                                 'fasting blood sugar': {'dtype': 'int64',
+                                                                         'num_unique': 229,
+                                                                         'type': 'continuous',
+                                                                         'value_range': (46,
+                                                                                         375)},
+                                                 'hearing(left)': {'dtype': 'int64',
+                                                                   'num_unique': 2,
+                                                                   'type': 'categorical_numeric',
+                                                                   'value_range': (1,
+                                                                                   2)},
+                                                 'hearing(right)': {'dtype': 'int64',
+                                                                    'num_unique': 2,
+                                                                    'type': 'categorical_numeric',
+                                                                    'value_range': (1,
+                                                                                    2)},
+                                                 'height(cm)': {'dtype': 'int64',
+                                                                'num_unique': 14,
+                                                                'type': 'continuous',
+                                                                'value_range': (135,
+                                                                                190)},
+                                                 'hemoglobin': {'dtype': 'float64',
+                                                                'num_unique': 134,
+                                                                'type': 'continuous',
+                                                                'value_range': (4.9,
+                                                                                21.0)},
+                                                 'relaxation': {'dtype': 'int64',
+                                                                'num_unique': 75,
+                                                                'type': 'continuous',
+                                                                'value_range': (44,
+                                                                                133)},
+                                                 'serum creatinine': {'dtype': 'float64',
+                                                                      'num_unique': 28,
+                                                                      'type': 'continuous',
+                                                                      'value_range': (0.1,
+                                                                                      9.9)},
+                                                 'systolic': {'dtype': 'int64',
+                                                              'num_unique': 112,
+                                                              'type': 'continuous',
+                                                              'value_range': (77,
+                                                                              213)},
+                                                 'triglyceride': {'dtype': 'int64',
+                                                                  'num_unique': 392,
+                                                                  'type': 'continuous',
+                                                                  'value_range': (8,
+                                                                                  766)},
+                                                 'waist(cm)': {'dtype': 'float64',
+                                                               'num_unique': 531,
+                                                               'type': 'continuous',
+                                                               'value_range': (51.0,
+                                                                               127.0)},
+                                                 'weight(kg)': {'dtype': 'int64',
+                                                                'num_unique': 28,
+                                                                'type': 'continuous',
+                                                                'value_range': (30,
+                                                                                130)}},
+                        'shape': (159256, 24),
+                        'type': 'pandas.core.frame.DataFrame'},
+ '__method__sns_histplot': {'doc_importants': {'notes': 'The choice of bins '
+                                                        'for computing and '
+                                                        'plotting a histogram '
+                                                        'can exert substantial '
+                                                        'influence on the '
+                                                        'insights that one is '
+                                                        'able to draw from the '
+                                                        'visualization. If the '
+                                                        'bins are too large, '
+                                                        'they may erase '
+                                                        'important features. '
+                                                        'On the other hand, '
+                                                        'bins that are too '
+                                                        'small may be '
+                                                        'dominated by random '
+                                                        'variability, '
+                                                        'obscuring the shape '
+                                                        'of the true '
+                                                        'underlying '
+                                                        'distribution. The '
+                                                        'default bin size is '
+                                                        'determined using a '
+                                                        'reference rule that '
+                                                        'depends on the sample '
+                                                        'size and variance. '
+                                                        'This works well in '
+                                                        'many cases, (i.e., '
+                                                        'with "well-behaved" '
+                                                        'data) but it fails in '
+                                                        'others. It is always '
+                                                        'a good to try '
+                                                        'different bin sizes '
+                                                        'to be sure that you '
+                                                        'are not missing '
+                                                        'something important. '
+                                                        'This function allows '
+                                                        'you to specify bins '
+                                                        'in several different '
+                                                        'ways, such as by '
+                                                        'setting the total '
+                                                        'number of bins to '
+                                                        'use, the width of '
+                                                        'each bin, or the '
+                                                        'specific locations '
+                                                        'where the bins should '
+                                                        'break.'},
+                            'signature': {'parameters': [{'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'data',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'x',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'y',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'hue',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'weights',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': "'count'",
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'stat',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': "'auto'",
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'bins',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'binwidth',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'binrange',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'discrete',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'False',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'cumulative',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'True',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'common_bins',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'True',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'common_norm',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': "'layer'",
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'multiple',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': "'bars'",
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'element',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'True',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'fill',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '1',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'shrink',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'False',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'kde',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'kde_kws',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'line_kws',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '0',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'thresh',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'pthresh',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'pmax',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'False',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'cbar',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'cbar_ax',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'cbar_kws',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'palette',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'hue_order',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'hue_norm',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'color',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'log_scale',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'True',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'legend',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'ax',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': None,
+                                                          'kind': 'VAR_KEYWORD',
+                                                          'name': 'kwargs',
+                                                          'required': True}],
+                                          'return_annotation': None},
+                            'type': "<class 'function'>"},
+ 'col': {'type': "<class 'str'>", 'value': 'SalePrice'},
+ 'plt': {'type': "<class 'module'>"},
+ 'pp': {'execution_cell_source': {'cellno': 4, 'lineno': 1},
+        'type': "<class '__main__.DataLoader'>"},
+ 'sns': {'type': "<class 'module'>"}}
+# Target Cell:
+
+fig, axs = plt.subplots(6, 3, figsize=(7, 17))
+for col,ax in zip(numvars,axs.ravel()):
+    if pp.train[col].dtype == float or pp.train[col].dtype == int:
+        sns.histplot(ax = ax, data = pp.train[col],bins=100)
+        plt.xlabel(col)
+        ax.set_xticklabels(ax.get_xticklabels(),fontsize=0.1)
+        ax.set(xlim = (0,None),ylim = (0,None))
+    else:
+        vc = pp.train[col].value_counts()
+        ax.bar(vc.index,vc.values)
+        plt.xlabel(col)
+fig.suptitle('Feature distributions', y=1.02, fontsize=20)
+plt.tight_layout()

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "yFit has shape (272,) while y_test has shape (68,), so SSE = sum((y_test - yFit)**2) will raise a ValueError due to incompatible shapes for broadcasting. Plotting will also mismatch lengths.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit has shape (272,) while y_test has shape (68,), so operations like (y_test - yFit) will raise a broadcasting error. Also plotting ranges will mismatch. Hence it will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_test has length 68 while yFit has length 272; operations (SSE, plotting) require matching lengths, leading to a shape mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_test has shape (68,) while yFit has shape (272,), so operations like SSE = sum((y_test - yFit)**2) will raise a broadcasting error due to mismatched lengths.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_test has shape (68,) but yFit has shape (272,), so operations like (y_test - yFit) will raise a broadcasting error due to mismatched lengths.",
+    "detection": true
+  }
+]

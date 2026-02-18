@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "X_train is a numpy.ndarray and does not have a join method, which is typically available for pandas DataFrame or Series objects.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train is a numpy.ndarray and does not have a join method, which is typically available for pandas DataFrame or Series objects.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train is a numpy.ndarray and does not have a join method, which is typically available for pandas DataFrame or Series objects.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train is a numpy.ndarray and does not have a join method, which is typically available for pandas DataFrame or Series objects.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train is a numpy.ndarray and does not have a join method, which is typically available for pandas DataFrame or Series objects.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "procData drops the 'RescuerID' column after transforming it, but also assigns back to data['RescuerID'] after transformation; however, this is valid. Potential issue: comparing string series with == 'nonameyet' after .str.lower().replace(' ', '') where .replace on strings is Series.str.replace by default? Here it's pandas Series replace, not str.replace; replacing spaces with '' using Series.replace won't work; but it won't crash. LabelEncoder.transform on data['RescuerID'] which contains strings is fine. No missing columns expected in both datasets.",
+    "detection": false
+  },
+  {
+    "reasoning": "procData drops the 'RescuerID' column after transforming it, but then tries to fillna on 'RescuerID' which was just converted to integers; also LabelEncoder.transform will error if there are unseen labels in test. Unseen RescuerID values in test not present in training will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "procData uses LabelEncoder.transform on existing 'RescuerID' values, maps name_count, and drops columns. All referenced columns exist; operations are valid. No clear source of exception.",
+    "detection": false
+  },
+  {
+    "reasoning": "procData calls str.lower() and replace on data['Name'] which may contain NaN; NaN has no .str, causing an AttributeError. Also, LabelEncoder.transform on data['RescuerID'] with unseen labels will raise ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "procData modifies columns including setting NameNull, NameLen using .isnull() and .fillna; however it compares data['Name'].str.lower().replace(' ', '') to 'nonameyet' without handling NaNs, which makes a boolean Series with NaNs that cannot be assigned to a new column, raising a ValueError.",
+    "detection": true
+  }
+]

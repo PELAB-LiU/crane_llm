@@ -1,0 +1,34 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+
+## Cell 2:
+
+df=pd.read_csv("data/Methane_final.csv")
+
+## Cell 3:
+
+df.reason=df.reason.astype('category')
+df.type=df.type.astype('category')
+df.region=df.region.astype('category')
+
+## Cell 4:
+
+df.drop(columns=['Unnamed: 0'],inplace=True)
+
+## Cell 5:
+
+df.emissions=df.emissions.apply(lambda x:round(x,2))
+
+## Cell 6:
+
+df.baseYear=df.baseYear.replace("2019-2021",2020)
+
+# Target Cell:
+
+df6=df.groupby('region').get_group('Asia Pacific').sort_values(by='%percent emission')

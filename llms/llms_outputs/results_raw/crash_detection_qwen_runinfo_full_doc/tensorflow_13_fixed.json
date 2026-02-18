@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `tokenize_text` function expects a string input, but `docs` is an array of strings. The function will be applied to each string in `docs`, and the resulting sequences will be padded to `max_length`. There is no indication that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `tokenize_text` function expects a string input, but `docs` is an array of strings. The function will be applied to each string in `docs`, and the resulting sequences will be padded to `max_length`. There is no indication that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `tokenize_text` function expects a string input, but `docs` is an array of strings. The function will be applied to each string in `docs`, and the resulting sequences will be padded to `max_length`. There is no indication that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `tokenize_text` function expects a string input, but `docs` is an array of strings. The function will be applied to each string in `docs`, and the resulting sequences will be padded to `max_length`. There is no indication that this will cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `tokenize_text` function expects a string input, but `docs` is an array of strings. The function will be applied to each string in `docs`, and the resulting sequences will be padded to `max_length`. There is no indication that this will cause a crash.",
+    "detection": false
+  }
+]

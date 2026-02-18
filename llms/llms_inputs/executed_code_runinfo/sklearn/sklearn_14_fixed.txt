@@ -1,0 +1,213 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+import numpy as np
+import pandas as pd
+
+## Cell 2:
+
+
+
+df=pd.read_csv('data/data.csv')
+
+## Cell 3:
+
+
+
+from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+
+## Cell 4:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+categorical_columns = ['street', 'city', 'statezip', 'country']
+df = pd.get_dummies(df, columns=categorical_columns, drop_first=True)
+
+## Cell 5:
+
+
+
+
+
+
+
+
+
+
+
+X = df.drop(columns=['date','price'])
+y = df['price']
+
+## Cell 6:
+
+
+
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test=train_test_split(X,y,train_size=0.8,random_state=2529)
+
+# Current relevent runtime information:
+{'X_train': {'has_nan': False,
+             'per_column_max_20': {'bathrooms': {'dtype': 'float64',
+                                                      'num_unique': 25,
+                                                      'type': 'continuous',
+                                                      'value_range': (0.0,
+                                                                      8.0)},
+                                        'bedrooms': {'dtype': 'float64',
+                                                     'num_unique': 10,
+                                                     'type': 'continuous',
+                                                     'value_range': (0.0, 9.0)},
+                                        'condition': {'dtype': 'int64',
+                                                      'num_unique': 5,
+                                                      'type': 'categorical_numeric',
+                                                      'value_range': (1, 5)},
+                                        'floors': {'dtype': 'float64',
+                                                   'num_unique': 6,
+                                                   'type': 'continuous',
+                                                   'value_range': (1.0, 3.5)},
+                                        'sqft_above': {'dtype': 'int64',
+                                                       'num_unique': 482,
+                                                       'type': 'continuous',
+                                                       'value_range': (370,
+                                                                       9410)},
+                                        'sqft_basement': {'dtype': 'int64',
+                                                          'num_unique': 200,
+                                                          'type': 'continuous',
+                                                          'value_range': (0,
+                                                                          4130)},
+                                        'sqft_living': {'dtype': 'int64',
+                                                        'num_unique': 534,
+                                                        'type': 'continuous',
+                                                        'value_range': (370,
+                                                                        13540)},
+                                        'sqft_lot': {'dtype': 'int64',
+                                                     'num_unique': 2586,
+                                                     'type': 'continuous',
+                                                     'value_range': (638,
+                                                                     478288)},
+                                        'street_10 W Etruria St': {'dtype': 'bool',
+                                                                   'num_unique': 1,
+                                                                   'type': 'continuous',
+                                                                   'value_range': (False,
+                                                                                   False)},
+                                        'street_100 20th Ave E': {'dtype': 'bool',
+                                                                  'num_unique': 2,
+                                                                  'type': 'binary',
+                                                                  'value_range': (False,
+                                                                                  True)},
+                                        'street_100 24th Ave E': {'dtype': 'bool',
+                                                                  'num_unique': 1,
+                                                                  'type': 'continuous',
+                                                                  'value_range': (False,
+                                                                                  False)},
+                                        'street_100 Mt Si Pl NW': {'dtype': 'bool',
+                                                                   'num_unique': 2,
+                                                                   'type': 'binary',
+                                                                   'value_range': (False,
+                                                                                   True)},
+                                        'street_1000 Mountain View Blvd SE': {'dtype': 'bool',
+                                                                              'num_unique': 2,
+                                                                              'type': 'binary',
+                                                                              'value_range': (False,
+                                                                                              True)},
+                                        'street_10000-10026 S 100th St': {'dtype': 'bool',
+                                                                          'num_unique': 2,
+                                                                          'type': 'binary',
+                                                                          'value_range': (False,
+                                                                                          True)},
+                                        'street_10005 16th Ave S': {'dtype': 'bool',
+                                                                    'num_unique': 2,
+                                                                    'type': 'binary',
+                                                                    'value_range': (False,
+                                                                                    True)},
+                                        'street_10009 SE 247th Pl': {'dtype': 'bool',
+                                                                     'num_unique': 2,
+                                                                     'type': 'binary',
+                                                                     'value_range': (False,
+                                                                                     True)},
+                                        'view': {'dtype': 'int64',
+                                                 'num_unique': 5,
+                                                 'type': 'categorical_numeric',
+                                                 'value_range': (0, 4)},
+                                        'waterfront': {'dtype': 'int64',
+                                                       'num_unique': 2,
+                                                       'type': 'binary',
+                                                       'value_range': (0, 1)},
+                                        'yr_built': {'dtype': 'int64',
+                                                     'num_unique': 115,
+                                                     'type': 'continuous',
+                                                     'value_range': (1900,
+                                                                     2014)},
+                                        'yr_renovated': {'dtype': 'int64',
+                                                         'num_unique': 59,
+                                                         'type': 'continuous',
+                                                         'value_range': (0,
+                                                                         2014)}},
+             'shape': (3680, 4655),
+             'type': 'pandas.core.frame.DataFrame'},
+ '__method__model_fit': {'type': "<class 'method'>"},
+ 'model': {'class_name': 'LinearRegression',
+           'execution_cell_source': {'cellno': 6, 'lineno': 4},
+           'is_fitted': False,
+           'module': 'sklearn.linear_model._base',
+           'type': "<class 'sklearn.linear_model._base.LinearRegression'>"},
+ 'y_train': {'dtype': 'float64',
+             'has_nan': False,
+             'length': 3680,
+             'type': 'pandas.core.series.Series',
+             'value_info': {'value_range': (0.0, 26590000.0),
+                            'value_type': 'continuous'}}}
+# Target Cell:
+
+
+model.fit(X_train,y_train)

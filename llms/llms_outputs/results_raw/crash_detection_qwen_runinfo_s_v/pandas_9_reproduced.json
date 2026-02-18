@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame 'df', as the existing column is named 'Total_Gross'. This will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame 'df', as the existing column is named 'Total_Gross'. This will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame 'df', as the existing column is named 'Total_Gross'. This will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame 'df', as the existing column is named 'Total_Gross'. This will cause a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame 'df', as the existing column is named 'Total_Gross'. This will cause a KeyError.",
+    "detection": true
+  }
+]

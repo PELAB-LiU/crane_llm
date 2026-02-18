@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The cell attempts to clean and convert the 'MSRP' column. The regex replacement and conversion to float should work as expected, and the final conversion to 'Int64' should handle any NaN values gracefully.",
+    "detection": false
+  },
+  {
+    "reasoning": "The cell attempts to clean and convert the 'MSRP' column. The regex replacement and conversion to float should work as long as the values are consistent with the example values provided. The final conversion to 'Int64' should also succeed without issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "The cell attempts to clean and convert the 'MSRP' column. The regex replacement and conversion to float should work as long as the values are consistent with the example values provided. The final conversion to 'Int64' should also succeed without issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "The cell attempts to clean and convert the 'MSRP' column. The regex replacement and conversion to float should work as long as the values are consistent with the example values provided. The final conversion to 'Int64' should also succeed without issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "The cell attempts to clean and convert the 'MSRP' column. The regex replacement and conversion to float should work as long as the 'MSRP' column contains valid string representations of numbers. The conversion to 'Int64' should also succeed without issues.",
+    "detection": false
+  }
+]

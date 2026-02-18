@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "GradientBoostingRegressor does not have feature_importances_ (only RandomForest does), so accessing model.feature_importances_ for gbr/gbr2/gbr_gs will raise AttributeError. Therefore the loop will crash on the first GradientBoosting model.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor does not have feature_importances_ (uses feature_importances_ only for tree-based ensembles like RandomForest; GBRegressor in sklearn has feature_importances_ via trees? In sklearn, GradientBoostingRegressor does expose feature_importances_ from decision trees). However gbr was fitted on 109 features while fearture_names for X_train has 109, okay. But for key 'X_2_train', models include gbr_gs, rfr_gs, gbr2, rfr2; all have feature_importances_. The loop builds DataFrame with columns from X_2_train (8) and rows length 4; arrays lengths should match: all models trained on 8 features. No NaNs. Should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "GradientBoostingRegressor instances (gbr, gbr2, gbr_gs) do not have feature_importances_ (only RandomForestRegressor does), so accessing model.feature_importances_ will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "gbr and rfr have feature_importances_, but GradientBoostingRegressor lacks this attribute in sklearn; accessing model.feature_importances_ for gbr, gbr2, gbr_gs will raise AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "For X_train models, feature_importances_ exists. For X_2_train, GradientBoostingRegressor provides feature_importances_, but RandomForestRegressor with criterion='friedman_mse' has no feature_importances_ attribute, causing AttributeError.",
+    "detection": true
+  }
+]

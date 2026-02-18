@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "pad_sequences expects a 2D array-like (list of sequences), but tokenize_text returns a 1D list of ids; also pad_sequences returns an array already, and np.array(pad_sequences(tokenize_text(i)), maxlen=...) misuses np.array with maxlen kwarg (invalid). This will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "pad_sequences expects a 2D list/array of sequences, but tokenize_text returns a 1D list of token IDs and it's being passed directly without wrapping; additionally, pad_sequences returns a 2D array which is then incorrectly wrapped with np.array(...) with maxlen argument in the wrong place.",
+    "detection": true
+  },
+  {
+    "reasoning": "pad_sequences expects a 2D list/array of sequences; tokenize_text returns a 1D list of ids, and calling pad_sequences on it without wrapping will raise a ValueError about input shape. Also, np.array(...) is used incorrectly with pad_sequences output.",
+    "detection": true
+  },
+  {
+    "reasoning": "pad_sequences expects a 2D list/array of sequences, but tokenize_text returns a 1D list of token IDs; calling pad_sequences(tokenize_text(i)) without wrapping in a list will raise a ValueError. Also, np.array(...) use is malformed with extra argument maxlen inside np.array call rather than pad_sequences.",
+    "detection": true
+  },
+  {
+    "reasoning": "pad_sequences expects a 2D sequence of sequences, but tokenize_text returns a 1D list of ids; additionally, pad_sequences requires the sequences argument, not individual elements; the current call pad_sequences(tokenize_text(i)) will raise a ValueError. Also wrapping with np.array(..., maxlen=...) is invalid usage of np.array.",
+    "detection": true
+  }
+]

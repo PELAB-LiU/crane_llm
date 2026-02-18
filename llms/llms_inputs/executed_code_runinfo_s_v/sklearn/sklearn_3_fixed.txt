@@ -1,0 +1,148 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+from catboost import CatBoostClassifier
+from sklearn.metrics import accuracy_score
+
+## Cell 2:
+
+
+train_df = pd.read_csv('data/train_synthetic.csv')
+test_df = pd.read_csv('data/test_synthetic.csv')
+greeks_df = pd.read_csv('data/greeks_synthetic.csv')
+
+## Cell 3:
+
+train_df = pd.merge(train_df, greeks_df, on="Id")
+
+## Cell 4:
+
+
+train_df = train_df.drop("Id", axis=1)
+test_df = test_df.drop("Id", axis=1)
+
+## Cell 5:
+
+
+
+
+
+categorical_cols_train = train_df.select_dtypes(include=["object"]).columns
+categorical_cols_test = test_df.select_dtypes(include=["object"]).columns
+
+
+train_df = pd.get_dummies(train_df, columns=categorical_cols_train)
+test_df = pd.get_dummies(test_df, columns=categorical_cols_test)
+
+
+train_df, test_df = train_df.align(test_df, join="left", axis=1, fill_value=0)
+
+feature_names = train_df.columns
+
+# Current relevent runtime information:
+{'test_df': {'has_nan': False,
+             'per_column_max_20': {'AB': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'AF': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'AH': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'AM': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'AR': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'AX': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'AY': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'AZ': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'BC': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'BD ': {'num_unique': 1,
+                                               'value_range': (0.0, 0.0)},
+                                       'BN': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'BP': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'BQ': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'BR': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'BZ': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'CB': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'CC': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'CD ': {'num_unique': 1,
+                                               'value_range': (0.0, 0.0)},
+                                       'CF': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)},
+                                       'CH': {'num_unique': 1,
+                                              'value_range': (0.0, 0.0)}},
+             'shape': (5, 252)},
+ 'train_df': {'has_nan': True,
+              'per_column_max_20': {'AB': {'num_unique': 268,
+                                               'value_range': (0.11, 6.13)},
+                                        'AF': {'num_unique': 362,
+                                               'value_range': (444.14,
+                                                               28574.96)},
+                                        'AH': {'num_unique': 362,
+                                               'value_range': (86.66, 1901.6)},
+                                        'AM': {'num_unique': 362,
+                                               'value_range': (5.67, 629.65)},
+                                        'AR': {'num_unique': 357,
+                                               'value_range': (8.45, 177.88)},
+                                        'AX': {'num_unique': 341,
+                                               'value_range': (0.73, 38.05)},
+                                        'AY': {'num_unique': 302,
+                                               'value_range': (0.04, 10.31)},
+                                        'AZ': {'num_unique': 339,
+                                               'value_range': (3.42, 38.89)},
+                                        'BC': {'num_unique': 361,
+                                               'value_range': (6.22, 1457.1)},
+                                        'BD ': {'num_unique': 362,
+                                                'value_range': (1788.08,
+                                                                53048.6)},
+                                        'BN': {'num_unique': 325,
+                                               'value_range': (10.01, 29.13)},
+                                        'BP': {'num_unique': 362,
+                                               'value_range': (74.45, 2443.0)},
+                                        'BQ': {'num_unique': 326,
+                                               'value_range': (1.65, 343.86)},
+                                        'BR': {'num_unique': 362,
+                                               'value_range': (281.06,
+                                                               178876.62)},
+                                        'BZ': {'num_unique': 362,
+                                               'value_range': (597.89,
+                                                               49838.27)},
+                                        'CB': {'num_unique': 360,
+                                               'value_range': (23.08, 2261.19)},
+                                        'CC': {'num_unique': 231,
+                                               'value_range': (0.19, 4.1)},
+                                        'CD ': {'num_unique': 360,
+                                                'value_range': (25.17, 632.68)},
+                                        'CF': {'num_unique': 360,
+                                               'value_range': (1.51, 200.5)},
+                                        'CH': {'num_unique': 23,
+                                               'value_range': (0.0, 0.22)}},
+              'shape': (624, 252)}}
+# Target Cell:
+
+
+scaler = StandardScaler()
+train_df = scaler.fit_transform(train_df)
+test_df = scaler.transform(test_df)

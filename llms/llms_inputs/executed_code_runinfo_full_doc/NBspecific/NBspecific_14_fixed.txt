@@ -1,0 +1,663 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+
+train_data = pd.read_csv("data/train.csv")
+train_data.head()
+
+## Cell 3:
+
+
+test_data = pd.read_csv("data/test.csv")
+test_data.head()
+
+# Current relevent runtime information:
+{'RandomForestClassifier': {'doc_importants': {'notes': 'The default values '
+                                                        'for the parameters '
+                                                        'controlling the size '
+                                                        'of the trees (e.g. '
+                                                        '``max_depth``, '
+                                                        '``min_samples_leaf``, '
+                                                        'etc.) lead to fully '
+                                                        'grown and unpruned '
+                                                        'trees which can '
+                                                        'potentially be very '
+                                                        'large on some data '
+                                                        'sets. To reduce '
+                                                        'memory consumption, '
+                                                        'the complexity and '
+                                                        'size of the trees '
+                                                        'should be controlled '
+                                                        'by setting those '
+                                                        'parameter values. The '
+                                                        'features are always '
+                                                        'randomly permuted at '
+                                                        'each split. '
+                                                        'Therefore, the best '
+                                                        'found split may vary, '
+                                                        'even with the same '
+                                                        'training data, '
+                                                        '``max_features=n_features`` '
+                                                        'and '
+                                                        '``bootstrap=False``, '
+                                                        'if the improvement of '
+                                                        'the criterion is '
+                                                        'identical for several '
+                                                        'splits enumerated '
+                                                        'during the search of '
+                                                        'the best split. To '
+                                                        'obtain a '
+                                                        'deterministic '
+                                                        'behaviour during '
+                                                        'fitting, '
+                                                        '``random_state`` has '
+                                                        'to be fixed.'},
+                            'signature': {'parameters': [{'annotation': None,
+                                                          'default': '100',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'n_estimators',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': "'gini'",
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'criterion',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'max_depth',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '2',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'min_samples_split',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '1',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'min_samples_leaf',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '0.0',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'min_weight_fraction_leaf',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': "'sqrt'",
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'max_features',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'max_leaf_nodes',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '0.0',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'min_impurity_decrease',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'True',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'bootstrap',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'False',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'oob_score',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'n_jobs',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'random_state',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '0',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'verbose',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'False',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'warm_start',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'class_weight',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': '0.0',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'ccp_alpha',
+                                                          'required': False},
+                                                         {'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'KEYWORD_ONLY',
+                                                          'name': 'max_samples',
+                                                          'required': False}],
+                                          'return_annotation': None},
+                            'type': "<class 'abc.ABCMeta'>"},
+ 'X': {'has_nan': False,
+       'per_column': {'age': {'dtype': 'int64',
+                              'num_unique': 41,
+                              'type': 'continuous',
+                              'value_range': (29, 77)},
+                      'caa': {'dtype': 'int64',
+                              'num_unique': 5,
+                              'type': 'categorical_numeric',
+                              'value_range': (0, 4)},
+                      'chol': {'dtype': 'int64',
+                               'num_unique': 152,
+                               'type': 'continuous',
+                               'value_range': (126, 564)},
+                      'cp': {'dtype': 'int64',
+                             'num_unique': 4,
+                             'type': 'categorical_numeric',
+                             'value_range': (0, 3)},
+                      'exng': {'dtype': 'int64',
+                               'num_unique': 2,
+                               'type': 'binary',
+                               'value_range': (0, 1)},
+                      'fbs': {'dtype': 'int64',
+                              'num_unique': 2,
+                              'type': 'binary',
+                              'value_range': (0, 1)},
+                      'oldpeak': {'dtype': 'float64',
+                                  'num_unique': 40,
+                                  'type': 'continuous',
+                                  'value_range': (0.0, 6.2)},
+                      'restecg': {'dtype': 'int64',
+                                  'num_unique': 3,
+                                  'type': 'categorical_numeric',
+                                  'value_range': (0, 2)},
+                      'sex': {'dtype': 'int64',
+                              'num_unique': 2,
+                              'type': 'binary',
+                              'value_range': (0, 1)},
+                      'slp': {'dtype': 'int64',
+                              'num_unique': 3,
+                              'type': 'categorical_numeric',
+                              'value_range': (0, 2)},
+                      'thalachh': {'dtype': 'int64',
+                                   'num_unique': 91,
+                                   'type': 'continuous',
+                                   'value_range': (71, 202)},
+                      'thall': {'dtype': 'int64',
+                                'num_unique': 4,
+                                'type': 'categorical_numeric',
+                                'value_range': (0, 3)},
+                      'trtbps': {'dtype': 'int64',
+                                 'num_unique': 49,
+                                 'type': 'continuous',
+                                 'value_range': (94, 200)}},
+       'shape': (303, 13),
+       'type': 'pandas.core.frame.DataFrame'},
+ 'X_test': {'has_nan': False,
+            'per_column': {'age': {'dtype': 'int64',
+                                   'num_unique': 29,
+                                   'type': 'continuous',
+                                   'value_range': (35, 70)},
+                           'caa': {'dtype': 'int64',
+                                   'num_unique': 5,
+                                   'type': 'categorical_numeric',
+                                   'value_range': (0, 4)},
+                           'chol': {'dtype': 'int64',
+                                    'num_unique': 63,
+                                    'type': 'continuous',
+                                    'value_range': (149, 409)},
+                           'cp': {'dtype': 'int64',
+                                  'num_unique': 4,
+                                  'type': 'categorical_numeric',
+                                  'value_range': (0, 3)},
+                           'exng': {'dtype': 'int64',
+                                    'num_unique': 2,
+                                    'type': 'binary',
+                                    'value_range': (0, 1)},
+                           'fbs': {'dtype': 'int64',
+                                   'num_unique': 2,
+                                   'type': 'binary',
+                                   'value_range': (0, 1)},
+                           'oldpeak': {'dtype': 'float64',
+                                       'num_unique': 28,
+                                       'type': 'continuous',
+                                       'value_range': (0.0, 4.2)},
+                           'restecg': {'dtype': 'int64',
+                                       'num_unique': 2,
+                                       'type': 'binary',
+                                       'value_range': (0, 1)},
+                           'sex': {'dtype': 'int64',
+                                   'num_unique': 2,
+                                   'type': 'binary',
+                                   'value_range': (0, 1)},
+                           'slp': {'dtype': 'int64',
+                                   'num_unique': 3,
+                                   'type': 'categorical_numeric',
+                                   'value_range': (0, 2)},
+                           'thalachh': {'dtype': 'int64',
+                                        'num_unique': 52,
+                                        'type': 'continuous',
+                                        'value_range': (71, 185)},
+                           'thall': {'dtype': 'int64',
+                                     'num_unique': 3,
+                                     'type': 'categorical_numeric',
+                                     'value_range': (1, 3)},
+                           'trtbps': {'dtype': 'int64',
+                                      'num_unique': 31,
+                                      'type': 'continuous',
+                                      'value_range': (100, 172)}},
+            'shape': (76, 13),
+            'type': 'pandas.core.frame.DataFrame'},
+ '__method__X_test_fillna': {'context': {'public_attributes': []},
+                             'signature': {'parameters': [{'annotation': "'Hashable "
+                                                                         '| '
+                                                                         'Mapping '
+                                                                         '| '
+                                                                         'Series '
+                                                                         '| '
+                                                                         'DataFrame '
+                                                                         '| '
+                                                                         "None'",
+                                                           'default': 'None',
+                                                           'kind': 'POSITIONAL_OR_KEYWORD',
+                                                           'name': 'value',
+                                                           'required': False},
+                                                          {'annotation': "'FillnaOptions "
+                                                                         '| '
+                                                                         "None'",
+                                                           'default': 'None',
+                                                           'kind': 'KEYWORD_ONLY',
+                                                           'name': 'method',
+                                                           'required': False},
+                                                          {'annotation': "'Axis "
+                                                                         '| '
+                                                                         "None'",
+                                                           'default': 'None',
+                                                           'kind': 'KEYWORD_ONLY',
+                                                           'name': 'axis',
+                                                           'required': False},
+                                                          {'annotation': "'bool_t'",
+                                                           'default': 'False',
+                                                           'kind': 'KEYWORD_ONLY',
+                                                           'name': 'inplace',
+                                                           'required': False},
+                                                          {'annotation': "'int "
+                                                                         '| '
+                                                                         "None'",
+                                                           'default': 'None',
+                                                           'kind': 'KEYWORD_ONLY',
+                                                           'name': 'limit',
+                                                           'required': False},
+                                                          {'annotation': "'dict "
+                                                                         '| '
+                                                                         'None '
+                                                                         '| '
+                                                                         "lib.NoDefault'",
+                                                           'default': '<no_default>',
+                                                           'kind': 'KEYWORD_ONLY',
+                                                           'name': 'downcast',
+                                                           'required': False}],
+                                           'return_annotation': "'Self | "
+                                                                "None'"},
+                             'type': "<class 'method'>"},
+ '__method__model_fit': {'context': {'public_attributes': ['ccp_alpha',
+                                                           'class_weight',
+                                                           'classes_',
+                                                           'criterion',
+                                                           'feature_names_in_',
+                                                           'max_depth',
+                                                           'max_features',
+                                                           'max_features_',
+                                                           'max_leaf_nodes',
+                                                           'min_impurity_decrease',
+                                                           'min_samples_leaf',
+                                                           'min_samples_split',
+                                                           'min_weight_fraction_leaf',
+                                                           'n_classes_',
+                                                           'n_features_in_',
+                                                           'n_outputs_',
+                                                           'random_state',
+                                                           'splitter',
+                                                           'tree_']},
+                         'signature': {'parameters': [{'annotation': None,
+                                                       'default': None,
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'X',
+                                                       'required': True},
+                                                      {'annotation': None,
+                                                       'default': None,
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'y',
+                                                       'required': True},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'sample_weight',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'True',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'check_input',
+                                                       'required': False}],
+                                       'return_annotation': None},
+                         'type': "<class 'method'>"},
+ '__method__model_predict': {'context': {'public_attributes': ['ccp_alpha',
+                                                               'class_weight',
+                                                               'classes_',
+                                                               'criterion',
+                                                               'feature_names_in_',
+                                                               'max_depth',
+                                                               'max_features',
+                                                               'max_features_',
+                                                               'max_leaf_nodes',
+                                                               'min_impurity_decrease',
+                                                               'min_samples_leaf',
+                                                               'min_samples_split',
+                                                               'min_weight_fraction_leaf',
+                                                               'n_classes_',
+                                                               'n_features_in_',
+                                                               'n_outputs_',
+                                                               'random_state',
+                                                               'splitter',
+                                                               'tree_']},
+                             'signature': {'parameters': [{'annotation': None,
+                                                           'default': None,
+                                                           'kind': 'POSITIONAL_OR_KEYWORD',
+                                                           'name': 'X',
+                                                           'required': True},
+                                                          {'annotation': None,
+                                                           'default': 'True',
+                                                           'kind': 'POSITIONAL_OR_KEYWORD',
+                                                           'name': 'check_input',
+                                                           'required': False}],
+                                           'return_annotation': None},
+                             'type': "<class 'method'>"},
+ '__method__pd_DataFrame': {'doc_importants': {'notes': 'Please reference the '
+                                                        ':ref:`User Guide '
+                                                        '<basics.dataframe>` '
+                                                        'for more '
+                                                        'information.'},
+                            'signature': {'parameters': [{'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'data',
+                                                          'required': False},
+                                                         {'annotation': "'Axes "
+                                                                        '| '
+                                                                        "None'",
+                                                          'default': 'None',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'index',
+                                                          'required': False},
+                                                         {'annotation': "'Axes "
+                                                                        '| '
+                                                                        "None'",
+                                                          'default': 'None',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'columns',
+                                                          'required': False},
+                                                         {'annotation': "'Dtype "
+                                                                        '| '
+                                                                        "None'",
+                                                          'default': 'None',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'dtype',
+                                                          'required': False},
+                                                         {'annotation': "'bool "
+                                                                        '| '
+                                                                        "None'",
+                                                          'default': 'None',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'copy',
+                                                          'required': False}],
+                                          'return_annotation': "'None'"},
+                            'type': "<class 'type'>"},
+ '__method__pd_get_dummies': {'doc_importants': {'notes': 'Reference :ref:`the '
+                                                          'user guide '
+                                                          '<reshaping.dummies>` '
+                                                          'for more examples.'},
+                              'signature': {'parameters': [{'annotation': None,
+                                                            'default': None,
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'data',
+                                                            'required': True},
+                                                           {'annotation': None,
+                                                            'default': 'None',
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'prefix',
+                                                            'required': False},
+                                                           {'annotation': "'str "
+                                                                          '| '
+                                                                          'Iterable[str] '
+                                                                          '| '
+                                                                          'dict[str, '
+                                                                          "str]'",
+                                                            'default': "'_'",
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'prefix_sep',
+                                                            'required': False},
+                                                           {'annotation': "'bool'",
+                                                            'default': 'False',
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'dummy_na',
+                                                            'required': False},
+                                                           {'annotation': None,
+                                                            'default': 'None',
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'columns',
+                                                            'required': False},
+                                                           {'annotation': "'bool'",
+                                                            'default': 'False',
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'sparse',
+                                                            'required': False},
+                                                           {'annotation': "'bool'",
+                                                            'default': 'False',
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'drop_first',
+                                                            'required': False},
+                                                           {'annotation': "'NpDtype "
+                                                                          '| '
+                                                                          "None'",
+                                                            'default': 'None',
+                                                            'kind': 'POSITIONAL_OR_KEYWORD',
+                                                            'name': 'dtype',
+                                                            'required': False}],
+                                            'return_annotation': "'DataFrame'"},
+                              'type': "<class 'function'>"},
+ '__method__test_data_PassengerId': {'dtype': 'int64',
+                                     'has_nan': False,
+                                     'length': 418,
+                                     'type': 'pandas.core.series.Series',
+                                     'value_info': {'value_range': (892, 1309),
+                                                    'value_type': 'continuous'}},
+ 'model': {'class_name': 'DecisionTreeClassifier',
+           'fitted_attributes': {'n_features_in_': 13, 'n_outputs_': 1},
+           'is_fitted': True,
+           'module': 'sklearn.tree._classes',
+           'type': "<class 'sklearn.tree._classes.DecisionTreeClassifier'>"},
+ 'pd': {'type': "<class 'module'>"},
+ 'test_data': {'execution_cell_source': {'cellno': 2, 'lineno': 2},
+               'has_nan': True,
+               'per_column': {'Age': {'dtype': 'float64',
+                                      'num_unique': 79,
+                                      'type': 'continuous',
+                                      'value_range': (0.17, 76.0)},
+                              'Cabin': {'dtype': 'object',
+                                        'example_values': ['C23 C25 C27',
+                                                           'C46',
+                                                           'F',
+                                                           'C80',
+                                                           'C97'],
+                                        'num_unique': 76,
+                                        'type': 'categorical'},
+                              'Embarked': {'dtype': 'object',
+                                           'num_unique': 3,
+                                           'type': 'categorical',
+                                           'unique_values': ['Q', 'S', 'C']},
+                              'Fare': {'dtype': 'float64',
+                                       'num_unique': 169,
+                                       'type': 'continuous',
+                                       'value_range': (0.0, 512.3292)},
+                              'Name': {'dtype': 'object',
+                                       'example_values': ['Wenzel, Mr. Linhart',
+                                                          'Thomson, Mr. '
+                                                          'Alexand...',
+                                                          'Warren, Mr. Frank '
+                                                          'Ma...',
+                                                          'Harder, Mrs. George '
+                                                          '...',
+                                                          'Spedden, Master. '
+                                                          'Rob...'],
+                                       'num_unique': 418,
+                                       'type': 'categorical'},
+                              'Parch': {'dtype': 'int64',
+                                        'num_unique': 8,
+                                        'type': 'categorical_numeric',
+                                        'value_range': (0, 9)},
+                              'PassengerId': {'dtype': 'int64',
+                                              'num_unique': 418,
+                                              'type': 'continuous',
+                                              'value_range': (892, 1309)},
+                              'Pclass': {'dtype': 'int64',
+                                         'num_unique': 3,
+                                         'type': 'categorical_numeric',
+                                         'value_range': (1, 3)},
+                              'Sex': {'dtype': 'object',
+                                      'num_unique': 2,
+                                      'type': 'categorical',
+                                      'unique_values': ['male', 'female']},
+                              'SibSp': {'dtype': 'int64',
+                                        'num_unique': 7,
+                                        'type': 'categorical_numeric',
+                                        'value_range': (0, 8)},
+                              'Ticket': {'dtype': 'object',
+                                         'example_values': ['345501',
+                                                            '347065',
+                                                            'SOTON/O.Q. '
+                                                            '3101309',
+                                                            '349909',
+                                                            '113509'],
+                                         'num_unique': 363,
+                                         'type': 'categorical'}},
+               'shape': (418, 11),
+               'type': 'pandas.core.frame.DataFrame'},
+ 'train_data': {'execution_cell_source': {'cellno': 1, 'lineno': 2},
+                'has_nan': True,
+                'per_column': {'Age': {'dtype': 'float64',
+                                       'num_unique': 88,
+                                       'type': 'continuous',
+                                       'value_range': (0.42, 80.0)},
+                               'Cabin': {'dtype': 'object',
+                                         'example_values': ['B5',
+                                                            'F G73',
+                                                            'D49',
+                                                            'B42',
+                                                            'C87'],
+                                         'num_unique': 147,
+                                         'type': 'categorical'},
+                               'Embarked': {'dtype': 'object',
+                                            'num_unique': 3,
+                                            'type': 'categorical',
+                                            'unique_values': ['S', 'C', 'Q']},
+                               'Fare': {'dtype': 'float64',
+                                        'num_unique': 248,
+                                        'type': 'continuous',
+                                        'value_range': (0.0, 512.3292)},
+                               'Name': {'dtype': 'object',
+                                        'example_values': ['Thomas, Master. '
+                                                           'Assa...',
+                                                           'Fox, Mr. Stanley '
+                                                           'Hub...',
+                                                           'Shellard, Mr. '
+                                                           'Freder...',
+                                                           'Webber, Mr. James',
+                                                           'Ilmakangas, Miss. '
+                                                           'Pi...'],
+                                        'num_unique': 891,
+                                        'type': 'categorical'},
+                               'Parch': {'dtype': 'int64',
+                                         'num_unique': 7,
+                                         'type': 'categorical_numeric',
+                                         'value_range': (0, 6)},
+                               'PassengerId': {'dtype': 'int64',
+                                               'num_unique': 891,
+                                               'type': 'continuous',
+                                               'value_range': (1, 891)},
+                               'Pclass': {'dtype': 'int64',
+                                          'num_unique': 3,
+                                          'type': 'categorical_numeric',
+                                          'value_range': (1, 3)},
+                               'Sex': {'dtype': 'object',
+                                       'num_unique': 2,
+                                       'type': 'categorical',
+                                       'unique_values': ['male', 'female']},
+                               'SibSp': {'dtype': 'int64',
+                                         'num_unique': 7,
+                                         'type': 'categorical_numeric',
+                                         'value_range': (0, 8)},
+                               'Survived': {'dtype': 'int64',
+                                            'num_unique': 2,
+                                            'type': 'binary',
+                                            'value_range': (0, 1)},
+                               'Ticket': {'dtype': 'object',
+                                          'example_values': ['2620',
+                                                             'PC 17592',
+                                                             '244358',
+                                                             '234604',
+                                                             '7267'],
+                                          'num_unique': 681,
+                                          'type': 'categorical'}},
+                'shape': (891, 12),
+                'type': 'pandas.core.frame.DataFrame'},
+ 'y': {'dtype': 'int64',
+       'has_nan': False,
+       'length': 303,
+       'type': 'pandas.core.series.Series',
+       'value_info': {'unique_values': [0, 1], 'value_type': 'binary'}}}
+# Target Cell:
+
+from sklearn.ensemble import RandomForestClassifier
+
+y = train_data["Survived"]
+
+features = ["Pclass", "Sex", "SibSp", "Parch", "Fare"]
+X = pd.get_dummies(train_data[features])
+X_test = pd.get_dummies(test_data[features])
+
+
+X_test.fillna(0, inplace=True)
+
+model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=1)
+model.fit(X, y)
+predictions = model.predict(X_test)
+
+output = pd.DataFrame({'PassengerId': test_data.PassengerId, 'Survived': predictions})
+
+print("Your submission was successfully saved!")

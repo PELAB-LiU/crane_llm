@@ -1,0 +1,23 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+## Cell 2:
+
+df=pd.read_csv('data/googleplaystore.csv')
+
+## Cell 3:
+
+df.dropna(inplace=True)
+
+## Cell 4:
+
+df['Reviews']=df['Reviews'].astype('int')
+
+# Target Cell:
+
+
+df['Installs']=df['Installs'].str.replace('+','').str.replace(',','').astype('int')

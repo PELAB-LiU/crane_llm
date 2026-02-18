@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "X_train and Y_train are NumPy arrays from train_test_split, and NumPy arrays do not have a .join method (that's a pandas DataFrame method). This will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train and Y_train are NumPy arrays (from train_test_split on X.values and Y.values). NumPy arrays do not have a .join method, so this will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train and Y_train are NumPy arrays (from train_test_split on X.values/Y.values). NumPy arrays do not have a .join method (it's a pandas DataFrame/Series method), so this will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train and Y_train are NumPy arrays (from train_test_split on X.values and Y.values). NumPy arrays do not have a .join method, so calling join will raise an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train and Y_train are NumPy arrays (from train_test_split on X.values/Y.values); NumPy arrays do not have a .join method, causing an AttributeError.",
+    "detection": true
+  }
+]

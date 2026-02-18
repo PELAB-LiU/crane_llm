@@ -1,0 +1,468 @@
+# Executed Cells:
+## Cell 1:
+
+"""Required Liberaries"""
+from numpy import zeros
+from numpy import ones
+from numpy.random import randint
+from tensorflow.keras.optimizers import Adam
+from keras.initializers import RandomNormal
+from keras.models import Model
+from keras.layers import Conv2D , Input
+from keras.layers import Conv2DTranspose
+from keras.layers import LeakyReLU
+from keras.layers import Activation
+from keras.layers import Concatenate
+from keras.layers import Dropout
+from keras.layers import BatchNormalization
+from matplotlib import pyplot as plt
+from tensorflow.keras.utils import plot_model
+
+## Cell 2:
+
+
+from tensorflow.keras.utils import normalize
+import os
+import glob
+import cv2
+import numpy as np
+from matplotlib import pyplot
+
+
+SIZE_X = 256
+SIZE_Y = 256
+
+tar_images = []
+
+for directory_path in glob.glob("data_small//tar_images/"):
+    for img_path in sorted(glob.glob(os.path.join(directory_path, "*.jpg"))):
+        img = cv2.imread(img_path, 1)
+        img = cv2.resize(img, (SIZE_Y, SIZE_X))
+        tar_images.append(img)
+tar_images = np.array(tar_images)
+
+## Cell 3:
+
+
+src_images = []
+
+for directory_path in glob.glob("data_small//src_images/"):
+    for img_path in sorted(glob.glob(os.path.join(directory_path, "*.jpg"))):
+        img = cv2.imread(img_path, 1)
+        img = cv2.resize(img, (SIZE_Y, SIZE_X))
+        src_images.append(img)
+src_images = np.array(src_images)
+
+# Current relevent runtime information:
+{'__method__cv2_COLOR_BGR2RGB': {'type': "<class 'int'>", 'value': 4},
+ '__method__cv2_cvtColor': {'type': "<class 'builtin_function_or_method'>"},
+ '__method__np_random': {'type': "<class 'module'>"},
+ '__method__np_reshape': {'doc_importants': {'notes': 'It is not always '
+                                                      'possible to change the '
+                                                      'shape of an array '
+                                                      'without copying the '
+                                                      'data. The `order` '
+                                                      'keyword gives the index '
+                                                      'ordering both for '
+                                                      '*fetching* the values '
+                                                      'from `a`, and then '
+                                                      '*placing* the values '
+                                                      'into the output array. '
+                                                      "For example, let's say "
+                                                      'you have an array: >>> '
+                                                      'a = '
+                                                      'np.arange(6).reshape((3, '
+                                                      '2)) >>> a array([[0, '
+                                                      '1], [2, 3], [4, 5]]) '
+                                                      'You can think of '
+                                                      'reshaping as first '
+                                                      'raveling the array '
+                                                      '(using the given index '
+                                                      'order), then inserting '
+                                                      'the elements from the '
+                                                      'raveled array into the '
+                                                      'new array using the '
+                                                      'same kind of index '
+                                                      'ordering as was used '
+                                                      'for the raveling. >>> '
+                                                      'np.reshape(a, (2, 3)) # '
+                                                      'C-like index ordering '
+                                                      'array([[0, 1, 2], [3, '
+                                                      '4, 5]]) >>> '
+                                                      'np.reshape(np.ravel(a), '
+                                                      '(2, 3)) # equivalent to '
+                                                      'C ravel then C reshape '
+                                                      'array([[0, 1, 2], [3, '
+                                                      '4, 5]]) >>> '
+                                                      'np.reshape(a, (2, 3), '
+                                                      "order='F') # "
+                                                      'Fortran-like index '
+                                                      'ordering array([[0, 4, '
+                                                      '3], [2, 1, 5]]) >>> '
+                                                      'np.reshape(np.ravel(a, '
+                                                      "order='F'), (2, 3), "
+                                                      "order='F') array([[0, "
+                                                      '4, 3], [2, 1, 5]])'},
+                          'signature': {'parameters': [{'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'a',
+                                                        'required': True},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'newshape',
+                                                        'required': True},
+                                                       {'annotation': None,
+                                                        'default': "'C'",
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'order',
+                                                        'required': False}],
+                                        'return_annotation': None},
+                          'type': "<class 'numpy._ArrayFunctionDispatcher'>"},
+ '__method__plt_figure': {'doc_importants': {'notes': 'A newly created figure '
+                                                      'is passed to the '
+                                                      '`~.FigureCanvasBase.new_manager` '
+                                                      'method or the '
+                                                      '`new_figure_manager` '
+                                                      'function provided by '
+                                                      'the current backend, '
+                                                      'which install a canvas '
+                                                      'and a manager on the '
+                                                      'figure. Once this is '
+                                                      'done, '
+                                                      ':rc:`figure.hooks` are '
+                                                      'called, one at a time, '
+                                                      'on the figure; these '
+                                                      'hooks allow arbitrary '
+                                                      'customization of the '
+                                                      'figure (e.g., attaching '
+                                                      'callbacks) or of '
+                                                      'associated elements '
+                                                      '(e.g., modifying the '
+                                                      'toolbar).  See '
+                                                      ':doc:`/gallery/user_interfaces/mplcvd` '
+                                                      'for an example of '
+                                                      'toolbar customization. '
+                                                      'If you are creating '
+                                                      'many figures, make sure '
+                                                      'you explicitly call '
+                                                      '`.pyplot.close` on the '
+                                                      'figures you are not '
+                                                      'using, because this '
+                                                      'will enable pyplot to '
+                                                      'properly clean up the '
+                                                      'memory. '
+                                                      '`~matplotlib.rcParams` '
+                                                      'defines the default '
+                                                      'values, which can be '
+                                                      'modified in the '
+                                                      'matplotlibrc file.'},
+                          'signature': {'parameters': [{'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'num',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'figsize',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'dpi',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'facecolor',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'edgecolor',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'True',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'frameon',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': '<class '
+                                                                   "'matplotlib.figure.Figure'>",
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'FigureClass',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'False',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'clear',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ '__method__plt_imshow': {'doc_importants': {'notes': 'Unless *extent* is '
+                                                      'used, pixel centers '
+                                                      'will be located at '
+                                                      'integer coordinates. In '
+                                                      'other words: the origin '
+                                                      'will coincide with the '
+                                                      'center of pixel (0, 0). '
+                                                      'There are two common '
+                                                      'representations for RGB '
+                                                      'images with an alpha '
+                                                      'channel: -   Straight '
+                                                      '(unassociated) alpha: '
+                                                      'R, G, and B channels '
+                                                      'represent the color of '
+                                                      'the pixel, disregarding '
+                                                      'its opacity. -   '
+                                                      'Premultiplied '
+                                                      '(associated) alpha: R, '
+                                                      'G, and B channels '
+                                                      'represent the color of '
+                                                      'the pixel, adjusted for '
+                                                      'its opacity by '
+                                                      'multiplication. '
+                                                      '`~matplotlib.pyplot.imshow` '
+                                                      'expects RGB images '
+                                                      'adopting the straight '
+                                                      '(unassociated) alpha '
+                                                      'representation.'},
+                          'signature': {'parameters': [{'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'X',
+                                                        'required': True},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'cmap',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'norm',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'aspect',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'interpolation',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'alpha',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'vmin',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'vmax',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'origin',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'extent',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'interpolation_stage',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'True',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'filternorm',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': '4.0',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'filterrad',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'resample',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'url',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'data',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ '__method__plt_show': {'doc_importants': {'notes': '**Saving figures to file '
+                                                    'and showing a window at '
+                                                    'the same time** If you '
+                                                    'want an image file as '
+                                                    'well as a user interface '
+                                                    'window, use '
+                                                    '`.pyplot.savefig` before '
+                                                    '`.pyplot.show`. At the '
+                                                    'end of (a blocking) '
+                                                    '``show()`` the figure is '
+                                                    'closed and thus '
+                                                    'unregistered from pyplot. '
+                                                    'Calling `.pyplot.savefig` '
+                                                    'afterwards would save a '
+                                                    'new and thus empty '
+                                                    'figure. This limitation '
+                                                    'of command order does not '
+                                                    'apply if the show is '
+                                                    'non-blocking or if you '
+                                                    'keep a reference to the '
+                                                    'figure and use '
+                                                    '`.Figure.savefig`. '
+                                                    '**Auto-show in jupyter '
+                                                    'notebooks** The jupyter '
+                                                    'backends (activated via '
+                                                    '``%matplotlib inline``, '
+                                                    '``%matplotlib notebook``, '
+                                                    'or ``%matplotlib '
+                                                    'widget``), call '
+                                                    '``show()`` at the end of '
+                                                    'every cell by default. '
+                                                    "Thus, you usually don't "
+                                                    'have to call it '
+                                                    'explicitly there.'},
+                        'signature': {'parameters': [{'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'block',
+                                                      'required': False}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ '__method__plt_subplot': {'doc_importants': {'notes': 'Creating a new Axes '
+                                                       'will delete any '
+                                                       'preexisting Axes that '
+                                                       'overlaps with it '
+                                                       'beyond sharing a '
+                                                       'boundary:: import '
+                                                       'matplotlib.pyplot as '
+                                                       'plt # plot a line, '
+                                                       'implicitly creating a '
+                                                       'subplot(111) '
+                                                       'plt.plot([1, 2, 3]) # '
+                                                       'now create a subplot '
+                                                       'which represents the '
+                                                       'top plot of a grid # '
+                                                       'with 2 rows and 1 '
+                                                       'column. Since this '
+                                                       'subplot will overlap '
+                                                       'the # first, the plot '
+                                                       '(and its axes) '
+                                                       'previously created, '
+                                                       'will be removed '
+                                                       'plt.subplot(211) If '
+                                                       'you do not want this '
+                                                       'behavior, use the '
+                                                       '`.Figure.add_subplot` '
+                                                       'method or the '
+                                                       '`.pyplot.axes` '
+                                                       'function instead. If '
+                                                       'no *kwargs* are passed '
+                                                       'and there exists an '
+                                                       'Axes in the location '
+                                                       'specified by *args* '
+                                                       'then that Axes will be '
+                                                       'returned rather than a '
+                                                       'new Axes being '
+                                                       'created. If *kwargs* '
+                                                       'are passed and there '
+                                                       'exists an Axes in the '
+                                                       'location specified by '
+                                                       '*args*, the projection '
+                                                       'type is the same, and '
+                                                       'the *kwargs* match '
+                                                       'with the existing '
+                                                       'Axes, then the '
+                                                       'existing Axes is '
+                                                       'returned.  Otherwise a '
+                                                       'new Axes is created '
+                                                       'with the specified '
+                                                       'parameters.  We save a '
+                                                       'reference to the '
+                                                       '*kwargs* which we use '
+                                                       'for this comparison.  '
+                                                       'If any of the values '
+                                                       'in *kwargs* are '
+                                                       'mutable we will not '
+                                                       'detect the case where '
+                                                       'they are mutated. In '
+                                                       'these cases we suggest '
+                                                       'using '
+                                                       '`.Figure.add_subplot` '
+                                                       'and the explicit Axes '
+                                                       'API rather than the '
+                                                       'implicit pyplot API.'},
+                           'signature': {'parameters': [{'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'VAR_POSITIONAL',
+                                                         'name': 'args',
+                                                         'required': True},
+                                                        {'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'VAR_KEYWORD',
+                                                         'name': 'kwargs',
+                                                         'required': True}],
+                                         'return_annotation': None},
+                           'type': "<class 'function'>"},
+ 'cv2': {'type': "<class 'module'>"},
+ 'np': {'type': "<class 'module'>"},
+ 'plt': {'type': "<class 'module'>"},
+ 'src_images': {'dtype': 'uint8',
+                'execution_cell_source': {'cellno': 14, 'lineno': 9},
+                'has_nan': False,
+                'shape': (238, 256, 256, 3),
+                'type': 'numpy.ndarray',
+                'value_range': (0, 201)},
+ 'tar_images': {'dtype': 'uint8',
+                'execution_cell_source': {'cellno': 11, 'lineno': 20},
+                'has_nan': False,
+                'shape': (99, 256, 256, 3),
+                'type': 'numpy.ndarray',
+                'value_range': (0, 255)}}
+# Target Cell:
+
+import numpy as np
+import cv2
+random_img = np.random.randint(0 , len(src_images))
+fig = plt.figure(figsize = (16, 16))
+src_img = np.reshape(src_images[random_img] , (256 , 256 ,3))
+random_img = np.random.randint(0 , len(tar_images))
+tar_img = np.reshape(tar_images[random_img] , (256 , 256 ,3))
+plt.subplot(121)
+plt.imshow(cv2.cvtColor(src_img , cv2.COLOR_BGR2RGB))
+plt.subplot(122)
+plt.imshow(cv2.cvtColor(tar_img , cv2.COLOR_BGR2RGB))
+plt.show()

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT-2, so computing attention_mask with input_ids.ne(None) will error; also using GPT2Tokenizer may mismatch earlier GPT2TokenizerFast but main crash is None pad_token id.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT-2, so input_ids.ne(None) will error; also mixing GPT2Tokenizer with previously loaded GPT2TokenizerFast not critical. The attention_mask computation will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT-2, so attention_mask=input_ids.ne(None) will raise a TypeError. Also decoding expects a list of ints, but slice returns tensor; however first issue already crashes.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT-2, so computing attention_mask with input_ids.ne(None) will raise an error; also mixing GPT2Tokenizer with previously loaded GPT2TokenizerFast may be fine, but the pad_token_id None is critical.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT-2, so attention_mask=input_ids.ne(None) will error; also two different tokenizer classes used earlier vs here but main crash is None comparison causing TypeError.",
+    "detection": true
+  }
+]

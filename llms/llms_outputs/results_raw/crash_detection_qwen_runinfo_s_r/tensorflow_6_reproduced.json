@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'history' object does not contain 'acc' and 'val_acc' keys, only 'loss' and 'val_loss'. This will cause a KeyError when trying to plot 'acc' and 'val_acc'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'history' object does not contain 'acc' and 'val_acc' keys, only 'loss' and 'val_loss'. This will cause a KeyError when trying to plot 'acc' and 'val_acc'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'history' object does not contain 'acc' and 'val_acc' keys, only 'loss' and 'val_loss'. This will cause a KeyError when trying to plot 'acc' and 'val_acc'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'history' object does not contain 'acc' and 'val_acc' keys, only 'loss' and 'val_loss'. This will cause a KeyError when trying to plot 'acc' and 'val_acc'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'history' object does not contain 'acc' and 'val_acc' keys, only 'loss' and 'val_loss'. This will cause a KeyError when trying to plot 'acc' and 'val_acc'.",
+    "detection": true
+  }
+]

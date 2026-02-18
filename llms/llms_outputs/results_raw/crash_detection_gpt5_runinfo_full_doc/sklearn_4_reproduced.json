@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "balanced_accuracy_score expects class labels but preds are continuous floats from AdaBoostRegressor; scikit-learn will raise a ValueError due to input format mismatch. Therefore, the cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects discrete class labels; preds is continuous floats from AdaBoostRegressor, which is incompatible and will raise a ValueError. Therefore the cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects class labels but preds are continuous floats from AdaBoostRegressor; passing continuous predictions will not raise an error but compute meaningless balanced accuracy. No crash is certain.",
+    "detection": false
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects class labels; preds is continuous floats from AdaBoostRegressor, causing a ValueError about continuous is not supported. Therefore execution will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects class labels, but preds are continuous floats from AdaBoostRegressor; this will raise a ValueError due to multiclass format or inconsistent input for a classification metric.",
+    "detection": true
+  }
+]

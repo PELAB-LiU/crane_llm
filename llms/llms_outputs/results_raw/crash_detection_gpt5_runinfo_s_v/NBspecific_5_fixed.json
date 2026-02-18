@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Column 'num_outbound_cmds' exists in df and in numeric_columns, so dropping it and removing from the list should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'num_outbound_cmds' exists in df per runtime info, so drop will succeed. It is also listed in numeric_columns, so removing it should work.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'num_outbound_cmds' exists in df and in numeric_columns; dropping and removing should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'num_outbound_cmds' exists in df and in numeric_columns; dropping it and removing from the list should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'num_outbound_cmds' exists in df and in numeric_columns; dropping it and removing from the list should succeed.",
+    "detection": false
+  }
+]

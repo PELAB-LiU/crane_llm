@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `shuffle_unit` function is called with `in_channels` and `out_channels` parameters that do not match the actual input tensor's channel dimension, leading to a shape mismatch when `Concatenate()` is called. For example, the first `shuffle_unit` call expects `in_channels=64` but the input `x` has 256 channels after the `MaxPooling2D` layer, causing a crash when `res` is concatenated with `x`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `shuffle_unit` function is called with `in_channels` and `out_channels` parameters that do not match the actual input tensor's channel dimension, leading to a shape mismatch when `Concatenate()` is called. For example, the first `shuffle_unit` call expects `in_channels=64` but the input `x` has 256 channels after the `MaxPooling2D` layer, causing a crash during model compilation or fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `shuffle_unit` function is called with `in_channels` and `out_channels` parameters that do not match the actual input tensor's channel dimension, leading to a shape mismatch when `Concatenate()` is called. For example, the first `shuffle_unit` call expects `in_channels=64` but the input `x` has 256 channels after the `MaxPooling2D` layer, causing a crash when `res` is concatenated with `x`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `shuffle_unit` function is called with `in_channels` and `out_channels` parameters that do not match the actual input tensor's channel dimension, leading to a shape mismatch when `Concatenate()` is called. For example, the first `shuffle_unit` call expects `in_channels=64` but the input `x` has 256 channels after the `MaxPooling2D` layer, causing a crash when `res` is concatenated with `x`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `shuffle_unit` function is called with `in_channels` and `out_channels` parameters that do not match the actual input tensor's channel dimension, leading to a shape mismatch when `Concatenate()` is called. For example, the first `shuffle_unit` call expects `in_channels=64` but the input `x` has 256 channels after the `MaxPooling2D` layer, causing a crash when `res` is concatenated with `x`.",
+    "detection": true
+  }
+]

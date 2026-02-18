@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train_labels elements are arrays of shape (1,) from CIFAR-10 load_data, so using them as list indices (class_names[train_labels[i]]) will raise a TypeError. Need int via train_labels[i][0].",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels elements are arrays with shape (1,), so indexing class_names with train_labels[i] (an array) will error; need an int. This will raise a TypeError or IndexError.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_images/test labels exist and are uint8; however, train_labels has shape (n,1) with dtype uint8, so indexing class_names with train_labels[i] yields a 1-element array, causing a TypeError (list indices must be integers or slices, not numpy.ndarray).",
+    "detection": true
+  },
+  {
+    "reasoning": "train_labels has shape (num_samples, 1) with dtype uint8, so indexing class_names using train_labels[i] returns a 1-element array, not an int, causing a TypeError. It should use train_labels[i][0] or train_labels[i].item().",
+    "detection": true
+  },
+  {
+    "reasoning": "train_images shape indicates CIFAR-10 and values are fine; train_labels is a numpy array of uint8 with values 0-9, but indexing class_names with train_labels[i] yields a 1-element array, not a Python int, causing a TypeError for list indices must be integers or slices, not numpy.ndarray.",
+    "detection": true
+  }
+]

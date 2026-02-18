@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "accuracy_score is not imported in the target cell, and not guaranteed to be in scope unless reused from previous cells; however, it was imported earlier and remains available. X and y exist and fit/predict will work. Thus it's unlikely to crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "accuracy_score is used but not imported in the target cell; prior cells imported it, so it exists in the current session. X, y, and model are defined and compatible, so the code should run.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell calls accuracy_score but it is not imported in this cell or guaranteed to be in scope; this will raise a NameError. Other variables (X, y) and model usage are valid.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score is used but not imported in the target cell; prior import occurred in earlier cells, so it exists in the environment. X, y, and model are defined and compatible, so the code should run.",
+    "detection": false
+  },
+  {
+    "reasoning": "accuracy_score is used but not imported in the target cell’s scope; prior import was in another cell, but if still in memory it works. Variables X, y exist and are compatible with model.fit/predict. Uncertain import state, so not certain to crash.",
+    "detection": false
+  }
+]

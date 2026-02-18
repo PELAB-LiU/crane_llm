@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "LogisticRegression with solver='liblinear' does not support penalty='elasticnet'; this raises a ValueError during model initialization or fit. Everything else (data and f1_score) is fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "LogisticRegression with solver='liblinear' does not support penalty='elasticnet'; this raises a ValueError on fit. All inputs exist and have correct types.",
+    "detection": true
+  },
+  {
+    "reasoning": "LogisticRegression with solver='liblinear' does not support penalty='elasticnet'; this combination raises a ValueError. All inputs exist and are valid otherwise.",
+    "detection": true
+  },
+  {
+    "reasoning": "scikit-learn’s LogisticRegression with solver='liblinear' does not support penalty='elasticnet', which will raise a ValueError. Everything else is valid.",
+    "detection": true
+  },
+  {
+    "reasoning": "LogisticRegression with solver='liblinear' does not support penalty='elasticnet'; this will raise a ValueError on initialization/fit. Everything else (data, labels) is fine.",
+    "detection": true
+  }
+]

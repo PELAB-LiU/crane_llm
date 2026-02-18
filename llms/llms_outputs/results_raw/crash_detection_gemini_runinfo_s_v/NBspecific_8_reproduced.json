@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Amount' column was dropped in a previous cell (Cell 3). Attempting to access it again in the target cell will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Amount' column was dropped in a previous cell (Cell 3). Attempting to access it again in the target cell will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Amount' column was dropped in a previous cell (Cell 3). Attempting to access it again in the target cell will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Amount' column was dropped in a previous cell (Cell 3). Attempting to access it again in the target cell will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Amount' column was dropped in a previous cell (Cell 3). Attempting to access it again in the target cell will result in a KeyError.",
+    "detection": true
+  }
+]

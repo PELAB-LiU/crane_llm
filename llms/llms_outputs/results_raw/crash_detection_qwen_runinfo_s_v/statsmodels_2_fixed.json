@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `residuals` series does not contain NaN values and has a sufficient length of 92, which is more than the required minimum for the ACF and PACF plots. The maximum lags for ACF and PACF are calculated correctly and are within the valid range.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `residuals` series does not contain NaN values and has a sufficient length of 92, which is more than the required minimum for the ACF and PACF plots. The maximum lags for ACF and PACF are calculated correctly and are within the valid range.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `residuals` series does not contain NaN values and has a sufficient length of 92, which is more than the required minimum for the ACF and PACF plots. The maximum lags for ACF and PACF are calculated correctly and are within the valid range.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `residuals` series does not contain NaN values and has a sufficient length of 92, which is more than the required minimum for the ACF and PACF plots. The maximum lags for ACF and PACF are calculated correctly and are within the valid range.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `residuals` series does not contain NaN values and has a sufficient length of 92, which is more than the required minimum for the ACF and PACF plots. The maximum lags for ACF and PACF are calculated correctly and are within the valid range.",
+    "detection": false
+  }
+]

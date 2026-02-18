@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "g.get_group('PAID') and g.get_group('DEFAULT') will raise a KeyError if NaNs exist in STATUS; STATUS is created only where BAD is 0/1, leaving NaNs for rows with NaN BAD. Groupby excludes NaNs, so the groups may exist, but if either label is missing due to data issues it crashes; however BAD has only 0/1 unique values, so both groups exist.",
+    "detection": false
+  },
+  {
+    "reasoning": "g.get_group('PAID') and 'DEFAULT' exist per STATUS uniques. However, several columns contain NaNs; np.histogram on arrays with NaN raises ValueError. df[col].values likely includes NaNs for multiple columns, causing the first histogram call to fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "Groupby on STATUS uses values set in prior cell. Some columns contain NaNs, but numpy.histogram handles NaNs by ignoring them; get_group will work since both groups exist. Holoviews objects creation is valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "Groupby on STATUS uses values set in prior cell; columns exist and numeric; histogram handles NaNs; HoloViews objects created properly. No obvious exceptions likely.",
+    "detection": false
+  },
+  {
+    "reasoning": "g.get_group('PAID') and 'DEFAULT' exist per STATUS unique values, and selected columns exist. np.histogram handles NaNs by ignoring them. HoloViews objects creation is valid. No certain error apparent.",
+    "detection": false
+  }
+]

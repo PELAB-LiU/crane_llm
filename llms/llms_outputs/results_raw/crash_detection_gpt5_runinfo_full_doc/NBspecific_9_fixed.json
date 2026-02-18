@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "df is a DataFrame with default integer index likely from CSV; dropping row label 10472 is valid and inplace is allowed. No missing method or type issues apparent.",
+    "detection": false
+  },
+  {
+    "reasoning": "df has 10841 rows and default RangeIndex likely includes 10472; pandas drop with inplace=True is valid. No type or API mismatch.",
+    "detection": false
+  },
+  {
+    "reasoning": "DataFrame has default RangeIndex including 10472 (shape (10841, 13)), so dropping row label 10472 is valid. No type/signature issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "Dropping row label 10472 on axis index is valid if that label exists; dataset has 10841 rows with default RangeIndex, so 0..10840 includes 10472.",
+    "detection": false
+  },
+  {
+    "reasoning": "df has 10841 rows, so index 10472 exists; drop accepts list of labels and inplace=True is valid.",
+    "detection": false
+  }
+]

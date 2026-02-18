@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "df is a DataFrame with a 'region' column containing 'Asia Pacific'; groupby with observed=True and get_group('Asia Pacific') is valid, and sorting by an existing numeric column is fine.",
+    "detection": false
+  },
+  {
+    "reasoning": "df is a valid DataFrame with a 'region' column including 'Asia Pacific'; groupby with observed=True is valid and get_group will find the group, then sort_values on existing '%percent emission' is fine.",
+    "detection": false
+  },
+  {
+    "reasoning": "df has a 'region' column with category dtype and includes 'Asia Pacific'; groupby with observed=True is valid and sorting by an existing numeric column is fine.",
+    "detection": false
+  },
+  {
+    "reasoning": "df is a valid DataFrame with a 'region' categorical column containing 'Asia Pacific'; groupby with observed=True and get_group('Asia Pacific') is valid, and sorting by '%percent emission' exists. No missing values reported.",
+    "detection": false
+  },
+  {
+    "reasoning": "df is a DataFrame with a categorical 'region' column containing 'Asia Pacific'; groupby with observed=True will include existing categories, and get_group('Asia Pacific') will succeed. Sorting by existing '%percent emission' is valid.",
+    "detection": false
+  }
+]

@@ -1,0 +1,506 @@
+# Executed Cells:
+## Cell 1:
+
+import sys
+import numpy as np
+from sklearn.preprocessing import KBinsDiscretizer
+
+from keras.layers import Dense, Input, LSTM, Reshape, Conv2D, MaxPooling2D
+from tensorflow import keras
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
+import tensorflow as tf
+from sklearn.metrics import classification_report, accuracy_score
+import matplotlib.pyplot as plt
+import pandas as pd
+import math
+import os
+import shutil
+import ntpath
+import re
+import csv
+import json
+from datetime import datetime as dt
+import requests
+import pytz
+from datetime import timedelta
+
+## Cell 2:
+
+df = pd.read_csv('data/1-09-1-20.csv.zip',index_col='Unnamed: 0',parse_dates=True)
+df.columns = np.arange(42)
+df = df.sample(n=100000).reset_index(drop=True)
+df
+
+## Cell 3:
+
+df = df.drop_duplicates(subset=1)
+
+data = df.loc[:,[2,3,22,23,4,5,24,25,6,7,26,27,8,9,28,29,10,11,30,31,12,13,32,33,14,15,34,35,16,17,36,37,18,19,38,39,20,21,40,41]]
+
+data.set_index(keys=pd.to_datetime(df[1]),drop=True,inplace=True)
+
+## Cell 4:
+
+
+midprice = pd.DataFrame((df.iloc[:,2] + df.iloc[:,22] )/2,columns=['Price'] )
+midprice['Time'] = pd.to_datetime(df[1])
+midprice.set_index(keys='Time',inplace=True)
+
+## Cell 5:
+
+
+def labeling(data,k,alpha,type=1):
+  data["MeanNegativeMid"] = data['Price'].rolling(window=k).mean()
+  data["MeanPositiveMid"] = data["MeanNegativeMid"].shift(-(k-1))
+  if type == 1:
+      data["SmoothingLabel"] = (data["MeanPositiveMid"] - data['Price']) / data['Price']
+  elif type == 2:
+      data["SmoothingLabel"] = (data["MeanPositiveMid"] - data["MeanNegativeMid"]) / data["MeanNegativeMid"]
+  labels_np = data["SmoothingLabel"].dropna()
+  data[k] = None
+  data.loc[labels_np.index, k] = 0
+  data.loc[data["SmoothingLabel"] < -alpha, k] = -1
+  data.loc[data["SmoothingLabel"] > alpha, k] = 1
+  return data
+
+## Cell 6:
+
+label = labeling(midprice,k=10,alpha=0.00001)
+
+label.dropna(inplace=True)
+data= data.loc[label.index]
+
+## Cell 7:
+
+
+window_size=86400
+col_mean = data.rolling(window_size).mean()
+col_std = data.rolling(window_size).std()
+
+data = (data - col_mean)/col_std
+data.dropna(inplace=True)
+
+## Cell 8:
+
+
+label = label.loc[data.index,10]
+label = tf.keras.utils.to_categorical(label,num_classes=3)
+
+## Cell 9:
+
+
+class DataSegmentation(tf.keras.utils.Sequence):
+    def __init__(self, X, Y,number_features,window_size,batch_size):
+        self.X, self.Y = X.reset_index(drop=True), Y
+        self.window_size = window_size
+        self.batch_size = batch_size
+        self.number_features = number_features
+
+    def __len__(self):
+        return math.floor((len(self.X)-self.window_size)/ self.batch_size)
+    def __getitem__(self, idx):
+      dataX =[]
+      dataY=[]
+      idx+=self.window_size
+      for i in range(self.batch_size):
+        x_sample=self.X.loc[idx-self.window_size:idx-1]
+        y_sample=self.Y[idx]
+        dataX.append(x_sample)
+        dataY.append(y_sample)
+        idx+=1
+      dataX = np.array(dataX).reshape(-1,self.window_size,self.number_features)
+      dataY = np.array(dataY)
+      return dataX,dataY
+
+## Cell 10:
+
+
+batch_size= 20
+window_size= 300
+number_features = 40
+Train_size = math.floor(len(data)*0.6)
+Validation_size = math.floor(len(data)*0.15)
+TrainBatch = DataSegmentation(data.iloc[:Train_size],label[:Train_size],number_features,window_size,batch_size)
+ValidationBatch = DataSegmentation(data.iloc[Train_size:Train_size+Validation_size],label[Train_size:Train_size+Validation_size],number_features,window_size,batch_size)
+TestBatch = DataSegmentation(data.iloc[Train_size+Validation_size:],label[Train_size+Validation_size:],number_features,window_size,batch_size)
+
+## Cell 11:
+
+gpus = tf.config.experimental.list_physical_devices('GPU')
+if gpus:
+    try:
+
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+            logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+        print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+    except RuntimeError as e:
+
+        print(e)
+
+
+import os
+import logging
+import glob
+import argparse
+import sys
+import time
+import pandas as pd
+import pickle
+import numpy as np
+import matplotlib.pyplot as plt
+from collections import Counter
+
+
+np.random.seed(1)
+tf.random.set_seed(2)
+
+## Cell 12:
+
+
+def create_deeplob(T, NF, number_of_lstm):
+    input_lmd = Input(shape=(T, NF, 1))
+
+    conv_first1 = Conv2D(32, (1, 2), strides=(1, 2))(input_lmd)
+    conv_first1 = keras.layers.LeakyReLU(alpha=0.01)(conv_first1)
+    conv_first1 = Conv2D(32, (4, 1), padding='same')(conv_first1)
+    conv_first1 = keras.layers.LeakyReLU(alpha=0.01)(conv_first1)
+    conv_first1 = Conv2D(32, (4, 1), padding='same')(conv_first1)
+    conv_first1 = keras.layers.LeakyReLU(alpha=0.01)(conv_first1)
+    conv_first1 = Conv2D(32, (1, 2), strides=(1, 2))(conv_first1)
+    conv_first1 = keras.layers.LeakyReLU(alpha=0.01)(conv_first1)
+    conv_first1 = Conv2D(32, (4, 1), padding='same')(conv_first1)
+    conv_first1 = keras.layers.LeakyReLU(alpha=0.01)(conv_first1)
+    conv_first1 = Conv2D(32, (4, 1), padding='same')(conv_first1)
+    conv_first1 = keras.layers.LeakyReLU(alpha=0.01)(conv_first1)
+    conv_first1 = Conv2D(32, (1, 10))(conv_first1)
+    conv_first1 = keras.layers.LeakyReLU(alpha=0.01)(conv_first1)
+    conv_first1 = Conv2D(32, (4, 1), padding='same')(conv_first1)
+    conv_first1 = keras.layers.LeakyReLU(alpha=0.01)(conv_first1)
+    conv_first1 = Conv2D(32, (4, 1), padding='same')(conv_first1)
+    conv_first1 = keras.layers.LeakyReLU(alpha=0.01)(conv_first1)
+
+    convsecond_1 = Conv2D(64, (1, 1), padding='same')(conv_first1)
+    convsecond_1 = keras.layers.LeakyReLU(alpha=0.01)(convsecond_1)
+    convsecond_1 = Conv2D(64, (3, 1), padding='same')(convsecond_1)
+    convsecond_1 = keras.layers.LeakyReLU(alpha=0.01)(convsecond_1)
+    convsecond_2 = Conv2D(64, (1, 1), padding='same')(conv_first1)
+    convsecond_2 = keras.layers.LeakyReLU(alpha=0.01)(convsecond_2)
+    convsecond_2 = Conv2D(64, (5, 1), padding='same')(convsecond_2)
+    convsecond_2 = keras.layers.LeakyReLU(alpha=0.01)(convsecond_2)
+    convsecond_3 = MaxPooling2D((3, 1), strides=(1, 1), padding='same')(conv_first1)
+    convsecond_3 = Conv2D(64, (1, 1), padding='same')(convsecond_3)
+    convsecond_3 = keras.layers.LeakyReLU(alpha=0.01)(convsecond_3)
+    convsecond_output = keras.layers.concatenate([convsecond_1, convsecond_2, convsecond_3], axis=3)
+    conv_reshape = Reshape((int(convsecond_output.shape[1]), int(convsecond_output.shape[3])))(convsecond_output)
+    conv_reshape = keras.layers.Dropout(0.2, noise_shape=(None, 1, int(conv_reshape.shape[2])))(conv_reshape, training=True)
+
+    conv_lstm = LSTM(number_of_lstm)(conv_reshape)
+
+    out = Dense(3, activation='softmax')(conv_lstm)
+    model = Model(inputs=input_lmd, outputs=out)
+    adam = Adam(learning_rate=0.0001)
+    model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
+    return model
+
+## Cell 13:
+
+model = create_deeplob(300,40,64)
+
+## Cell 14:
+
+checkpoint_filepath = 'data.weights.h5'
+model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+    filepath=checkpoint_filepath,
+    save_weights_only=True,
+    monitor='val_loss',
+    mode='auto',
+    save_best_only=True)
+
+# Current relevent runtime information:
+{'__method__plt_plot': {'doc_importants': {'notes': '**Format Strings** A '
+                                                    'format string consists of '
+                                                    'a part for color, marker '
+                                                    'and line:: fmt = '
+                                                    "'[marker][line][color]' "
+                                                    'Each of them is optional. '
+                                                    'If not provided, the '
+                                                    'value from the style '
+                                                    'cycle is used. Exception: '
+                                                    'If ``line`` is given, but '
+                                                    'no ``marker``, the data '
+                                                    'will be a line without '
+                                                    'markers. Other '
+                                                    'combinations such as '
+                                                    '``[color][marker][line]`` '
+                                                    'are also supported, but '
+                                                    'note that their parsing '
+                                                    'may be ambiguous. '
+                                                    '**Markers** '
+                                                    '=============   '
+                                                    '=============================== '
+                                                    'character       '
+                                                    'description '
+                                                    '=============   '
+                                                    '=============================== '
+                                                    "``'.'``         point "
+                                                    "marker ``','``         "
+                                                    'pixel marker '
+                                                    "``'o'``         circle "
+                                                    "marker ``'v'``         "
+                                                    'triangle_down marker '
+                                                    "``'^'``         "
+                                                    'triangle_up marker '
+                                                    "``'<'``         "
+                                                    'triangle_left marker '
+                                                    "``'>'``         "
+                                                    'triangle_right marker '
+                                                    "``'1'``         tri_down "
+                                                    "marker ``'2'``         "
+                                                    'tri_up marker '
+                                                    "``'3'``         tri_left "
+                                                    "marker ``'4'``         "
+                                                    'tri_right marker '
+                                                    "``'8'``         octagon "
+                                                    "marker ``'s'``         "
+                                                    'square marker '
+                                                    "``'p'``         pentagon "
+                                                    "marker ``'P'``         "
+                                                    'plus (filled) marker '
+                                                    "``'*'``         star "
+                                                    "marker ``'h'``         "
+                                                    'hexagon1 marker '
+                                                    "``'H'``         hexagon2 "
+                                                    "marker ``'+'``         "
+                                                    'plus marker '
+                                                    "``'x'``         x marker "
+                                                    "``'X'``         x "
+                                                    '(filled) marker '
+                                                    "``'D'``         diamond "
+                                                    "marker ``'d'``         "
+                                                    'thin_diamond marker '
+                                                    "``'|'``         vline "
+                                                    "marker ``'_'``         "
+                                                    'hline marker '
+                                                    '=============   '
+                                                    '=============================== '
+                                                    '**Line Styles** '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    'character        '
+                                                    'description '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    "``'-'``          solid "
+                                                    'line style '
+                                                    "``'--'``         dashed "
+                                                    'line style '
+                                                    "``'-.'``         dash-dot "
+                                                    'line style '
+                                                    "``':'``          dotted "
+                                                    'line style '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    'Example format strings:: '
+                                                    "'b'    # blue markers "
+                                                    "with default shape 'or'   "
+                                                    "# red circles '-g'   # "
+                                                    "green solid line '--'   # "
+                                                    'dashed line with default '
+                                                    "color '^k:'  # black "
+                                                    'triangle_up markers '
+                                                    'connected by a dotted '
+                                                    'line **Colors** The '
+                                                    'supported color '
+                                                    'abbreviations are the '
+                                                    'single letter codes '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    'character        color '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    "``'b'``          blue "
+                                                    "``'g'``          green "
+                                                    "``'r'``          red "
+                                                    "``'c'``          cyan "
+                                                    "``'m'``          magenta "
+                                                    "``'y'``          yellow "
+                                                    "``'k'``          black "
+                                                    "``'w'``          white "
+                                                    '=============    '
+                                                    '=============================== '
+                                                    "and the ``'CN'`` colors "
+                                                    'that index into the '
+                                                    'default property cycle. '
+                                                    'If the color is the only '
+                                                    'part of the format '
+                                                    'string, you can '
+                                                    'additionally use any  '
+                                                    '`matplotlib.colors` spec, '
+                                                    'e.g. full names '
+                                                    "(``'green'``) or hex "
+                                                    "strings (``'#008000'``)."},
+                        'signature': {'parameters': [{'annotation': None,
+                                                      'default': None,
+                                                      'kind': 'VAR_POSITIONAL',
+                                                      'name': 'args',
+                                                      'required': True},
+                                                     {'annotation': None,
+                                                      'default': 'True',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'scalex',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'True',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'scaley',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'data',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': None,
+                                                      'kind': 'VAR_KEYWORD',
+                                                      'name': 'kwargs',
+                                                      'required': True}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ '__method__plt_show': {'doc_importants': {'notes': '**Saving figures to file '
+                                                    'and showing a window at '
+                                                    'the same time** If you '
+                                                    'want an image file as '
+                                                    'well as a user interface '
+                                                    'window, use '
+                                                    '`.pyplot.savefig` before '
+                                                    '`.pyplot.show`. At the '
+                                                    'end of (a blocking) '
+                                                    '``show()`` the figure is '
+                                                    'closed and thus '
+                                                    'unregistered from pyplot. '
+                                                    'Calling `.pyplot.savefig` '
+                                                    'afterwards would save a '
+                                                    'new and thus empty '
+                                                    'figure. This limitation '
+                                                    'of command order does not '
+                                                    'apply if the show is '
+                                                    'non-blocking or if you '
+                                                    'keep a reference to the '
+                                                    'figure and use '
+                                                    '`.Figure.savefig`. '
+                                                    '**Auto-show in jupyter '
+                                                    'notebooks** The jupyter '
+                                                    'backends (activated via '
+                                                    '``%matplotlib inline``, '
+                                                    '``%matplotlib notebook``, '
+                                                    'or ``%matplotlib '
+                                                    'widget``), call '
+                                                    '``show()`` at the end of '
+                                                    'every cell by default. '
+                                                    "Thus, you usually don't "
+                                                    'have to call it '
+                                                    'explicitly there.'},
+                        'signature': {'parameters': [{'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'block',
+                                                      'required': False}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ '__method__plt_title': {'signature': {'parameters': [{'annotation': None,
+                                                       'default': None,
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'label',
+                                                       'required': True},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'fontdict',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'loc',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'pad',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'KEYWORD_ONLY',
+                                                       'name': 'y',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': None,
+                                                       'kind': 'VAR_KEYWORD',
+                                                       'name': 'kwargs',
+                                                       'required': True}],
+                                       'return_annotation': None},
+                         'type': "<class 'function'>"},
+ '__method__plt_xlabel': {'signature': {'parameters': [{'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'xlabel',
+                                                        'required': True},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'fontdict',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'labelpad',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'loc',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ '__method__plt_ylabel': {'signature': {'parameters': [{'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'ylabel',
+                                                        'required': True},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'fontdict',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'labelpad',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'loc',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ 'plt': {'type': "<class 'module'>"}}
+# Target Cell:
+
+plt.plot(history.history['accuracy'],label='Train Accuracy')
+plt.plot(history.history['val_accuracy'],label='Validation Accuracy')
+plt.title('Accuracy Per epoch')
+plt.ylabel('Accuracy')
+plt.xlabel('Epoch')
+plt.show()

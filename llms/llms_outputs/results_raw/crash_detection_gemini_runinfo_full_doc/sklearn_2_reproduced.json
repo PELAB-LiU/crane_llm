@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The DTRmodel object has not been fitted, which is a prerequisite for calling its predict method. Attempting to predict with an unfitted model will raise a NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted, which is required before calling the predict method. Attempting to predict with an unfitted model will raise an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, so calling predict on it will raise a NotFittedError. The model was initialized but not trained.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, so calling predict on it will raise a NotFittedError. The model was initialized but not trained.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel object has not been fitted, which is a prerequisite for calling its predict method. Attempting to predict with an unfitted model will raise a NotFittedError.",
+    "detection": true
+  }
+]

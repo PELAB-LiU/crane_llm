@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `bert_model` is a PyTorch model, and `tf.keras.utils.plot_model` is used to plot TensorFlow models. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is a PyTorch model, and `tf.keras.utils.plot_model` is used to plot TensorFlow models. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is a PyTorch model, and `tf.keras.utils.plot_model` is used to plot TensorFlow models. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is a PyTorch model, and `tf.keras.utils.plot_model` is used to plot TensorFlow models. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `bert_model` is a PyTorch model, and `tf.keras.utils.plot_model` is used to plot TensorFlow models. This mismatch will cause a crash.",
+    "detection": true
+  }
+]

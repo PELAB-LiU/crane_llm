@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `best_estimator` is a trained DecisionTreeRegressor model, and `dft_encoded` is a DataFrame with the same structure as the training data, without any NaN values. The model should be able to predict on this data without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a trained DecisionTreeRegressor model, and `dft_encoded` is a DataFrame with the same structure as the training data, without any NaN values. The model should be able to predict on this data without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a trained DecisionTreeRegressor model, and `dft_encoded` is a DataFrame with the same structure as the training data, without any NaN values. The model should be able to predict on this data without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a trained DecisionTreeRegressor model, and `dft_encoded` is a DataFrame with the same structure as the training data, without any NaN values. The model should be able to predict on this data without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a trained DecisionTreeRegressor model, and `dft_encoded` is a DataFrame with the same structure as the training data, without any NaN values. The model should be able to predict on this data without crashing.",
+    "detection": false
+  }
+]

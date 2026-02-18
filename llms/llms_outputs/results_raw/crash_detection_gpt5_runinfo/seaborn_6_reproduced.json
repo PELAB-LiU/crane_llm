@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "seaborn.violinplot expects data passed as keyword data=; calling sns.violinplot(df, x='species') will treat df as positional for data which is allowed in seaborn 0.12+? In 0.12, signature is violinplot(data=None, *, x=None, ...). Positional data not accepted; passing df positionally will raise TypeError. Not certain of version, so cannot be sure it crashes.",
+    "detection": false
+  },
+  {
+    "reasoning": "sns.violinplot expects data passed via the data= keyword; providing the DataFrame as the first positional argument will be interpreted as x, causing a type error. Using sns.violinplot(data=df, x='species') would work.",
+    "detection": true
+  },
+  {
+    "reasoning": "seaborn.violinplot expects data as a keyword argument data=..., and the first positional argument is taken as data only in some versions; passing df as first arg without specifying y may still work because x is provided as a named param. Not certain it will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "Seaborn's violinplot requires data passed via the data parameter when using column names; the call sns.violinplot(df, x='species') will treat df as the first positional argument (x), causing an error. It should be sns.violinplot(data=df, x='species').",
+    "detection": true
+  },
+  {
+    "reasoning": "Seaborn's violinplot requires keyword arguments; passing the DataFrame as the first positional argument will be interpreted as data=None and x='species' as a sequence, causing a TypeError. It should be called as sns.violinplot(data=df, x='species').",
+    "detection": true
+  }
+]

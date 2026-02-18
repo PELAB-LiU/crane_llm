@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'yFit' variable was predicted using 'X_train', but it is being used with 'y_test' which has a different shape, leading to a ValueError when calculating SSR and SSE.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'yFit' variable was predicted using 'X_train', but it is being used with 'y_test' which has a different shape, leading to a ValueError when calculating SSR and SSE.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'yFit' variable was predicted using 'X_train', but it is being used with 'y_test' which has a different shape, leading to a ValueError when calculating SSR and SSE.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'yFit' variable was predicted using 'X_train' and 'y_train', so its length is 272. However, 'y_test' has a length of 68. Attempting to perform element-wise operations like subtraction and squaring between arrays of different lengths will result in a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'yFit' variable was predicted using 'X_train' and 'y_train', so its length is 272. However, 'y_test' has a length of 68. Attempting to perform element-wise operations like subtraction and squaring between arrays of different lengths will result in a ValueError.",
+    "detection": true
+  }
+]

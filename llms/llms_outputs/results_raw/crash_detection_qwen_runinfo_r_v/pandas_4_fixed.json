@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The function `row2image` will fail because the `emotion_map` does not contain the key `1`, which is present in the `data['emotion']` column. This will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` will fail because the `emotion_map` does not contain the key `1`, which is present in the `data['emotion']` column. This will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` will fail because the `emotion_map` does not contain the key `1`, which is present in the `data['emotion']` column. This will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` will fail because the `emotion_map` does not contain the key `1`, which is present in the `data['emotion']` column. This will result in a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` will fail because the `emotion_map` does not contain the key `1`, which is present in the `data['emotion']` column. This will result in a KeyError.",
+    "detection": true
+  }
+]

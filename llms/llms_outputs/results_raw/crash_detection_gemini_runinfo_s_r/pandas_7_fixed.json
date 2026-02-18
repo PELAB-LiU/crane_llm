@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'released' column likely contains string representations of dates. The code attempts to split these strings by '-' and convert the first part to a float, then to an Int64. If any 'released' value is not a string or cannot be split/converted, it could lead to an error. However, the current runtime information does not provide enough detail about the 'released' column's content to confirm a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains string values that are split by '-', and then converted to float and Int64. If any value in the 'released' column is not a string or cannot be split by '-' or converted to float, it will raise an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains string values that are split by '-', and then converted to float and Int64. If any value in the 'released' column is not a string or cannot be split by '-' or converted to float, it will raise an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column likely contains string representations of dates. The code attempts to split these strings by '-' and convert the first part to a float, then to an Int64. If any 'released' value is not a string or cannot be split/converted, it could lead to an error. However, the current runtime information does not provide enough detail about the 'released' column's content to confirm a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column likely contains string representations of dates. The code attempts to split these strings by '-' and convert the first part to a float, then to an Int64. If any 'released' value is not a string or cannot be split/converted, it could lead to an error. However, the current runtime information does not provide enough detail about the 'released' column's content to confirm a crash.",
+    "detection": false
+  }
+]

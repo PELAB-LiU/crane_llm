@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "y_pred is not defined anywhere in the executed cells, but the target cell uses it to compute MAE, which will raise a NameError. The runtime info about y_pred does not create the variable.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_pred is not defined in prior cells; only model.fit was run. mean_absolute_error(y_test, y_pred) will raise a NameError due to undefined y_pred.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_pred is not defined in prior cells; only model.fit was called and no predictions were generated. Calling mean_absolute_error(y_test, y_pred) will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_pred is not defined in prior cells; only the model was fitted and train/test split created. Calling mean_absolute_error(y_test, y_pred) will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_pred is not defined anywhere in the executed cells, but the target cell uses it to compute MAE, causing a NameError.",
+    "detection": true
+  }
+]

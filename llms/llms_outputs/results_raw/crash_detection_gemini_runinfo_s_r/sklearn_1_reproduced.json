@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects in the way `np.unique` expects. It's a private attribute `_labels` or requires iteration to access, which will cause an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects in the way `np.unique` expects. It's a private attribute `_labels` or requires iteration to access, which will cause an AttributeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects. It is typically accessed after iterating through the dataset or by using `train_dataset.classes`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects. It is typically accessed after iterating through the dataset or by using `train_dataset.classes`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute is not directly accessible for `DirectoryIterator` objects in the way `np.unique` expects. It's a private attribute `_labels` or requires iteration to access, which will cause an AttributeError.",
+    "detection": true
+  }
+]

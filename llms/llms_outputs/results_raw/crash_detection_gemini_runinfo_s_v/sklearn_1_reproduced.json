@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train_dataset` object, which is an `ImageDataGenerator` flow, does not have a `.labels` attribute. This will cause an `AttributeError` when `np.unique(train_dataset.labels)` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset` object, which is an `ImageDataGenerator` flow, does not have a `labels` attribute directly. This will cause an `AttributeError` when `np.unique(train_dataset.labels)` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset` object, which is an `ImageDataGenerator` flow, does not have a `.labels` attribute. This will cause an `AttributeError` when `np.unique(train_dataset.labels)` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset` object, which is an `ImageDataGenerator` flow, does not have a `labels` attribute directly. This will cause an `AttributeError` when `np.unique(train_dataset.labels)` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset` object, which is an `ImageDataGenerator` flow, does not have a `.labels` attribute. This will cause an `AttributeError` when `np.unique(train_dataset.labels)` is called.",
+    "detection": true
+  }
+]

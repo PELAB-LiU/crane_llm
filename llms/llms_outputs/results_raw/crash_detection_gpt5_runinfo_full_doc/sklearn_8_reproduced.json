@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "accuracy_score expects y_true and y_pred of same length, but x is a feature DataFrame, not predictions; passing (x, y) will raise a ValueError due to shape mismatch and invalid comparison.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects y_true and y_pred of same length, but x is a DataFrame of shape (59381, 124) and y is a Series of length 59381; passing x as y_true causes a shape mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects y_true and y_pred of same length, but x is a (59381, 124) DataFrame of features, not predictions; passing x and y will raise a ValueError about shape mismatch or invalid input types.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects y_true and y_pred of equal length, but x is a DataFrame of shape (59381, 124), not predictions; passing (X, y) will raise a ValueError about input shapes. ",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects y_true and y_pred with matching lengths, but x is a DataFrame of shape (59381, 124) and y is a Series of length 59381; passing x as y_true will cause a shape mismatch error.",
+    "detection": true
+  }
+]

@@ -1,0 +1,278 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+%matplotlib inline
+import seaborn as sns
+import matplotlib.pyplot as plt
+import cv2
+import os
+import warnings
+warnings.filterwarnings('ignore')
+import tensorflow as tf
+import random
+import albumentations as A
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.layers import Dense,Activation,Flatten, Conv2D, MaxPooling2D
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.callbacks import ModelCheckpoint,EarlyStopping
+
+## Cell 2:
+
+train_image_path = '../input/plant-pathology-2021-fgvc8/train_images'
+test_image_path = '../input/plant-pathology-2021-fgvc8/test_images'
+train_df_path = 'data/train.csv'
+test_df_path = 'data/sample_submission.csv'
+
+## Cell 3:
+
+df_train = pd.read_csv(train_df_path)
+df_test=pd.read_csv(test_df_path)
+
+# Current relevent runtime information:
+{'__method__df_train_labels': {'dtype': 'object',
+                               'has_nan': False,
+                               'length': 18632,
+                               'type': 'pandas.core.series.Series',
+                               'value_info': {'num_unique': 12,
+                                              'value_type': 'categorical or '
+                                                            'object'}},
+ '__method__plt_figure': {'doc_importants': {'notes': 'A newly created figure '
+                                                      'is passed to the '
+                                                      '`~.FigureCanvasBase.new_manager` '
+                                                      'method or the '
+                                                      '`new_figure_manager` '
+                                                      'function provided by '
+                                                      'the current backend, '
+                                                      'which install a canvas '
+                                                      'and a manager on the '
+                                                      'figure. Once this is '
+                                                      'done, '
+                                                      ':rc:`figure.hooks` are '
+                                                      'called, one at a time, '
+                                                      'on the figure; these '
+                                                      'hooks allow arbitrary '
+                                                      'customization of the '
+                                                      'figure (e.g., attaching '
+                                                      'callbacks) or of '
+                                                      'associated elements '
+                                                      '(e.g., modifying the '
+                                                      'toolbar).  See '
+                                                      ':doc:`/gallery/user_interfaces/mplcvd` '
+                                                      'for an example of '
+                                                      'toolbar customization. '
+                                                      'If you are creating '
+                                                      'many figures, make sure '
+                                                      'you explicitly call '
+                                                      '`.pyplot.close` on the '
+                                                      'figures you are not '
+                                                      'using, because this '
+                                                      'will enable pyplot to '
+                                                      'properly clean up the '
+                                                      'memory. '
+                                                      '`~matplotlib.rcParams` '
+                                                      'defines the default '
+                                                      'values, which can be '
+                                                      'modified in the '
+                                                      'matplotlibrc file.'},
+                          'signature': {'parameters': [{'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'num',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'figsize',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'dpi',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'facecolor',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'edgecolor',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'True',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'frameon',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': '<class '
+                                                                   "'matplotlib.figure.Figure'>",
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'FigureClass',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'False',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'clear',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ '__method__sns_barplot': {'signature': {'parameters': [{'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'data',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'x',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'y',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'hue',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'order',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'hue_order',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': "'mean'",
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'estimator',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': "('ci', "
+                                                                    '95)',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'errorbar',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '1000',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'n_boot',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'units',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'seed',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'orient',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'color',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'palette',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '0.75',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'saturation',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '0.8',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'width',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': "'.26'",
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'errcolor',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'errwidth',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'capsize',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'True',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'dodge',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': "'deprecated'",
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'ci',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'ax',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'VAR_KEYWORD',
+                                                         'name': 'kwargs',
+                                                         'required': True}],
+                                         'return_annotation': None},
+                           'type': "<class 'function'>"},
+ 'df_train': {'execution_cell_source': {'cellno': 2, 'lineno': 1},
+              'has_nan': False,
+              'per_column': {'image': {'dtype': 'object',
+                                       'example_values': ['95458bae4d4c3f34.jpg',
+                                                          'fc01c2dc8fa99de0.jpg',
+                                                          '819e1fd0933b4f43.jpg',
+                                                          'a38796d33c797310.jpg',
+                                                          '94b78d183adc3b43.jpg'],
+                                       'num_unique': 18632,
+                                       'type': 'categorical'},
+                             'labels': {'dtype': 'object',
+                                        'example_values': ['complex',
+                                                           'scab '
+                                                           'frog_eye_leaf_s...',
+                                                           'frog_eye_leaf_spot',
+                                                           'scab '
+                                                           'frog_eye_leaf_s...',
+                                                           'rust complex'],
+                                        'num_unique': 12,
+                                        'type': 'categorical'}},
+              'shape': (18632, 2),
+              'type': 'pandas.core.frame.DataFrame'},
+ 'plt': {'type': "<class 'module'>"},
+ 'sns': {'type': "<class 'module'>"}}
+# Target Cell:
+
+plt.figure(figsize=(15,12))
+
+
+
+labels = sns.barplot(x=df_train.labels.value_counts().index, y=df_train.labels.value_counts())
+
+for item in labels.get_xticklabels():
+    item.set_rotation(45)

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The variable 'multiplicative_model' is defined only inside the function decompose and hasn't been assigned in the global scope; referencing it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'multiplicative_model' is defined only inside the function decompose and hasn't been created in the global scope since the function wasn't called. Referencing it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'multiplicative_model' is defined inside the decompose function and has not been created in the global scope because the function was never called. Referencing it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "multiplicative_model is defined only inside the decompose function and hasn't been assigned in the global scope. Referencing it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'multiplicative_model' was defined inside the function 'decompose' and has not been created in the global scope since the function was never called. Referencing it will raise a NameError.",
+    "detection": true
+  }
+]

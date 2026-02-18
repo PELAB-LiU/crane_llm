@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Installs contains strings like '10,000+' which cannot be directly cast to int, causing a ValueError during astype('int').",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Installs' contains strings like '10,000+' which cannot be directly cast to int without cleaning. astype('int') will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Installs contains strings like '10,000+' which cannot be directly cast to int, causing a ValueError during astype('int').",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Installs' contains strings like '10,000+' which cannot be directly cast to int without cleaning (removing commas and '+'). astype('int') will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Installs' contains strings like '10,000+' with commas and '+' which cannot be directly cast to int, causing a ValueError.",
+    "detection": true
+  }
+]

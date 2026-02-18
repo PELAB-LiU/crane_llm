@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Variable 'history' has not been created; no prior training call (e.g., model.fit) is shown to produce it. Accessing history.history will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variable 'history' has not been created; no prior model.fit call is shown, so history.history will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'history' has not been defined or assigned (no prior model.fit call returning history), so accessing history.history will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'history' has not been created; no prior cell shows a model.fit call returning a History object. Accessing history.history will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable 'history' has not been created or assigned (e.g., via model.fit), so accessing history.history will raise a NameError.",
+    "detection": true
+  }
+]

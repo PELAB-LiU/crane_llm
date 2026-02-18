@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Order ID' column contains string values that cannot be directly converted to integers, such as '179604', '146466', etc. This will cause a ValueError when attempting to cast to integer type.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains string values that cannot be directly converted to integers, such as '179604', '146466', etc. This will cause a ValueError when attempting to cast to integer type.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains string values that cannot be directly converted to integers, such as '179604', '146466', etc. This will cause a ValueError when attempting to cast to integer type.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains string values that cannot be directly converted to integers, such as '179604', '146466', etc. This will cause a ValueError when attempting to cast to integer.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains string values that cannot be directly converted to integers, such as '179604', '146466', etc. This will cause a ValueError when attempting to cast to integer.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train` variable is a numpy array, not a pandas Series or DataFrame. The `check_stationarity` function expects a Series as input, so passing a numpy array will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train` variable is a numpy array, not a pandas Series or DataFrame. The `check_stationarity` function expects a Series as input, so passing a numpy array will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train` variable is a numpy array, not a pandas Series or DataFrame. The `check_stationarity` function expects a Series as input, so passing a numpy array will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train` variable is a numpy array, not a pandas Series or DataFrame. The `check_stationarity` function expects a Series as input, so passing a numpy array will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train` variable is a numpy array, not a pandas Series or DataFrame. The `check_stationarity` function expects a Series as input, so passing a numpy array will cause a crash.",
+    "detection": true
+  }
+]

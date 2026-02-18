@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train is a NumPy ndarray after scaling, not a DataFrame; indexing with ['ActivePower'] will raise a TypeError. Also check_stationarity expects a Series but can accept array; the immediate error is invalid indexing.",
+    "detection": true
+  },
+  {
+    "reasoning": "train is a numpy ndarray after scaling, not a DataFrame with 'ActivePower' column; indexing with ['ActivePower'] will raise a TypeError. Also check_stationarity expects a Series/array, not column name access here.",
+    "detection": true
+  },
+  {
+    "reasoning": "In Cell 24, train was transformed to a NumPy array by MinMaxScaler, so it no longer has a column 'ActivePower' and does not support string indexing. Accessing train['ActivePower'] will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "train is a NumPy array after scaling, not a DataFrame; indexing with ['ActivePower'] will raise a TypeError. Also check_stationarity expects a Series, not array indexing by column.",
+    "detection": true
+  },
+  {
+    "reasoning": "train is a NumPy ndarray after scaling, not a DataFrame, so indexing with ['ActivePower'] will raise a TypeError. Also check_stationarity expects a Series-like; passing ndarray is fine, but the subscript causes the crash.",
+    "detection": true
+  }
+]

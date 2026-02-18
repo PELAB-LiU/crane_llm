@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "sns.barplot expects raw data; passing a pandas Series as y without specifying data can cause a ValueError. Also x is an Index object. Likely shape mismatch for x and y lengths or unexpected input type.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot expects y as a sequence of values, but value_counts() returns a Series; passing it directly without .values can work since seaborn handles array-like. x is an Index; seaborn accepts that. Code should execute without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "sns.barplot expects y to be a 1D array-like of numeric values; passing a pandas Series directly is fine. However, x is a pandas Index of strings, also fine. Code should run and plot; no undefined variables.",
+    "detection": false
+  },
+  {
+    "reasoning": "sns.barplot expects y as a sequence of values; passing a pandas Series without .values is fine. x uses index, y uses corresponding counts; rotation on tick labels is valid. No undefined variables. Should run.",
+    "detection": false
+  },
+  {
+    "reasoning": "sns.barplot expects y to be an array-like of values, but passing a pandas Series directly without .values is acceptable; however x uses an Index object which is also acceptable. The code relies on df_train.labels existing, which it does. No obvious errors.",
+    "detection": false
+  }
+]

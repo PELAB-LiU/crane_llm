@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Quantity Ordered' column contains the string 'Quantity Ordered', which will cause a ValueError when attempting to convert the entire column to an integer type.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Quantity Ordered' column contains the string 'Quantity Ordered', which will cause a ValueError when attempting to convert the entire column to an integer type.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Quantity Ordered' column contains the string 'Quantity Ordered', which will cause a ValueError when attempting to convert the entire column to an integer type.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Quantity Ordered' column contains the string 'Quantity Ordered', which will cause a ValueError when attempting to convert the entire column to an integer type.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Quantity Ordered' column contains the string 'Quantity Ordered', which will cause a ValueError when attempting to convert the entire column to an integer type.",
+    "detection": true
+  }
+]

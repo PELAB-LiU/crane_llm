@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model inputs expect shape (max_len=50), but train_input tensors have sequence length 172, causing shape mismatch during training. Also batch_size=64 with only 8 samples is fine; validation_split works. The mismatch will likely crash at input shape validation.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects inputs of fixed shape (max_len=50), but train_input tensors have sequence length 172, causing shape mismatch. Also batch_size=64 with only 8 samples and validation_split=0.2 is fine but not the core issue.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model inputs have fixed shape (max_len=50), but train_input tensors are length 172; also batch_size=64 with only 8 samples and validation_split=0.2 can work, but input shape mismatch will trigger an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model inputs have fixed shape (max_len=50), but train_input tensors are length 172; also batch_size 64 with only 8 samples and validation_split=0.2 may be okay, but the shape mismatch will cause an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_input tensors have sequence length 172, but the model expects inputs of shape (max_len=50). This mismatch will raise a shape error when fitting.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist in the `train_dataset` object created by `flow_from_directory`, which will cause an error when trying to compute class weights.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist in the `train_dataset` object created by `flow_from_directory`, which will cause an error when trying to compute class weights.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist in the `train_dataset` object created by `flow_from_directory`, which will cause an error when trying to compute class weights.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist in the `train_dataset` object created by `flow_from_directory`, which will cause an error when trying to compute class weights.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_dataset.labels` attribute does not exist in the `train_dataset` object created by `flow_from_directory`, which will cause an error when trying to compute class weights.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "sns.barplot and sns.boxplot are called with incorrect arguments: sns.barplot(df[col]) should specify x or y, causing a TypeError. Other parts likely run.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot(df[col]) is invalid; barplot expects x and y or data with specified columns, so passing a single Series positionally will raise a TypeError. Other parts likely run.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot(df[col]) uses the first positional argument as data, but no x/y specified; seaborn will raise a ValueError. Additionally, df has NaNs that may also cause plotting issues.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot is called with a single positional argument (a Series), but seaborn.barplot requires keyword arguments like x or data; this will raise a TypeError. Other parts rely on existing imports and valid columns.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot(df[col]) uses positional args; current seaborn requires specifying x or y or data with both. This will raise a TypeError. Other parts likely run.",
+    "detection": true
+  }
+]

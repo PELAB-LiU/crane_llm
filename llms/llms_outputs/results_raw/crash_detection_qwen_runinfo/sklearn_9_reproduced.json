@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to fit a LogisticRegression model with the 'elasticnet' penalty, which is not supported by the 'liblinear' solver. This will result in a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to fit a LogisticRegression model with the 'elasticnet' penalty, which is not supported by the 'liblinear' solver. This will result in a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to fit a LogisticRegression model with the 'elasticnet' penalty, which is not supported by the 'liblinear' solver. This will result in a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to fit a LogisticRegression model with the 'elasticnet' penalty, which is not supported by the 'liblinear' solver. This will result in a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to fit a LogisticRegression model with the 'elasticnet' penalty, which is not supported by the 'liblinear' solver. This will result in a ValueError.",
+    "detection": true
+  }
+]

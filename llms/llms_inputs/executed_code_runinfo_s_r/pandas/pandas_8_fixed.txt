@@ -1,0 +1,23 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+
+## Cell 2:
+
+df=pd.read_csv("data/2. Cars Data1.csv")
+
+## Cell 3:
+
+df["DriveTrain"]=df["DriveTrain"].astype("category")
+
+# Current relevent runtime information:
+{'__method__df_head': {'type': "<class 'method'>"},
+ 'df': {'shape': (432, 15), 'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+
+
+df["MSRP"] = df["MSRP"].str.replace(r"[\$,]", "", regex=True).astype(float).astype("Int64")
+df.head()

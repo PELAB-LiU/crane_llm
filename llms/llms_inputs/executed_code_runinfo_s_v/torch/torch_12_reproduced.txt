@@ -1,0 +1,126 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import plotly.graph_objs as go
+import plotly.offline as py
+import plotly.express as px
+
+
+import warnings
+warnings.filterwarnings('ignore')
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+
+
+from transformers import AutoTokenizer
+
+df = pd.read_csv('data/train.csv')
+
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
+
+
+df.drop_duplicates(inplace=True)
+df.dropna(subset=['output', 'instruction'], inplace=True)
+
+
+df['instruction_tokens'] = df['instruction'].apply(lambda x: len(tokenizer.tokenize(x)))
+df['output_tokens'] = df['output'].apply(lambda x: len(tokenizer.tokenize(x)))
+
+
+print(df.head())
+
+# Current relevent runtime information:
+{'__method__tokenizer_eos_token_id': {'value': 50256},
+ 'df': {'has_nan': True,
+        'per_column': {'data_source': {'example_values': ['scienceqa',
+                                                          'guanaco',
+                                                          'theoremqa',
+                                                          'tigerbot-kaggle',
+                                                          'ARB'],
+                                       'num_unique': 10},
+                       'input': {'example_values': ['A sentence is a grou...',
+                                                    'Choose A, B, C or D ...',
+                                                    'Organisms that carry...',
+                                                    'During peer review, ...',
+                                                    'All organisms have p...'],
+                                 'num_unique': 6},
+                       'instruction': {'example_values': ['Determine the '
+                                                          'smalle...',
+                                                          'Jenny and Kenny are '
+                                                          '...',
+                                                          'You are given a '
+                                                          'stri...',
+                                                          'Let $f(x) = '
+                                                          '\\frac{3}...',
+                                                          'Find the remainder '
+                                                          'w...'],
+                                       'num_unique': 24926},
+                       'instruction_tokens': {'num_unique': 1011,
+                                              'value_range': (4, 2281)},
+                       'output': {'example_values': ['To solve this proble...',
+                                                     'If the stripe were c...',
+                                                     'Note that\n'
+                                                     '\\[\\frac{1}...',
+                                                     'Given any pair of th...',
+                                                     '{\n'
+                                                     '"superfoods": [\n'
+                                                     '"q...'],
+                                  'num_unique': 19530},
+                       'output_tokens': {'num_unique': 1338,
+                                         'value_range': (1, 5217)}},
+        'shape': (24926, 6)}}
+# Target Cell:
+
+import pandas as pd
+import torch
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
+
+
+model_name = "gpt2"
+model = GPT2LMHeadModel.from_pretrained(model_name)
+tokenizer = GPT2Tokenizer.from_pretrained(model_name)
+
+
+
+generated_responses = []
+
+for index, row in df.iterrows():
+    prompt = row['instruction']
+    input_ids = tokenizer.encode(prompt, return_tensors="pt")
+
+
+    with torch.no_grad():
+        output = model.generate(
+            input_ids,
+            max_length=input_ids.size(1) + 50,
+            num_return_sequences=1,
+            pad_token_id=tokenizer.eos_token_id,
+            attention_mask=input_ids.ne(tokenizer.pad_token_id)
+        )
+
+
+    padded_output = output[:, input_ids.size(1):]
+
+    response = tokenizer.decode(padded_output[0], skip_special_tokens=True)
+    generated_responses.append(response)

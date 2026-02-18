@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to replace characters in the 'Installs' column and convert it to an integer. However, there is no guarantee that 'Installs' contains only numeric characters after replacements, which could lead to a ValueError during the conversion to integer.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to replace characters in the 'Installs' column and convert it to an integer. However, there is no guarantee that 'Installs' contains only numeric characters after replacements, which could lead to a ValueError during the conversion to integer.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to replace characters in the 'Installs' column and convert it to an integer. However, there is no guarantee that 'Installs' contains only numeric characters after replacements, which could lead to a ValueError during the conversion to integer.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to replace characters in the 'Installs' column and convert it to an integer. However, there is no guarantee that 'Installs' contains only numeric characters after replacements, which could lead to a ValueError during the conversion to integer.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to replace characters in the 'Installs' column and convert it to an integer. However, there is no guarantee that 'Installs' contains only numeric characters after replacements, which could lead to a ValueError during the conversion to integer.",
+    "detection": false
+  }
+]

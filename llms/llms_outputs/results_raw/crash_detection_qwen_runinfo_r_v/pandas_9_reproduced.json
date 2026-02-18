@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame, and the condition 'Censor'!='(Banned)' will not crash but will filter the data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame, and the condition 'Censor'!='(Banned)' will not crash but will filter the data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame, and the condition 'Censor'!='(Banned)' will not crash but will filter the data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame, and the condition 'Censor'!='(Banned)' will not crash but will filter the data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame, and the condition 'Censor'!='(Banned)' will not crash but will filter the data.",
+    "detection": true
+  }
+]

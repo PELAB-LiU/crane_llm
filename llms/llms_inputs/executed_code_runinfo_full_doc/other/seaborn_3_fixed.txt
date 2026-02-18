@@ -1,0 +1,430 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+from catboost import CatBoostRegressor
+from lightgbm import LGBMRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.exceptions import ConvergenceWarning
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.svm import SVR
+from sklearn.tree import DecisionTreeRegressor
+from xgboost import XGBRegressor
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import mean_squared_error
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split, cross_val_score,GridSearchCV
+
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter("ignore", category=ConvergenceWarning)
+
+
+pd.set_option('display.max_columns', None)
+
+pd.set_option('display.width', None)
+pd.set_option('display.float_format', lambda x: '%.3f' % x)
+
+
+## Cell 2:
+
+train = pd.read_csv("data/train.csv")
+test = pd.read_csv("data/test.csv")
+
+
+df = pd.concat([train, test], ignore_index=True)
+
+selected_list = ["GarageArea", "LotArea", "LotFrontage", "OverallQual", "PoolArea", "MSSubClass", "YearBuilt", "GrLivArea",
+                 "BedroomAbvGr", "LowQualFinSF", "TotRmsAbvGrd", "Id", "SalePrice"]
+
+
+df = df[selected_list]
+
+
+df.head()
+df.shape
+df.isnull().sum()
+
+## Cell 3:
+
+def grab_col_names(dataframe, cat_th=10, car_th=25):
+    """
+    grab_col_names for given dataframe
+
+    :param dataframe:
+    :param cat_th:
+    :param car_th:
+    :return:
+    """
+
+    cat_cols = [col for col in dataframe.columns if dataframe[col].dtypes == "O"]
+
+    num_but_cat = [col for col in dataframe.columns if dataframe[col].nunique() < cat_th and
+                   dataframe[col].dtypes != "O"]
+
+    cat_but_car = [col for col in dataframe.columns if dataframe[col].nunique() > car_th and
+                   dataframe[col].dtypes == "O"]
+
+    cat_cols = cat_cols + num_but_cat
+    cat_cols = [col for col in cat_cols if col not in cat_but_car]
+
+    num_cols = [col for col in dataframe.columns if dataframe[col].dtypes != "O"]
+    num_cols = [col for col in num_cols if col not in num_but_cat]
+
+    print(f"Observations: {dataframe.shape[0]}")
+    print(f"Variables: {dataframe.shape[1]}")
+    print(f'cat_cols: {len(cat_cols)}')
+    print(f'num_cols: {len(num_cols)}')
+    print(f'cat_but_car: {len(cat_but_car)}')
+    print(f'num_but_cat: {len(num_but_cat)}')
+
+
+
+
+
+
+    return cat_cols, cat_but_car, num_cols
+
+cat_cols, cat_but_car, num_cols = grab_col_names(df)
+
+# Current relevent runtime information:
+{'__method__plt_show': {'doc_importants': {'notes': '**Saving figures to file '
+                                                    'and showing a window at '
+                                                    'the same time** If you '
+                                                    'want an image file as '
+                                                    'well as a user interface '
+                                                    'window, use '
+                                                    '`.pyplot.savefig` before '
+                                                    '`.pyplot.show`. At the '
+                                                    'end of (a blocking) '
+                                                    '``show()`` the figure is '
+                                                    'closed and thus '
+                                                    'unregistered from pyplot. '
+                                                    'Calling `.pyplot.savefig` '
+                                                    'afterwards would save a '
+                                                    'new and thus empty '
+                                                    'figure. This limitation '
+                                                    'of command order does not '
+                                                    'apply if the show is '
+                                                    'non-blocking or if you '
+                                                    'keep a reference to the '
+                                                    'figure and use '
+                                                    '`.Figure.savefig`. '
+                                                    '**Auto-show in jupyter '
+                                                    'notebooks** The jupyter '
+                                                    'backends (activated via '
+                                                    '``%matplotlib inline``, '
+                                                    '``%matplotlib notebook``, '
+                                                    'or ``%matplotlib '
+                                                    'widget``), call '
+                                                    '``show()`` at the end of '
+                                                    'every cell by default. '
+                                                    "Thus, you usually don't "
+                                                    'have to call it '
+                                                    'explicitly there.'},
+                        'signature': {'parameters': [{'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'block',
+                                                      'required': False}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ '__method__sns_barplot': {'signature': {'parameters': [{'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'data',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'x',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'y',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'hue',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'order',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'hue_order',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': "'mean'",
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'estimator',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': "('ci', "
+                                                                    '95)',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'errorbar',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '1000',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'n_boot',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'units',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'seed',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'orient',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'color',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'palette',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '0.75',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'saturation',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '0.8',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'width',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': "'.26'",
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'errcolor',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'errwidth',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'capsize',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'True',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'dodge',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': "'deprecated'",
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'ci',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'ax',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'VAR_KEYWORD',
+                                                         'name': 'kwargs',
+                                                         'required': True}],
+                                         'return_annotation': None},
+                           'type': "<class 'function'>"},
+ '__method__sns_boxplot': {'signature': {'parameters': [{'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                                         'name': 'data',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'x',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'y',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'hue',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'order',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'hue_order',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'orient',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'color',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'palette',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '0.75',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'saturation',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '0.8',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'width',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'True',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'dodge',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '5',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'fliersize',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'linewidth',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': '1.5',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'whis',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': 'None',
+                                                         'kind': 'KEYWORD_ONLY',
+                                                         'name': 'ax',
+                                                         'required': False},
+                                                        {'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'VAR_KEYWORD',
+                                                         'name': 'kwargs',
+                                                         'required': True}],
+                                         'return_annotation': None},
+                           'type': "<class 'function'>"},
+ 'df': {'execution_cell_source': {'cellno': 1, 'lineno': 11},
+        'has_nan': True,
+        'per_column': {'BedroomAbvGr': {'dtype': 'int64',
+                                        'num_unique': 8,
+                                        'type': 'categorical_numeric',
+                                        'value_range': (0, 8)},
+                       'GarageArea': {'dtype': 'float64',
+                                      'num_unique': 603,
+                                      'type': 'continuous',
+                                      'value_range': (0.0, 1488.0)},
+                       'GrLivArea': {'dtype': 'int64',
+                                     'num_unique': 1292,
+                                     'type': 'continuous',
+                                     'value_range': (334, 5642)},
+                       'Id': {'dtype': 'int64',
+                              'num_unique': 2919,
+                              'type': 'continuous',
+                              'value_range': (1, 2919)},
+                       'LotArea': {'dtype': 'int64',
+                                   'num_unique': 1951,
+                                   'type': 'continuous',
+                                   'value_range': (1300, 215245)},
+                       'LotFrontage': {'dtype': 'float64',
+                                       'num_unique': 128,
+                                       'type': 'continuous',
+                                       'value_range': (21.0, 313.0)},
+                       'LowQualFinSF': {'dtype': 'int64',
+                                        'num_unique': 36,
+                                        'type': 'continuous',
+                                        'value_range': (0, 1064)},
+                       'MSSubClass': {'dtype': 'int64',
+                                      'num_unique': 16,
+                                      'type': 'continuous',
+                                      'value_range': (20, 190)},
+                       'OverallQual': {'dtype': 'int64',
+                                       'num_unique': 10,
+                                       'type': 'categorical_numeric',
+                                       'value_range': (1, 10)},
+                       'PoolArea': {'dtype': 'int64',
+                                    'num_unique': 14,
+                                    'type': 'continuous',
+                                    'value_range': (0, 800)},
+                       'SalePrice': {'dtype': 'float64',
+                                     'num_unique': 663,
+                                     'type': 'continuous',
+                                     'value_range': (34900.0, 755000.0)},
+                       'TotRmsAbvGrd': {'dtype': 'int64',
+                                        'num_unique': 14,
+                                        'type': 'continuous',
+                                        'value_range': (2, 15)},
+                       'YearBuilt': {'dtype': 'int64',
+                                     'num_unique': 118,
+                                     'type': 'continuous',
+                                     'value_range': (1872, 2010)}},
+        'shape': (2919, 13),
+        'type': 'pandas.core.frame.DataFrame'},
+ 'num_cols': {'execution_cell_source': {'cellno': 3, 'lineno': 23},
+              'length': 12,
+              'type': "<class 'list'>",
+              'value_info': {'num_unique': 12,
+                             'value_type': 'categorical or object'}},
+ 'plt': {'type': "<class 'module'>"},
+ 'sns': {'type': "<class 'module'>"}}
+# Target Cell:
+
+def num_summary(dataframe, numerical_col, plot=False):
+    quantiles = [0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 0.99]
+    print(dataframe[numerical_col].describe(quantiles).T)
+
+    if plot:
+        dataframe[numerical_col].hist(bins=50)
+        plt.xlabel(numerical_col)
+        plt.title(numerical_col)
+        plt.show(block=True)
+
+    print("#####################################")
+
+
+for col in num_cols:
+    num_summary(df, col, True)
+
+for col in num_cols:
+
+
+    sns.barplot(df[col])
+
+for col in num_cols:
+    sns.boxplot(data=df, x=col)
+    plt.show(block=True)

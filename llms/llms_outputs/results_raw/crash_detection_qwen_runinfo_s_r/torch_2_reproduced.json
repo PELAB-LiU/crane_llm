@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model_quantization` function returns `None` and not the quantized model. Therefore, the `inference` function will receive the original model instead of the quantized one, which may lead to a crash or unexpected behavior.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None` and not the quantized model. Therefore, the `inference` function will receive the original model instead of the quantized one, which may lead to a crash or unexpected behavior.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None` and not the quantized model. Therefore, the `inference` function will receive the original model instead of the quantized one, which may lead to a crash or unexpected behavior.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None` and not the quantized model. Therefore, the `inference` function will receive the original model instead of the quantized one, which may lead to a crash or unexpected behavior.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None` and not the quantized model. Therefore, the `inference` function will receive the original model instead of the quantized one, which may lead to a crash or unexpected behavior.",
+    "detection": false
+  }
+]

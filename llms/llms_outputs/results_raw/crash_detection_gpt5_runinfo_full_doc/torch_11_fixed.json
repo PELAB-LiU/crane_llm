@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "In train(), it iterates over (cx, cy) batches; cy is a tensor of shape [batch], then cy_onehot = F.one_hot(cy, num_classes=2) creates shape [batch,2], but outputs = model.forward(cx) returns shape [batch,2]; mse_loss requires same shape, which matches. However, cy comes from collate_fn where ys are ints; but in elmo model, embedding size expects vocab indices < vocab_size=len(vocab), while collate_fn maps tokens >= glv_size to unk, using vocab_size=glv_size=50, causing many indices < len(vocab) but some valid indices >=50 mapped to 1. This doesn't crash. Potential bug in Dataset data class (unused). No certain runtime error detected.",
+    "detection": false
+  },
+  {
+    "reasoning": "train expects batches of (cx, cy) where cx is LongTensor of token indices compatible with model Embedding. collate_fn ensures tensor types and padding; model, optimizer, and loss shapes align. No obvious type/shape mismatch or missing vars.",
+    "detection": false
+  },
+  {
+    "reasoning": "train iterates over DataLoader yielding (cx, cy). It calls model.forward(cx). Model expects token ids < vocab_size (len(vocab)), but collate_fn clamps using vocab_size=glv_size=50, causing many valid ids to be mapped to 1, but still valid. However, inside train it computes cy_onehot = F.one_hot(cy, num_classes=2) where cy is batch of labels; but earlier DataLoader returns ys as tensor of ints 0/1; shapes ok. The major issue: in data class earlier, __len__ and __getitem__ had bugs, but not used. Model embedding init: self.embedding.weights assignment is incorrect attribute name but embed=None so not used. Likely runs without crash though loss uses mse with outputs shape [batch,2] vs cy_onehot shape [batch, seq_len, 2]? Here cy from st_train is shape [batch], so one_hot gives [batch,2], matching. So no certain crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "train() expects each batch as (cx, cy). st_train's collate_fn returns (xs_tensor [batch, max_len], ys_tensor [batch]). Model forward takes cx [batch, seq] and outputs [batch, 2]. But cy is integer labels [batch], then cy_onehot = F.one_hot(cy, num_classes=2) yields [batch, 2]; mse_loss between [batch,2] works. No certain crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The train loop expects dataloader to yield (cx, cy) with cx as LongTensor of token indices and cy as labels; st_train provides padded LongTensor inputs and integer labels. However, inside train(), it computes cy_onehot = F.one_hot(cy, num_classes=2).float() but cy has shape [batch], then later uses MSE with outputs shape [batch,2], which is compatible. No obvious mismatched types or shapes. Not certain of a crash.",
+    "detection": false
+  }
+]

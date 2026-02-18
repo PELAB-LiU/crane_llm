@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "test_generator.classes is a 1D array of class indices, not one-hot; applying np.argmax along axis=1 will raise an AxisError. Also y_true_onehot has shape (6,), so argmax axis=1 is invalid.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes is a 1D array of class indices, not one-hot; applying np.argmax to it will raise an AxisError because axis=1 is out of bounds for array of dimension 1. Therefore the cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes is a 1D integer array of class indices, not one-hot; applying np.argmax to it will raise an AxisError. The first two lines will run since y_pred is valid.",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes is a 1D array of class indices, not one-hot; applying np.argmax to it will raise an AxisError. The earlier y_pred has correct shape (6,2).",
+    "detection": true
+  },
+  {
+    "reasoning": "test_generator.classes is a 1D array of class indices, not one-hot; applying np.argmax to it will raise an AxisError. The rest (predict and np.argmax on y_pred) are fine.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Row label 10472 was already dropped; dropping it again with errors='raise' default will raise a KeyError. The label no longer exists in the index.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DataFrame currently has at least 10,840 rows and the same drop index [10472] succeeded before; dropping it again with errors='raise' will raise a KeyError because the label no longer exists.",
+    "detection": true
+  },
+  {
+    "reasoning": "Dropping the same index again will raise a KeyError since label 10472 no longer exists after the first drop and errors='raise' by default.",
+    "detection": true
+  },
+  {
+    "reasoning": "Dropping index 10472 again will raise KeyError since the first drop already removed that label and errors='raise' is default.",
+    "detection": true
+  },
+  {
+    "reasoning": "Dropping the same index label twice without errors='ignore' will raise a KeyError since row 10472 was already removed in a previous cell.",
+    "detection": true
+  }
+]

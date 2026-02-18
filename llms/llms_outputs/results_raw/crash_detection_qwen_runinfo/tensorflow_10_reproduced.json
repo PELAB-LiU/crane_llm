@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train_data` is a pandas Series of text data, which cannot be directly fed into the model without tokenization. The model expects numerical tensor inputs, not raw text.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_data` is a pandas Series of text data, which cannot be directly fed into the model without tokenization. The model expects numerical tensor inputs, not raw text.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_data` is a pandas Series of text data, which cannot be directly fed into the model without tokenization. The model expects tokenized inputs, not raw text.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_data` is a pandas Series of text data, which cannot be directly fed into the model without tokenization. The model expects numerical tensor inputs, not raw text.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_data` is a pandas Series of text data, which cannot be directly fed into the model without tokenization. The model expects numerical tensor inputs, not raw text.",
+    "detection": true
+  }
+]

@@ -1,0 +1,153 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+from catboost import CatBoostClassifier
+from sklearn.metrics import accuracy_score
+
+## Cell 2:
+
+
+train_df = pd.read_csv('data/train_synthetic.csv')
+test_df = pd.read_csv('data/test_synthetic.csv')
+greeks_df = pd.read_csv('data/greeks_synthetic.csv')
+
+## Cell 3:
+
+train_df = pd.merge(train_df, greeks_df, on="Id")
+
+## Cell 4:
+
+
+train_df = train_df.drop("Id", axis=1)
+test_df = test_df.drop("Id", axis=1)
+
+## Cell 5:
+
+
+encoder = OneHotEncoder(handle_unknown="ignore")
+train_df = pd.get_dummies(train_df, columns=list(train_df))
+test_df = pd.get_dummies(test_df, columns=list(test_df))
+
+# Current relevent runtime information:
+{'test_df': {'has_nan': False,
+             'per_column_max_20': {'AB_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'AF_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'AH_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'AM_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'AR_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'AX_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'AY_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'AZ_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'BC_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'BD _0.0': {'num_unique': 1,
+                                                  'value_range': (True, True)},
+                                      'BN_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'BP_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'BQ_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'BR_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'BZ_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'CB_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'CC_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'CD _0.0': {'num_unique': 1,
+                                                  'value_range': (True, True)},
+                                      'CF_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)},
+                                      'CH_0.0': {'num_unique': 1,
+                                                 'value_range': (True, True)}},
+             'shape': (5, 56)},
+ 'train_df': {'has_nan': False,
+              'per_column_max_20': {'AB_0.11': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.12': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.16': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.18': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.19': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.2': {'num_unique': 2,
+                                                     'value_range': (False,
+                                                                     True)},
+                                          'AB_0.21': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.24': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.25': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.28': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.29': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.32': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.37': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.42': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.46': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.47': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.48': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.49': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)},
+                                          'AB_0.5': {'num_unique': 2,
+                                                     'value_range': (False,
+                                                                     True)},
+                                          'AB_0.56': {'num_unique': 2,
+                                                      'value_range': (False,
+                                                                      True)}},
+              'shape': (624, 18532)}}
+# Target Cell:
+
+
+scaler = StandardScaler()
+train_df = scaler.fit_transform(train_df)
+test_df = scaler.transform(test_df)

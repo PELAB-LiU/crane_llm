@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "custom_dataset.images[1] is a tensor with shape (1, 125, 125); indexing [0, :, :] yields a 2D array suitable for plt.imshow. Labels tensor indexing also valid. No type/shape issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "custom_dataset.images has shape (508, 1, 125, 125); indexing [1][0, :, :] yields a 2D tensor suitable for imshow. Title uses a tensor label, which matplotlib can format as a string. No undefined variables.",
+    "detection": false
+  },
+  {
+    "reasoning": "custom_dataset.images[1] has shape (1,125,125); indexing [0,:,:] yields a 2D array suitable for imshow. Title uses a tensor label, which matplotlib can stringify. No undefined variables.",
+    "detection": false
+  },
+  {
+    "reasoning": "custom_dataset.images has shape (508, 1, 125, 125); indexing [1][0, :, :] yields a 2D array suitable for imshow. Title uses a tensor, which matplotlib can convert to string. No errors expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "custom_dataset.images[1] has shape (1,125,125); indexing [0,:,:] yields (125,125) suitable for imshow. Title uses a tensor label which is printable. No undefined variables.",
+    "detection": false
+  }
+]

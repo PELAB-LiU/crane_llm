@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model was trained with 58 features but test_ds has 53 columns; sklearn will raise a shape mismatch error on predict. Creating DataFrame won’t be reached.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model was trained with 58 features, but test_ds has 53 columns; sklearn will raise a ValueError about mismatched n_features_in_.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model was trained with 58 features, but test_ds has 53 columns; predict will raise a shape mismatch error. Also submission column uses 'ID' while original was 'Id' but main crash is feature mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model was trained with 58 features, but test_ds has 53 columns; predict will raise a feature mismatch error. Also submission column name uses 'ID' while stored ids were from 'Id', but main crash is feature count mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model was trained with 58 features, but test_ds has 53 columns after preprocessing; predict will raise a shape mismatch error. Also submission uses 'ID' not matching original 'Id' but main crash is feature count mismatch.",
+    "detection": true
+  }
+]

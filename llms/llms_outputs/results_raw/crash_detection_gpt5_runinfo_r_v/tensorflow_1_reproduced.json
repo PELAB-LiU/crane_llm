@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model is compiled and train/validation datasets match expected input shapes and types; fitting for 1 epoch should run normally.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model is compiled, datasets have matching input shapes and labels, and fit() signature is valid. No conflicting types or missing variables.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model is compiled and datasets match expected input shape and types; fitting for 1 epoch should run. No obvious shape or type mismatch.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model is compiled; train_ds and val_ds are compatible tf.data datasets with matching shapes and dtypes; epochs is valid. No obvious shape or type mismatch.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model is compiled and datasets match input shape; fit with epochs=1 should run without shape/type issues.",
+    "detection": false
+  }
+]

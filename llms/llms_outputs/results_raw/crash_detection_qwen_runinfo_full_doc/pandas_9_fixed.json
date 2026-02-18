@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The conditions in the target cell filter out specific string values from 'Total_Gross' and 'Censor' columns. Since the 'Total_Gross' column contains values like ['$6.85M', '$22.43M', ...] and 'Censor' contains values like ['13', '18', ...], the conditions will not crash but may result in an empty DataFrame if no matching rows are found.",
+    "detection": false
+  },
+  {
+    "reasoning": "The conditions in the target cell filter out specific string values from 'Total_Gross' and 'Censor' columns. Since the 'Total_Gross' column contains values like ['$6.85M', '$22.43M', ...] and 'Censor' contains values like ['13', '18', ...], the conditions will not crash but may result in an empty DataFrame if no matching rows are found.",
+    "detection": false
+  },
+  {
+    "reasoning": "The conditions in the target cell filter out specific string values from 'Total_Gross' and 'Censor' columns. Since the 'Total_Gross' column contains values like ['$6.85M', '$22.43M', ...] and 'Censor' contains values like ['13', '18', ...], the conditions will not crash but may result in an empty DataFrame if no matching rows are found.",
+    "detection": false
+  },
+  {
+    "reasoning": "The conditions in the target cell filter out specific string values from 'Total_Gross' and 'Censor' columns. Since the 'Total_Gross' column contains values like ['$6.85M', '$22.43M', ...] and 'Censor' contains values like ['13', '18', ...], the conditions will not crash but may result in an empty DataFrame if no matching rows are found.",
+    "detection": false
+  },
+  {
+    "reasoning": "The conditions in the target cell filter out specific string values from 'Total_Gross' and 'Censor' columns. Since the 'Total_Gross' column contains values like ['$6.85M', '$22.43M', ...] and 'Censor' contains values like ['13', '18', ...], the conditions will not crash but may result in an empty DataFrame if no matching rows are found.",
+    "detection": false
+  }
+]

@@ -1,0 +1,104 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+df = pd.read_csv("data/IMDb_All_Genres_etf_clean1.csv")
+
+# Current relevent runtime information:
+{'df': {'execution_cell_source': {'cellno': 1, 'lineno': 1},
+        'has_nan': False,
+        'per_column': {'Actors': {'dtype': 'object',
+                                  'example_values': ['Bill Farmer, Jason M...',
+                                                     'Jeff Bridges, Jennif...',
+                                                     'Luke Treadaway, Bob ...',
+                                                     'Kristen Connolly, Ch...',
+                                                     'James Franco, Dave F...'],
+                                  'num_unique': 5511,
+                                  'type': 'categorical'},
+                       'Censor': {'dtype': 'object',
+                                  'example_values': ['A',
+                                                     'UA 7+',
+                                                     'NC-17',
+                                                     'PG-13',
+                                                     'UA'],
+                                  'num_unique': 25,
+                                  'type': 'categorical'},
+                       'Director': {'dtype': 'object',
+                                    'example_values': ['Mike Judge',
+                                                       'Rishab Shetty',
+                                                       'Nigel Cole',
+                                                       'Sam Hargrave',
+                                                       'Shane Acker'],
+                                    'num_unique': 2320,
+                                    'type': 'categorical'},
+                       'Movie_Title': {'dtype': 'object',
+                                       'example_values': ['Master',
+                                                          'The Rescuers Down '
+                                                          'Un...',
+                                                          'To Live and Die in '
+                                                          'L...',
+                                                          'Mr. Deeds',
+                                                          'The Majestic'],
+                                       'num_unique': 5453,
+                                       'type': 'categorical'},
+                       'Rating': {'dtype': 'float64',
+                                  'num_unique': 74,
+                                  'type': 'continuous',
+                                  'value_range': (1.0, 9.3)},
+                       'Runtime(Mins)': {'dtype': 'int64',
+                                         'num_unique': 156,
+                                         'type': 'continuous',
+                                         'value_range': (45, 321)},
+                       'Total_Gross': {'dtype': 'object',
+                                       'example_values': ['$0.70M',
+                                                          '$17.50M',
+                                                          '$7.77M',
+                                                          '$51.80M',
+                                                          '$25.70M'],
+                                       'num_unique': 3501,
+                                       'type': 'categorical'},
+                       'Year': {'dtype': 'int64',
+                                'num_unique': 99,
+                                'type': 'continuous',
+                                'value_range': (1920, 2022)},
+                       'main_genre': {'dtype': 'object',
+                                      'example_values': ['Western',
+                                                         'Biography',
+                                                         'Mystery',
+                                                         'Horror',
+                                                         'Drama'],
+                                      'num_unique': 13,
+                                      'type': 'categorical'},
+                       'side_genre': {'dtype': 'object',
+                                      'example_values': [' Mystery,  War',
+                                                         ' Comedy',
+                                                         ' Fantasy,  Mystery',
+                                                         'Drama',
+                                                         ' Comedy,  Sport'],
+                                      'num_unique': 144,
+                                      'type': 'categorical'}},
+        'shape': (5562, 10),
+        'type': 'pandas.core.frame.DataFrame'}}
+# Target Cell:
+
+clean_df = df[(df["Total Gross (millions)"]!="$0.00M") & (df["Total Gross (millions)"]!="Gross Unkown")].copy()
+clean_df = clean_df[clean_df['Censor']!="(Banned)"]

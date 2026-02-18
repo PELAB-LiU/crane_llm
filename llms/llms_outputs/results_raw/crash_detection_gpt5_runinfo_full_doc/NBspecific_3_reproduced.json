@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "yFit has shape (272,) while y_test has shape (68,). Operations SSE = sum((y_test - yFit)**2) and plotting yFit against range(len(y_test)) will fail due to shape mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit has shape (272,) while y_test has shape (68,), so SSE = sum((y_test - yFit)**2) will raise a broadcasting error. Also SSR uses yFit vs y_test mean mismatch. This will crash due to incompatible shapes.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit has shape (272,) while y_test has shape (68,), so operations like SSE = sum((y_test - yFit)**2) will raise a shape mismatch error. Plotting likewise mismatches lengths.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_test has length 68 while yFit has length 272, so operations like SSE = sum((y_test - yFit)**2) will raise a ValueError due to shape mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit has length 272 while y_test has length 68; operations like SSE = sum((y_test - yFit)**2) and plotting them together will raise a ValueError due to shape mismatch.",
+    "detection": true
+  }
+]

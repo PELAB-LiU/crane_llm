@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Order ID' column contains non-integer values, including the string 'Order ID' itself, which will cause a ValueError when attempting to convert the entire column to integer type.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-integer values, such as 'Order ID' itself, which will cause a ValueError when attempting to convert the entire column to an integer type.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-integer values, such as 'Order ID' itself, which will cause a ValueError when attempting to convert the entire column to an integer type.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-integer values, including the string 'Order ID' itself, which will cause a ValueError when attempting to convert the entire column to integer type.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-integer values, such as 'Order ID' itself, which will cause a ValueError when attempting to convert the entire column to an integer type.",
+    "detection": true
+  }
+]

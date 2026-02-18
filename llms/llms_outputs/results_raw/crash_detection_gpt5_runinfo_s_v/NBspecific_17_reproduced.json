@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Variable X is referenced but not defined in the executed cells or provided runtime; only metadata about X is shown, not the variable itself. This will raise a NameError when calling fit_transform(X).",
+    "detection": true
+  },
+  {
+    "reasoning": "Variable X is referenced but not defined in the executed cells or provided runtime info as an actual variable; only metadata about X is given. This will raise a NameError when fit_transform(X) is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variable X is not defined in the executed cells or provided runtime info as an assigned object, so calling fit_transform(X) will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variable X is not defined in the executed cells, so referencing X will raise a NameError when fitting PolynomialFeatures.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable X is present with shape info and no NaNs; PolynomialFeatures with degree=1 and interaction_only=True is valid and fit_transform will succeed, returning an array shaped (303, n_features+1).",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to group by 'kmeans_cluster' and aggregate on specific numeric columns. The code will crash because 'numeric_columns[1]' and subsequent indices are not valid keys in the aggregation dictionary. They should be passed as a list of tuples.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to group by 'kmeans_cluster' and aggregate on specific numeric columns. The code will crash because 'numeric_columns[1]' and subsequent indices are not valid keys in the aggregation dictionary. They should be passed as a list of tuples.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to group by 'kmeans_cluster' and aggregate on specific numeric columns. The code will crash because 'numeric_columns[1]' and subsequent indices are not valid keys in the aggregation dictionary. They should be passed as a list of tuples.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to group by 'kmeans_cluster' and aggregate on specific numeric columns. The code will crash because 'numeric_columns[1]' and subsequent indices are not valid keys in the aggregation dictionary. They should be passed as a list of tuples.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to group by 'kmeans_cluster' and aggregate on specific numeric columns. The code will crash because 'numeric_columns[1]' and subsequent indices are not valid keys in the aggregation dictionary. They should be passed as a list of tuples.",
+    "detection": true
+  }
+]

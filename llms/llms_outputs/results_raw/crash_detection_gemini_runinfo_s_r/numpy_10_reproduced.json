@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `imshow` function is called without `plt` being defined in the same scope, leading to a `NameError`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `imshow` function is called without `plt` being defined in the same scope, leading to a `NameError`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `imshow` function is called without `plt` being defined in the current scope, leading to a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `imshow` function is called without `plt` being defined in the same scope, leading to a `NameError`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `imshow` function is called without `plt` being defined in the current scope, leading to a NameError.",
+    "detection": true
+  }
+]

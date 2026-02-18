@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "LinearRegression requires numeric features; X includes likely non-numeric columns (e.g., 'street', 'statezip', 'country'), and only 'city' was encoded. This will raise a ValueError about converting string to float.",
+    "detection": true
+  },
+  {
+    "reasoning": "X contains non-numeric columns like 'street', 'statezip', 'country' that haven't been encoded; LinearRegression requires numeric input, so fit will raise a ValueError on dtype.",
+    "detection": true
+  },
+  {
+    "reasoning": "X contains non-numeric columns like 'street', 'statezip', and possibly 'country'; LinearRegression.fit requires numeric arrays and will error during dtype conversion.",
+    "detection": true
+  },
+  {
+    "reasoning": "X includes non-numeric columns like 'street', 'statezip', and possibly partially unmapped 'city', which LinearRegression cannot handle without encoding. Likely raises a ValueError about converting string to float.",
+    "detection": true
+  },
+  {
+    "reasoning": "LinearRegression.fit requires numeric features; X includes columns like 'street', 'statezip', 'country' likely non-numeric, causing a ValueError when converting to float.",
+    "detection": true
+  }
+]

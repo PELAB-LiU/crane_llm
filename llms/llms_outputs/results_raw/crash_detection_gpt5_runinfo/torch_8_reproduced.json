@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "DataLoader yields numpy arrays of shape [B,196,196,3], but the model expects torch tensors shaped [B,3,H,W]; this will cause a type/shape error during forward pass.",
+    "detection": true
+  },
+  {
+    "reasoning": "Dataloaders yield numpy arrays shaped [batch, 196,196,3], but the model expects torch tensors with channels-first [N,3,196,196]; train_model sends inputs directly to model without conversion, causing a TypeError or shape mismatch. Also labels are arrays, not class indices tensors.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DataLoader yields NumPy arrays shaped [batch, 196, 196, 3], but the model expects PyTorch tensors with [batch, channels, height, width]; this type/shape mismatch will cause errors during model forward. Also labels are arrays of images instead of class indices.",
+    "detection": true
+  },
+  {
+    "reasoning": "DataLoader yields numpy arrays shaped [B,196,196,3], but the model expects torch tensors shaped [B,3,196,196]; also labels are arrays, not class indices. This will cause type/shape errors when forwarding or computing loss.",
+    "detection": true
+  },
+  {
+    "reasoning": "train_loader yields numpy arrays shaped (batch, 196,196,3) but the model expects torch tensors shaped (batch, 3, H, W); also labels provided are arrays of images, not class indices, causing type/shape errors in forward/CrossEntropyLoss.",
+    "detection": true
+  }
+]

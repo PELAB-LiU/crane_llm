@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "procData uses LabelEncoder.transform on object column RescuerID (fitted), then fillna, computes string operations on Name (works with NaN), maps name_count, and drops existing columns; all referenced columns exist. No obvious type or missing-column issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "procData uses LabelEncoder.transform on object RescuerID values, maps name_count, computes simple string features, and then drops existing columns; all referenced columns exist in both dataframes. No operations are expected to raise errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "procData uses LabelEncoder.transform on object RescuerID values (fitted), maps Name and name_count, then drops existing columns; operations are compatible with provided data types. No obvious errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "procData drops the RescuerID column after transforming; no missing columns referenced, and operations handle NaNs. LabelEncoder.transform can handle unseen labels only if fitted on combined train+test, which it was. Should run without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "procData assigns boolean from string comparison without handling NaNs, causing a TypeError when comparing None/NaN to string with .str; also sets RescuerID via LabelEncoder then tries fillna on integer dtype (harmless). The .str.lower() on Name with NaNs will raise.",
+    "detection": true
+  }
+]

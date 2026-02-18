@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model.predict(x) returns shape (batch,1) with sigmoid; np.argmax(..., axis=-1) on a 2D array of width 1 yields an array of zeros, but np.atleast_1d on that result followed by concatenation with empty arrays is valid, and classification_report accepts 0/1 labels with provided target_names of length 2.",
+    "detection": false
+  },
+  {
+    "reasoning": "model.predict(x) returns shape (batch_size,1) with sigmoid; applying np.argmax(..., axis=-1) on 1D arrays will raise an AxisError because axis -1 is out of bounds. Thus concatenation uses an invalid result.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict(x) returns probabilities of shape (batch,1) for binary sigmoid; argmax over axis=-1 yields all zeros, but shapes are compatible and concatenations are valid. classification_report will accept arrays of numbers and target_names with two classes.",
+    "detection": false
+  },
+  {
+    "reasoning": "model.predict(x) returns shape (batch_size,1) with sigmoid outputs; np.argmax(..., axis=-1) on a 2D array with one column will return all zeros, but it won't crash. Concatenations with empty arrays and printing classification_report with valid class_names also work.",
+    "detection": false
+  },
+  {
+    "reasoning": "model.predict(x) returns probabilities for binary output shape (batch,1); np.argmax with axis=-1 on that yields zeros, but shapes remain compatible. Loop limits to one batch; concatenations and classification_report with 2 class names should run.",
+    "detection": false
+  }
+]

@@ -1,0 +1,290 @@
+# Executed Cells:
+## Cell 1:
+
+
+
+
+
+import numpy as np
+import pandas as pd
+
+
+
+
+import os
+for dirname, _, filenames in os.walk('data'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+
+
+## Cell 2:
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+## Cell 3:
+
+train_ds = pd.read_csv("data/train.csv")
+test_ds = pd.read_csv("data/test.csv")
+
+## Cell 4:
+
+train_ds.drop(['Id', 'MoSold', 'GarageYrBlt', 'Condition1', 'Condition2'], axis = 1, inplace = True)
+
+## Cell 5:
+
+for column in train_ds:
+    null_count = train_ds[column].isnull().sum()
+    if null_count > 1:
+        print(f"Dropping column {column} with {null_count} missing values.")
+        train_ds.drop(column, axis = 1, inplace = True)
+
+## Cell 6:
+
+le = LabelEncoder()
+string_columns = train_ds.select_dtypes(include = ['object']).columns
+for column in string_columns:
+    train_ds[column] = le.fit_transform(train_ds[column])
+
+## Cell 7:
+
+X = train_ds.drop(['SalePrice'], axis = 1)
+y = train_ds['SalePrice']
+
+## Cell 8:
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = 42)
+
+## Cell 9:
+
+from sklearn.ensemble import RandomForestRegressor
+FReg = RandomForestRegressor(n_estimators = 100, random_state = 42)
+
+## Cell 10:
+
+FReg.fit(X_train, y_train)
+
+## Cell 11:
+
+y_pred = FReg.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f'R2 Score: {r2}')
+print(f'MSE: {mse}')
+
+## Cell 12:
+
+test_ds_ids = test_ds['Id']
+test_ds.drop(['Id', 'MoSold', 'GarageYrBlt', 'Condition1', 'Condition2'], axis = 1, inplace = True)
+
+## Cell 13:
+
+
+
+
+
+
+
+
+
+test_ds = test_ds[X_train.columns]
+for col in test_ds.columns:
+    if test_ds[col].dtype == 'object':
+        test_ds[col] = test_ds[col].fillna("")
+    elif pd.api.types.is_numeric_dtype(test_ds[col]):
+        test_ds[col] = test_ds[col].fillna(0)
+
+## Cell 14:
+
+le = LabelEncoder()
+string_columns = test_ds.select_dtypes(include = ['object']).columns
+for column in string_columns:
+    test_ds[column] = le.fit_transform(test_ds[column])
+
+# Current relevent runtime information:
+{'FReg': {'class_name': 'RandomForestRegressor',
+          'execution_cell_source': {'cellno': 33, 'lineno': 2},
+          'fitted_attributes': {'n_features_in_': 58, 'n_outputs_': 1},
+          'is_fitted': True,
+          'module': 'sklearn.ensemble._forest',
+          'type': "<class 'sklearn.ensemble._forest.RandomForestRegressor'>"},
+ '__method__FReg_predict': {'context': {'public_attributes': ['base_estimator',
+                                                              'bootstrap',
+                                                              'ccp_alpha',
+                                                              'class_weight',
+                                                              'criterion',
+                                                              'estimator',
+                                                              'estimator_',
+                                                              'estimator_params',
+                                                              'estimators_',
+                                                              'feature_names_in_',
+                                                              'max_depth',
+                                                              'max_features',
+                                                              'max_leaf_nodes',
+                                                              'max_samples',
+                                                              'min_impurity_decrease',
+                                                              'min_samples_leaf',
+                                                              'min_samples_split',
+                                                              'min_weight_fraction_leaf',
+                                                              'n_estimators',
+                                                              'n_features_in_',
+                                                              'n_jobs',
+                                                              'n_outputs_',
+                                                              'oob_score',
+                                                              'random_state',
+                                                              'verbose',
+                                                              'warm_start']},
+                            'signature': {'parameters': [{'annotation': None,
+                                                          'default': None,
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'X',
+                                                          'required': True}],
+                                          'return_annotation': None},
+                            'type': "<class 'method'>"},
+ '__method__pd_DataFrame': {'doc_importants': {'notes': 'Please reference the '
+                                                        ':ref:`User Guide '
+                                                        '<basics.dataframe>` '
+                                                        'for more '
+                                                        'information.'},
+                            'signature': {'parameters': [{'annotation': None,
+                                                          'default': 'None',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'data',
+                                                          'required': False},
+                                                         {'annotation': "'Axes "
+                                                                        '| '
+                                                                        "None'",
+                                                          'default': 'None',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'index',
+                                                          'required': False},
+                                                         {'annotation': "'Axes "
+                                                                        '| '
+                                                                        "None'",
+                                                          'default': 'None',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'columns',
+                                                          'required': False},
+                                                         {'annotation': "'Dtype "
+                                                                        '| '
+                                                                        "None'",
+                                                          'default': 'None',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'dtype',
+                                                          'required': False},
+                                                         {'annotation': "'bool "
+                                                                        '| '
+                                                                        "None'",
+                                                          'default': 'None',
+                                                          'kind': 'POSITIONAL_OR_KEYWORD',
+                                                          'name': 'copy',
+                                                          'required': False}],
+                                          'return_annotation': "'None'"},
+                            'type': "<class 'type'>"},
+ 'pd': {'type': "<class 'module'>"},
+ 'test_ds': {'execution_cell_source': {'cellno': 42, 'lineno': 9},
+             'has_nan': False,
+             'per_column_max_20': {'BldgType': {'dtype': 'int64',
+                                                   'num_unique': 5,
+                                                   'type': 'categorical_numeric',
+                                                   'value_range': (0, 4)},
+                                      'Exterior1st': {'dtype': 'int64',
+                                                      'num_unique': 14,
+                                                      'type': 'continuous',
+                                                      'value_range': (0, 13)},
+                                      'Exterior2nd': {'dtype': 'int64',
+                                                      'num_unique': 16,
+                                                      'type': 'continuous',
+                                                      'value_range': (0, 15)},
+                                      'HouseStyle': {'dtype': 'int64',
+                                                     'num_unique': 7,
+                                                     'type': 'categorical_numeric',
+                                                     'value_range': (0, 6)},
+                                      'LandContour': {'dtype': 'int64',
+                                                      'num_unique': 4,
+                                                      'type': 'categorical_numeric',
+                                                      'value_range': (0, 3)},
+                                      'LandSlope': {'dtype': 'int64',
+                                                    'num_unique': 3,
+                                                    'type': 'categorical_numeric',
+                                                    'value_range': (0, 2)},
+                                      'LotArea': {'dtype': 'int64',
+                                                  'num_unique': 1106,
+                                                  'type': 'continuous',
+                                                  'value_range': (1470, 56600)},
+                                      'LotConfig': {'dtype': 'int64',
+                                                    'num_unique': 5,
+                                                    'type': 'categorical_numeric',
+                                                    'value_range': (0, 4)},
+                                      'LotShape': {'dtype': 'int64',
+                                                   'num_unique': 4,
+                                                   'type': 'categorical_numeric',
+                                                   'value_range': (0, 3)},
+                                      'MSSubClass': {'dtype': 'int64',
+                                                     'num_unique': 16,
+                                                     'type': 'continuous',
+                                                     'value_range': (20, 190)},
+                                      'MSZoning': {'dtype': 'int64',
+                                                   'num_unique': 6,
+                                                   'type': 'categorical_numeric',
+                                                   'value_range': (0, 5)},
+                                      'Neighborhood': {'dtype': 'int64',
+                                                       'num_unique': 25,
+                                                       'type': 'continuous',
+                                                       'value_range': (0, 24)},
+                                      'OverallCond': {'dtype': 'int64',
+                                                      'num_unique': 9,
+                                                      'type': 'categorical_numeric',
+                                                      'value_range': (1, 9)},
+                                      'OverallQual': {'dtype': 'int64',
+                                                      'num_unique': 10,
+                                                      'type': 'categorical_numeric',
+                                                      'value_range': (1, 10)},
+                                      'RoofMatl': {'dtype': 'int64',
+                                                   'num_unique': 4,
+                                                   'type': 'categorical_numeric',
+                                                   'value_range': (0, 3)},
+                                      'RoofStyle': {'dtype': 'int64',
+                                                    'num_unique': 6,
+                                                    'type': 'categorical_numeric',
+                                                    'value_range': (0, 5)},
+                                      'Street': {'dtype': 'int64',
+                                                 'num_unique': 2,
+                                                 'type': 'binary',
+                                                 'value_range': (0, 1)},
+                                      'Utilities': {'dtype': 'int64',
+                                                    'num_unique': 2,
+                                                    'type': 'binary',
+                                                    'value_range': (0, 1)},
+                                      'YearBuilt': {'dtype': 'int64',
+                                                    'num_unique': 106,
+                                                    'type': 'continuous',
+                                                    'value_range': (1879,
+                                                                    2010)},
+                                      'YearRemodAdd': {'dtype': 'int64',
+                                                       'num_unique': 61,
+                                                       'type': 'continuous',
+                                                       'value_range': (1950,
+                                                                       2010)}},
+             'shape': (1459, 58),
+             'type': 'pandas.core.frame.DataFrame'},
+ 'test_ds_ids': {'dtype': 'int64',
+                 'execution_cell_source': {'cellno': 40, 'lineno': 1},
+                 'has_nan': False,
+                 'length': 1459,
+                 'type': 'pandas.core.series.Series',
+                 'value_info': {'value_range': (1461, 2919),
+                                'value_type': 'continuous'}}}
+# Target Cell:
+
+predictions = FReg.predict(test_ds)
+submissions_df = pd.DataFrame({
+    "ID" : test_ds_ids,
+    "Predictions" : predictions
+})
+

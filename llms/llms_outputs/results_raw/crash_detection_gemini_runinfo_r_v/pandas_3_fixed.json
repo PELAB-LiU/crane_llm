@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `procData` function is designed to drop the 'Description' column. However, the 'Description' column is not present in the 'test' DataFrame, which will cause a KeyError when `procData` is called on 'test'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `procData` function attempts to drop columns 'Name', 'RescuerID', and 'Description'. However, the 'Description' column is not present in the `test` DataFrame, which will cause a KeyError when `procData` is called on `test`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `procData` function attempts to drop columns 'Name', 'RescuerID', and 'Description'. However, the 'Description' column is not present in the `test` DataFrame, which will cause a KeyError when `procData` is called on `test`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `procData` function attempts to drop columns 'Name', 'RescuerID', and 'Description'. However, the 'Description' column is not present in the `test` DataFrame, which will cause a KeyError when `procData` is called on `test`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `procData` function attempts to drop columns 'Name', 'RescuerID', and 'Description'. However, the 'Description' column is not present in the `test` DataFrame, which will cause a KeyError when `procData` is called on `test`.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `ConfusionMatrixDisplay` expects labels that match the unique values in `y_test` and `y_pred`, which are categorical string labels ('versicolor', 'setosa', 'virginica'). However, the `display_labels` provided are boolean values [False, True], which do not match the actual labels, leading to a mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `ConfusionMatrixDisplay` expects labels that match the unique values in `y_test` and `y_pred`, which are categorical string labels ('versicolor', 'setosa', 'virginica'). However, the `display_labels` provided are boolean values [False, True], which do not match the actual labels, leading to a mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `ConfusionMatrixDisplay` expects labels that match the unique values in `y_test` and `y_pred`, which are categorical string labels ('versicolor', 'setosa', 'virginica'). However, the `display_labels` provided are boolean values [False, True], which do not match the actual labels, leading to a mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `ConfusionMatrixDisplay` expects labels that match the unique values in `y_test` and `y_pred`, which are categorical string labels ('versicolor', 'setosa', 'virginica'). However, the `display_labels` provided are boolean values [False, True], which do not match the actual labels, leading to a mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `ConfusionMatrixDisplay` expects labels that match the unique values in `y_test` and `y_pred`, which are categorical string labels ('versicolor', 'setosa', 'virginica'). However, the `display_labels` provided are boolean values [False, True], which do not match the actual labels, leading to a mismatch error.",
+    "detection": true
+  }
+]

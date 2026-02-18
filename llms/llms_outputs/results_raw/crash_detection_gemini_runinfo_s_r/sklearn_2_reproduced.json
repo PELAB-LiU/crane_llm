@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The DTRmodel object has not been fitted, so calling its predict method will raise a NotFittedError. The GridSearchCV object was fitted, but its best_estimator_ was used for prediction, not the original DTRmodel.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted yet, so calling predict on it will raise a NotFittedError. The GridSearchCV object was fitted, but the DTRmodel itself was not directly fitted.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel object has not been fitted, so calling its predict method will raise a NotFittedError. The GridSearchCV object was fitted, but its best_estimator_ was used for prediction, not the original DTRmodel.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel object has not been fitted, so calling predict on it will raise a NotFittedError. The GridSearchCV object was fitted, but its best_estimator_ was used for predictions, not the original DTRmodel.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel object has not been fitted, so calling its predict method will raise a NotFittedError. The GridSearchCV object was fitted, but its best_estimator_ was used for prediction, not the original DTRmodel.",
+    "detection": true
+  }
+]

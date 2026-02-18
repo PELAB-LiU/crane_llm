@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "transforms is a module, not a transform callable; ImageFolder expects a callable transform. Passing torchvision.transforms module will cause a TypeError when applied to samples.",
+    "detection": true
+  },
+  {
+    "reasoning": "transforms is a module, but ImageFolder expects a transform callable; passing torchvision.transforms module will cause a TypeError when indexing dataset. Not the composed transform used earlier.",
+    "detection": true
+  },
+  {
+    "reasoning": "transforms is a module, not a transform callable; ImageFolder expects a callable transform, so passing the module will cause a TypeError when loading data.",
+    "detection": true
+  },
+  {
+    "reasoning": "transforms is a module, but ImageFolder expects a callable transform; passing the module will cause a TypeError. Also it shadows previous valid transform pipeline.",
+    "detection": true
+  },
+  {
+    "reasoning": "transforms was previously a module, but here passed as transform to ImageFolder which expects a callable; passing module will likely raise a TypeError. Hence likely crash.",
+    "detection": true
+  }
+]

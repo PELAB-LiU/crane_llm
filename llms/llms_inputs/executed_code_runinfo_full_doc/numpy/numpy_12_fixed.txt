@@ -1,0 +1,656 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas
+import matplotlib.pyplot as plt
+dataset = pandas.read_csv('data/international-airline-passengers.csv', usecols=[1], engine='python')
+plt.plot(dataset)
+plt.show()
+
+## Cell 2:
+
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.layers import LSTM
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import mean_squared_error
+
+## Cell 3:
+
+
+scaler = MinMaxScaler(feature_range=(0, 1))
+dataset = scaler.fit_transform(dataset)
+
+## Cell 4:
+
+
+train_size = int(len(dataset) * 0.67)
+test_size = len(dataset) - train_size
+train, test = dataset[0:train_size,:], dataset[train_size:len(dataset),:]
+print(len(train), len(test))
+
+## Cell 5:
+
+
+def create_dataset(dataset, look_back=1):
+	dataX, dataY = [], []
+ for i in range(len(dataset)-look_back-1):
+		a = dataset[i:(i+look_back), 0]
+  dataX.append(a)
+  dataY.append(dataset[i + look_back, 0])
+ return np.array(dataX), np.array(dataY)
+
+# Current relevent runtime information:
+{'Dense': {'signature': {'parameters': [{'annotation': None,
+                                         'default': None,
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'units',
+                                         'required': True},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'activation',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'True',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'use_bias',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': "'glorot_uniform'",
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'kernel_initializer',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': "'zeros'",
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'bias_initializer',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'kernel_regularizer',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'bias_regularizer',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'activity_regularizer',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'kernel_constraint',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'bias_constraint',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'lora_rank',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': None,
+                                         'kind': 'VAR_KEYWORD',
+                                         'name': 'kwargs',
+                                         'required': True}],
+                         'return_annotation': None},
+           'type': "<class 'type'>"},
+ 'LSTM': {'signature': {'parameters': [{'annotation': None,
+                                        'default': None,
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'units',
+                                        'required': True},
+                                       {'annotation': None,
+                                        'default': "'tanh'",
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'activation',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': "'sigmoid'",
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'recurrent_activation',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'True',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'use_bias',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': "'glorot_uniform'",
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'kernel_initializer',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': "'orthogonal'",
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'recurrent_initializer',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': "'zeros'",
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'bias_initializer',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'True',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'unit_forget_bias',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'None',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'kernel_regularizer',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'None',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'recurrent_regularizer',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'None',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'bias_regularizer',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'None',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'activity_regularizer',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'None',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'kernel_constraint',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'None',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'recurrent_constraint',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'None',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'bias_constraint',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': '0.0',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'dropout',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': '0.0',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'recurrent_dropout',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'None',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'seed',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'False',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'return_sequences',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'False',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'return_state',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'False',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'go_backwards',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'False',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'stateful',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': 'False',
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'unroll',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': "'auto'",
+                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                        'name': 'use_cudnn',
+                                        'required': False},
+                                       {'annotation': None,
+                                        'default': None,
+                                        'kind': 'VAR_KEYWORD',
+                                        'name': 'kwargs',
+                                        'required': True}],
+                        'return_annotation': None},
+          'type': "<class 'type'>"},
+ 'Sequential': {'signature': {'parameters': [{'annotation': None,
+                                              'default': None,
+                                              'kind': 'VAR_POSITIONAL',
+                                              'name': 'args',
+                                              'required': True},
+                                             {'annotation': None,
+                                              'default': None,
+                                              'kind': 'VAR_KEYWORD',
+                                              'name': 'kwargs',
+                                              'required': True}],
+                              'return_annotation': None},
+                'type': "<class 'type'>"},
+ '__method__np_empty_like': {'doc_importants': {'notes': 'This function does '
+                                                         '*not* initialize the '
+                                                         'returned array; to '
+                                                         'do that use '
+                                                         '`zeros_like` or '
+                                                         '`ones_like` '
+                                                         'instead.  It may be '
+                                                         'marginally faster '
+                                                         'than the functions '
+                                                         'that do set the '
+                                                         'array values.'},
+                             'type': '<class '
+                                     "'numpy._ArrayFunctionDispatcher'>"},
+ '__method__np_nan': {'type': "<class 'float'>", 'value': nan},
+ '__method__np_reshape': {'doc_importants': {'notes': 'It is not always '
+                                                      'possible to change the '
+                                                      'shape of an array '
+                                                      'without copying the '
+                                                      'data. The `order` '
+                                                      'keyword gives the index '
+                                                      'ordering both for '
+                                                      '*fetching* the values '
+                                                      'from `a`, and then '
+                                                      '*placing* the values '
+                                                      'into the output array. '
+                                                      "For example, let's say "
+                                                      'you have an array: >>> '
+                                                      'a = '
+                                                      'np.arange(6).reshape((3, '
+                                                      '2)) >>> a array([[0, '
+                                                      '1], [2, 3], [4, 5]]) '
+                                                      'You can think of '
+                                                      'reshaping as first '
+                                                      'raveling the array '
+                                                      '(using the given index '
+                                                      'order), then inserting '
+                                                      'the elements from the '
+                                                      'raveled array into the '
+                                                      'new array using the '
+                                                      'same kind of index '
+                                                      'ordering as was used '
+                                                      'for the raveling. >>> '
+                                                      'np.reshape(a, (2, 3)) # '
+                                                      'C-like index ordering '
+                                                      'array([[0, 1, 2], [3, '
+                                                      '4, 5]]) >>> '
+                                                      'np.reshape(np.ravel(a), '
+                                                      '(2, 3)) # equivalent to '
+                                                      'C ravel then C reshape '
+                                                      'array([[0, 1, 2], [3, '
+                                                      '4, 5]]) >>> '
+                                                      'np.reshape(a, (2, 3), '
+                                                      "order='F') # "
+                                                      'Fortran-like index '
+                                                      'ordering array([[0, 4, '
+                                                      '3], [2, 1, 5]]) >>> '
+                                                      'np.reshape(np.ravel(a, '
+                                                      "order='F'), (2, 3), "
+                                                      "order='F') array([[0, "
+                                                      '4, 3], [2, 1, 5]])'},
+                          'signature': {'parameters': [{'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'a',
+                                                        'required': True},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'newshape',
+                                                        'required': True},
+                                                       {'annotation': None,
+                                                        'default': "'C'",
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'order',
+                                                        'required': False}],
+                                        'return_annotation': None},
+                          'type': "<class 'numpy._ArrayFunctionDispatcher'>"},
+ '__method__np_sqrt': {'doc_importants': {'notes': '*sqrt* has--consistent '
+                                                   'with common convention--as '
+                                                   'its branch cut the real '
+                                                   '"interval" [`-inf`, 0), '
+                                                   'and is continuous from '
+                                                   'above on it. A branch cut '
+                                                   'is a curve in the complex '
+                                                   'plane across which a given '
+                                                   'complex function fails to '
+                                                   'be continuous.'},
+                       'type': "<class 'numpy.ufunc'>"},
+ '__method__plt_plot': {'doc_importants': {'notes': '**Format Strings** A '
+                                                    'format string consists of '
+                                                    'a part for color, marker '
+                                                    'and line:: fmt = '
+                                                    "'[marker][line][color]' "
+                                                    'Each of them is optional. '
+                                                    'If not provided, the '
+                                                    'value from the style '
+                                                    'cycle is used. Exception: '
+                                                    'If ``line`` is given, but '
+                                                    'no ``marker``, the data '
+                                                    'will be a line without '
+                                                    'markers. Other '
+                                                    'combinations such as '
+                                                    '``[color][marker][line]`` '
+                                                    'are also supported, but '
+                                                    'note that their parsing '
+                                                    'may be ambiguous. '
+                                                    '**Markers** '
+                                                    '=============   '
+                                                    '=============================== '
+                                                    'character       '
+                                                    'description '
+                                                    '=============   '
+                                                    '=============================== '
+                                                    "``'.'``         point "
+                                                    "marker ``','``         "
+                                                    'pixel marker '
+                                                    "``'o'``         circle "
+                                                    "marker ``'v'``         "
+                                                    'triangle_down marker '
+                                                    "``'^'``         "
+                                                    'triangle_up marker '
+                                                    "``'<'``         "
+                                                    'triangle_left marker '
+                                                    "``'>'``         "
+                                                    'triangle_right marker '
+                                                    "``'1'``         tri_down "
+                                                    "marker ``'2'``         "
+                                                    'tri_up marker '
+                                                    "``'3'``         tri_left "
+                                                    "marker ``'4'``         "
+                                                    'tri_right marker '
+                                                    "``'8'``         octagon "
+                                                    "marker ``'s'``         "
+                                                    'square marker '
+                                                    "``'p'``         pentagon "
+                                                    "marker ``'P'``         "
+                                                    'plus (filled) marker '
+                                                    "``'*'``         star "
+                                                    "marker ``'h'``         "
+                                                    'hexagon1 marker '
+                                                    "``'H'``         hexagon2 "
+                                                    "marker ``'+'``         "
+                                                    'plus marker '
+                                                    "``'x'``         x marker "
+                                                    "``'X'``         x "
+                                                    '(filled) marker '
+                                                    "``'D'``         diamond "
+                                                    "marker ``'d'``         "
+                                                    'thin_diamond marker '
+                                                    "``'|'``         vline "
+                                                    "marker ``'_'``         "
+                                                    'hline marker '
+                                                    '=============   '
+                                                    '=============================== '
+                                                    '**Line Styles** '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    'character        '
+                                                    'description '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    "``'-'``          solid "
+                                                    'line style '
+                                                    "``'--'``         dashed "
+                                                    'line style '
+                                                    "``'-.'``         dash-dot "
+                                                    'line style '
+                                                    "``':'``          dotted "
+                                                    'line style '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    'Example format strings:: '
+                                                    "'b'    # blue markers "
+                                                    "with default shape 'or'   "
+                                                    "# red circles '-g'   # "
+                                                    "green solid line '--'   # "
+                                                    'dashed line with default '
+                                                    "color '^k:'  # black "
+                                                    'triangle_up markers '
+                                                    'connected by a dotted '
+                                                    'line **Colors** The '
+                                                    'supported color '
+                                                    'abbreviations are the '
+                                                    'single letter codes '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    'character        color '
+                                                    '=============    '
+                                                    '=============================== '
+                                                    "``'b'``          blue "
+                                                    "``'g'``          green "
+                                                    "``'r'``          red "
+                                                    "``'c'``          cyan "
+                                                    "``'m'``          magenta "
+                                                    "``'y'``          yellow "
+                                                    "``'k'``          black "
+                                                    "``'w'``          white "
+                                                    '=============    '
+                                                    '=============================== '
+                                                    "and the ``'CN'`` colors "
+                                                    'that index into the '
+                                                    'default property cycle. '
+                                                    'If the color is the only '
+                                                    'part of the format '
+                                                    'string, you can '
+                                                    'additionally use any  '
+                                                    '`matplotlib.colors` spec, '
+                                                    'e.g. full names '
+                                                    "(``'green'``) or hex "
+                                                    "strings (``'#008000'``)."},
+                        'signature': {'parameters': [{'annotation': None,
+                                                      'default': None,
+                                                      'kind': 'VAR_POSITIONAL',
+                                                      'name': 'args',
+                                                      'required': True},
+                                                     {'annotation': None,
+                                                      'default': 'True',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'scalex',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'True',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'scaley',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'data',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': None,
+                                                      'kind': 'VAR_KEYWORD',
+                                                      'name': 'kwargs',
+                                                      'required': True}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ '__method__plt_show': {'doc_importants': {'notes': '**Saving figures to file '
+                                                    'and showing a window at '
+                                                    'the same time** If you '
+                                                    'want an image file as '
+                                                    'well as a user interface '
+                                                    'window, use '
+                                                    '`.pyplot.savefig` before '
+                                                    '`.pyplot.show`. At the '
+                                                    'end of (a blocking) '
+                                                    '``show()`` the figure is '
+                                                    'closed and thus '
+                                                    'unregistered from pyplot. '
+                                                    'Calling `.pyplot.savefig` '
+                                                    'afterwards would save a '
+                                                    'new and thus empty '
+                                                    'figure. This limitation '
+                                                    'of command order does not '
+                                                    'apply if the show is '
+                                                    'non-blocking or if you '
+                                                    'keep a reference to the '
+                                                    'figure and use '
+                                                    '`.Figure.savefig`. '
+                                                    '**Auto-show in jupyter '
+                                                    'notebooks** The jupyter '
+                                                    'backends (activated via '
+                                                    '``%matplotlib inline``, '
+                                                    '``%matplotlib notebook``, '
+                                                    'or ``%matplotlib '
+                                                    'widget``), call '
+                                                    '``show()`` at the end of '
+                                                    'every cell by default. '
+                                                    "Thus, you usually don't "
+                                                    'have to call it '
+                                                    'explicitly there.'},
+                        'signature': {'parameters': [{'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'block',
+                                                      'required': False}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ '__method__scaler_inverse_transform': {'context': {'public_attributes': ['clip',
+                                                                          'copy',
+                                                                          'data_max_',
+                                                                          'data_min_',
+                                                                          'data_range_',
+                                                                          'feature_names_in_',
+                                                                          'feature_range',
+                                                                          'min_',
+                                                                          'n_features_in_',
+                                                                          'n_samples_seen_',
+                                                                          'scale_']},
+                                        'signature': {'parameters': [{'annotation': None,
+                                                                      'default': None,
+                                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                                      'name': 'X',
+                                                                      'required': True}],
+                                                      'return_annotation': None},
+                                        'type': "<class 'method'>"},
+ 'create_dataset': {'execution_cell_source': {'cellno': 4, 'lineno': 2},
+                    'signature': {'parameters': [{'annotation': None,
+                                                  'default': None,
+                                                  'kind': 'POSITIONAL_OR_KEYWORD',
+                                                  'name': 'dataset',
+                                                  'required': True},
+                                                 {'annotation': None,
+                                                  'default': '1',
+                                                  'kind': 'POSITIONAL_OR_KEYWORD',
+                                                  'name': 'look_back',
+                                                  'required': False}],
+                                  'return_annotation': None},
+                    'type': "<class 'function'>"},
+ 'dataset': {'dtype': 'float64',
+             'execution_cell_source': {'cellno': 2, 'lineno': 3},
+             'has_nan': True,
+             'shape': (145, 1),
+             'type': 'numpy.ndarray',
+             'value_range': (0.0, 1.0)},
+ 'mean_squared_error': {'signature': {'parameters': [{'annotation': None,
+                                                      'default': None,
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'y_true',
+                                                      'required': True},
+                                                     {'annotation': None,
+                                                      'default': None,
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'y_pred',
+                                                      'required': True},
+                                                     {'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'sample_weight',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': "'uniform_average'",
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'multioutput',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'True',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'squared',
+                                                      'required': False}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ 'np': {'type': "<class 'module'>"},
+ 'plt': {'type': "<class 'module'>"},
+ 'scaler': {'class_name': 'MinMaxScaler',
+            'execution_cell_source': {'cellno': 2, 'lineno': 2},
+            'fitted_attributes': {'n_features_in_': 1, 'n_outputs_': None},
+            'is_fitted': True,
+            'module': 'sklearn.preprocessing._data',
+            'type': "<class 'sklearn.preprocessing._data.MinMaxScaler'>"},
+ 'test': {'dtype': 'float64',
+          'has_nan': True,
+          'shape': (48, 1),
+          'type': 'numpy.ndarray',
+          'value_range': (0.3803088803088803, 1.0)},
+ 'train': {'dtype': 'float64',
+           'has_nan': False,
+           'shape': (97, 1),
+           'type': 'numpy.ndarray',
+           'value_range': (0.0, 0.5965250965250966)}}
+# Target Cell:
+
+
+look_back = 12
+trainX, trainY = create_dataset(train, look_back)
+testX, testY = create_dataset(test, look_back)
+
+trainX = np.reshape(trainX, (trainX.shape[0], 1, trainX.shape[1]))
+testX = np.reshape(testX, (testX.shape[0], 1, testX.shape[1]))
+
+
+model = Sequential()
+model.add(LSTM(4, input_shape=(1, look_back),return_sequences=True))
+
+
+
+model.add(LSTM(4))
+model.add(Dense(1))
+
+model.compile(loss='mean_squared_error', optimizer='adam')
+model.fit(trainX, trainY, epochs=10, batch_size=1, verbose=2)
+
+
+trainPredict = model.predict(trainX)
+testPredict = model.predict(testX)
+
+trainPredict = scaler.inverse_transform(trainPredict)
+trainY = scaler.inverse_transform([trainY])
+testPredict = scaler.inverse_transform(testPredict)
+testY = scaler.inverse_transform([testY])
+
+trainScore = np.sqrt(mean_squared_error(trainY[0], trainPredict[:,0]))
+print('Train Score: %.2f RMSE' % (trainScore))
+testScore = np.sqrt(mean_squared_error(testY[0], testPredict[:,0]))
+print('Test Score: %.2f RMSE' % (testScore))
+
+trainPredictPlot = np.empty_like(dataset)
+trainPredictPlot[:, :] = np.nan
+trainPredictPlot[look_back:len(trainPredict)+look_back, :] = trainPredict
+
+testPredictPlot = np.empty_like(dataset)
+testPredictPlot[:, :] = np.nan
+testPredictPlot[len(trainPredict)+(look_back*2)+1:len(dataset)-1, :] = testPredict
+
+plt.plot(scaler.inverse_transform(dataset))
+plt.plot(trainPredictPlot)
+plt.plot(testPredictPlot)
+plt.show()

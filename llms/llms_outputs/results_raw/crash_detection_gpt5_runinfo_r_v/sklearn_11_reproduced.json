@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "x and y are empty arrays, so train_test_split with test_size=0.2 will raise a ValueError due to zero samples.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y are empty arrays; train_test_split with empty inputs will raise a ValueError due to zero samples, and fitting LinearRegression on empty data would also fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y are empty arrays; train_test_split with empty inputs will raise a ValueError due to insufficient samples.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y are empty arrays; train_test_split with empty arrays will raise a ValueError due to zero samples, and subsequent fit would also fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y are empty arrays; train_test_split with test_size=0.2 will raise a ValueError on empty input, or lr.fit will fail due to zero samples.",
+    "detection": true
+  }
+]

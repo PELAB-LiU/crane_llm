@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "seaborn.violinplot expects the DataFrame to be passed via the data= keyword; providing df as the first positional argument will be interpreted as data but older/newer versions may require keyword or additional args. However, this generally works: data positional, x specified by name, numeric y not provided so it will error because violinplot requires a numeric variable. With only x and no y, it will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Seaborn’s violinplot requires specifying data via the data= keyword; passing the DataFrame as the first positional argument will be interpreted as x and cause a type error. This will likely crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "seaborn.violinplot requires a y (numeric) or both x/y; providing only x with a DataFrame will error due to missing y. Current call likely raises a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "seaborn.violinplot expects data passed via the 'data' keyword; providing the DataFrame as the first positional argument will be interpreted as 'x' and cause a type mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "Seaborn's violinplot requires numeric data for plotting; only x='species' is provided without a y or data in long-form, which will raise a ValueError about neither 'x' nor 'y' being numeric. Therefore it will crash.",
+    "detection": true
+  }
+]

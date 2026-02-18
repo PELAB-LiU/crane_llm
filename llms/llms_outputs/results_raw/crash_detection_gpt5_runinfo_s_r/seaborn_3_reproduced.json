@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "sns.barplot is called with positional arguments (col, df), but its signature expects data and x/y as keywords; this will raise a TypeError. Other parts likely run.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot is called with arguments in the wrong order/types (dataframe passed as second positional arg instead of data=, and x/y not specified), which will raise a TypeError. Other parts likely run.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot is called with positional arguments (col, df), but it expects keyword args like x= and data=; this will raise a TypeError. Other parts (num_summary, boxplot) look fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot is called with positional args (col, df) instead of specifying data and x/y; seaborn expects data= and x/y columns, so this will raise a TypeError. Other parts likely run.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot(col, df) uses deprecated positional args and expects x/y or data; this will raise a TypeError. Other parts likely run.",
+    "detection": true
+  }
+]

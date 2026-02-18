@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "sns.barplot is called with a single positional argument (the Series) but without specifying x or y; this will raise a TypeError due to ambiguous signature. Other parts likely run.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot is called with a single positional argument (the Series) while the first parameter is data and requires x or y to be specified; this will raise a TypeError. Other parts (hist, boxplot with x=col) are fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot is called with a single positional argument (data) but no x/y specified; with a pandas Series it may be ambiguous and newer seaborn versions require specifying x or y, likely raising a ValueError. Other parts use valid columns and plotting.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot is called with a single positional argument df[col], but its signature expects data as first arg and x/y as keywords; passing a Series positionally will raise a TypeError. Other parts likely work.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot(df[col]) passes a Series positionally into the data parameter without specifying x or y, which raises a TypeError in recent seaborn versions. Other parts likely run.",
+    "detection": true
+  }
+]

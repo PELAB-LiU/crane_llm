@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT2Tokenizer until pad_token is set; attention_mask=input_ids.ne(None) will error due to NoneType. Also GPT2Tokenizer differs from earlier AutoTokenizer Fast; but main certain crash is comparing tensor to None.",
+    "detection": true
+  },
+  {
+    "reasoning": "attention_mask uses tokenizer.pad_token_id, which is None for GPT2Tokenizer unless explicitly set; although pad_token is set to eos_token, pad_token_id remains None, causing a tensor comparison with None and a runtime error.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT2Tokenizer; attention_mask uses input_ids.ne(None) which will error. Also tokenizer.encode is a method returning tensor OK; but pad_token_id None leads to TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT2 tokenizer; attention_mask=input_ids.ne(None) will raise a TypeError. Also df exists. Setting pad_token earlier doesn’t set pad_token_id automatically in GPT2Tokenizer (not fast).",
+    "detection": true
+  },
+  {
+    "reasoning": "tokenizer.pad_token_id is None for GPT-2 until pad_token is set; attention_mask=input_ids.ne(tokenizer.pad_token_id) compares to None and will error (or produce invalid tensor). Also GPT2Tokenizer vs previously AutoTokenizer mismatch isn't issue. Likely crash due to None pad_token_id used in attention_mask.",
+    "detection": true
+  }
+]

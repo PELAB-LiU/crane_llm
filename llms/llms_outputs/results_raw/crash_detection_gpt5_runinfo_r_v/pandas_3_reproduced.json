@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "procData joins name_count on RescuerID (mismatched key) then calls LabelEncoder.transform on test/train RescuerID containing unseen labels, which raises ValueError. Therefore executing on test will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "procData joins name_count on 'RescuerID' (a series indexed by names), causing all-NaN due to key mismatch, then applies LabelEncoder.transform to unseen test labels which raises an error; also tries string ops on Name with NaNs without fillna before lower().",
+    "detection": true
+  },
+  {
+    "reasoning": "procData joins name_count on 'RescuerID' which mismatches the Series index (names) and then applies LabelEncoder.transform to data['RescuerID'], which will raise ValueError for unseen labels in test; however, existence of unseen labels is not guaranteed, and pandas join mismatch may just produce NaNs. Not certain of a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "procData joins name_count on RescuerID first, but name_count was computed from train['Name']; joining on a non-matching key likely yields all NaN but not a crash. LabelEncoder.transform on unseen RescuerID values in test will raise ValueError; however, both train and test have RescuerID strings and encoder fitted on train, so transform should work. Potential bug: data['RescuerID'] becomes int array; then fillna on integer series has no effect but not a crash. SinNombre line uses .str on Name which may have NaN; pandas handles it. Dropping columns exists. Uncertain of any guaranteed exception, so not certain it will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "data.join(name_count, on='RescuerID') will fail since name_count index is names, not RescuerID; also RescuerID.transform on test contains unseen labels causing ValueError. Crash likely from mismatched join argument raising KeyError or transform unseen labels.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "residuals is a valid pandas Series without NaNs; max_acf_lags and max_pacf_lags are computed from its length and capped, and plotting functions are available. No obvious error sources.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals is a valid pandas Series without NaNs; lags are computed using len(residuals) and capped, which will be positive given a non-empty validation period; plot_acf/pacf and plt are imported and available.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals is a valid pandas Series without NaNs. max_acf_lags and max_pacf_lags are computed from its length and remain non-negative for typical validation windows; plotting functions and plt are imported.",
+    "detection": false
+  },
+  {
+    "reasoning": "max_acf_lags and max_pacf_lags are computed from len(residuals); if len(residuals) is 0 or 1, lags become negative and plot_acf/plot_pacf will error. No guarantee residuals length > 1.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals is a valid pandas Series without NaNs; max_acf_lags and max_pacf_lags are computed from its length and capped, so lags will be non-negative and within bounds. plot_acf/pacf and plt.show are available.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "images has shape (1, 20, 32, 32, 3) and dtype likely float; np.savetxt expects 1D or 2D array. Passing 5D will raise a ValueError about improper shape.",
+    "detection": true
+  },
+  {
+    "reasoning": "images is a float array with shape (1, 20, 32, 32, 3); np.savetxt expects 1D or 2D arrays. Passing a 5D array will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "images has shape (1, 20, 32, 32, 3) and dtype likely float; np.savetxt expects 1D/2D array and fmt %d, so passing a 5D array will raise a ValueError about 1D/2D required.",
+    "detection": true
+  },
+  {
+    "reasoning": "images is a NumPy array of shape (1, 20, 32, 32, 3) with float values in a small range; savetxt with fmt='%d' will cast to int but fails for arrays with more than 2 dimensions. savetxt expects 1D or 2D.",
+    "detection": true
+  },
+  {
+    "reasoning": "images is a 5D float array; np.savetxt expects 1D/2D. This will raise a ValueError about expected 1D or 2D array.",
+    "detection": true
+  }
+]

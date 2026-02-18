@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model's final layer has 20 classes but labels only span 1–4; also using SparseCategoricalCrossentropy(from_logits=True) with a softmax output is inconsistent. This is likely to cause a shape/logits mismatch or training instability.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model output uses softmax but loss is SparseCategoricalCrossentropy(from_logits=True), which expects logits; this mismatch will raise an error at training start.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects sparse integer labels and inputs shaped (100,100,3); provided train/val arrays match shapes and label types. Loss uses from_logits=True with softmax, which is inconsistent but typically does not crash during fit.",
+    "detection": false
+  },
+  {
+    "reasoning": "Shapes match the model input, labels are integer class indices, and validation data is provided correctly. The only potential issue is using SparseCategoricalCrossentropy with from_logits=True while the model ends with a softmax, but this typically does not cause an immediate crash, only suboptimal training.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model uses SparseCategoricalCrossentropy(from_logits=True) with a softmax output and 20 classes while labels are in {1..4}; from_logits=True is inconsistent but not a hard error, and extra output classes are allowed. Shapes match, so training should run.",
+    "detection": false
+  }
+]

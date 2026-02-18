@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "sns.barplot(df[col]) is called with a single positional argument; seaborn.barplot expects x/y or data with x=, y=. This will raise a TypeError. Other parts likely run.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot(df[col]) is invalid because barplot expects x/y or data with specified axes; passing a 1D Series as the sole positional argument will raise a TypeError. Other parts likely run.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot is called with a single positional argument df[col], but Seaborn barplot requires keyword x= or y= (or data= with x/y). This will raise a TypeError. Other parts likely run.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot(df[col]) will raise a TypeError because barplot expects data with specified x/y or a Series with index as x; passing a single positional argument without keywords is invalid in recent seaborn versions. Other parts likely run.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot(df[col]) uses a single positional argument; seaborn expects data and x/y specified or 1D categorical but passing a Series positionally is deprecated and may error. Also columns contain NaNs which can cause issues. Uncertain crash likelihood, so default to no.",
+    "detection": false
+  }
+]

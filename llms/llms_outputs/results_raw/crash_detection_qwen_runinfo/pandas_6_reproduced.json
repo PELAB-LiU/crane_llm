@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Order ID' column is of categorical type and contains string values that cannot be directly converted to integers, which will likely result in a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column is of categorical type and contains string values that cannot be directly converted to integers, which will likely result in a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column is of categorical type and contains string values that cannot be directly converted to integers, which will likely result in a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column is of categorical type and contains string values that cannot be directly converted to integers, which will likely result in a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column is of categorical type and contains string values that cannot be directly converted to integers, which will likely result in a ValueError.",
+    "detection": true
+  }
+]

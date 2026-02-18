@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "adv is a float32 numpy array of shape (224, 224, 3) with finite values; plt.imshow can display it without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is a float32 NumPy array with shape (224, 224, 3) and finite values; plt.imshow accepts this. No missing imports or device issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is a float32 numpy array with shape (224, 224, 3) and finite values; plt.imshow can display it without errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is a float32 numpy array of shape (224, 224, 3) within a displayable range; plt.imshow can handle it.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is a float32 numpy array with shape (224, 224, 3), a valid HxWx3 image; matplotlib.pyplot.imshow accepts this. Value range is fine; no NaNs.",
+    "detection": false
+  }
+]

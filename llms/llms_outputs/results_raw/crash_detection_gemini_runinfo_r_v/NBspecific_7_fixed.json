@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'baseYear' column contains both integers (2020) and strings ('2022'), which will cause a TypeError when attempting to sort or perform other numerical operations on this column. However, the target cell only groups by 'region' and sorts by '%percent emission', which are valid operations given the current data types.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'baseYear' column contains both integers (2020) and a string ('2022'), which will cause a TypeError when attempting to sort or perform other numerical operations on this column. However, the target cell only groups by 'region' and sorts by '%percent emission', which are both valid operations given the current data types.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'baseYear' column contains both integers (2020) and strings ('2022'), which will cause a TypeError when attempting to sort or perform other numerical operations on this column. However, the target cell only groups by 'region' and sorts by '%percent emission', which are valid operations given the current data types.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'baseYear' column contains both integers (2020) and strings ('2022'), which will cause a TypeError when attempting to sort or perform other numerical operations on this column. However, the target cell only groups by 'region' and sorts by '%percent emission', which are valid operations given the current data types.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'baseYear' column contains both integers (2020) and strings ('2022'), which will cause a TypeError when attempting to sort or perform other numerical operations on this column. However, the target cell only groups by 'region' and sorts by '%percent emission', which are valid operations given the current data types.",
+    "detection": false
+  }
+]

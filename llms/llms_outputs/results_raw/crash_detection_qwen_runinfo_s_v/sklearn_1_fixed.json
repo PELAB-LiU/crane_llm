@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `compute_class_weight` function requires `train_dataset.labels` to be defined, but the `train_dataset` object has an image shape of (48, 48, 3) while the model input shape is (64, 64, 3). This mismatch will cause an error when trying to compile and train the model with the dataset.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `compute_class_weight` function requires `train_dataset.labels` to be defined, but the `train_dataset` object has an image shape of (48, 48, 3) while the model input shape is (64, 64, 3). This mismatch will cause an error when trying to compile and train the model with the given dataset.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `compute_class_weight` function requires `train_dataset.labels` to be defined, but the `train_dataset` object has an image shape of (48, 48, 3) while the model input shape is (64, 64, 3). This mismatch will cause an error when trying to compile and train the model with the dataset.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `compute_class_weight` function requires `train_dataset.labels` to be defined, but the `train_dataset` object has an image shape of (48, 48, 3) while the model input shape is (64, 64, 3). This mismatch will cause an error when trying to compile and train the model with the dataset.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `compute_class_weight` function requires `train_dataset.labels` to be defined, but the `train_dataset` object has an image shape of (48, 48, 3) while the model input shape is (64, 64, 3). This mismatch will cause an error when trying to compile and train the model with the dataset.",
+    "detection": true
+  }
+]

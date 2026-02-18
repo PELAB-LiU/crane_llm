@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The DataFrame does not have a column named 'Total Gross (millions)'; it has 'Total_Gross'. Accessing a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The dataframe columns include 'Total_Gross' not 'Total Gross (millions)', so referencing 'Total Gross (millions)' will raise a KeyError. The second line uses 'Censor' which exists, but the first line will already crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DataFrame df does not contain a column named 'Total Gross (millions)'; it has 'Total_Gross' instead. Accessing a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DataFrame does not have a column named 'Total Gross (millions)'; it has 'Total_Gross' instead, so accessing df['Total Gross (millions)'] will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The Target Cell references columns 'Total Gross (millions)' which do not exist; the dataset has 'Total_Gross' instead. Accessing a non-existent column will raise a KeyError.",
+    "detection": true
+  }
+]

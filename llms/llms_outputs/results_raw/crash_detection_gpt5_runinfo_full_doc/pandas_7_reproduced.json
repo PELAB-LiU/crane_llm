@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Column 'released' is object with date-like strings but DataFrame has NaNs overall; converting to int will fail if any 'released' entries are NaN or non-parsable (e.g., 'nan').",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'released' is object strings like '2017-11-07', splitting by '-' and taking first yields numeric year strings convertible to int; existing NaNs may become 'nan' which will raise ValueError, but earlier data indicates 'released' dtype object with dates present and no explicit NaN count. Uncertain NaN presence means not certain to crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'released' contains strings like 'YYYY-MM-DD', but also likely NaNs or non-parsable values; str(x).split('-')[0] on NaN gives 'nan' which astype(int) will fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'released' is object strings like 'YYYY-MM-DD'; splitting by '-' and astype(int) should work. Some NaNs may exist, but str(x) handles them as 'nan', which will not convert to int and could raise ValueError.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'released' is object with date-like strings; splitting by '-' and casting year to int should work even for NaNs since str(NaN) becomes 'nan' causing int conversion to fail. Presence of NaNs indicates int() on 'nan' will raise ValueError.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "StandardScaler can handle NaNs by ignoring them during fit and preserving them on transform; train_df and test_df are numeric and aligned. No shape/type mismatch expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler can handle NaNs in fit/transform and both train_df and test_df are aligned numeric arrays; shapes are consistent. No error is expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler can handle NaNs in fit/transform, and both inputs are numeric dataframes; shapes align. The code should run without error, returning numpy arrays.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler can handle NaNs in fit/transform and both train_df and test_df are numeric with aligned columns; shapes are compatible. The code should run without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "StandardScaler can handle NaNs and both train_df and test_df are numeric and aligned; fit on train, transform on test should work.",
+    "detection": false
+  }
+]

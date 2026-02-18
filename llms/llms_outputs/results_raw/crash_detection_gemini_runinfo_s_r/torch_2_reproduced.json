@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model_quantization` function returns `None` because it does not have a return statement. This `None` value is then assigned to `quantized_vit`, but `quantized_vit` is not used later. The `inference` function is called with the original `model`, which is not quantized. Therefore, there is no crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None` because it does not have a return statement. This `None` value is then assigned to `quantized_vit`, but `quantized_vit` is not used later. The `inference` function is called with the original `model`, which is not quantized. Therefore, the code will execute without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None` because it does not have a return statement. This `None` value is then assigned to `quantized_vit`, but `quantized_vit` is not used in the subsequent `inference` call. The `inference` function uses the original `model`, which is not quantized. Therefore, the code will execute without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None` because it does not have a return statement. This `None` value is then assigned to `quantized_vit`, but `quantized_vit` is not used in the subsequent `inference` call. The `inference` function uses the original `model`, which is not quantized. Therefore, the code will execute without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_quantization` function returns `None` because it does not have a return statement. This `None` value is then assigned to `quantized_vit`, but `quantized_vit` is not used later. The `inference` function is called with the original `model`, which is not quantized. Therefore, the code will execute without crashing.",
+    "detection": false
+  }
+]

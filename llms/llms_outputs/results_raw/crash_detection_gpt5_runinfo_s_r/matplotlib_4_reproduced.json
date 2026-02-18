@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "labels is a one-hot tensor of shape (batch, 58); indexing class_names with labels[i] (a vector) will error. Also images[i] are float [0,1] so uint8 conversion is okay, but main error is using one-hot vector as index.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels is one-hot encoded (shape (None, 58)), but code indexes class_names with labels[i] (a vector), causing invalid list index. Should use argmax to get class index.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels is one-hot encoded (shape [None, 58]), but indexing class_names with labels[i] expects an integer class index; this will raise a TypeError. Also images[i] are float32 [0,1] from dataset, casting to uint8 will produce mostly 0/1 values but not crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels is a one-hot vector per sample (shape (None,58)), so indexing class_names[labels[i]] uses a tensor/array as index, causing a TypeError. Also images are float in [0,1]; uint8 cast ok but main issue remains.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels is a one-hot vector per sample; using it as an index (class_names[labels[i]]) will error because labels[i] is a tensor/array, not an integer index. Must argmax first.",
+    "detection": true
+  }
+]

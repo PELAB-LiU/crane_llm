@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Inception.forward returns a list of tensors, but GoogLeNet.forward treats outputs as tensors for subsequent layers, causing type errors when passing lists into layers expecting tensors.",
+    "detection": true
+  },
+  {
+    "reasoning": "Inception.forward returns a list of tensors, but GoogLeNet.forward treats outputs as tensors and applies pooling/linear ops, causing type errors. The first maxpool after inception3b receives a list instead of a tensor, leading to a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "Inception.forward returns a list of tensors, but GoogLeNet.forward uses outputs directly as tensors for subsequent layers, causing type/shape mismatches during execution.",
+    "detection": true
+  },
+  {
+    "reasoning": "Inception.forward returns a list of tensors, but GoogLeNet.forward uses its outputs as if they were tensors (e.g., passed to nn.MaxPool2d), causing a type error. Thus, executing the target cell will raise an exception.",
+    "detection": true
+  },
+  {
+    "reasoning": "Inception.forward returns a list of feature maps, but GoogLeNet.forward treats outputs as tensors and passes them into layers expecting tensors, leading to type and shape mismatches. The forward call will error out.",
+    "detection": true
+  }
+]

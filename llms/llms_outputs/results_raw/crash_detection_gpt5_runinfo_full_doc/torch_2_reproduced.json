@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model_quantization does not return a value, so quantized_vit will be None but unused; inference uses CPU/GPU model with dataloader shapes matching model input. No obvious exceptions.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_quantization returns None, so quantized_vit is None but unused; inference expects labels in range 1..1000 and adds +1 to predictions, but class_dict maps 50 classes and labels are ints as strings; this may reduce accuracy but not crash. All required vars are defined.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_quantization does not return a value, so quantized_vit becomes None but is unused; inference uses a valid model and dataloader. No obvious type/device mismatches. Unlikely to crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_quantization does not return a value, so quantized_vit will be None but unused. inference expects model on correct device and uses labels_process with class_dict of int->str; it converts back to ints and tensor, matching predicted_labels+1. Nothing indicates a runtime error.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_quantization does not return a value, so quantized_vit becomes None, but it's not used later; inference expects model on correct device and works. No obvious type/shape/device errors are evident.",
+    "detection": false
+  }
+]

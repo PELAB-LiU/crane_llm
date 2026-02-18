@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Order ID' column contains values that are numeric strings, but there is no guarantee that all values can be converted to integers without errors. For example, if any value is not a valid integer string, the conversion will fail.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Order ID' column contains values that are numeric strings, but there is no guarantee that all values can be converted to integers without errors. For example, if any value is not a valid integer string, the conversion will fail.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Order ID' column contains values that are numeric strings, but there is no guarantee that all values can be converted to integers without errors. For example, if any value is not a valid integer string, the conversion will fail.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Order ID' column contains values that are numeric strings, but there is no guarantee that all values can be converted to integers without errors. For example, if any value is not a valid integer string, the conversion will fail.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'Order ID' column contains values that are numeric strings, but there is no guarantee that all values can be converted to integers without errors. For example, if any value is not a valid integer string, the conversion will fail.",
+    "detection": false
+  }
+]

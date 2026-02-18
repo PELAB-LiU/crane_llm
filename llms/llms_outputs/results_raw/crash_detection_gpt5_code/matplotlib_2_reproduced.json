@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "custom_dataset.labels[0] is a scalar tensor and cannot be displayed with plt.imshow, which expects 2D or 3D array; this will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "custom_dataset.labels[0] is a scalar tensor, not image-like; passing it to plt.imshow will raise a TypeError. Other lines are fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "Second imshow tries to plot a 0-dim scalar tensor (label) as an image, which Matplotlib cannot handle. Also indexing uses labels[0] while title uses labels_array[1], but the crash comes from imshow on the label.",
+    "detection": true
+  },
+  {
+    "reasoning": "custom_dataset.labels[0] is a 0-D tensor (scalar), but plt.imshow expects a 2D/3D array; this will raise a TypeError. Also mixing two imshow calls without clearing may overlay, but not crash. Title access is fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "custom_dataset.labels[0] is a scalar tensor; plt.imshow expects 2D/3D array, causing a TypeError. The first imshow on the image is fine.",
+    "detection": true
+  }
+]

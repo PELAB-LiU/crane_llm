@@ -1,0 +1,368 @@
+# Executed Cells:
+## Cell 1:
+
+import tensorflow as tf
+from tensorflow import keras
+
+## Cell 2:
+
+from tensorflow import keras
+
+(train_images, train_labels), (test_images, test_labels) = keras.datasets.cifar10.load_data()
+train_images.shape, train_labels.shape, test_images.shape, test_labels.shape
+
+# Current relevent runtime information:
+{'__method__plt_axis': {'signature': {'parameters': [{'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'POSITIONAL_ONLY',
+                                                      'name': 'arg',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'True',
+                                                      'kind': 'KEYWORD_ONLY',
+                                                      'name': 'emit',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': None,
+                                                      'kind': 'VAR_KEYWORD',
+                                                      'name': 'kwargs',
+                                                      'required': True}],
+                                      'return_annotation': None},
+                        'type': "<class 'function'>"},
+ '__method__plt_figure': {'doc_importants': {'notes': 'A newly created figure '
+                                                      'is passed to the '
+                                                      '`~.FigureCanvasBase.new_manager` '
+                                                      'method or the '
+                                                      '`new_figure_manager` '
+                                                      'function provided by '
+                                                      'the current backend, '
+                                                      'which install a canvas '
+                                                      'and a manager on the '
+                                                      'figure. Once this is '
+                                                      'done, '
+                                                      ':rc:`figure.hooks` are '
+                                                      'called, one at a time, '
+                                                      'on the figure; these '
+                                                      'hooks allow arbitrary '
+                                                      'customization of the '
+                                                      'figure (e.g., attaching '
+                                                      'callbacks) or of '
+                                                      'associated elements '
+                                                      '(e.g., modifying the '
+                                                      'toolbar).  See '
+                                                      ':doc:`/gallery/user_interfaces/mplcvd` '
+                                                      'for an example of '
+                                                      'toolbar customization. '
+                                                      'If you are creating '
+                                                      'many figures, make sure '
+                                                      'you explicitly call '
+                                                      '`.pyplot.close` on the '
+                                                      'figures you are not '
+                                                      'using, because this '
+                                                      'will enable pyplot to '
+                                                      'properly clean up the '
+                                                      'memory. '
+                                                      '`~matplotlib.rcParams` '
+                                                      'defines the default '
+                                                      'values, which can be '
+                                                      'modified in the '
+                                                      'matplotlibrc file.'},
+                          'signature': {'parameters': [{'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'num',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'figsize',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'dpi',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'facecolor',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'edgecolor',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'True',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'frameon',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': '<class '
+                                                                   "'matplotlib.figure.Figure'>",
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'FigureClass',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'False',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'clear',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ '__method__plt_imshow': {'doc_importants': {'notes': 'Unless *extent* is '
+                                                      'used, pixel centers '
+                                                      'will be located at '
+                                                      'integer coordinates. In '
+                                                      'other words: the origin '
+                                                      'will coincide with the '
+                                                      'center of pixel (0, 0). '
+                                                      'There are two common '
+                                                      'representations for RGB '
+                                                      'images with an alpha '
+                                                      'channel: -   Straight '
+                                                      '(unassociated) alpha: '
+                                                      'R, G, and B channels '
+                                                      'represent the color of '
+                                                      'the pixel, disregarding '
+                                                      'its opacity. -   '
+                                                      'Premultiplied '
+                                                      '(associated) alpha: R, '
+                                                      'G, and B channels '
+                                                      'represent the color of '
+                                                      'the pixel, adjusted for '
+                                                      'its opacity by '
+                                                      'multiplication. '
+                                                      '`~matplotlib.pyplot.imshow` '
+                                                      'expects RGB images '
+                                                      'adopting the straight '
+                                                      '(unassociated) alpha '
+                                                      'representation.'},
+                          'signature': {'parameters': [{'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'X',
+                                                        'required': True},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'cmap',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'POSITIONAL_OR_KEYWORD',
+                                                        'name': 'norm',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'aspect',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'interpolation',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'alpha',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'vmin',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'vmax',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'origin',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'extent',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'interpolation_stage',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'True',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'filternorm',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': '4.0',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'filterrad',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'resample',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'url',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': 'None',
+                                                        'kind': 'KEYWORD_ONLY',
+                                                        'name': 'data',
+                                                        'required': False},
+                                                       {'annotation': None,
+                                                        'default': None,
+                                                        'kind': 'VAR_KEYWORD',
+                                                        'name': 'kwargs',
+                                                        'required': True}],
+                                        'return_annotation': None},
+                          'type': "<class 'function'>"},
+ '__method__plt_subplot': {'doc_importants': {'notes': 'Creating a new Axes '
+                                                       'will delete any '
+                                                       'preexisting Axes that '
+                                                       'overlaps with it '
+                                                       'beyond sharing a '
+                                                       'boundary:: import '
+                                                       'matplotlib.pyplot as '
+                                                       'plt # plot a line, '
+                                                       'implicitly creating a '
+                                                       'subplot(111) '
+                                                       'plt.plot([1, 2, 3]) # '
+                                                       'now create a subplot '
+                                                       'which represents the '
+                                                       'top plot of a grid # '
+                                                       'with 2 rows and 1 '
+                                                       'column. Since this '
+                                                       'subplot will overlap '
+                                                       'the # first, the plot '
+                                                       '(and its axes) '
+                                                       'previously created, '
+                                                       'will be removed '
+                                                       'plt.subplot(211) If '
+                                                       'you do not want this '
+                                                       'behavior, use the '
+                                                       '`.Figure.add_subplot` '
+                                                       'method or the '
+                                                       '`.pyplot.axes` '
+                                                       'function instead. If '
+                                                       'no *kwargs* are passed '
+                                                       'and there exists an '
+                                                       'Axes in the location '
+                                                       'specified by *args* '
+                                                       'then that Axes will be '
+                                                       'returned rather than a '
+                                                       'new Axes being '
+                                                       'created. If *kwargs* '
+                                                       'are passed and there '
+                                                       'exists an Axes in the '
+                                                       'location specified by '
+                                                       '*args*, the projection '
+                                                       'type is the same, and '
+                                                       'the *kwargs* match '
+                                                       'with the existing '
+                                                       'Axes, then the '
+                                                       'existing Axes is '
+                                                       'returned.  Otherwise a '
+                                                       'new Axes is created '
+                                                       'with the specified '
+                                                       'parameters.  We save a '
+                                                       'reference to the '
+                                                       '*kwargs* which we use '
+                                                       'for this comparison.  '
+                                                       'If any of the values '
+                                                       'in *kwargs* are '
+                                                       'mutable we will not '
+                                                       'detect the case where '
+                                                       'they are mutated. In '
+                                                       'these cases we suggest '
+                                                       'using '
+                                                       '`.Figure.add_subplot` '
+                                                       'and the explicit Axes '
+                                                       'API rather than the '
+                                                       'implicit pyplot API.'},
+                           'signature': {'parameters': [{'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'VAR_POSITIONAL',
+                                                         'name': 'args',
+                                                         'required': True},
+                                                        {'annotation': None,
+                                                         'default': None,
+                                                         'kind': 'VAR_KEYWORD',
+                                                         'name': 'kwargs',
+                                                         'required': True}],
+                                         'return_annotation': None},
+                           'type': "<class 'function'>"},
+ '__method__plt_title': {'signature': {'parameters': [{'annotation': None,
+                                                       'default': None,
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'label',
+                                                       'required': True},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'fontdict',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'loc',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'POSITIONAL_OR_KEYWORD',
+                                                       'name': 'pad',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': 'None',
+                                                       'kind': 'KEYWORD_ONLY',
+                                                       'name': 'y',
+                                                       'required': False},
+                                                      {'annotation': None,
+                                                       'default': None,
+                                                       'kind': 'VAR_KEYWORD',
+                                                       'name': 'kwargs',
+                                                       'required': True}],
+                                       'return_annotation': None},
+                         'type': "<class 'function'>"},
+ 'class_names': {'length': 2,
+                 'type': "<class 'list'>",
+                 'value_info': {'num_unique': 2,
+                                'unique_values': ['PNEUMONIA', 'NORMAL'],
+                                'value_type': 'categorical or object'}},
+ 'i': {'type': "<class 'int'>", 'value': 333},
+ 'plt': {'type': "<class 'module'>"},
+ 'train_images': {'dtype': 'uint8',
+                  'has_nan': False,
+                  'shape': (50000, 32, 32, 3),
+                  'type': 'numpy.ndarray',
+                  'value_range': (0, 255)},
+ 'train_labels': {'dtype': 'uint8',
+                  'has_nan': False,
+                  'shape': (50000, 1),
+                  'type': 'numpy.ndarray',
+                  'value_range': (0, 9)}}
+# Target Cell:
+
+import matplotlib.pyplot as plt
+
+class_names = "airplane automobile bird cat deer dog frog horse ship truck".split()
+
+plt.figure(figsize=(10, 10))
+for i in range(25):
+    plt.subplot(5, 5, i+1)
+    plt.imshow(train_images[i].astype("uint8"))
+    plt.title(class_names[train_labels[i]])
+    plt.axis("off")

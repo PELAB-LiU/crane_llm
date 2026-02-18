@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `CustomModel` expects `labels` to be a 1D tensor with shape (batch_size,), but `target` is a 2D tensor with shape (1, 3). This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `CustomModel` expects `labels` to be a 1D tensor with shape (batch_size,), but `target` is a 2D tensor with shape (1, 3). This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `CustomModel` expects `labels` to be a 1D tensor with shape (batch_size,), but `target` is a 2D tensor with shape (1, 3). This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `CustomModel` expects `labels` to be a 1D tensor with shape (batch_size,), but `target` is a 2D tensor with shape (1, 3). This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `CustomModel` expects `labels` to be a 1D tensor with shape (batch_size,), but `target` is a 2D tensor with shape (1, 3). This mismatch will cause a crash.",
+    "detection": true
+  }
+]

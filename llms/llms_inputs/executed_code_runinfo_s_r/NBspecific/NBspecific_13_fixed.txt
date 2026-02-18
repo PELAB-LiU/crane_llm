@@ -1,0 +1,56 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+from matplotlib import pyplot as plt
+
+## Cell 2:
+
+df = pd.read_csv("data/heart.csv")
+
+## Cell 3:
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+df=pd.read_csv("data/heart.csv")
+
+y = df['output']
+X = df.drop(['output'], axis=1)
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+
+model = DecisionTreeClassifier()
+
+
+model.fit(X_train, y_train)
+
+
+y_hat = model.predict(X_test)
+
+
+accuracy = accuracy_score(y_test, y_hat)
+print("Accuracy:", accuracy)
+
+# Current relevent runtime information:
+{'DecisionTreeClassifier': {'type': "<class 'abc.ABCMeta'>"},
+ 'X': {'shape': (303, 13), 'type': 'pandas.core.frame.DataFrame'},
+ '__method__model_fit': {'type': "<class 'method'>"},
+ '__method__model_predict': {'type': "<class 'method'>"},
+ 'accuracy_score': {'type': "<class 'function'>"},
+ 'model': {'fitted_attributes': {'n_features_in_': 13, 'n_outputs_': 1},
+           'is_fitted': True,
+           'module': 'sklearn.tree._classes',
+           'type': "<class 'sklearn.tree._classes.DecisionTreeClassifier'>"},
+ 'y': {'dtype': 'int64', 'length': 303, 'type': 'pandas.core.series.Series'},
+ 'y_hat': {'dtype': 'int64', 'shape': (76,), 'type': 'numpy.ndarray'}}
+# Target Cell:
+
+from sklearn.tree import DecisionTreeClassifier
+model = DecisionTreeClassifier()
+model .fit(X,y)
+y_hat = model.predict(X)
+print ( accuracy_score(y_hat,y))

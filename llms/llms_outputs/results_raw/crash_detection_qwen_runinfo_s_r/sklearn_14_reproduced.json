@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model is an instance of LinearRegression and has not been fitted yet. The X_train and y_train are of appropriate types and shapes for fitting the model.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model is an instance of LinearRegression and has not been fitted yet. The X_train and y_train are of appropriate types and shapes for fitting the model.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model is an instance of LinearRegression and has not been fitted yet. The X_train and y_train are of appropriate types and shapes for fitting the model.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model is an instance of LinearRegression and has not been fitted yet. The X_train and y_train are of appropriate types and shapes for fitting the model.",
+    "detection": false
+  },
+  {
+    "reasoning": "The model is an instance of LinearRegression and has not been fitted yet. The X_train and y_train are of appropriate types and shapes for fitting the model.",
+    "detection": false
+  }
+]

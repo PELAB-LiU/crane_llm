@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Installs' column may contain non-integer values such as commas or plus signs, which would prevent the conversion to integer and cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column may contain non-integer values such as commas or plus signs, which would prevent the conversion to integer and cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column may contain non-integer values such as commas or plus signs, which would prevent the conversion to integer and cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column may contain non-integer values such as commas or plus signs, which would prevent the conversion to integer and cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column may contain non-integer values such as commas or plus signs, which would prevent the conversion to integer and cause a crash.",
+    "detection": true
+  }
+]

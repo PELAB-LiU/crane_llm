@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "sns.violinplot accepts a DataFrame via the first positional 'data' argument and a categorical column name for x; df exists, has no NaNs, and species is valid. No incompatible types or missing columns.",
+    "detection": false
+  },
+  {
+    "reasoning": "sns.violinplot supports signature (data=None, x=None, y=None, ...). Passing data=df and x='species' is valid; dataframe has no NaNs. Plotting should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "sns.violinplot expects numeric data for distribution; passing only x='species' without y selects no numeric variable, causing an error. It should be called with y specifying a numeric column or with data melted.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.violinplot supports passing data as first arg and x as a categorical column; df has no NaNs and species exists. This should run without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "sns.violinplot supports data as first arg and x as column; species is categorical without NaNs. Should execute successfully.",
+    "detection": false
+  }
+]

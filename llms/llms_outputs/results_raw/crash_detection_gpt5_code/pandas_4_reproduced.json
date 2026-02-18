@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "plt.imshow(img[0]) passes a 2D array while img is already 3-channel; likely intended to pass the full image. Also, when i=2 (emotion==1) those rows were dropped, so data[data['emotion']==1].iloc[0] will raise IndexError.",
+    "detection": true
+  },
+  {
+    "reasoning": "plt.imshow(img[0]) passes a 2D array instead of the 3-channel image; this is valid. However, selecting face with data[data['emotion'] == i-1].iloc[0] will fail when that subset is empty because emotion 1 (disgust) was removed.",
+    "detection": true
+  },
+  {
+    "reasoning": "plt.imshow(img[0]) passes a 2D array slice (shape 48x48) from a 3-channel image; Matplotlib accepts 2D arrays, so not a crash. However, selecting face with data[data['emotion']==i-1].iloc[0] will fail when i-1==1 (disgust) because those rows were dropped, causing an IndexError. Therefore it will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "plt.imshow(img[0]) indexes the first row of the image (shape 48x48x3), producing shape (48,3) which is invalid for imshow; should pass the full image. Also, for i where no rows exist (e.g., emotion 1 removed), .iloc[0] will raise IndexError.",
+    "detection": true
+  },
+  {
+    "reasoning": "emotion_map has no key 1 after disgust removal, and data rows with emotion==1 were dropped; selecting data[data['emotion']==i-1] for i=2 yields empty, so .iloc[0] will IndexError. Also plt.imshow(img[0]) is incorrect shape (should pass img).",
+    "detection": true
+  }
+]

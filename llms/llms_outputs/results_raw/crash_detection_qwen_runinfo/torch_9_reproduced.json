@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The dataloader contains images of varying sizes, which will cause an error when trying to stack them into a batch due to size mismatch. This will lead to a crash when attempting to display the batch.",
+    "detection": true
+  },
+  {
+    "reasoning": "The dataloader contains images of varying sizes, which will cause an error when trying to stack them into a batch due to size mismatch. This will lead to a crash when attempting to display the batch.",
+    "detection": true
+  },
+  {
+    "reasoning": "The dataloader contains images of varying sizes, which will cause an error when trying to stack them into a batch due to size mismatch. This will lead to a crash when attempting to display the batch.",
+    "detection": true
+  },
+  {
+    "reasoning": "The dataloader contains images of varying sizes, which will cause an error when trying to stack them into a batch due to size mismatch. This will lead to a crash when attempting to display the batch.",
+    "detection": true
+  },
+  {
+    "reasoning": "The dataloader contains images of varying sizes, which will cause an error when trying to stack them into a batch due to size mismatch. This will lead to a crash when attempting to display the batch.",
+    "detection": true
+  }
+]

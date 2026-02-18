@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "evaluate_fitness uses lr expecting 2-feature inputs from transform_gp_structure, but X_train/X_test are 2D arrays with many features; transform_gp_structure passes rows as many arguments; gp PrimitiveSet has arity=2 input terminals so compiled expr expects 2 args, causing a TypeError due to argument mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "evaluate_fitness uses lr.fit/predict on transformed arrays but X_train/X_test are 2D arrays; transform_gp_structure returns 1D array, causing shape mismatch in fit. Likely ValueError when fitting LogisticRegression or during predict_proba.",
+    "detection": true
+  },
+  {
+    "reasoning": "evaluate_fitness uses lr.fit on X_train_gp, but X_train is a 2D array from StandardScaler while transform_gp_structure compiles expressions with arity=2 and applies them row-wise, producing a 1D array; lr.fit expects 2D input, likely causing a shape error. Additionally, gp.PrimitiveSet with arity=2 mismatches the high-dimensional X_train rows.",
+    "detection": true
+  },
+  {
+    "reasoning": "evaluate_fitness transforms X_train/X_test with gp expressions that expect arity=2 inputs, but X_train/X_test are high-dimensional arrays from StandardScaler, so expr(*row) will receive >2 arguments causing a TypeError. Thus fitness evaluation will fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "toolbox.select requires a positional k argument, but only population is provided, leading to a TypeError about missing required positional argument 'k'.",
+    "detection": true
+  }
+]

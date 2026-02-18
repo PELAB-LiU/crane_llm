@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'released' column is being transformed to extract the year part. However, there is no guarantee that 'released' contains date strings in the 'YYYY-MM-DD' format, and attempting to split non-date strings or missing values could lead to errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column is being transformed to extract the year part. However, there is no guarantee that 'released' contains date strings in the 'YYYY-MM-DD' format, which could lead to an error if the format is different or if the column contains non-string data types.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column is being transformed to extract the year part. However, there is no guarantee that 'released' contains date strings in the 'YYYY-MM-DD' format, and attempting to split non-date strings or missing values could lead to errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column is being transformed to extract the year part. However, there is no guarantee that 'released' contains date strings in the 'YYYY-MM-DD' format, and attempting to split non-date strings or missing values could lead to errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column is being transformed to extract the year part. However, there is no guarantee that 'released' contains date strings in the 'YYYY-MM-DD' format, and attempting to split non-date strings or missing values could lead to errors.",
+    "detection": false
+  }
+]

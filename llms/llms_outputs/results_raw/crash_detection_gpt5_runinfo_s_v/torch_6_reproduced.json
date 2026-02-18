@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "run_model uses CrossEntropyLoss with one-hot float labels (6294) and applies to outputs shaped [batch,6294], but then in accuracy computes argmax over entire tensor without dim, returning a single index over all elements; however this won’t crash. Main crash: CrossEntropyLoss expects class indices (Long) or probabilities with class dimension and target as class indices; passing one-hot float tensor will raise a runtime error about target dtype/shape.",
+    "detection": true
+  },
+  {
+    "reasoning": "run_model uses CrossEntropyLoss but labels are one-hot float tensors of size 6294; CrossEntropyLoss expects class indices (Long) or logits with target as class indices. This will raise a size/type mismatch error when computing loss.",
+    "detection": true
+  },
+  {
+    "reasoning": "CrossEntropyLoss expects class indices (LongTensor) but labels are one-hot FloatTensors, causing a dtype/shape mismatch error when computing loss. Also argmax over entire batch tensor without dim will be wrong shape.",
+    "detection": true
+  },
+  {
+    "reasoning": "CrossEntropyLoss expects class indices (LongTensor) but labels are one-hot float tensors with size 6294; this will raise a target dtype/shape error when computing loss. Additionally, argmax is taken over entire tensor without dim which may still work but loss will crash first.",
+    "detection": true
+  },
+  {
+    "reasoning": "run_model uses CrossEntropyLoss with labels shaped as one-hot float tensors, but CrossEntropyLoss expects class indices (LongTensor) for targets. This will raise a RuntimeError on the first training step.",
+    "detection": true
+  }
+]

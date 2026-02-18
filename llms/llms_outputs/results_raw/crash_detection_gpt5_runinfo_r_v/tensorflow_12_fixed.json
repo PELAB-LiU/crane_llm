@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model uses SparseCategoricalCrossentropy(from_logits=True) but final layer has softmax; however Keras tolerates this. Input shapes likely match and labels are within [0,19] classes though only 4 present. No dtype issues for uint8 images. Fit should run.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model uses SparseCategoricalCrossentropy(from_logits=True) but final layer has softmax, causing a logits/softmax mismatch error during training.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects SparseCategoricalCrossentropy with from_logits=True but final layer uses softmax; this mismatch may affect learning but not cause a runtime error. Data shapes/types (N,100,100,3) and integer labels 1-4 align with multi-class training, so fit should run.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model uses SparseCategoricalCrossentropy(from_logits=True) but final layer is softmax; however Keras will still run though metrics may be inconsistent. Input shapes and label ranges match, and data types are acceptable.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model uses SparseCategoricalCrossentropy(from_logits=True) but final layer has softmax; this mismatch can cause incorrect training but not a runtime crash. Input shapes and label ranges match expected dimensions.",
+    "detection": false
+  }
+]

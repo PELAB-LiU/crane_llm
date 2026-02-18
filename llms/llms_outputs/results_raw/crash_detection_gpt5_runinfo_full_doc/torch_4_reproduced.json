@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The code references vocab.label_size, but Vocab defines label_size as a method, not an attribute. Passing the method object to nn.Linear as out_features will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Likely crash: self.out uses vocab.label_size which is a method, not invoked, passing function as out_features to nn.Linear. Should be vocab.label_size().",
+    "detection": true
+  },
+  {
+    "reasoning": "The code references vocab.label_size as an attribute, but Vocab defines a method label_size(self) rather than a property, so passing vocab.label_size to nn.Linear will raise a TypeError. All other dependencies are defined.",
+    "detection": true
+  },
+  {
+    "reasoning": "The Model class references global variables and modules already defined, uses the provided vocab, and performs only module initialization without running forward passes; no undefined names or shape-dependent ops are executed now.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model initializes layers using previously defined classes and vocab; all referenced variables exist. No obvious shape or type mismatches at init time, and forward isn't executed yet.",
+    "detection": false
+  }
+]

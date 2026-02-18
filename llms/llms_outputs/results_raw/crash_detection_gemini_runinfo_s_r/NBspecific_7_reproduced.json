@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The column '%percent emission' does not exist in the DataFrame 'df', which will cause a KeyError when attempting to sort by it.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column '%percent emission' does not exist in the DataFrame 'df', which will cause a KeyError when attempting to sort by it.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column '%percent emission' does not exist in the DataFrame 'df', which will cause a KeyError when attempting to sort by it.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column '%percent emission' does not exist in the DataFrame 'df', which will cause a KeyError when attempting to sort by it.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column '%percent emission' does not exist in the DataFrame 'df', which will cause a KeyError when attempting to sort by it.",
+    "detection": true
+  }
+]

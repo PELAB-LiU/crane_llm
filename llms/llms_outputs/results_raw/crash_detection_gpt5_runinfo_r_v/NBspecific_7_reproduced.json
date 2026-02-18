@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Column '%percent emission' likely doesn't exist in df, causing KeyError when sorting, though groupby and get_group keys appear valid. Not certain about column presence, but given no prior creation of such a column, crash is likely.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column '%percent emission' likely does not exist in df (not listed in columns), so sort_values will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The code groups by 'region' and then sorts by a column named '%percent emission', but the available columns listed do not include '%percent emission'. Sorting by a non-existent column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column '%percent emission' does not exist in df; groupby and get_group are fine, but sort_values on a missing column will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column '%percent emission' is not present in df per the provided columns, so sort_values will raise a KeyError.",
+    "detection": true
+  }
+]

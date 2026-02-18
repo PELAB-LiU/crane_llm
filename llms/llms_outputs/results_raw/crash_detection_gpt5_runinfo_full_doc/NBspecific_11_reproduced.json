@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "adv is a float32 numpy array with shape (3, 224, 224), which is valid for plt.imshow expecting (M, N, 3) so the channels-first format is incorrect and will likely display improperly but not crash. Matplotlib accepts float values outside [0,1] by clipping; no type errors expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is a float32 numpy array with shape (3, 224, 224), which is a valid RGB image layout for plt.imshow. Value range is arbitrary but acceptable; imshow will scale or display as-is without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is a numpy array of shape (3, 224, 224) with float32 values; matplotlib expects image arrays in (M, N, 3) or (M, N, 4) for RGB(A). Passing channel-first will not crash but will display incorrectly or raise a shape error depending on version. It typically raises a TypeError about invalid shape.",
+    "detection": true
+  },
+  {
+    "reasoning": "adv has shape (3, 224, 224) and dtype float32, which is a valid HxWx3 format when transposed; but here it's CHW, not HWC, so plt.imshow expects (224, 224, 3). This mismatch likely causes incorrect display but not a crash; Matplotlib will interpret it as 3 layers and try to map, which can error if shape is (M, N, 3) required.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is a 3x224x224 float32 array; matplotlib expects HxWxC. Passing CxHxW may display incorrectly but won't crash. dtype and value range are acceptable.",
+    "detection": false
+  }
+]

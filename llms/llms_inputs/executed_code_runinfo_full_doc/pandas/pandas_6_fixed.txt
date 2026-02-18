@@ -1,0 +1,158 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+## Cell 2:
+
+df= pd.read_csv(r'data/Retailsales.csv')
+df=df.drop(columns='Unnamed: 0')
+df.head()
+
+## Cell 3:
+
+df=df.dropna(how='all')
+df
+
+# Current relevent runtime information:
+{'__method__df_dropna': {'context': {'public_attributes': []},
+                         'signature': {'parameters': [{'annotation': "'Axis'",
+                                                       'default': '0',
+                                                       'kind': 'KEYWORD_ONLY',
+                                                       'name': 'axis',
+                                                       'required': False},
+                                                      {'annotation': "'AnyAll "
+                                                                     '| '
+                                                                     "lib.NoDefault'",
+                                                       'default': '<no_default>',
+                                                       'kind': 'KEYWORD_ONLY',
+                                                       'name': 'how',
+                                                       'required': False},
+                                                      {'annotation': "'int | "
+                                                                     "lib.NoDefault'",
+                                                       'default': '<no_default>',
+                                                       'kind': 'KEYWORD_ONLY',
+                                                       'name': 'thresh',
+                                                       'required': False},
+                                                      {'annotation': "'IndexLabel "
+                                                                     "| None'",
+                                                       'default': 'None',
+                                                       'kind': 'KEYWORD_ONLY',
+                                                       'name': 'subset',
+                                                       'required': False},
+                                                      {'annotation': "'bool'",
+                                                       'default': 'False',
+                                                       'kind': 'KEYWORD_ONLY',
+                                                       'name': 'inplace',
+                                                       'required': False},
+                                                      {'annotation': "'bool'",
+                                                       'default': 'False',
+                                                       'kind': 'KEYWORD_ONLY',
+                                                       'name': 'ignore_index',
+                                                       'required': False}],
+                                       'return_annotation': "'DataFrame | "
+                                                            "None'"},
+                         'type': "<class 'method'>"},
+ '__method__pd_to_numeric': {'signature': {'parameters': [{'annotation': None,
+                                                           'default': None,
+                                                           'kind': 'POSITIONAL_OR_KEYWORD',
+                                                           'name': 'arg',
+                                                           'required': True},
+                                                          {'annotation': "'DateTimeErrorChoices'",
+                                                           'default': "'raise'",
+                                                           'kind': 'POSITIONAL_OR_KEYWORD',
+                                                           'name': 'errors',
+                                                           'required': False},
+                                                          {'annotation': '"Literal[\'integer\', '
+                                                                         "'signed', "
+                                                                         "'unsigned', "
+                                                                         "'float'] "
+                                                                         '| '
+                                                                         'None"',
+                                                           'default': 'None',
+                                                           'kind': 'POSITIONAL_OR_KEYWORD',
+                                                           'name': 'downcast',
+                                                           'required': False},
+                                                          {'annotation': "'DtypeBackend "
+                                                                         '| '
+                                                                         "lib.NoDefault'",
+                                                           'default': '<no_default>',
+                                                           'kind': 'POSITIONAL_OR_KEYWORD',
+                                                           'name': 'dtype_backend',
+                                                           'required': False}],
+                                           'return_annotation': None},
+                             'type': "<class 'function'>"},
+ 'df': {'execution_cell_source': {'cellno': 4, 'lineno': 1},
+        'has_nan': False,
+        'per_column': {'Order Date': {'dtype': 'object',
+                                      'example_values': ['02/21/19 18:29',
+                                                         '11/05/19 09:33',
+                                                         '03/13/19 17:25',
+                                                         '01/20/19 16:46',
+                                                         '07/21/19 14:46'],
+                                      'num_unique': 142396,
+                                      'type': 'categorical'},
+                       'Order ID': {'dtype': 'object',
+                                    'example_values': ['220782',
+                                                       '295922',
+                                                       '198723',
+                                                       '270203',
+                                                       '246400'],
+                                    'num_unique': 178438,
+                                    'type': 'categorical'},
+                       'Price Each': {'dtype': 'object',
+                                      'example_values': ['11.99',
+                                                         '300.0',
+                                                         '2.99',
+                                                         '14.95',
+                                                         '700'],
+                                      'num_unique': 24,
+                                      'type': 'categorical'},
+                       'Product': {'dtype': 'object',
+                                   'example_values': ['iPhone',
+                                                      'AAA Batteries (4-pac...',
+                                                      'Wired Headphones',
+                                                      'LG Dryer',
+                                                      'Google Phone'],
+                                   'num_unique': 20,
+                                   'type': 'categorical'},
+                       'Purchase Address': {'dtype': 'object',
+                                            'example_values': ['189 2nd St, '
+                                                               'Seattle,...',
+                                                               '919 Meadow St, '
+                                                               'Los A...',
+                                                               '887 Lincoln '
+                                                               'St, Los ...',
+                                                               '197 Jefferson '
+                                                               'St, Sa...',
+                                                               '794 10th St, '
+                                                               'Atlanta...'],
+                                            'num_unique': 140788,
+                                            'type': 'categorical'},
+                       'Quantity Ordered': {'dtype': 'object',
+                                            'example_values': ['3',
+                                                               '5',
+                                                               '7',
+                                                               '1',
+                                                               '4'],
+                                            'num_unique': 10,
+                                            'type': 'categorical'}},
+        'shape': (186305, 6),
+        'type': 'pandas.core.frame.DataFrame'},
+ 'pd': {'type': "<class 'module'>"}}
+# Target Cell:
+
+
+
+df["Order ID"] = pd.to_numeric(df["Order ID"], errors="coerce")
+df = df.dropna(subset=["Order ID"])
+

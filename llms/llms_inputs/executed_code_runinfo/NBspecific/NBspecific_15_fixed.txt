@@ -1,0 +1,93 @@
+# Executed Cells:
+## Cell 1:
+
+"""Required Liberaries"""
+from numpy import zeros
+from numpy import ones
+from numpy.random import randint
+from tensorflow.keras.optimizers import Adam
+from keras.initializers import RandomNormal
+from keras.models import Model
+from keras.layers import Conv2D , Input
+from keras.layers import Conv2DTranspose
+from keras.layers import LeakyReLU
+from keras.layers import Activation
+from keras.layers import Concatenate
+from keras.layers import Dropout
+from keras.layers import BatchNormalization
+from matplotlib import pyplot as plt
+from tensorflow.keras.utils import plot_model
+
+## Cell 2:
+
+
+from tensorflow.keras.utils import normalize
+import os
+import glob
+import cv2
+import numpy as np
+from matplotlib import pyplot
+
+
+SIZE_X = 256
+SIZE_Y = 256
+
+tar_images = []
+
+for directory_path in glob.glob("data_small//tar_images/"):
+    for img_path in sorted(glob.glob(os.path.join(directory_path, "*.jpg"))):
+        img = cv2.imread(img_path, 1)
+        img = cv2.resize(img, (SIZE_Y, SIZE_X))
+        tar_images.append(img)
+tar_images = np.array(tar_images)
+
+## Cell 3:
+
+
+src_images = []
+
+for directory_path in glob.glob("data_small//src_images/"):
+    for img_path in sorted(glob.glob(os.path.join(directory_path, "*.jpg"))):
+        img = cv2.imread(img_path, 1)
+        img = cv2.resize(img, (SIZE_Y, SIZE_X))
+        src_images.append(img)
+src_images = np.array(src_images)
+
+# Current relevent runtime information:
+{'__method__cv2_COLOR_BGR2RGB': {'type': "<class 'int'>", 'value': 4},
+ '__method__cv2_cvtColor': {'type': "<class 'builtin_function_or_method'>"},
+ '__method__np_random': {'type': "<class 'module'>"},
+ '__method__np_reshape': {'type': "<class 'numpy._ArrayFunctionDispatcher'>"},
+ '__method__plt_figure': {'type': "<class 'function'>"},
+ '__method__plt_imshow': {'type': "<class 'function'>"},
+ '__method__plt_show': {'type': "<class 'function'>"},
+ '__method__plt_subplot': {'type': "<class 'function'>"},
+ 'cv2': {'type': "<class 'module'>"},
+ 'np': {'type': "<class 'module'>"},
+ 'plt': {'type': "<class 'module'>"},
+ 'src_images': {'dtype': 'uint8',
+                'execution_cell_source': {'cellno': 14, 'lineno': 9},
+                'has_nan': False,
+                'shape': (238, 256, 256, 3),
+                'type': 'numpy.ndarray',
+                'value_range': (0, 201)},
+ 'tar_images': {'dtype': 'uint8',
+                'execution_cell_source': {'cellno': 11, 'lineno': 20},
+                'has_nan': False,
+                'shape': (99, 256, 256, 3),
+                'type': 'numpy.ndarray',
+                'value_range': (0, 255)}}
+# Target Cell:
+
+import numpy as np
+import cv2
+random_img = np.random.randint(0 , len(src_images))
+fig = plt.figure(figsize = (16, 16))
+src_img = np.reshape(src_images[random_img] , (256 , 256 ,3))
+random_img = np.random.randint(0 , len(tar_images))
+tar_img = np.reshape(tar_images[random_img] , (256 , 256 ,3))
+plt.subplot(121)
+plt.imshow(cv2.cvtColor(src_img , cv2.COLOR_BGR2RGB))
+plt.subplot(122)
+plt.imshow(cv2.cvtColor(tar_img , cv2.COLOR_BGR2RGB))
+plt.show()

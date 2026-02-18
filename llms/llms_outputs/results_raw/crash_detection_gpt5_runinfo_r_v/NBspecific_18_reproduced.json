@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "y_pred is not defined anywhere in the executed cells, so calling mean_absolute_error(y_test, y_pred) will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_pred has not been defined in any executed cell, so calling mean_absolute_error(y_test, y_pred) will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_pred is defined (numpy array of ints) and y_test is a Series of floats with no NaNs; mean_absolute_error accepts these. Shapes are not provided but typically align after model.predict; no clear cause for crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "y_pred is not defined in the executed cells; no predictions were generated before computing MAE, so referencing y_pred will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_pred is not defined in prior cells; only y_test exists. Calling mean_absolute_error(y_test, y_pred) will raise a NameError.",
+    "detection": true
+  }
+]

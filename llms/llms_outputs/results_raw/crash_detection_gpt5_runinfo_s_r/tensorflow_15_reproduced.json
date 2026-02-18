@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model.predict_classes is removed in recent Keras; also y is binary shape (batch,1) so np.argmax over axis -1 will give all zeros. predict_classes call will raise AttributeError. Therefore it will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes does not exist in current Keras/TensorFlow and will raise an AttributeError. Also y has shape (batch,1) for binary labels, so np.argmax over axis -1 is invalid for 1D last axis size 1 intent, but main certain error is missing method.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes does not exist in current Keras/TensorFlow and will raise an AttributeError. Also, y has shape (batch,1) for binary labels, so np.argmax over axis -1 is unnecessary but not crashing; the primary crash is the missing method.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes does not exist in current Keras/TensorFlow; also labels from y are shape (batch,1) floats, and np.argmax over last axis yields zeros, but main error will be AttributeError on predict_classes.",
+    "detection": true
+  },
+  {
+    "reasoning": "model.predict_classes does not exist in current Keras; also y has shape (batch,1) numeric labels, so np.argmax over axis -1 is invalid. This will raise an AttributeError (and/or ValueError).",
+    "detection": true
+  }
+]

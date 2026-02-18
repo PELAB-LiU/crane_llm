@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame 'df'. The correct column name is 'Total_Gross'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame 'df'. The correct column name is 'Total_Gross'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame 'df'. The correct column name is 'Total_Gross'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame 'df'. The correct column name is 'Total_Gross'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'Total Gross (millions)' does not exist in the DataFrame 'df'. The correct column name is 'Total_Gross'.",
+    "detection": true
+  }
+]

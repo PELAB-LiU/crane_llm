@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame without NaN values and has the same number of features as expected by the model (208 features). Therefore, the prediction should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame without NaN values and has the same number of features as expected by the model (208 features). Therefore, the prediction should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame without NaN values and has the same number of features as expected by the model (208 features). Therefore, the prediction should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame without NaN values and has the same number of features as expected by the model (208 features). Therefore, the prediction should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `best_estimator` is a fitted DecisionTreeRegressor and `dft_encoded` is a DataFrame without NaN values and has the same number of features as expected by the model (208 features). Therefore, the prediction should not crash.",
+    "detection": false
+  }
+]

@@ -1,0 +1,361 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras.models import Sequential,Model
+from tensorflow.keras.layers import ZeroPadding2D,Convolution2D,MaxPooling2D
+from tensorflow.keras.layers import Dense,Dropout,Softmax,Flatten,Activation,BatchNormalization
+from tensorflow.keras.preprocessing.image import load_img,img_to_array
+from tensorflow.keras.applications.imagenet_utils import preprocess_input
+import tensorflow.keras.backend as K
+
+## Cell 2:
+
+
+model = Sequential()
+model.add(ZeroPadding2D((1,1),input_shape=(224,224, 3)))
+model.add(Convolution2D(64, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(64, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2,2), strides=(2,2)))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(128, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(128, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2,2), strides=(2,2)))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(256, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(256, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(256, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2,2), strides=(2,2)))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(512, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(512, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(512, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2,2), strides=(2,2)))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(512, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(512, (3, 3), activation='relu'))
+model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(512, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2,2), strides=(2,2)))
+model.add(Convolution2D(4096, (7, 7), activation='relu'))
+model.add(Dropout(0.5))
+model.add(Convolution2D(4096, (1, 1), activation='relu'))
+model.add(Dropout(0.5))
+model.add(Convolution2D(2622, (1, 1)))
+model.add(Flatten())
+model.add(Activation('softmax'))
+
+
+model.load_weights('data/vgg_face_weights.h5')
+
+## Cell 3:
+
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.applications import VGG16
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+# Current relevent runtime information:
+{'Dense': {'signature': {'parameters': [{'annotation': None,
+                                         'default': None,
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'units',
+                                         'required': True},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'activation',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'True',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'use_bias',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': "'glorot_uniform'",
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'kernel_initializer',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': "'zeros'",
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'bias_initializer',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'kernel_regularizer',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'bias_regularizer',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'activity_regularizer',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'kernel_constraint',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'bias_constraint',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'lora_rank',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': None,
+                                         'kind': 'VAR_KEYWORD',
+                                         'name': 'kwargs',
+                                         'required': True}],
+                         'return_annotation': None},
+           'type': "<class 'type'>"},
+ 'ImageDataGenerator': {'signature': {'parameters': [{'annotation': None,
+                                                      'default': 'False',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'featurewise_center',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'False',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'samplewise_center',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'False',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'featurewise_std_normalization',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'False',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'samplewise_std_normalization',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'False',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'zca_whitening',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '1e-06',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'zca_epsilon',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '0',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'rotation_range',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '0.0',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'width_shift_range',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '0.0',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'height_shift_range',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'brightness_range',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '0.0',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'shear_range',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '0.0',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'zoom_range',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '0.0',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'channel_shift_range',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': "'nearest'",
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'fill_mode',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '0.0',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'cval',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'False',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'horizontal_flip',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'False',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'vertical_flip',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'rescale',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'preprocessing_function',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'data_format',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '0.0',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'validation_split',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': '1',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'interpolation_order',
+                                                      'required': False},
+                                                     {'annotation': None,
+                                                      'default': 'None',
+                                                      'kind': 'POSITIONAL_OR_KEYWORD',
+                                                      'name': 'dtype',
+                                                      'required': False}],
+                                      'return_annotation': None},
+                        'type': "<class 'type'>"},
+ 'Model': {'signature': {'parameters': [{'annotation': None,
+                                         'default': None,
+                                         'kind': 'VAR_POSITIONAL',
+                                         'name': 'args',
+                                         'required': True},
+                                        {'annotation': None,
+                                         'default': None,
+                                         'kind': 'VAR_KEYWORD',
+                                         'name': 'kwargs',
+                                         'required': True}],
+                         'return_annotation': None},
+           'type': "<class 'type'>"},
+ 'VGG16': {'signature': {'parameters': [{'annotation': None,
+                                         'default': 'True',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'include_top',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': "'imagenet'",
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'weights',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'input_tensor',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'input_shape',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': 'None',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'pooling',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': '1000',
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'classes',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': "'softmax'",
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'classifier_activation',
+                                         'required': False},
+                                        {'annotation': None,
+                                         'default': "'vgg16'",
+                                         'kind': 'POSITIONAL_OR_KEYWORD',
+                                         'name': 'name',
+                                         'required': False}],
+                         'return_annotation': None},
+           'type': "<class 'function'>"}}
+# Target Cell:
+
+
+main_data_directory = 'data/train-data-imgs'
+
+
+input_size = (224, 224)
+
+
+train_datagen = ImageDataGenerator(
+    rescale=1.0/255,
+    rotation_range=20,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    horizontal_flip=True,
+    zoom_range=0.2
+)
+
+train_generator = train_datagen.flow_from_directory(
+    main_data_directory,
+    target_size=input_size,
+    batch_size=32,
+    class_mode='categorical',
+    shuffle=True
+)
+
+
+base_model = VGG16(weights='imagenet', include_top=False,classes=7)
+
+
+for layer in base_model.layers:
+    layer.trainable = False
+
+
+
+from tensorflow.keras.layers import GlobalAveragePooling2D
+x = base_model.output
+x = GlobalAveragePooling2D()(x)
+x = Dense(256, activation='relu')(x)
+x = Dense(7, activation='softmax')(x)
+base_model = Model(inputs=base_model.input, outputs=x)
+
+
+
+base_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+
+
+
+
+base_model.load_weights('data/vgg_face_weights.h5', by_name=True, skip_mismatch=True)
+
+
+base_model.fit(
+    train_generator,
+    steps_per_epoch=len(train_generator),
+    epochs=1,
+)
+
+
+base_model.save('data/updated_vgg_face_weights.h5')

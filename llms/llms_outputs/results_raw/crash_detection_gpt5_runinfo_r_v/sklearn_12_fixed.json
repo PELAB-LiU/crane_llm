@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier with feature_importances_ available and features.columns exists; lengths match (10), so Series creation is valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier with feature_importances_ available and features.columns exists; lengths match (10). No missing values indicated.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier with feature_importances_ available and features.columns exists; lengths match (10). Import of Series is valid. No undefined names. Execution should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier with feature_importances_ available, and features.columns is defined; lengths match (10 features).",
+    "detection": false
+  },
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier with feature_importances_ available and features.columns exists; lengths should match (n_features_in_ = 10).",
+    "detection": false
+  }
+]

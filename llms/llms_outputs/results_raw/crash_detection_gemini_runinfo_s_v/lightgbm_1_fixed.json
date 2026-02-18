@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'y' Series contains NaN values, as indicated by 'y': {'has_nan': True}. The `StratifiedKFold` function used in `find_out_params_model` does not support NaN values in the target variable `y`, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'y' Series contains NaN values, and the `StratifiedKFold` function used in `find_out_params_model` does not support NaN values in the target variable, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'y' Series contains NaN values, and the `StratifiedKFold` function used in `find_out_params_model` does not support NaN values in the target variable, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'y' Series contains NaN values, and the `StratifiedKFold` function used in `find_out_params_model` does not support NaN values in the target variable, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'y' Series contains NaN values, and the `StratifiedKFold` function used in `find_out_params_model` does not support NaN values in the target variable, which will cause a crash.",
+    "detection": true
+  }
+]

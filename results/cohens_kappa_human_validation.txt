@@ -1,0 +1,27 @@
+Overall Cohen's kappa between human and validator results: 0.8897
+Total sample size: 222
+Total disagreements: 7
+
+Detailed disagreements by model:
+==================================================
+Disagreements in crash_detection_gemini_code (1 instances):
+    numpy_4_reproduced: Human=partially correct, Validator=reasoning wrong
+
+Disagreements in crash_detection_qwen_code (1 instances):
+    pandas_12_reproduced: Human=correct, Validator=reasoning wrong
+
+Disagreements in crash_detection_gpt5_code (3 instances):
+    sklearn_10_reproduced: Human=correct, Validator=partially correct
+    sklearn_15_reproduced: Human=reasoning wrong, Validator=correct
+    tensorflow_4_reproduced: Human=correct, Validator=partially correct
+
+Disagreements in crash_detection_gemini_runinfo (1 instances):
+    sklearn_10_reproduced: Human=correct, Validator=reasoning wrong
+
+Disagreements in crash_detection_gpt5_runinfo (1 instances):
+    torch_3_reproduced: Human=reasoning wrong, Validator=correct
+
+
+Final Summary:
+Total instances with disagreements: 7
+Agreement rate: 0.9685

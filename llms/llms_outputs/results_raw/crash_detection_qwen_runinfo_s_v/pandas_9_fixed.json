@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The conditions in the target cell filter out specific string values from 'Total_Gross' and 'Censor' columns. Since the provided information does not indicate the presence of '$0.00M', 'Gross Unkown', or '(Banned)' in these columns, the operations are unlikely to crash but cannot be confirmed with certainty.",
+    "detection": false
+  },
+  {
+    "reasoning": "The conditions in the target cell filter out specific string values from 'Total_Gross' and 'Censor' columns. Since the provided information does not indicate the presence of '$0.00M', 'Gross Unkown', or '(Banned)' in these columns, the operations are unlikely to crash but cannot be confirmed with certainty.",
+    "detection": false
+  },
+  {
+    "reasoning": "The conditions in the target cell filter out specific string values from 'Total_Gross' and 'Censor' columns. Since the provided information does not indicate the presence of '$0.00M', 'Gross Unkown', or '(Banned)' in these columns, the operations are unlikely to crash but cannot be confirmed with certainty.",
+    "detection": false
+  },
+  {
+    "reasoning": "The conditions in the target cell filter out specific string values from 'Total_Gross' and 'Censor' columns. Since the provided information does not indicate the presence of '$0.00M', 'Gross Unkown', or '(Banned)' in these columns, the operations are unlikely to crash but cannot be confirmed with certainty.",
+    "detection": false
+  },
+  {
+    "reasoning": "The conditions in the target cell filter out specific string values from 'Total_Gross' and 'Censor' columns. Since the provided information does not indicate the presence of '$0.00M', 'Gross Unkown', or '(Banned)' in these columns, the operations are unlikely to crash but cannot be confirmed with certainty.",
+    "detection": false
+  }
+]

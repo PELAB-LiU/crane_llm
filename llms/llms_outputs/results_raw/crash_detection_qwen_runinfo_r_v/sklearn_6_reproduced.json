@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `test_ds` DataFrame contains NaN values, which will cause the `FReg.predict` method to fail as it requires complete data without missing values.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_ds` DataFrame contains NaN values, which will cause the `FReg.predict` method to fail as it requires complete data without missing values.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_ds` DataFrame contains NaN values, which will cause the `FReg.predict` method to fail as it requires complete data without missing values.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_ds` DataFrame contains NaN values, which will cause the `FReg.predict` method to fail as it requires complete data without missing values.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `test_ds` DataFrame contains NaN values, which will cause the `FReg.predict` method to fail as it requires complete data without missing values.",
+    "detection": true
+  }
+]

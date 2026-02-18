@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model_predict updates w using dw.T, causing w's shape to become (1,4) instead of (4,1). Subsequent np.dot(w, X_tr_arr.T) expects (4,1) x (4,75) compatible shapes but gets (1,4) x (4,75), leading to a shape mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "model_predict updates w using dw.T leading to shape mismatch: w starts (1,4) but dw is (4,1), so dw.T is (1,4) and subtraction w - lr*dw.T works; however inside model_optimize (the redefined version) expects X as (m, n), w as (n,1), Y as (m,1). Passing w as (1,4) causes np.dot(X, w) to fail due to incompatible shapes.",
+    "detection": true
+  },
+  {
+    "reasoning": "model_predict updates w using dw.T causing shape mismatch: w is (1, n_features) but dw is (n_features,1), so dw.T is (1,n_features) matches; however model_optimize used in model_predict is the later version expecting X shape (m,n), w shape (n,1) and computes np.dot(X,w)+b; passing w as (1,n) will cause shape misalignment. First call to model_optimize in model_predict: np.dot(X, w) where X is (75,4) and w is (1,4) -> shapes (75,4) x (1,4) invalid.",
+    "detection": true
+  },
+  {
+    "reasoning": "model_predict updates w using dw.T, causing w to become shape (1, n_features) - (learning_rate * (n_features,1)).T => (1,n_features) - (1,n_features) okay. However, db is scalar, b updated fine. In sigmoid_activation later, np.dot(w, X_tr_arr.T) expects w shape (1,4) and X_tr_arr.T (4,75), okay. predict expects final_pred shape (1,m). y_tr_arr is (75,1). accuracy_score compares shapes compatible. No obvious type/shape errors; functions exist. Should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "weightInitialization returns w shape (1,n_features) and b int; model_predict updates w with (dw.T), where dw from model_optimize in Cell 14 has shape (n_features,1), so dw.T is (1,n_features) matching w. However, model_optimize in Cell 14 expects X shape (m,n_features) and Y shape (m,1), which holds. No obvious type/shape errors; prints and accuracy_score inputs have matching shapes. Unlikely to crash.",
+    "detection": false
+  }
+]

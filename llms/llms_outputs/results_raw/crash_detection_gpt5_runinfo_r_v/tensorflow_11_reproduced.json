@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model outputs 5 classes (Dense(5)) but the generators have num_classes=2 (categorical), causing a shape mismatch with categorical_crossentropy.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model outputs 5 classes (Dense(5)) but the data generators are configured for 2 classes (num_classes=2); this mismatch will cause a shape error during training.",
+    "detection": true
+  },
+  {
+    "reasoning": "The data generators have 2 classes, but the model’s final Dense layer has 5 outputs; this mismatch with categorical_crossentropy will cause a shape error during training.",
+    "detection": true
+  },
+  {
+    "reasoning": "The data generators have 2 classes (categorical) but the model outputs 5 logits; this shape mismatch will raise an error during training with categorical_crossentropy.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs 5 units but generators have 2 classes; categorical_crossentropy expects matching shape, causing a shape mismatch error during training.",
+    "detection": true
+  }
+]

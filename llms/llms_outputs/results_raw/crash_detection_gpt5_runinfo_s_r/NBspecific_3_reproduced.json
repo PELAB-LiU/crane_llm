@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "yFit has shape (272,) while y_test has shape (68,), so operations like SSE = sum((y_test - yFit)**2) will raise a broadcasting error due to mismatched lengths.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_test has shape (68,), but yFit has shape (272,); operations like SSE = sum((y_test - yFit)**2) will raise a broadcasting error. Also SSR uses yFit vs yMean inconsistently. The shape mismatch guarantees a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit has length 272 while y_test has length 68; operations mixing them (SSE and plotting) require equal lengths and will raise a shape mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit has length 272 while y_test has length 68; operations SSE = sum((y_test - yFit)**2) and plotting both against same x will raise a broadcasting error due to shape mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "yFit has length 272 (training predictions) while y_test has length 68 (test set). Operations SST/SSR/SSE and plotting mix y_test with yFit causing shape mismatch errors.",
+    "detection": true
+  }
+]

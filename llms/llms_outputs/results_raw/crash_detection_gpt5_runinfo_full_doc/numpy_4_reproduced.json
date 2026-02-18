@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "valid_dataset yields (x,y) where y are scalar binary labels, not one-hot; np.argmax(y.numpy(), axis=-1) will raise an AttributeError since y is a NumPy array and has no .numpy().",
+    "detection": true
+  },
+  {
+    "reasoning": "valid_dataset yields batches indefinitely; iterating `for x, y in valid_dataset` without a break will create an infinite loop. Also, y from a Keras DirectoryIterator is already 1D binary labels, so `y.numpy()` may fail.",
+    "detection": true
+  },
+  {
+    "reasoning": "valid_dataset yields batches until StopIteration, but iterating without a defined number of steps on a Keras DirectoryIterator in a plain for-loop will run indefinitely and the cell may hang rather than crash. Other operations (model.predict, argmax) are valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "valid_dataset yields batches indefinitely; iterating 'for x, y in valid_dataset' without limiting steps will not terminate and hang rather than crash. Otherwise, shapes and methods are compatible.",
+    "detection": false
+  },
+  {
+    "reasoning": "valid_dataset yields indefinitely; the loop `for x, y in valid_dataset:` will not terminate and will hang rather than crash. All functions and shapes used are compatible.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model_predict updates w using dw.T, causing w to become shape (n_features,) instead of (1,n_features); later np.dot(w, X_tr_arr.T) will broadcast or fail due to mismatched shapes compared to expected (1,m). This likely leads to shape errors or incorrect dimensions for predict.",
+    "detection": true
+  },
+  {
+    "reasoning": "model_predict subtracts learning_rate * (dw.T) from w where w is shape (1,n_features) and dw from model_optimize in Cell 14 has shape (n_features,1); dw.T is (1,n_features), so shapes align. y_tr_arr is a 2D column via values; accuracy_score inputs have matching shapes after transpose. No obvious NaNs or type issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_predict updates w using dw.T while w was initialized as shape (1, n_features) and dw from model_optimize has shape (n_features,1); mixing these leads to incompatible shapes later when using w in np.dot(w, X.T), causing a shape misalignment error.",
+    "detection": true
+  },
+  {
+    "reasoning": "model_predict updates w using dw.T, but dw shape matches w only if w is (n_features,1). weightInitialization creates w with shape (1, n_features), causing shape mismatch on updates and in np.dot(w, X.T).",
+    "detection": true
+  },
+  {
+    "reasoning": "w is initialized as shape (1, n_features), but model_predict updates w using dw.T where dw has shape (n_features,1), making w become (n_features,1). Later np.dot(w, X_tr_arr.T) then tries (n_features,1) dot (n_features, m), which is incompatible and will raise a shape mismatch error.",
+    "detection": true
+  }
+]

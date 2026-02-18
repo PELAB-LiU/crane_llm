@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model outputs a single sigmoid value for binary labels, but the code applies argmax to both predictions and labels; labels are scalar 0/1, not one-hot, so np.argmax on y will error. Also predictions shape (batch,1) makes argmax axis=1 valid but labels argmax invalid.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs a single sigmoid unit for binary classification, but the code uses argmax on predictions and labels. pred has shape (batch,1) causing argmax to return all zeros; y is scalar binary labels, not one-hot, so argmax on a 1D array raises an axis error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs a single sigmoid value for binary classification, but the code uses argmax on predictions and labels; argmax on 1D arrays will raise an axis error, and y is scalar binary labels not one-hot.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs a single sigmoid (shape [batch,1]) for binary labels, but the code uses argmax on predictions and on y; y is scalar binary (shape [batch,]) so np.argmax(y, axis=-1) will error. Also predictions initialized as float array; concatenating ints is fine but argmax on 1D/2D mismatch likely. This will crash due to np.argmax on 1D labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model outputs a single sigmoid value (binary), but code uses argmax on predictions and labels; y is scalar binary (not one-hot), so np.argmax on 1D arrays will error or give 0 incorrectly. Also concatenating ints into empty float arrays may work but shapes mismatch expected; primary issue: argmax on 1D labels/preds.",
+    "detection": true
+  }
+]

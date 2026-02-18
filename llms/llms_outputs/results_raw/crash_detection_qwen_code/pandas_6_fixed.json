@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to convert the 'Order ID' column to numeric and drops rows with NaN in 'Order ID'. If 'Order ID' contains non-convertible values, this will not crash but may result in NaNs being dropped.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to convert the 'Order ID' column to numeric and drops rows with NaN in 'Order ID'. If 'Order ID' contains non-convertible values, this will not crash but may result in NaNs being dropped.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to convert the 'Order ID' column to numeric and drops rows with NaN in 'Order ID'. If 'Order ID' contains non-convertible values, this will not crash but may result in NaNs, which are then dropped.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to convert the 'Order ID' column to numeric and drops rows with NaN in 'Order ID'. If 'Order ID' contains non-convertible values, this will not crash but may result in NaNs, which are then dropped.",
+    "detection": false
+  },
+  {
+    "reasoning": "The target cell attempts to convert the 'Order ID' column to numeric and drops rows with NaN in 'Order ID'. If 'Order ID' contains non-convertible values, this will not crash but may result in NaNs, which are then dropped.",
+    "detection": false
+  }
+]

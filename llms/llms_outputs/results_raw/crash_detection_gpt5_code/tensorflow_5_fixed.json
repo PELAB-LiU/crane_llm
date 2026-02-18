@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model expects integer indices for Embedding inputs; X_train_array contains float dtype from numpy slicing, which causes dtype mismatch. Keras Embedding requires int32/int64 tensors.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects integer indices for Embedding; X_train_array contains integer user and anime IDs, and targets y are normalized to [0,1]. Shapes align with inputs, callbacks are defined. No clear source of runtime error.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model expects integer indices for Embedding layers; X_train_array contains floats from X (due to pandas -> numpy), causing invalid dtype for Embedding input. This will likely raise an error unless cast to int.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects integer indices for Embedding inputs; X_train_array consists of integer columns, and batch size and epochs are valid. Validation data matches shape. No clear error conditions.",
+    "detection": false
+  },
+  {
+    "reasoning": "Inputs to the model are integer indices; X_train_array contains user and anime columns shaped (n_samples,), which Keras accepts for Embedding inputs with shape [1]. Callbacks and learning rate scheduler are properly defined, and batch size and epochs are valid. No obvious shape or type mismatch.",
+    "detection": false
+  }
+]

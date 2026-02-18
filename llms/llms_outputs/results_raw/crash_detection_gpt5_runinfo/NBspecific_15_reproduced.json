@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The cell references src_images which is not defined in the executed cells; this will raise a NameError when computing its length or indexing.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell references src_images, which has not been defined in the executed cells, leading to a NameError when computing its length or indexing it.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell references src_images, which is not defined in the executed cells or runtime info; accessing len(src_images) will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell references src_images, which has not been defined in the executed cells, causing a NameError. All other variables and functions appear available.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell references src_images, which has not been defined in the executed cells or runtime info, leading to a NameError.",
+    "detection": true
+  }
+]

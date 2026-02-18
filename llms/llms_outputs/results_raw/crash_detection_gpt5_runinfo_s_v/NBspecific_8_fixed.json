@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "StandardScaler can fit_transform a 2D array from df['Amount'].values.reshape(-1,1); 'Amount' exists and df has no NaNs; dropping 'Amount' afterward is valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "df exists and includes an 'Amount' column; StandardScaler can scale a numeric Series reshaped to (-1,1), and there are no NaNs. Dropping 'Amount' afterward is valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "df exists and has an 'Amount' column (since only 'Time' was dropped). Reshaping values and StandardScaler on numeric column is valid; then dropping 'Amount' is fine.",
+    "detection": false
+  },
+  {
+    "reasoning": "df exists and has an 'Amount' column (shape 30 columns before dropping Time). StandardScaler on a 1D numeric column reshaped to (-1,1) is valid, and assigning to a new column then dropping 'Amount' is supported.",
+    "detection": false
+  },
+  {
+    "reasoning": "df exists and has column 'Amount' (not yet dropped), no NaNs, and StandardScaler accepts 2D array from values.reshape(-1,1). Dropping 'Amount' after creating 'scaled_Amount' is valid.",
+    "detection": false
+  }
+]

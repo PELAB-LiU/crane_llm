@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to use `model` and `X_test`, but neither have been defined or imported as no cells have been executed yet.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use `model` and `X_test`, but neither have been defined or imported as no cells have been executed yet.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use `model` and `X_test`, but neither have been defined or imported as no cells have been executed yet.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use `model` and `X_test`, but neither have been defined or imported as no cells have been executed yet.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to use `model` and `X_test`, but neither have been defined or imported as no cells have been executed yet.",
+    "detection": true
+  }
+]

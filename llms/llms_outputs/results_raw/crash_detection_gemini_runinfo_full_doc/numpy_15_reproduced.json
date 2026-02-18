@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `model_predict` function expects `w` to be a 2D array for `np.dot(w, X.T)`, but `weightInitialization` returns `w` as `(1, n_features)`. However, inside `model_predict`, `w` is updated as `w - (learning_rate * (dw.T))`. The `dw` from `model_optimize` (Cell 14) is `(n_features, 1)`. Therefore, `dw.T` will be `(1, n_features)`, making the update `w - (learning_rate * (1, n_features))`, which is consistent with `w`'s initial shape. The `np.dot(w, X.T)` operation will then be `(1, n_features) . (n_features, m)`, resulting in `(1, m)`, which is correct for `final_result`. The `predict` function also expects `final_pred` to be `(1, m)`, which is consistent. The `accuracy_score` function expects `y_true` and `y_pred` to have the same shape, and `y_tr_pred.T` will be `(m_tr, 1)` and `y_tr_arr` is `(m_tr, 1)`, so this is also consistent.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_predict` function expects `w` to be a 2D array for `np.dot(w, X.T)`, but `weightInitialization` returns `w` as `(1, n_features)`. However, inside `model_predict`, `w` is updated as `w - (learning_rate * (dw.T))`. The `dw` from `model_optimize` (Cell 14) is `(n_features, 1)`. Therefore, `dw.T` will be `(1, n_features)`, making the update `w - (learning_rate * (1, n_features))`, which is consistent with the initial `w` shape. The `np.dot(w, X.T)` operation will then be `(1, n_features) . (n_features, m)`, resulting in `(1, m)`, which is correct for `final_result`. The `predict` function expects `final_pred` to be `(1, m)`, which is consistent with the output of `sigmoid_activation(np.dot(w,X.T)+b)`. The `accuracy_score` function expects `y_true` and `y_pred` to have consistent shapes, and `y_tr_pred.T` will be `(m_tr, 1)` and `y_tr_arr` is `(m_tr, 1)`, so this will work.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_predict` function expects `w` to be a 1D array for `np.dot(w, X.T)`, but `weightInitialization` returns `w` as a 2D array of shape (1, n_features). This will cause a ValueError in `np.dot` due to incompatible dimensions.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `model_predict` function expects `w` to be a 2D array for `np.dot(w, X.T)`, but `weightInitialization` returns `w` as `(1, n_features)`. However, inside `model_predict`, `w` is updated as `w - (learning_rate * (dw.T))`. The `dw` from `model_optimize` (Cell 14) is `(n_features, 1)`. Therefore, `dw.T` will be `(1, n_features)`, making the update `w - (learning_rate * (1, n_features))`, which is consistent with `w`'s initial shape. The `np.dot(w, X.T)` operation will then be `(1, n_features) . (n_features, m)`, resulting in `(1, m)`, which is correct for `final_result`. The `predict` function also expects `final_pred` to be `(1, m)`, which is consistent. The `accuracy_score` function expects `y_true` and `y_pred` to have the same shape, and `y_tr_pred.T` will be `(m_tr, 1)` and `y_tr_arr` is `(m_tr, 1)`, so this is also consistent.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `model_predict` function expects `w` to be a 2D array for `np.dot(w, X.T)`, but `weightInitialization` returns `w` as `(1, n_features)`. However, inside `model_predict`, `w` is updated as `w - (learning_rate * (dw.T))`. The `dw` from `model_optimize` (Cell 14) is `(n_features, 1)`. Therefore, `dw.T` will be `(1, n_features)`, making the update `w - (learning_rate * (1, n_features))`, which is consistent with `w`'s initial shape. The `np.dot(w, X.T)` operation will then be `(1, n_features) . (n_features, m)`, resulting in `(1, m)`, which is correct for `final_result`. The `predict` function also expects `final_pred` to be `(1, m)`, which is consistent. The `accuracy_score` function expects `y_true` and `y_pred` to have the same shape, and `y_tr_pred.T` will be `(m_tr, 1)` and `y_tr_arr` is `(m_tr, 1)`, so this is also consistent.",
+    "detection": false
+  }
+]

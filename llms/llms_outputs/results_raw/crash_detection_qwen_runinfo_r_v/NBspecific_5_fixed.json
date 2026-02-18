@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'num_outbound_cmds' column exists in the DataFrame and is also present in the numeric_columns list. Therefore, both operations will execute without errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'num_outbound_cmds' column exists in the DataFrame and is also present in the numeric_columns list. Therefore, both operations will execute without errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'num_outbound_cmds' column exists in the DataFrame and is also present in the numeric_columns list. Therefore, both operations will execute without errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'num_outbound_cmds' column exists in the DataFrame and is also present in the numeric_columns list. Therefore, both operations will execute without errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'num_outbound_cmds' column exists in the DataFrame and is also present in the numeric_columns list. Therefore, both operations will execute without errors.",
+    "detection": false
+  }
+]

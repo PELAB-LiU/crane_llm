@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier with feature_importances_ of length 10, and features has 10 columns; pandas Series import is valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier with feature_importances_ of length 10, and features has 10 columns; pandas Series import is valid. No mismatched lengths or undefined variables.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier with feature_importances_ of length 10, and features.columns has length 10; pandas Series import is valid. No mismatched shapes or undefined names.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier with feature_importances_ of length 10, and features.columns has length 10; pandas Series can be created with matching index. No missing variables/imports.",
+    "detection": false
+  },
+  {
+    "reasoning": "model_fix is a fitted GradientBoostingClassifier with feature_importances_ of length 10, and features.columns has length 10. Pandas Series import is valid. No mismatched shapes or missing vars.",
+    "detection": false
+  }
+]

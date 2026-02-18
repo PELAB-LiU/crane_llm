@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "residuals length is 92 (no NaNs). max_acf_lags=91 and max_pacf_lags=45, both valid; plotting functions accept these. No undefined variables or imports missing.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals length is 92 and has no NaNs; computed lags are max_acf_lags=91 and max_pacf_lags=45, which are valid for plot_acf/plot_pacf. No undefined variables or type issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals exists, has no NaNs, and length is 92; computed lags are positive (acf: 91, pacf: 45), so plotting ACF/PACF should work without errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals length is 92; max_acf_lags = min(91,180)=91 and max_pacf_lags = min(46-1,180)=45, both valid. residuals has no NaNs. Required imports are present. Plotting should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals length is 92; max_acf_lags becomes min(91,180)=91 and max_pacf_lags becomes min(46-1,180)=45, both valid positive integers. No NaNs in residuals, required imports available.",
+    "detection": false
+  }
+]

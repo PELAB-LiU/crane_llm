@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model uses SparseCategoricalCrossentropy(from_logits=True) but final layer has softmax; however this is still allowed. Shapes and dtypes of inputs and labels match expectations. It should train for 2 epochs.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model outputs 20 classes but labels have 4 classes and loss is SparseCategoricalCrossentropy with from_logits=True while final activation is softmax; this mismatch will cause an error. Also from_logits=True with softmax is invalid.",
+    "detection": true
+  },
+  {
+    "reasoning": "Labels are integers 1–4, loss is SparseCategoricalCrossentropy with from_logits=True while final layer uses softmax, which is inconsistent but not a runtime error; data shapes match model input.",
+    "detection": false
+  },
+  {
+    "reasoning": "Model uses SparseCategoricalCrossentropy(from_logits=True) but final Dense has softmax, causing a logits/softmax mismatch error during training. Therefore fit will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects SparseCategoricalCrossentropy(from_logits=True) but final layer uses softmax; this mismatch may affect training but won't crash. Shapes and dtypes of inputs and labels match; class indices are within range for 20-way output.",
+    "detection": false
+  }
+]

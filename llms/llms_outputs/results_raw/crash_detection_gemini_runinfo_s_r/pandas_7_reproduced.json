@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'released' column is expected to contain date strings that can be split by '-' and converted to integers. If any value in 'released' is not a string or cannot be split/converted, it will cause an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column is expected to contain date strings that can be split by '-' and converted to integers. If any value in 'released' is not a string or cannot be split/converted, it will cause an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column is expected to contain date strings that can be split by '-' and converted to integers. If any value in 'released' is not a string or cannot be split/converted, it will cause an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column is expected to contain date strings that can be split by '-' and converted to integers. If any value in 'released' is not a string or cannot be split/converted, it will cause an error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column is expected to contain date strings that can be split by '-' and converted to integers. If any value in 'released' is not a string or cannot be split/converted, it will cause an error.",
+    "detection": false
+  }
+]

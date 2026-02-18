@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'MSRP' column contains string values with '$' and ',' characters, which will prevent direct conversion to numeric type and cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'MSRP' column contains string values with '$' and ',' characters, which will prevent direct conversion to numeric type and cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'MSRP' column contains string values with '$' and ',' characters, which will prevent direct conversion to numeric type and cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'MSRP' column contains string values with '$' and ',' characters, which will prevent direct conversion to numeric type and cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'MSRP' column contains string values with '$' and ',' characters, which will prevent direct conversion to numeric type and cause a ValueError.",
+    "detection": true
+  }
+]

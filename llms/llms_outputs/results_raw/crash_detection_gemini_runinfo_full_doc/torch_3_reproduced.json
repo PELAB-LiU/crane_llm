@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The CustomModel expects labels to be a 1D tensor, but the provided 'target' tensor is 2D. This will cause a shape mismatch when calculating the loss with nn.NLLLoss.",
+    "detection": true
+  },
+  {
+    "reasoning": "The CustomModel expects labels to be a 1D tensor, but the provided 'target' tensor is 2D. This will cause a shape mismatch when calculating the loss with nn.NLLLoss.",
+    "detection": true
+  },
+  {
+    "reasoning": "The CustomModel expects labels to be a 1D tensor, but the 'target' tensor is 2D. This will cause a shape mismatch when `loss_func(logits.view(-1,self.num_choice),labels.view(-1))` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The CustomModel expects labels to be a 1D tensor, but the 'target' tensor is 2D. This will cause a shape mismatch when `loss_func(logits.view(-1,self.num_choice),labels.view(-1))` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The CustomModel expects labels to be a 1D tensor, but the 'target' tensor is 2D. This will cause a shape mismatch when `loss_func(logits.view(-1,self.num_choice),labels.view(-1))` is called.",
+    "detection": true
+  }
+]

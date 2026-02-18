@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The code uses np.moveaxis on CIFAR images that are already (N,32,32,3); it first moves axis 1->3 (OK), then inside else it moves back -1->1, resulting in shape (N,3,32,32), but Keras Conv2D default expects channels_last (32,32,3). Model input_shape is (32,32,3), so fitting with (N,3,32,32) will cause a shape mismatch error. Also to_categorical on labels shaped (N,1) is okay. Thus execution will crash at model.fit due to input shape mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "CIFAR-10 labels are shaped (N,1); to_categorical cannot handle 2D column labels directly, causing a shape error. Also, training data is moved to channels-first only in the else branch, while model input_shape is channels-last, creating mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "CIFAR labels are shape (N,1); to_categorical expects 1D ints. Passing 2D arrays causes a shape error. Also, images are moved to channels_last then moved back to channels_first only in the else branch, mismatching Keras default channels_last input shape.",
+    "detection": true
+  },
+  {
+    "reasoning": "CIFAR-10 labels are shape (N,1); to_categorical expects 1D class indices. Passing (N,1) arrays will raise a shape error during one-hot conversion and later mismatch in model.fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "CIFAR-10 labels are loaded as shape (N, 1) uint8; to_categorical expects 1D class indices but will accept (N,1) producing shape (N,1,10). Model.fit expects (N,10), causing a shape mismatch error during training.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Installs' column contains non-numeric characters like '+' and commas, which will prevent direct conversion to an integer type. This will raise a ValueError during the astype('int') operation.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains non-numeric characters like '+' and commas, which will prevent direct conversion to an integer type. This will raise a ValueError during the astype('int') operation.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains non-numeric characters like '+' and commas, which will prevent direct conversion to an integer type. This will raise a ValueError during the astype('int') operation.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains non-numeric characters like '+' and commas, which will prevent direct conversion to an integer type. This will raise a ValueError during the astype('int') operation.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains non-numeric characters like '+' and commas, which will prevent direct conversion to an integer type. This will raise a ValueError during the astype('int') operation.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'released' column is being transformed to extract the year, but there is no guarantee that 'released' contains date strings in the expected format. If 'released' contains unexpected values, this could cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column is being transformed to extract the year, but there is no guarantee that 'released' contains date strings in the expected format. If 'released' contains unexpected values, this could cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column is being transformed to extract the year, but there is no guarantee that 'released' contains date strings in the expected format. If 'released' contains unexpected values, this could cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column is being transformed to extract the year, but there is no guarantee that 'released' contains date strings in the expected format. If 'released' contains unexpected values, this could cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column is being transformed to extract the year, but there is no guarantee that 'released' contains date strings in the expected format. If 'released' contains unexpected values, this could cause a crash.",
+    "detection": false
+  }
+]

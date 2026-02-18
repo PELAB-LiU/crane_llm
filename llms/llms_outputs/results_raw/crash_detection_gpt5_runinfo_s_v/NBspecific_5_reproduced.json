@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The column 'num_outbound_cmds' was already dropped and removed from numeric_columns in a previous cell; attempting to drop it again and remove it will raise KeyError and ValueError, respectively.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' has already been dropped and removed from numeric_columns in Cell 4, so dropping it again and removing from the list will raise KeyError and ValueError respectively.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' has already been dropped and removed from numeric_columns in a previous cell; attempting to drop it again and remove it again will raise a KeyError for both operations.",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' was already dropped and removed from numeric_columns in a prior cell; attempting to drop it again and remove it again will raise errors (KeyError for drop and ValueError for list.remove).",
+    "detection": true
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' was already dropped and removed from numeric_columns in Cell 4. Dropping it again will raise a KeyError, and removing it again will raise a ValueError.",
+    "detection": true
+  }
+]

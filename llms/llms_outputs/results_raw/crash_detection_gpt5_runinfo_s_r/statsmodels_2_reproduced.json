@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "residuals has length 92, but lags=180 exceeds series length; statsmodels plot_acf/plot_pacf will error when lags >= nobs. This will likely raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Residuals series has length 92, but lags=180 exceeds available observations; statsmodels plot_acf/plot_pacf will raise a ValueError for lags too large.",
+    "detection": true
+  },
+  {
+    "reasoning": "residuals has length 92 but lags=180 is larger than series length; plot_acf/plot_pacf will raise a ValueError about lags exceeding nobs.",
+    "detection": true
+  },
+  {
+    "reasoning": "residuals is a pandas Series of length 92; requesting lags=180 exceeds nobs-1, which will cause statsmodels plot_acf/plot_pacf to raise a ValueError. Thus it will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "residuals is a pandas Series of length 92, but lags=180 exceeds the available observations for ACF/PACF and will raise a ValueError. Therefore, executing will crash.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `history` object is not defined, which will cause a NameError when trying to access `history.history`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `history` object is not defined, which will cause a NameError when trying to access `history.history`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `history` object is not defined, which will cause a NameError when trying to access `history.history`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `history` object is not defined, which will cause a NameError when trying to access `history.history`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `history` object is not defined, which will cause a NameError when trying to access `history.history`.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "X is referenced but no executed cell shows its creation, so NameError will occur when calling fit_transform(X).",
+    "detection": true
+  },
+  {
+    "reasoning": "Variable X is referenced but not defined in the executed cells or provided context, so accessing X will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variable X is referenced but not defined in the executed cells or runtime info; only its schema is described, not its creation. This will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "X is referenced but not defined in the executed cells or provided variables, so accessing X will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Variable X is referenced but not shown as defined in executed cells; without a prior assignment, this will raise a NameError when fitting PolynomialFeatures.",
+    "detection": true
+  }
+]

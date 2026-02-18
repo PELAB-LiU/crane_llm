@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "df exists and has an 'Order ID' column with string numerics; pd.to_numeric with errors='coerce' is valid, and dropna on that column is valid. No type or missing column issues expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "Order ID column exists and contains string numerics; pd.to_numeric with errors='coerce' is valid, and dropna on that subset is valid. No conflicting types or missing column.",
+    "detection": false
+  },
+  {
+    "reasoning": "df exists and has an 'Order ID' column with string numerics; pd.to_numeric with errors='coerce' is valid and dropna on that column is valid. No type mismatches or missing columns.",
+    "detection": false
+  },
+  {
+    "reasoning": "df has an 'Order ID' column with string numerics; pd.to_numeric with errors='coerce' works on object dtype, and dropna on that subset is valid. No missing df. Should run without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "df exists and has an 'Order ID' column with string numerics; pd.to_numeric with errors='coerce' is valid and dropna on that subset is safe. No type or key errors expected.",
+    "detection": false
+  }
+]

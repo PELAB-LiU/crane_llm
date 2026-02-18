@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Series.str.replace with a plain '+' is interpreted as regex and causes 'nothing to repeat' error. Must set regex=False or escape '+'.",
+    "detection": true
+  },
+  {
+    "reasoning": "df['Installs'] is object with values like '1,000+' and no NaNs. Using .str.replace('+','') then .str.replace(',','') then astype(int) should succeed on all rows.",
+    "detection": false
+  },
+  {
+    "reasoning": "df['Installs'] is object strings like '1,000+'; using .str.replace('+','') and .str.replace(',','') then astype('int') should succeed on all rows since non-numeric chars are removed. No NaNs remain.",
+    "detection": false
+  },
+  {
+    "reasoning": "df['Installs'] is object with values like '1,000+'; using .str.replace with '+' and ',' then astype int is valid in pandas (treats patterns literally by default). No NaNs remain.",
+    "detection": false
+  },
+  {
+    "reasoning": "df['Installs'] is object with values like '1,000+'; using .str.replace('+','') is invalid because '+' is a regex quantifier in pandas .str.replace with regex=True by default, causing a regex error.",
+    "detection": true
+  }
+]

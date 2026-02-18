@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "custom_dataset.images is a torch float32 tensor shaped (N, 1, 125, 125); indexing [1][0,:,:] yields a 2D array suitable for plt.imshow. The label is int64 tensor; f-string will print it fine. No undefined names.",
+    "detection": false
+  },
+  {
+    "reasoning": "custom_dataset.images is a torch.FloatTensor with shape (N, 1, 125, 125); indexing [1][0, :, :] yields a 2D array compatible with plt.imshow. Labels are int64 and printable. No undefined variables.",
+    "detection": false
+  },
+  {
+    "reasoning": "custom_dataset.images is a float32 torch.Tensor on CPU; indexing with [1][0,:,:] yields a 2D array compatible with plt.imshow. labels[1] exists and plt functions are available.",
+    "detection": false
+  },
+  {
+    "reasoning": "custom_dataset.images is a torch tensor shaped (N, C, H, W) after ToTensor; indexing [1][0,:,:] yields a 2D array acceptable for plt.imshow. Labels are ints 0/1, fine for title. No undefined names. Should not crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "custom_dataset.images is a float32 torch tensor shaped (N, 1, 125, 125); indexing [1][0, :, :] yields a 2D tensor suitable for plt.imshow. custom_dataset.labels[1] is an int64 tensor with values 0 or 1; f-string will display it. No undefined variables.",
+    "detection": false
+  }
+]

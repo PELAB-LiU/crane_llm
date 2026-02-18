@@ -1,0 +1,93 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np;
+import pandas as pd;
+import seaborn as sn;
+import matplotlib.pyplot as plt;
+
+## Cell 2:
+
+df = pd.read_csv('data/googleplaystore.csv');
+
+## Cell 3:
+
+
+df.drop([10472],inplace = True);
+
+# Current relevent runtime information:
+{'df': {'has_nan': True,
+        'per_column': {'Android Ver': {'example_values': ['4.0 and up',
+                                                          '4.0.3 - 7.1.1',
+                                                          '5.0 and up',
+                                                          'Varies with device',
+                                                          '6.0 and up'],
+                                       'num_unique': 33},
+                       'App': {'example_values': ['Learn CW',
+                                                  'My FR App',
+                                                  'Sniper Killer Shoote...',
+                                                  'Grow Stone Online : ...',
+                                                  'Trulia Mortgage Calc...'],
+                               'num_unique': 9659},
+                       'Category': {'example_values': ['VIDEO_PLAYERS',
+                                                       'LIBRARIES_AND_DEMO',
+                                                       'FINANCE',
+                                                       'ART_AND_DESIGN',
+                                                       'PARENTING'],
+                                    'num_unique': 33},
+                       'Content Rating': {'example_values': ['Adults only 18+',
+                                                             'Teen',
+                                                             'Mature 17+',
+                                                             'Unrated',
+                                                             'Everyone'],
+                                          'num_unique': 6},
+                       'Current Ver': {'example_values': ['0.1.2',
+                                                          '1.78',
+                                                          '5.29.77 Domain 427',
+                                                          '1.0.6.4',
+                                                          '3.3.1'],
+                                       'num_unique': 2831},
+                       'Genres': {'example_values': ['Books & Reference;Cr...',
+                                                     'Trivia;Education',
+                                                     'Parenting;Music & Vi...',
+                                                     'Educational;Action &...',
+                                                     'Tools;Education'],
+                                  'num_unique': 119},
+                       'Installs': {'example_values': ['100+',
+                                                       '1,000+',
+                                                       '10+',
+                                                       '50,000,000+',
+                                                       '0'],
+                                    'num_unique': 21},
+                       'Last Updated': {'example_values': ['October 21, 2015',
+                                                           'January 18, 2018',
+                                                           'October 17, 2015',
+                                                           'January 11, 2018',
+                                                           'March 13, 2015'],
+                                        'num_unique': 1377},
+                       'Price': {'example_values': ['$12.99',
+                                                    '$15.46',
+                                                    '$3.99',
+                                                    '$74.99',
+                                                    '$1.96'],
+                                 'num_unique': 92},
+                       'Rating': {'num_unique': 39, 'value_range': (1.0, 5.0)},
+                       'Reviews': {'example_values': ['29265',
+                                                      '104',
+                                                      '63765',
+                                                      '1254730',
+                                                      '13819'],
+                                   'num_unique': 6001},
+                       'Size': {'example_values': ['85M',
+                                                   '17M',
+                                                   '334k',
+                                                   '500k',
+                                                   '192k'],
+                                'num_unique': 461},
+                       'Type': {'num_unique': 2,
+                                'unique_values': ['Free', 'Paid']}},
+        'shape': (10840, 13)}}
+# Target Cell:
+
+
+df.drop([10472],inplace = True);

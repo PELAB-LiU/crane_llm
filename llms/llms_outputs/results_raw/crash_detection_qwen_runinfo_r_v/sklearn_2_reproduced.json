@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The DTRmodel has not been fitted and is a fresh instance of DecisionTreeRegressor. Predictions cannot be made on an unfitted model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted and is a fresh instance of DecisionTreeRegressor. Predictions cannot be made on an unfitted model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted and is a fresh instance of DecisionTreeRegressor. Predictions cannot be made on an unfitted model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted and is a fresh instance of DecisionTreeRegressor. Predictions cannot be made on an unfitted model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The DTRmodel has not been fitted and is a fresh instance of DecisionTreeRegressor. Predictions cannot be made on an unfitted model.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model expects input_shape (100,100,3) but generators produce images of shape (223,223,3), causing a shape mismatch error when fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects input_shape (100,100,3) but the generators yield images of shape (223,223,3), causing a shape mismatch at training time.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model input_shape is (100,100,3) but generators yield images of shape (223,223,3), causing a shape mismatch on fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model’s input_shape is (100,100,3) but the generators produce images of shape (223,223,3), which will cause a shape mismatch error when fitting.",
+    "detection": true
+  },
+  {
+    "reasoning": "Model expects input_shape (100,100,3) but generators produce images of shape (223,223,3), causing a shape mismatch at training.",
+    "detection": true
+  }
+]

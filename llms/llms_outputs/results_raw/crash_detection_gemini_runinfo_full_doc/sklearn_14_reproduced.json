@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type (categorical strings), which LinearRegression cannot directly process. These columns need to be numerically encoded before fitting the model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type (categorical strings), which LinearRegression cannot directly process. These columns need to be numerically encoded before fitting the model.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type (categorical strings), which cannot be directly used by LinearRegression.fit() without numerical encoding.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type (categorical strings), which cannot be directly used by LinearRegression.fit() without numerical encoding.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are of object type (categorical strings), which cannot be directly used by LinearRegression.fit() without numerical encoding.",
+    "detection": true
+  }
+]

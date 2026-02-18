@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "region is a categorical column and includes 'Asia Pacific' among its categories, so groupby(..., observed=True) will keep only observed groups; since 'Asia Pacific' is present, get_group will succeed and sorting by an existing column is valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'region' exists as categorical and includes 'Asia Pacific'; groupby with observed=True is valid and get_group will find the group. Sorting by '%percent emission' also valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'region' contains category 'Asia Pacific' per example values, and groupby with observed=True is valid; sorting by existing '%percent emission' is fine. Should return the group's DataFrame without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'region' exists and includes 'Asia Pacific'; groupby with observed=True is valid. Sorting by '%percent emission' also valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'region' exists and includes 'Asia Pacific'; groupby with observed=True is valid and sorting by an existing numeric column is fine.",
+    "detection": false
+  }
+]

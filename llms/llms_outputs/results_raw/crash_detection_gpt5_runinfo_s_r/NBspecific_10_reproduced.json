@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "train is a numpy ndarray after scaling and does not have column 'ActivePower'; indexing it with ['ActivePower'] will raise a TypeError. Also check_stationarity expects a Series but can handle any array-like; the error arises from the dict-like indexing.",
+    "detection": true
+  },
+  {
+    "reasoning": "train is a numpy ndarray of shape (44582, 1), not a DataFrame; indexing with ['ActivePower'] will raise a TypeError. Also, check_stationarity accepts a Series/array, so passing train directly would be fine, but current call uses invalid column access.",
+    "detection": true
+  },
+  {
+    "reasoning": "train is a numpy ndarray after scaling, not a DataFrame; indexing with ['ActivePower'] will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "train is a NumPy array after scaling, not a DataFrame/Series, so indexing with ['ActivePower'] will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "train is a numpy ndarray after scaling, not a DataFrame with 'ActivePower' column; indexing with ['ActivePower'] will raise a TypeError. Also check_stationarity expects a 1D Series-like, not a 2D array.",
+    "detection": true
+  }
+]

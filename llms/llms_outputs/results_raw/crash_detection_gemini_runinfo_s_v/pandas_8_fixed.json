@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'MSRP' column contains string values with '$' and ',' characters, which need to be removed before converting to a numeric type. The regex replacement and subsequent type conversions are valid operations.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column contains string values with '$' and ',' characters, which need to be removed before converting to a numeric type. The regex replacement and subsequent type conversions to float and then 'Int64' are valid operations for this data.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column contains string values with '$' and ',' characters, which need to be removed before converting to a numeric type. The regex replacement and subsequent type conversions to float and then 'Int64' are valid operations for this data.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column contains string values with '$' and ',' characters, which need to be removed before converting to a numeric type. The regex replacement and subsequent type conversions are valid operations.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'MSRP' column contains string values with '$' and ',' characters, which need to be removed before converting to a numeric type. The regex replacement and subsequent type conversions are valid operations.",
+    "detection": false
+  }
+]

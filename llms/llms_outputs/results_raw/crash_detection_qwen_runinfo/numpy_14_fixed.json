@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is already in class index form, not one-hot encoded. This will lead to a crash when attempting to use `y_true_onehot` as if it were one-hot encoded.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is already in class index form, not one-hot encoded. This will lead to a crash when attempting to use `y_true_onehot` as if it were one-hot encoded.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is already in class index form, not one-hot encoded. This will lead to a crash when attempting to use `y_true_onehot` as if it were one-hot encoded.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is already in class index form, not one-hot encoded. This will lead to a crash when attempting to use `y_true_onehot` as if it were one-hot encoded.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is already in class index form, not one-hot encoded. This will lead to a crash when attempting to use `y_true_onehot` as if it were one-hot encoded.",
+    "detection": true
+  }
+]

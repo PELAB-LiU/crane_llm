@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "classes from predict are integer indices, but cat_to_name expects string category labels; indexing cat_to_name with integers will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "classes returned by predict are integer class indices, but cat_to_name expects string category labels, causing a KeyError when mapping class_names. Other parts likely run.",
+    "detection": true
+  },
+  {
+    "reasoning": "classes from predict are integer class indices, but cat_to_name expects string category labels; indexing dict with ints will raise KeyError. Also test_ds.imgs entries are (path, class_idx), so np.random.choice(test_ds.imgs)[0] returns path correctly.",
+    "detection": true
+  },
+  {
+    "reasoning": "classes are integer class indices from the dataset, but cat_to_name expects string category labels; indexing cat_to_name with integers will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "classes returned by predict are integer class indices, but cat_to_name keys are strings; indexing with integers will raise a KeyError. Also, plt is imported here so imshow's plt reference is fine.",
+    "detection": true
+  }
+]

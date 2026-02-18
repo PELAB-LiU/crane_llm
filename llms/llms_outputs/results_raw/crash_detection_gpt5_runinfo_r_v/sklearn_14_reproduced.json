@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "X_train contains non-numeric string columns (street, statezip, country) which LinearRegression cannot handle without encoding, so fit will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train contains non-numeric columns (street, statezip, country), which LinearRegression cannot handle without encoding; fitting will raise a ValueError about non-numeric data.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train includes non-numeric string columns (street, statezip, country) and mixed-encoded city; LinearRegression requires numeric features, so fit will raise a ValueError about dtype/object.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train contains non-numeric string columns like 'street', 'statezip', and 'country', which LinearRegression cannot handle without encoding; fitting will raise a ValueError about converting strings to float.",
+    "detection": true
+  },
+  {
+    "reasoning": "X_train contains string/object columns like 'street' and 'statezip', which LinearRegression cannot handle without encoding; fitting will raise a ValueError about non-numeric data.",
+    "detection": true
+  }
+]

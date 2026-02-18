@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The target cell attempts to plot accuracy metrics from `history`, but `history` is not defined in the executed cells. This will result in a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to plot accuracy metrics from `history`, but `history` is not defined in the executed cells. This will result in a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to plot accuracy metrics from `history`, but `history` is not defined in the executed cells. This will result in a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to plot accuracy metrics from `history`, but `history` is not defined in the executed cells. This will result in a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell attempts to plot accuracy metrics from `history`, but `history` is not defined in the executed cells. This will result in a NameError.",
+    "detection": true
+  }
+]

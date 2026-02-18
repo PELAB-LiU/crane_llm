@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `load` method is not an attribute of a Keras Sequential model. To load a model, `tf.keras.models.load_model` should be used.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `load` method is not an attribute of a Keras Sequential model. To load a model, `tf.keras.models.load_model` should be used.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `load` method is not an attribute of a Keras Sequential model. To load a model, `tf.keras.models.load_model` should be used.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `load` method is not an attribute of a Keras Sequential model. To load a model, `tf.keras.models.load_model` should be used.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `load` method is not an attribute of a Keras Sequential model. The correct function to load a model is `tf.keras.models.load_model`.",
+    "detection": true
+  }
+]

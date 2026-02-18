@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "residuals is a non-empty pandas Series; computed lags are positive (max_acf_lags=91, max_pacf_lags=45) and within valid range for statsmodels plot_acf/pacf. Required imports and plt are available.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals is a pandas Series of length 92, so max_acf_lags=91 and max_pacf_lags=45; both are valid for plot_acf/plot_pacf. All required imports and variables exist.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals is a pandas Series of length 92; computed lags are max_acf_lags=91 and max_pacf_lags=45, both valid. plot_acf/plot_pacf accept these, and plotting functions exist.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals length is 92, so max_acf_lags = 91 and max_pacf_lags = 45, both valid; plotting functions and plt are available. No undefined variables or invalid parameters.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals is a pandas Series of length 92, so computed lags are max_acf_lags=91 and max_pacf_lags=45, both valid. plot_acf/plot_pacf and plt are imported and available.",
+    "detection": false
+  }
+]

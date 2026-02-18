@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The StandardScaler is being incorrectly applied to the target variables y_train and y_test, which are categorical. StandardScaler should only be applied to numerical features, not to the target labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "The StandardScaler is being incorrectly applied to the target variables y_train and y_test, which are categorical. StandardScaler should only be applied to numerical features, not to the target labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "The StandardScaler is being incorrectly applied to the target variables y_train and y_test, which are categorical. StandardScaler should only be applied to numerical features, not to the target labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "The StandardScaler is being incorrectly applied to the target variables y_train and y_test, which are categorical. StandardScaler should only be applied to numerical features, not to the target labels.",
+    "detection": true
+  },
+  {
+    "reasoning": "The StandardScaler is being incorrectly applied to the target variables y_train and y_test, which are categorical. StandardScaler should only be applied to numerical features, not to the target labels.",
+    "detection": true
+  }
+]

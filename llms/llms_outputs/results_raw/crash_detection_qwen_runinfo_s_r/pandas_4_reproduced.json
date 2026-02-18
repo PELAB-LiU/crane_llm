@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The function `row2image` attempts to access `emotion_map` with keys from 0 to 6, but the dataframe `data` no longer contains rows with emotion value 1 after they were dropped in Cell 3. This will result in an error when trying to access `data['emotion'] == 1`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` attempts to access `emotion_map` with keys from 0 to 6, but the dataframe `data` no longer contains rows with emotion value 1 after they were dropped in Cell 3. This will result in an error when trying to access `data['emotion'] == 1`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` attempts to access `emotion_map` with keys from 0 to 6, but the dataframe `data` no longer contains rows with emotion value 1 after they were dropped in Cell 3. This will result in an error when trying to access `data['emotion'] == 1`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` attempts to access `emotion_map` with keys from 0 to 6, but the dataframe `data` no longer contains rows with emotion value 1 after they were dropped in Cell 3. This will result in an error when trying to access `data['emotion'] == 1`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The function `row2image` attempts to access `emotion_map` with keys from 0 to 6, but the dataframe `data` no longer contains rows with emotion value 1 after they were dropped in Cell 3. This will result in an error when trying to access `data['emotion'] == 1`.",
+    "detection": true
+  }
+]

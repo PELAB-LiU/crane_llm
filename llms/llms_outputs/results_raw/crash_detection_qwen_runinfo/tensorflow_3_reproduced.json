@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The method `load` does not exist for the Sequential model in TensorFlow/Keras. The correct method to load a model is `load_model` from `tensorflow.keras.models`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The method `load` does not exist for the Sequential model in TensorFlow/Keras. The correct method to load a model is `load_model` from `tensorflow.keras.models`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The method `load` does not exist for the Sequential model in TensorFlow/Keras. The correct method to load a model is `load_model` from `tensorflow.keras.models`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The method `load` does not exist for the Sequential model in TensorFlow/Keras. The correct method to load a model is `load_model` from `tensorflow.keras.models`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The method `load` does not exist for the Sequential model in TensorFlow/Keras. The correct method to load a model is `load_model` from `tensorflow.keras.models`.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model expects tokenized tensor inputs matching the HuggingFace model (input IDs, attention masks), but train_data is a pandas Series of raw text; shape/type mismatch will cause an error during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects tokenized tensor inputs compatible with TFAutoModel (e.g., dict with input_ids/attention_mask), but train_data is a pandas Series of raw strings, causing a shape/type mismatch during fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The Sequential model expects tensor inputs matching the HuggingFace model, but train_data is a pandas Series of raw text and the layer expects tokenized tensors; input shape/type mismatch will cause an error. Also, the HuggingFace layer returns a tuple/dict not directly compatible with Dense without pooling.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects tensor inputs matching BERT's signature (e.g., input_ids, attention_mask), but train_data is a pandas Series of raw text; this will cause a shape/type mismatch when calling the HuggingFaceLayer.",
+    "detection": true
+  },
+  {
+    "reasoning": "The Sequential model expects tensor inputs matching the HuggingFace model (e.g., input_ids/attention_mask), but train_data is a pandas Series of raw text; passing strings to TFAutoModel will raise a type/shape error. Also labels are float Series without batching.",
+    "detection": true
+  }
+]

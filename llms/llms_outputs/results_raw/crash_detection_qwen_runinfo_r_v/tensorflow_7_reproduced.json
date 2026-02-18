@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model expects inputs of shape (max_len,), but the train_input tensors have a shape of (8, 172), which does not match the expected input shape of 50. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects inputs of shape (max_len,), but the train_input tensors have a shape of (8, 172), which does not match the expected input shape of 50. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects inputs of shape (max_len,), but the train_input tensors have a shape of (8, 172), which does not match the expected input shape of 50. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects inputs of shape (max_len,), but the train_input tensors have a shape of (8, 172), which does not match the expected input shape of 50. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects inputs of shape (max_len,), but the train_input tensors have a shape of (8, 172), which does not match the expected input shape of 50. This mismatch will cause a crash.",
+    "detection": true
+  }
+]

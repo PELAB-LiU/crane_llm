@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "df['Order ID'] has dtype object with non-numeric strings present; astype('int') on the entire Series will raise a ValueError when encountering non-integer values.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Order ID' has dtype object and likely contains non-numeric strings; astype('int') would raise ValueError if any non-integer values are present. Not certain without full values.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'Order ID' is dtype object and likely contains non-numeric strings; astype('int') will raise ValueError when encountering such values.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'Order ID' has dtype object with non-numeric values likely present; astype('int') on the whole column will raise a ValueError during conversion.",
+    "detection": true
+  },
+  {
+    "reasoning": "df['Order ID'] contains non-numeric strings; astype('int') on the entire column will raise a ValueError.",
+    "detection": true
+  }
+]

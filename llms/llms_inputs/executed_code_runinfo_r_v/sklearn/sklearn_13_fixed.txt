@@ -1,0 +1,104 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+## Cell 2:
+
+df = pd.read_csv("data/SalaryData_Test(1).csv")
+
+## Cell 3:
+
+x = df.workclass.values.reshape(-1,1)
+y = df.Salary.values.reshape(-1,1)
+
+# Current relevent runtime information:
+{'__method__df_Salary': {'dtype': 'object',
+                         'has_nan': False,
+                         'type': 'pandas.core.series.Series',
+                         'value_info': {'num_unique': 2,
+                                        'unique_values': [' <=50K', ' >50K']}},
+ '__method__df_workclass': {'dtype': 'object',
+                            'has_nan': False,
+                            'type': 'pandas.core.series.Series',
+                            'value_info': {'num_unique': 7}},
+ 'df': {'has_nan': False,
+        'per_column': {'Salary': {'num_unique': 2,
+                                  'unique_values': [' <=50K', ' >50K']},
+                       'age': {'num_unique': 73, 'value_range': (17, 90)},
+                       'capitalgain': {'num_unique': 110,
+                                       'value_range': (0, 99999)},
+                       'capitalloss': {'num_unique': 79,
+                                       'value_range': (0, 3770)},
+                       'education': {'example_values': [' HS-grad',
+                                                        ' Assoc-acdm',
+                                                        ' Doctorate',
+                                                        ' 9th',
+                                                        ' Preschool'],
+                                     'num_unique': 16},
+                       'educationno': {'num_unique': 16,
+                                       'value_range': (1, 16)},
+                       'hoursperweek': {'num_unique': 89,
+                                        'value_range': (1, 99)},
+                       'maritalstatus': {'example_values': [' '
+                                                            'Married-spouse-abse...',
+                                                            ' Separated',
+                                                            ' '
+                                                            'Married-civ-spouse',
+                                                            ' Divorced',
+                                                            ' Never-married'],
+                                         'num_unique': 7},
+                       'native': {'example_values': [' Peru',
+                                                     ' Outlying-US(Guam-US...',
+                                                     ' Japan',
+                                                     ' Cuba',
+                                                     ' Poland'],
+                                  'num_unique': 40},
+                       'occupation': {'example_values': [' Prof-specialty',
+                                                         ' Transport-moving',
+                                                         ' Priv-house-serv',
+                                                         ' Adm-clerical',
+                                                         ' Handlers-cleaners'],
+                                      'num_unique': 14},
+                       'race': {'num_unique': 5,
+                                'unique_values': [' Black',
+                                                  ' White',
+                                                  ' Other',
+                                                  ' Amer-Indian-Eskimo',
+                                                  ' Asian-Pac-Islander']},
+                       'relationship': {'example_values': [' Not-in-family',
+                                                           ' Other-relative',
+                                                           ' Own-child',
+                                                           ' Wife',
+                                                           ' Husband'],
+                                        'num_unique': 6},
+                       'sex': {'num_unique': 2,
+                               'unique_values': [' Male', ' Female']},
+                       'workclass': {'example_values': [' Without-pay',
+                                                        ' Local-gov',
+                                                        ' Federal-gov',
+                                                        ' Self-emp-not-inc',
+                                                        ' Private'],
+                                     'num_unique': 7}},
+        'type': 'pandas.core.frame.DataFrame'},
+ 'x': {'dtype': 'object', 'type': 'numpy.ndarray'},
+ 'y': {'dtype': 'object', 'type': 'numpy.ndarray'}}
+# Target Cell:
+
+from sklearn.linear_model import LinearRegression
+
+
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+
+label_encoder = LabelEncoder()
+x_encoded = label_encoder.fit_transform(df.workclass.values)
+x = x_encoded.reshape(-1,1)
+y_encoded = label_encoder.fit_transform(df.Salary.values)
+y = y_encoded.reshape(-1,1)
+
+
+linear_reg = LinearRegression()
+linear_reg.fit(x,y)

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "StandardScaler requires numeric input, but previous cell one-hot encoded all columns including target, likely causing train/test column mismatch; scaler.transform on test_df will raise a shape/feature mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "After get_dummies on all columns including target, train and test likely have mismatched columns; StandardScaler.transform on test will fail due to differing feature columns. Also, fitting includes target which is inappropriate.",
+    "detection": true
+  },
+  {
+    "reasoning": "StandardScaler requires the same features in train and test, but get_dummies applied separately can produce mismatched columns, causing transform on test to fail. Also, OneHotEncoder is defined but unused.",
+    "detection": true
+  },
+  {
+    "reasoning": "StandardScaler expects numeric arrays; after get_dummies both dataframes are numeric. However, train and test dummy columns likely differ, causing scaler.transform to fail due to mismatched feature count.",
+    "detection": true
+  },
+  {
+    "reasoning": "StandardScaler requires numeric inputs, but train_df/test_df were one-hot encoded via get_dummies, which yields numeric columns; however, train_df and test_df likely have different columns after separate get_dummies, causing scaler.transform(test_df) to fail due to mismatched feature counts. Not guaranteed without data.",
+    "detection": false
+  }
+]

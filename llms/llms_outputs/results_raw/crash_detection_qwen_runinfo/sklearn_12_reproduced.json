@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The SVC model does not have a `feature_importances_` attribute, which will cause an AttributeError when trying to access it.",
+    "detection": true
+  },
+  {
+    "reasoning": "The SVC model does not have a `feature_importances_` attribute, which will cause an AttributeError when trying to access it.",
+    "detection": true
+  },
+  {
+    "reasoning": "The SVC model does not have a `feature_importances_` attribute, which will cause an AttributeError when trying to access it.",
+    "detection": true
+  },
+  {
+    "reasoning": "The SVC model does not have a `feature_importances_` attribute, which will cause an AttributeError when trying to access it.",
+    "detection": true
+  },
+  {
+    "reasoning": "The SVC model does not have a `feature_importances_` attribute, which will cause an AttributeError when trying to access it.",
+    "detection": true
+  }
+]

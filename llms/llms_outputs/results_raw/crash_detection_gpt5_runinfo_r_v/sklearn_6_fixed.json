@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Model expects 58 features; test_ds was aligned to X_train.columns and encoded, with no NaNs. Predicting and creating a DataFrame with matching-length IDs should work.",
+    "detection": false
+  },
+  {
+    "reasoning": "FReg expects 58 features; test_ds was aligned to X_train.columns and label-encoded, with no NaNs, so shape and types should match for prediction. Constructing the DataFrame with existing test_ds_ids also should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "FReg expects 58 features, and test_ds was aligned to X_train.columns and encoded, with no NaNs; shapes likely match. Predict and DataFrame creation should run without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "FReg is fitted and expects 58 features; test_ds was aligned to X_train.columns and contains no NaNs. Predicting and creating a DataFrame with matching ID length should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "FReg is fitted and test_ds has no NaNs with columns aligned to X_train.columns. Predict expects 58 features and test_ds matches. The DataFrame creation uses existing test_ds_ids and predictions lengths should align, so it should run without error.",
+    "detection": false
+  }
+]

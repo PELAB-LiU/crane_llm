@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The variables `x` and `y` are numpy arrays with dtype 'object', which is not suitable for fitting a LinearRegression model. The model requires numerical data.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variables `x` and `y` are numpy arrays with dtype 'object', which is not suitable for the LinearRegression model that expects numerical data. This will likely cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variables `x` and `y` are numpy arrays with dtype 'object', which is not suitable for the LinearRegression model that expects numerical data. This will likely cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variables `x` and `y` are numpy arrays with dtype 'object', which is not suitable for the LinearRegression model that expects numerical data. This will likely cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variables `x` and `y` are numpy arrays with dtype 'object', which is not suitable for the LinearRegression model that expects numerical data. This will likely cause a crash.",
+    "detection": true
+  }
+]

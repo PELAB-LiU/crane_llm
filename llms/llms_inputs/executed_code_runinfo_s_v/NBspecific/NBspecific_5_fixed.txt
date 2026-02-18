@@ -1,0 +1,92 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from mpl_toolkits import mplot3d
+import warnings
+
+warnings.filterwarnings('ignore')
+
+## Cell 2:
+
+df=pd.read_csv('data/kdd_train.csv.zip')
+df.head()
+
+## Cell 3:
+
+numeric_columns = []
+categorical_columns = []
+for column in df.columns:
+    if df[column].dtype != 'object':
+        numeric_columns.append(column)
+    else:
+        categorical_columns.append(column)
+
+categorical_columns = categorical_columns[:-1]
+labels=df['labels'].unique()
+
+# Current relevent runtime information:
+{'df': {'has_nan': False,
+        'per_column_max_20': {'dst_bytes': {'num_unique': 9326,
+                                               'value_range': (0, 1309937401)},
+                                 'duration': {'num_unique': 2981,
+                                              'value_range': (0, 42908)},
+                                 'flag': {'example_values': ['RSTR',
+                                                             'S1',
+                                                             'OTH',
+                                                             'REJ',
+                                                             'SF'],
+                                          'num_unique': 11},
+                                 'hot': {'num_unique': 28,
+                                         'value_range': (0, 77)},
+                                 'land': {'num_unique': 2,
+                                          'value_range': (0, 1)},
+                                 'logged_in': {'num_unique': 2,
+                                               'value_range': (0, 1)},
+                                 'num_access_files': {'num_unique': 10,
+                                                      'value_range': (0, 9)},
+                                 'num_compromised': {'num_unique': 88,
+                                                     'value_range': (0, 7479)},
+                                 'num_failed_logins': {'num_unique': 6,
+                                                       'value_range': (0, 5)},
+                                 'num_file_creations': {'num_unique': 35,
+                                                        'value_range': (0, 43)},
+                                 'num_outbound_cmds': {'num_unique': 1,
+                                                       'value_range': (0, 0)},
+                                 'num_root': {'num_unique': 82,
+                                              'value_range': (0, 7468)},
+                                 'num_shells': {'num_unique': 3,
+                                                'value_range': (0, 2)},
+                                 'protocol_type': {'num_unique': 3,
+                                                   'unique_values': ['tcp',
+                                                                     'udp',
+                                                                     'icmp']},
+                                 'root_shell': {'num_unique': 2,
+                                                'value_range': (0, 1)},
+                                 'service': {'example_values': ['daytime',
+                                                                'time',
+                                                                'tim_i',
+                                                                'ldap',
+                                                                'IRC'],
+                                             'num_unique': 70},
+                                 'src_bytes': {'num_unique': 3341,
+                                               'value_range': (0, 1379963888)},
+                                 'su_attempted': {'num_unique': 3,
+                                                  'value_range': (0, 2)},
+                                 'urgent': {'num_unique': 4,
+                                            'value_range': (0, 3)},
+                                 'wrong_fragment': {'num_unique': 3,
+                                                    'value_range': (0, 3)}},
+        'shape': (125973, 42)},
+ 'numeric_columns': {'length': 38, 'value_info': {'num_unique': 38}}}
+# Target Cell:
+
+
+
+df.drop(columns='num_outbound_cmds', inplace=True)
+
+
+numeric_columns.remove('num_outbound_cmds')

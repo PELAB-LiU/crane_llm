@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "DTRmodel is an unfitted DecisionTreeRegressor (is_fitted: False); calling predict on it will raise NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel was never fitted (is_fitted: False), and predicting with an unfitted scikit-learn estimator raises NotFittedError.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel is an unfitted DecisionTreeRegressor (is_fitted: False); calling predict on it will raise NotFittedError even though dft_encoded is valid.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel is an unfitted DecisionTreeRegressor (is_fitted: False), so calling predict will raise NotFittedError. dft_encoded is valid input shape-wise but the model isn’t trained.",
+    "detection": true
+  },
+  {
+    "reasoning": "DTRmodel has not been fitted (is_fitted: False), and predicting with an unfitted scikit-learn estimator raises NotFittedError.",
+    "detection": true
+  }
+]

@@ -1,0 +1,45 @@
+# Executed Cells:
+## Cell 1:
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+## Cell 2:
+
+train_df = pd.read_csv('data/train.csv', index_col = "Id")
+test_df = pd.read_csv('data/test.csv', index_col = "Id")
+
+## Cell 3:
+
+from sklearn.model_selection import KFold
+from sklearn.linear_model import LinearRegression, Ridge
+from sklearn.metrics import mean_squared_error
+from sklearn.preprocessing import PolynomialFeatures
+
+# Current relevent runtime information:
+{'PolynomialFeatures': {'type': "<class 'type'>"},
+ 'X': {'has_nan': False,
+       'per_column': {'age': {'num_unique': 41, 'value_range': (29, 77)},
+                      'caa': {'num_unique': 5, 'value_range': (0, 4)},
+                      'chol': {'num_unique': 152, 'value_range': (126, 564)},
+                      'cp': {'num_unique': 4, 'value_range': (0, 3)},
+                      'exng': {'num_unique': 2, 'value_range': (0, 1)},
+                      'fbs': {'num_unique': 2, 'value_range': (0, 1)},
+                      'oldpeak': {'num_unique': 40, 'value_range': (0.0, 6.2)},
+                      'restecg': {'num_unique': 3, 'value_range': (0, 2)},
+                      'sex': {'num_unique': 2, 'value_range': (0, 1)},
+                      'slp': {'num_unique': 3, 'value_range': (0, 2)},
+                      'thalachh': {'num_unique': 91, 'value_range': (71, 202)},
+                      'thall': {'num_unique': 4, 'value_range': (0, 3)},
+                      'trtbps': {'num_unique': 49, 'value_range': (94, 200)}},
+       'type': 'pandas.core.frame.DataFrame'},
+ '__method__X_shape': {'type': "<class 'tuple'>"}}
+# Target Cell:
+
+
+poly = PolynomialFeatures(degree=1, interaction_only=True)
+poly_X = poly.fit_transform(X)
+
+X.shape, poly_X.shape

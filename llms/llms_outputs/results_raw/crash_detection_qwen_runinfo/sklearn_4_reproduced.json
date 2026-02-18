@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multiclass labels, but `preds` contains continuous values, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multiclass labels, but `preds` contains continuous values, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multiclass labels, but `preds` contains continuous values, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multiclass labels, but `preds` contains continuous values, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects binary or multiclass labels, but `preds` contains continuous values, which will cause a crash.",
+    "detection": true
+  }
+]

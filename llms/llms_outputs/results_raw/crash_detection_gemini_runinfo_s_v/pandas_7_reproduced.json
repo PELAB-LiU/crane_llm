@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'released' column contains string representations of dates. The code attempts to split these strings by '-' and convert the first part (year) to an integer, which is a valid operation.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains date strings. The target cell attempts to extract the year as an integer, which is a valid operation for the given data type and format.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains date strings. The target cell attempts to extract the year as an integer, which is a valid operation for the given data type and format.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains string representations of dates. The code attempts to extract the year by splitting the string at '-' and converting the first part to an integer, which is a valid operation.",
+    "detection": false
+  },
+  {
+    "reasoning": "The 'released' column contains date strings. The target cell attempts to extract the year as an integer, which is a valid operation for the given data type and format.",
+    "detection": false
+  }
+]

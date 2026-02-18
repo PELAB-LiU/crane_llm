@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "GradientBoostingRegressor objects (gbr, gbr2, gbr_gs) do not have feature_importances_, causing an AttributeError when accessed. The loop tries to access it for all models.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor does not have feature_importances_ attribute; accessing it will raise an AttributeError when iterating over gbr/gbr2/gbr_gs. RandomForestRegressor has it, but the loop includes the GB models first.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor does not have feature_importances_, so accessing model.feature_importances_ for gbr/gbr2/gbr_gs will raise an AttributeError. RandomForestRegressor has it, but the loop includes GB models first.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor (gbr, gbr2, gbr_gs) does not have feature_importances_, so accessing it will raise an AttributeError when iterating models.",
+    "detection": true
+  },
+  {
+    "reasoning": "GradientBoostingRegressor does not have feature_importances_ (uses feature_importances_ for tree-based? Actually GradientBoostingRegressor has feature_importances_ via trees). Main issue: using X_2_train with models having 8 features but rfr_gs trained with criterion='friedman_mse' invalid for RandomForestRegressor? It trained successfully. The likely crash is mismatch lengths if any model lacks feature_importances_. All listed models provide feature_importances_. No crash certain.",
+    "detection": false
+  }
+]

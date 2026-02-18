@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Order ID' column contains non-integer values (e.g., '148850', '173699') that cannot be directly converted to integers using `astype('int')` without first handling potential non-numeric characters or converting to a numeric type that can handle them.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-integer values (e.g., '148850', '173699') that cannot be directly converted to integers using `astype('int')` without first handling potential non-numeric characters or converting to a numeric type that can handle them.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-integer values (e.g., '148850', '173699') that cannot be directly converted to integers using `astype('int')` without first handling potential non-numeric characters or converting to a numeric type that can handle them.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-integer values (e.g., '148850', '173699') that cannot be directly converted to integers using `astype('int')` without first handling potential non-numeric characters or converting to a numeric type that can handle them.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Order ID' column contains non-integer values (e.g., '148850', '173699') that cannot be directly converted to integers using `astype('int')` without first handling potential non-numeric characters or converting to a numeric type that can handle them.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Groupby keys 'PAID' and 'DEFAULT' exist, columns exist, and hv.Histogram accepts (edges, freq). No obvious type or missing-key errors. Even with NaNs, np.histogram handles them by ignoring NaNs when applied to .values (will raise if all-NaN, but ranges show valid values).",
+    "detection": false
+  },
+  {
+    "reasoning": "g.get_group('PAID') and 'DEFAULT' exist per STATUS unique values. np.histogram handles NaNs by ignoring them. Histogram and HoloMap constructions match expected types. No obvious errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "Groupby on STATUS has both 'PAID' and 'DEFAULT'. Histograms use np.histogram on numeric columns listed; all exist and are numeric in df summary. Holoviews objects and dimension usage look valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "Groupby keys 'PAID' and 'DEFAULT' exist and columns listed are present. np.histogram can handle NaNs by treating them as ignored; holoviews Histogram accepts (edges, freq) pairs. No obvious type or key errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "g.get_group('PAID') and 'DEFAULT' exist; columns in cols exist with numeric ranges. np.histogram handles NaNs by ignoring them; hv.Histogram accepts (edges,freq). No obvious type/key errors.",
+    "detection": false
+  }
+]

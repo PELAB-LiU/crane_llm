@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "StandardScaler cannot fit/transform y since it is a 1D object dtype Series of strings; also reusing scaler on y overwrites it with numeric array shape mismatch for LogisticRegression requiring 1D target. This will raise an error when fitting/transforming y.",
+    "detection": true
+  },
+  {
+    "reasoning": "Scaling X is fine, but calling StandardScaler on y (object labels 'No'/'Yes') will fail because StandardScaler expects numeric array-like. Thus y_train = scaler.fit_transform(y_train) raises a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Scaling y with StandardScaler will crash because y_train/y_test are object labels ('No','Yes'); StandardScaler requires numeric array and fit_transform on y_train will raise a dtype error. Also fitting LogisticRegression with non-numeric y would fail. Crash is certain.",
+    "detection": true
+  },
+  {
+    "reasoning": "y_train and y_test are object labels ['No','Yes']; applying StandardScaler to them will raise a ValueError when converting to float. Also refitting scaler on y_train overwrites it. Therefore the cell will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "Scaling X is fine, but applying StandardScaler to y (object labels) will fail: scaler.fit_transform requires numeric array and y is categorical. Thus logreg.fit will not be reached due to error on y scaling.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Installs' column contains values with commas and a '+' sign, which cannot be directly converted to integers. This will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains values with commas and a '+' sign, which cannot be directly converted to integers. This will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains values with commas and a '+' sign, which cannot be directly converted to integers. This will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains values with commas and a '+' sign, which cannot be directly converted to integers. This will cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains values with commas and a '+' sign, which cannot be directly converted to integers. This will cause a ValueError.",
+    "detection": true
+  }
+]

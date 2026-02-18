@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "residuals is a pandas Series of length 92 without NaNs; computed lags are positive (acf lags=91, pacf lags=45) and plotting functions accept these. Imports and plt are available.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals exists as a pandas Series of length 92 with no NaNs; computed lags (min-based) will be positive (acf: 91, pacf: 45). plot_acf/plot_pacf accept these inputs, so execution should succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals is a valid pandas Series of length 92; computed lags (min(91,180)=91 and min(46-1,180)=45) are positive, and plotting functions accept these. Imports and plt are available. No crash expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals is a valid Series of length 92; computed lags are max_acf_lags=91 and max_pacf_lags=45, both acceptable. plot_acf/plot_pacf accept these and plt functions are available.",
+    "detection": false
+  },
+  {
+    "reasoning": "Residuals is a pandas Series of length 92 with no NaNs; lags computed as 91 and 45 are valid. Required imports and plt are available. No obvious errors.",
+    "detection": false
+  }
+]

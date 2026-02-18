@@ -1,0 +1,264 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn import metrics
+from sklearn.preprocessing import StandardScaler
+
+## Cell 2:
+
+
+data = pd.read_csv('data/data.csv')
+
+## Cell 3:
+
+data = data.drop(['Date', 'Location', 'Evaporation', 'Sunshine', 'Cloud9am', 'Cloud3pm'], axis=1)
+
+## Cell 4:
+
+for column in data.columns:
+    if np.issubdtype(data[column].dtype, np.number):
+        data[column].fillna(data[column].median(), inplace=True)
+    else:
+        data[column].fillna(data[column].mode()[0], inplace=True)
+
+## Cell 5:
+
+categorical_columns = ['WindGustDir', 'WindDir9am', 'WindDir3pm', 'RainToday']
+data = pd.get_dummies(data, columns=categorical_columns, drop_first=True)
+
+## Cell 6:
+
+X = data.drop('RainTomorrow', axis=1)
+y = data['RainTomorrow']
+
+## Cell 7:
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Current relevent runtime information:
+{'LogisticRegression': {'type': "<class 'type'>"},
+ 'StandardScaler': {'type': "<class 'type'>"},
+ 'X_test': {'has_nan': False,
+            'per_column_max_20': {'Humidity3pm': {'dtype': 'float64',
+                                                     'num_unique': 99,
+                                                     'type': 'continuous',
+                                                     'value_range': (2.0,
+                                                                     100.0)},
+                                     'Humidity9am': {'dtype': 'float64',
+                                                     'num_unique': 94,
+                                                     'type': 'continuous',
+                                                     'value_range': (6.0,
+                                                                     100.0)},
+                                     'MaxTemp': {'dtype': 'float64',
+                                                 'num_unique': 393,
+                                                 'type': 'continuous',
+                                                 'value_range': (-3.1, 46.7)},
+                                     'MinTemp': {'dtype': 'float64',
+                                                 'num_unique': 338,
+                                                 'type': 'continuous',
+                                                 'value_range': (-6.9, 30.5)},
+                                     'Pressure3pm': {'dtype': 'float64',
+                                                     'num_unique': 414,
+                                                     'type': 'continuous',
+                                                     'value_range': (987.1,
+                                                                     1038.4)},
+                                     'Pressure9am': {'dtype': 'float64',
+                                                     'num_unique': 417,
+                                                     'type': 'continuous',
+                                                     'value_range': (983.7,
+                                                                     1040.3)},
+                                     'RISK_MM': {'dtype': 'float64',
+                                                 'num_unique': 241,
+                                                 'type': 'continuous',
+                                                 'value_range': (0.0, 367.6)},
+                                     'Rainfall': {'dtype': 'float64',
+                                                  'num_unique': 249,
+                                                  'type': 'continuous',
+                                                  'value_range': (0.0, 170.4)},
+                                     'Temp3pm': {'dtype': 'float64',
+                                                 'num_unique': 393,
+                                                 'type': 'continuous',
+                                                 'value_range': (-3.9, 46.1)},
+                                     'Temp9am': {'dtype': 'float64',
+                                                 'num_unique': 360,
+                                                 'type': 'continuous',
+                                                 'value_range': (-4.9, 37.7)},
+                                     'Unnamed: 0': {'dtype': 'int64',
+                                                    'num_unique': 7377,
+                                                    'type': 'continuous',
+                                                    'value_range': (4, 36876)},
+                                     'WindGustDir_ENE': {'dtype': 'bool',
+                                                         'num_unique': 2,
+                                                         'type': 'binary',
+                                                         'value_range': (False,
+                                                                         True)},
+                                     'WindGustDir_ESE': {'dtype': 'bool',
+                                                         'num_unique': 2,
+                                                         'type': 'binary',
+                                                         'value_range': (False,
+                                                                         True)},
+                                     'WindGustDir_N': {'dtype': 'bool',
+                                                       'num_unique': 2,
+                                                       'type': 'binary',
+                                                       'value_range': (False,
+                                                                       True)},
+                                     'WindGustDir_NE': {'dtype': 'bool',
+                                                        'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (False,
+                                                                        True)},
+                                     'WindGustDir_NNE': {'dtype': 'bool',
+                                                         'num_unique': 2,
+                                                         'type': 'binary',
+                                                         'value_range': (False,
+                                                                         True)},
+                                     'WindGustDir_NNW': {'dtype': 'bool',
+                                                         'num_unique': 2,
+                                                         'type': 'binary',
+                                                         'value_range': (False,
+                                                                         True)},
+                                     'WindGustSpeed': {'dtype': 'float64',
+                                                       'num_unique': 55,
+                                                       'type': 'continuous',
+                                                       'value_range': (9.0,
+                                                                       135.0)},
+                                     'WindSpeed3pm': {'dtype': 'float64',
+                                                      'num_unique': 33,
+                                                      'type': 'continuous',
+                                                      'value_range': (0.0,
+                                                                      83.0)},
+                                     'WindSpeed9am': {'dtype': 'float64',
+                                                      'num_unique': 35,
+                                                      'type': 'continuous',
+                                                      'value_range': (0.0,
+                                                                      83.0)}},
+            'shape': (7377, 60),
+            'type': 'pandas.core.frame.DataFrame'},
+ 'X_train': {'has_nan': False,
+             'per_column_max_20': {'Humidity3pm': {'dtype': 'float64',
+                                                      'num_unique': 100,
+                                                      'type': 'continuous',
+                                                      'value_range': (1.0,
+                                                                      100.0)},
+                                      'Humidity9am': {'dtype': 'float64',
+                                                      'num_unique': 99,
+                                                      'type': 'continuous',
+                                                      'value_range': (2.0,
+                                                                      100.0)},
+                                      'MaxTemp': {'dtype': 'float64',
+                                                  'num_unique': 462,
+                                                  'type': 'continuous',
+                                                  'value_range': (-3.1, 48.1)},
+                                      'MinTemp': {'dtype': 'float64',
+                                                  'num_unique': 362,
+                                                  'type': 'continuous',
+                                                  'value_range': (-8.5, 30.3)},
+                                      'Pressure3pm': {'dtype': 'float64',
+                                                      'num_unique': 492,
+                                                      'type': 'continuous',
+                                                      'value_range': (980.2,
+                                                                      1039.6)},
+                                      'Pressure9am': {'dtype': 'float64',
+                                                      'num_unique': 496,
+                                                      'type': 'continuous',
+                                                      'value_range': (982.9,
+                                                                      1041.0)},
+                                      'RISK_MM': {'dtype': 'float64',
+                                                  'num_unique': 389,
+                                                  'type': 'continuous',
+                                                  'value_range': (0.0, 278.4)},
+                                      'Rainfall': {'dtype': 'float64',
+                                                   'num_unique': 396,
+                                                   'type': 'continuous',
+                                                   'value_range': (0.0, 371.0)},
+                                      'Temp3pm': {'dtype': 'float64',
+                                                  'num_unique': 456,
+                                                  'type': 'continuous',
+                                                  'value_range': (-5.1, 46.1)},
+                                      'Temp9am': {'dtype': 'float64',
+                                                  'num_unique': 396,
+                                                  'type': 'continuous',
+                                                  'value_range': (-5.9, 37.6)},
+                                      'Unnamed: 0': {'dtype': 'int64',
+                                                     'num_unique': 29504,
+                                                     'type': 'continuous',
+                                                     'value_range': (0, 36880)},
+                                      'WindGustDir_ENE': {'dtype': 'bool',
+                                                          'num_unique': 2,
+                                                          'type': 'binary',
+                                                          'value_range': (False,
+                                                                          True)},
+                                      'WindGustDir_ESE': {'dtype': 'bool',
+                                                          'num_unique': 2,
+                                                          'type': 'binary',
+                                                          'value_range': (False,
+                                                                          True)},
+                                      'WindGustDir_N': {'dtype': 'bool',
+                                                        'num_unique': 2,
+                                                        'type': 'binary',
+                                                        'value_range': (False,
+                                                                        True)},
+                                      'WindGustDir_NE': {'dtype': 'bool',
+                                                         'num_unique': 2,
+                                                         'type': 'binary',
+                                                         'value_range': (False,
+                                                                         True)},
+                                      'WindGustDir_NNE': {'dtype': 'bool',
+                                                          'num_unique': 2,
+                                                          'type': 'binary',
+                                                          'value_range': (False,
+                                                                          True)},
+                                      'WindGustDir_NNW': {'dtype': 'bool',
+                                                          'num_unique': 2,
+                                                          'type': 'binary',
+                                                          'value_range': (False,
+                                                                          True)},
+                                      'WindGustSpeed': {'dtype': 'float64',
+                                                        'num_unique': 62,
+                                                        'type': 'continuous',
+                                                        'value_range': (7.0,
+                                                                        135.0)},
+                                      'WindSpeed3pm': {'dtype': 'float64',
+                                                       'num_unique': 38,
+                                                       'type': 'continuous',
+                                                       'value_range': (0.0,
+                                                                       87.0)},
+                                      'WindSpeed9am': {'dtype': 'float64',
+                                                       'num_unique': 38,
+                                                       'type': 'continuous',
+                                                       'value_range': (0.0,
+                                                                       87.0)}},
+             'shape': (29504, 60),
+             'type': 'pandas.core.frame.DataFrame'},
+ 'y_test': {'dtype': 'object',
+            'has_nan': False,
+            'length': 7377,
+            'type': 'pandas.core.series.Series',
+            'value_info': {'num_unique': 2,
+                           'unique_values': ['No', 'Yes'],
+                           'value_type': 'categorical or object'}},
+ 'y_train': {'dtype': 'object',
+             'has_nan': False,
+             'length': 29504,
+             'type': 'pandas.core.series.Series',
+             'value_info': {'num_unique': 2,
+                            'unique_values': ['No', 'Yes'],
+                            'value_type': 'categorical or object'}}}
+# Target Cell:
+
+logreg = LogisticRegression(max_iter=1000)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+y_train = scaler.fit_transform(y_train)
+y_test = scaler.transform(y_test)
+
+logreg.fit(X_train, y_train)

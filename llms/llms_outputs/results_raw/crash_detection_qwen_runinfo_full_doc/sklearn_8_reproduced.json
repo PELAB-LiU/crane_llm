@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `accuracy_score` function expects `y_true` and `y_pred` as inputs, but `x` (a DataFrame) and `y` (a Series) are provided instead. This will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `accuracy_score` function expects `y_true` and `y_pred` as inputs, but `x` (a DataFrame) and `y` (a Series) are provided instead. This will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `accuracy_score` function expects `y_true` and `y_pred` as inputs, but `x` (a DataFrame) and `y` (a Series) are provided instead. This will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `accuracy_score` function expects `y_true` and `y_pred` as inputs, but `x` (a DataFrame) and `y` (a Series) are provided instead. This will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `accuracy_score` function expects `y_true` and `y_pred` as inputs, but `x` (a DataFrame) and `y` (a Series) are provided instead. This will cause a crash.",
+    "detection": true
+  }
+]

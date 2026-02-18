@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The cell references src_images which is never defined in the executed cells, causing a NameError when accessing its length or elements.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable src_images is not defined anywhere in the executed cells, so referencing it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell references src_images, which is never defined in the executed cells or runtime info; accessing it will raise a NameError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The cell references src_images, which is not defined in the executed cells, causing a NameError when computing its length or indexing. All other variables exist and tar_images has valid shape.",
+    "detection": true
+  },
+  {
+    "reasoning": "The target cell references src_images, which has not been defined in the executed cells or runtime info, leading to a NameError.",
+    "detection": true
+  }
+]

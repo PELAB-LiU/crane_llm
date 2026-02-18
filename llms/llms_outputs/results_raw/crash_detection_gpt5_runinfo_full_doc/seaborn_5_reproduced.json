@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "sns.barplot expects keyword arguments for x and y; passing positional Series may raise a TypeError depending on seaborn version. Not certain it will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "sns.barplot expects keyword args for x and y (or data with x/y). Passing positional Series without keywords can raise a TypeError in current seaborn versions. Not certain it will crash across versions.",
+    "detection": false
+  },
+  {
+    "reasoning": "sns.barplot expects data as first positional arg and x/y as keywords; passing two positional Series without specifying x/y may raise a TypeError in recent seaborn versions. Not certain across versions, so cannot be sure it will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "sns.barplot expects keyword arguments for x and y (or data with x/y specified). Passing two positional arguments will raise a TypeError due to signature mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot expects data as keyword arguments or DataFrame with x= and y=; passing positional Series without keywords will raise a TypeError. Also seaborn now prefers keyword-only parameters.",
+    "detection": true
+  }
+]

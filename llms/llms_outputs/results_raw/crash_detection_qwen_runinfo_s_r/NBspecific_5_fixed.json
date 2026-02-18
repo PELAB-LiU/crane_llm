@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The column 'num_outbound_cmds' exists in the DataFrame and is also present in the numeric_columns list. Therefore, the operations in the target cell will not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' exists in the DataFrame and is also present in the numeric_columns list. Therefore, the operations in the target cell will not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' exists in the DataFrame and is also present in the numeric_columns list. Therefore, the operations in the target cell will not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' exists in the DataFrame and is also present in the numeric_columns list. Therefore, the operations in the target cell will not cause a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "The column 'num_outbound_cmds' exists in the DataFrame and is also present in the numeric_columns list. Therefore, the operations in the target cell will not cause a crash.",
+    "detection": false
+  }
+]

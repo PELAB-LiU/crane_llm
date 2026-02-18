@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "valid_dataset yields (x, y) where y are scalar class indices (binary), not one-hot tensors; calling y.numpy() and np.argmax on axis -1 will fail because y is a NumPy array already and not one-hot. Also looping over a Keras DirectoryIterator without breaking will raise StopIteration or run indefinitely.",
+    "detection": true
+  },
+  {
+    "reasoning": "valid_dataset yields NumPy arrays, not tensors; y has shape (batch_size,) for binary class_mode='binary', so calling y.numpy() and np.argmax on it will raise errors (AttributeError or wrong dimensions).",
+    "detection": true
+  },
+  {
+    "reasoning": "valid_dataset yields batches indefinitely and y is binary labels (not one-hot), so y.numpy() and argmax will error; argmax on 1D also mismatched with binary output. Also loop may never terminate.",
+    "detection": true
+  },
+  {
+    "reasoning": "valid_dataset yields batches until exhaustion, but iterating without breaking will loop indefinitely; also y from DirectoryIterator is a NumPy array, so y.numpy() will raise an AttributeError. This will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "valid_dataset yields batches until exhaustion but in a Python for-loop over a Keras DirectoryIterator, iteration does not stop and will loop indefinitely, causing a hang. Also, y from DirectoryIterator is a NumPy array, so y.numpy() will raise an AttributeError.",
+    "detection": true
+  }
+]

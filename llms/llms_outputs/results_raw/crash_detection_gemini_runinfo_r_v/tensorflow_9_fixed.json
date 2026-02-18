@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `summary` function from `torchinfo` is designed to work with `torch.nn.Module` instances, and `bert_model` is an instance of `BertModel`, which inherits from `nn.Module`. Therefore, calling `summary` on `bert_model` should execute without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `summary` function from `torchinfo` is designed to work with `torch.nn.Module` instances, and `bert_model` is an instance of `BertModel`, which inherits from `nn.Module`. Therefore, calling `summary` on `bert_model` should execute without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `summary` function from `torchinfo` is designed to work with `torch.nn.Module` instances, and `bert_model` is an instance of `BertModel`, which inherits from `nn.Module`. Therefore, calling `summary` on `bert_model` should execute without error.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `torchinfo.summary` function is designed to work with `torch.nn.Module` instances, and `bert_model` is an instance of `BertModel`, which inherits from `nn.Module`. Therefore, calling `summary(bert_model)` should execute without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "The `summary` function from `torchinfo` is designed to work with `torch.nn.Module` instances, and `bert_model` is an instance of `BertModel`, which inherits from `nn.Module`. Therefore, calling `summary` on `bert_model` should execute without error.",
+    "detection": false
+  }
+]

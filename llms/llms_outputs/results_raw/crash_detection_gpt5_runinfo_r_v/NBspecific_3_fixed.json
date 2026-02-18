@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "All referenced variables (X_test, y_test, yFit, np, stats, plt) exist with compatible shapes and no NaNs; F-stat denominator n-m-1 should be positive given train/test split. No type or name errors expected.",
+    "detection": false
+  },
+  {
+    "reasoning": "All referenced variables (X_test, y_test, yFit, np, stats, plt) exist with compatible shapes; operations and plotting are valid. No division-by-zero risk since n > m+1 is likely after train/test split and arrays have no NaNs.",
+    "detection": false
+  },
+  {
+    "reasoning": "All referenced variables (X_test, y_test, yFit, np, stats, plt) exist with compatible shapes and types; n > m+1 is likely but not guaranteed, so unless certain of division by zero or negative dof, cannot assert a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "F-test uses n-m-1 in denominator; if n <= m+1, division by zero or negative df occurs. Without exact shapes, not certain it will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "All variables used are defined and numeric arrays without NaNs, and shapes permit the operations; plotting functions are available. F-statistic denominator n-m-1 could be zero/negative only if n <= m+1, but no evidence indicates that, so cannot be certain of a crash.",
+    "detection": false
+  }
+]

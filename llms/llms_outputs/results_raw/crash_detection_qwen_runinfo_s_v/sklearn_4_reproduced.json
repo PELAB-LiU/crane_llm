@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `preds` array contains values that are not binary (0 or 1), which is required for the `balanced_accuracy_score` function when the target variable `y_test` is binary. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `preds` array contains values that are not binary (0 or 1), which is required for the `balanced_accuracy_score` function. This will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `preds` array contains values that are not binary (0 or 1), which is required for the `balanced_accuracy_score` function when the target variable `y_test` is binary. This mismatch will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `preds` array contains values that are not binary (0 or 1), which is required for the `balanced_accuracy_score` function. This will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `preds` array contains values that are not binary (0 or 1), which is required for the `balanced_accuracy_score` function when the target variable `y_test` is binary. This mismatch will cause a crash.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `plt` module does not have an attribute `zlabel`. This will cause an AttributeError when `plt.zlabel(\"Insulin\")` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `plt` module does not have an attribute `zlabel`. This will cause an AttributeError when `plt.zlabel(\"Insulin\")` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `plt` module does not have an attribute `zlabel`. This will cause an AttributeError when `plt.zlabel(\"Insulin\")` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `plt` module does not have an attribute `zlabel`. This will cause an AttributeError when `plt.zlabel(\"Insulin\")` is called.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `plt` module does not have an attribute `zlabel`. This will cause an AttributeError when `plt.zlabel(\"Insulin\")` is called.",
+    "detection": true
+  }
+]

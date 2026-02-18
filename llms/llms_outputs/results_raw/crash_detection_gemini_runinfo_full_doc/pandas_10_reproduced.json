@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'Installs' column contains non-numeric characters such as ',' and '+', which will prevent direct conversion to an integer type and cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains non-numeric characters such as ',' and '+', which will prevent direct conversion to an integer type. These characters need to be removed before casting to int.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains non-numeric characters such as ',' and '+', which will prevent direct conversion to an integer type and cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains non-numeric characters such as ',' and '+', which will prevent direct conversion to an integer type and cause a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'Installs' column contains non-numeric characters such as ',' and '+', which will prevent direct conversion to an integer type and cause a ValueError.",
+    "detection": true
+  }
+]

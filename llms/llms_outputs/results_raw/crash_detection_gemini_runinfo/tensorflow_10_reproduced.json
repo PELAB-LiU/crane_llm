@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The model expects tokenized inputs (input_ids, attention_mask, token_type_ids) but is receiving raw text data (train_data) and labels (train_labels). This mismatch in input format will cause a crash during model.fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects tokenized inputs (input_ids, attention_mask, token_type_ids) but is being fit with raw text data (train_data) and labels (train_labels). This mismatch in input format will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects tokenized inputs (input_ids, attention_mask, token_type_ids) but is receiving raw text data (train_data) and labels (train_labels). This mismatch in input format will cause a crash during model.fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects tokenized inputs (input_ids, attention_mask, token_type_ids) but is receiving raw text data (train_data) and labels (train_labels). This mismatch in input format will cause a crash during model.fit.",
+    "detection": true
+  },
+  {
+    "reasoning": "The model expects tokenized inputs (input_ids, attention_mask, token_type_ids) but is receiving raw text data (train_data) and labels (train_labels). This mismatch in input format will cause a crash during model.fit.",
+    "detection": true
+  }
+]

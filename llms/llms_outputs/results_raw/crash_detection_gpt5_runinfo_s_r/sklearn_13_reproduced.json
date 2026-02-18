@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "LinearRegression requires numeric features, but x and y are object dtype (categorical strings). Fitting will raise a ValueError during conversion to float.",
+    "detection": true
+  },
+  {
+    "reasoning": "LinearRegression requires numeric features, but x and y are object dtype (categorical/strings). Fitting with non-numeric data will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y are object dtype arrays with categorical/string values; LinearRegression requires numeric inputs, so fitting will raise a ValueError about non-numeric data.",
+    "detection": true
+  },
+  {
+    "reasoning": "x and y contain object dtype with categorical/string values; LinearRegression.fit expects numeric arrays and will fail to convert strings to float.",
+    "detection": true
+  },
+  {
+    "reasoning": "LinearRegression.fit expects numeric arrays; x and y are dtype object with categorical strings, causing a ValueError during fit.",
+    "detection": true
+  }
+]

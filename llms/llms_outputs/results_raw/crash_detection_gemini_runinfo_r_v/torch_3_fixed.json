@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `CustomModelMultichoice` expects `labels` to be a tensor of shape `(batch_size, num_choices)` for `nn.NLLLoss`, but `target` has shape `(1, 3)` which is incompatible with the `torch.argmax(labels, dim=1)` operation when `labels` is passed directly to `nn.NLLLoss` after `argmax`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The CustomModel expects labels to be a 1D tensor for NLLLoss, but the provided 'target' tensor is 2D. This will cause a runtime error when `torch.argmax(labels, dim=1)` is called, as it expects a 1D tensor.",
+    "detection": true
+  },
+  {
+    "reasoning": "The CustomModel expects labels to be a 1D tensor for NLLLoss, but the provided 'target' tensor is 2D. This will cause a runtime error when `torch.argmax(labels, dim=1)` is called, as it expects a 1D tensor.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `CustomModelMultichoice` expects `labels` to be a tensor of shape `(batch_size, num_choices)` for `nn.NLLLoss`, but `target` has shape `(1, 3)` which is incompatible with the `torch.argmax(labels, dim=1)` operation when `labels` is passed directly to `nn.NLLLoss` after `argmax`.",
+    "detection": true
+  },
+  {
+    "reasoning": "The CustomModel expects labels to be a 1D tensor for NLLLoss, but the provided 'target' tensor is 2D. This will cause a runtime error when `torch.argmax(labels, dim=1)` is called, as it expects a 1D tensor.",
+    "detection": true
+  }
+]

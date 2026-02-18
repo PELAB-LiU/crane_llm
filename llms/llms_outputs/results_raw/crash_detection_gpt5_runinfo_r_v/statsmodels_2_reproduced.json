@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "residuals is a valid pandas Series without NaNs; plot_acf/plot_pacf accept Series input and specified lags (180) will be internally adjusted if longer than series. No undefined names or type issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "Residuals is a valid pandas Series without NaNs. plot_acf/plot_pacf accept Series and specified lags; no undefined variables or incompatible types are present.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals is a valid pandas Series without NaNs, and plotting ACF/PACF with lags=180 and plt.show() should execute without errors given imported functions. No conflicting types or missing variables.",
+    "detection": false
+  },
+  {
+    "reasoning": "Residuals is a non-NaN pandas Series; plot_acf/plot_pacf accept Series input and specified lags. No missing variables or incompatible types.",
+    "detection": false
+  },
+  {
+    "reasoning": "Residuals is a pandas Series of float64 without NaNs, suitable for plot_acf/plot_pacf. No incompatible types or missing imports; lags=180 may truncate but won’t crash.",
+    "detection": false
+  }
+]

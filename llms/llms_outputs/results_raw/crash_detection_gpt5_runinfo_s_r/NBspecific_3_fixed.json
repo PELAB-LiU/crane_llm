@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "All referenced variables (X_test, y_test, yFit, np, stats, plt) exist with compatible shapes; n - m - 1 = 68 - 6 - 1 = 61 > 0, so F-stat computation is valid. No division by zero expected since SSE over test set unlikely exactly zero.",
+    "detection": false
+  },
+  {
+    "reasoning": "All variables used (X_test, y_test, yFit, np, stats, plt) exist with compatible shapes; m and n yield positive df (n-m-1=61). No division by zero or type issues are apparent.",
+    "detection": false
+  },
+  {
+    "reasoning": "All referenced variables (X_test, y_test, yFit, np, stats, plt) exist with compatible shapes; n-m-1 = 68-6-1 = 61 > 0 so no division-by-zero. Computations and plotting should proceed without errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "All variables used are defined with compatible shapes; n=68, m=6 makes n-m-1=61>0, avoiding division by zero. Operations and plotting calls are valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "All variables used (X_test, y_test, yFit, np, stats, plt) exist with compatible shapes; n-m-1=61>0 so no division by zero. The code should run.",
+    "detection": false
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `display_labels` parameter in `ConfusionMatrixDisplay` expects labels for each class. Since there are 3 unique values in `y_test` and `y_pred`, providing only `[False, True]` will cause a mismatch and lead to an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `display_labels` parameter in `ConfusionMatrixDisplay` expects labels for each class. Since there are 3 unique values in `y_test` and `y_pred`, providing only `[False, True]` will cause a mismatch and lead to an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `display_labels` parameter in `ConfusionMatrixDisplay` expects labels for each class. Since there are 3 unique values in `y_test` and `y_pred`, providing only `[False, True]` will cause a mismatch and lead to an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `display_labels` parameter in `ConfusionMatrixDisplay` expects labels for each class. Since there are 3 unique values in `y_test` and `y_pred`, providing only `[False, True]` will cause a mismatch and lead to an error.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `display_labels` parameter in `ConfusionMatrixDisplay` expects labels for each class. Since there are 3 unique values in `y_test` and `y_pred`, providing only `[False, True]` will cause a mismatch and lead to an error.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "adv is a (224,224,3) float32 array; imshow accepts float arrays but expects values in [0,1] for RGB. Values are outside this range, but this typically results in clipping, not a crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is a float32 numpy array of shape (224, 224, 3), which is a valid RGB image for plt.imshow. Value range is acceptable for float inputs.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is a numpy array with shape (224, 224, 3) and dtype float32; plt.imshow accepts this even if values are outside [0,1] or [0,255], rendering withAutoscaling. No missing variables.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is a float32 numpy array with shape (224, 224, 3), which is a valid RGB image format for plt.imshow; value range can be outside [0,1] but matplotlib will display with normalization without crashing.",
+    "detection": false
+  },
+  {
+    "reasoning": "adv is a float32 numpy array with shape (224, 224, 3), which is a valid RGB image shape for plt.imshow; value range outside [0,1] is still accepted and will be normalized for floats. No undefined variables. It should not crash.",
+    "detection": false
+  }
+]

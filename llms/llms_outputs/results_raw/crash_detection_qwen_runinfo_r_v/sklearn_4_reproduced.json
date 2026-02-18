@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects integer labels, but `preds` contains float values, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects integer labels, but `preds` contains float values, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects integer labels, but `preds` contains float values, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects integer labels, but `preds` contains float values, which will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `balanced_accuracy_score` function expects integer labels, but `preds` contains float values, which will cause a crash.",
+    "detection": true
+  }
+]

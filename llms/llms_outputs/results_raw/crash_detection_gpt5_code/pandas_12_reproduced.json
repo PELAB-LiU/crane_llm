@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The aggregation dict uses integer keys (1,2,3,4) which are not column names; unless the DataFrame has columns literally named 1–4, pandas will raise a KeyError.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg is using integer keys 1,2,3,4 which are not column names; pandas will raise a KeyError. It should map to actual column names.",
+    "detection": true
+  },
+  {
+    "reasoning": "The aggregation dict uses integer keys 1,2,3,4, but DataFrame columns are likely named strings (e.g., feature names) and not integers; this will raise a KeyError. Also kmeans_cluster exists, so groupby key is fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "agg dict uses integer keys 1,2,3,4 which are not column names; groupby.agg will raise a KeyError for missing columns. Columns likely have string names; only 'kmeans_cluster' added.",
+    "detection": true
+  },
+  {
+    "reasoning": "The aggregation dict uses integer keys (1,2,3,4) which are not column names; DataFrame columns are likely strings, causing a KeyError. Therefore this will crash.",
+    "detection": true
+  }
+]

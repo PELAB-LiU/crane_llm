@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "X is a 303x13 DataFrame without NaNs. PolynomialFeatures with degree=1 and interaction_only=True will output only bias and original features, which is valid for any numeric input.",
+    "detection": false
+  },
+  {
+    "reasoning": "X exists as a DataFrame with shape (303, 13). PolynomialFeatures with degree=1 and interaction_only=True will produce only bias and linear terms; fit_transform will work and return an array, so printing shapes will succeed.",
+    "detection": false
+  },
+  {
+    "reasoning": "X exists as a DataFrame with no NaNs and shape (303, 13). PolynomialFeatures with degree=1 and interaction_only=True will produce bias + original features, so fit_transform will work. Outputting shapes is valid.",
+    "detection": false
+  },
+  {
+    "reasoning": "X is a 303x13 DataFrame without NaNs. PolynomialFeatures with degree=1 and interaction_only=True is valid and will return a NumPy array; fit_transform should work and shapes will be computable.",
+    "detection": false
+  },
+  {
+    "reasoning": "X is a valid DataFrame with no NaNs and PolynomialFeatures accepts degree=1 with interaction_only=True; fit_transform on X should succeed. The shape query is valid.",
+    "detection": false
+  }
+]

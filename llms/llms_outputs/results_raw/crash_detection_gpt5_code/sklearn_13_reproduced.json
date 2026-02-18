@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "x and y are arrays of strings/categorical values; LinearRegression.fit expects numeric features and targets, so fitting on non-numeric data will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "LinearRegression expects numeric features; 'workclass' and 'Salary' are likely categorical strings, so fitting on non-numeric arrays will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "LinearRegression in scikit-learn requires numeric features; 'workclass' is likely a categorical string column, causing .fit to fail with a dtype error when fitting on x. y may also be non-numeric.",
+    "detection": true
+  },
+  {
+    "reasoning": "x contains the 'workclass' column, which is likely non-numeric categorical data; LinearRegression.fit expects numeric features and will raise a ValueError when encountering strings.",
+    "detection": true
+  },
+  {
+    "reasoning": "x contains a single categorical column (workclass) with string values; LinearRegression.fit expects numeric features and will raise a ValueError when encountering non-numeric data.",
+    "detection": true
+  }
+]

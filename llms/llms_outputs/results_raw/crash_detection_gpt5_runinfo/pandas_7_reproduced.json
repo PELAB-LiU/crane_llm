@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Column 'released' contains non-null strings like '2015-10-23', but DataFrame has NaNs overall; converting all entries with str(x).split('-')[0] then astype('int') may fail if any value is missing or non-numeric. Not certain it will crash.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'released' contains some missing values (DataFrame has NaNs). Casting strings like 'nan' to int with astype('int') will raise a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'released' contains strings like '2015-10-23' but may also have NaN or non-parseable values; converting all to int could raise ValueError if any split result isn't numeric.",
+    "detection": false
+  },
+  {
+    "reasoning": "Column 'released' contains NaNs; str(x).split('-')[0] on NaN yields 'nan', which astype('int') will fail to convert, causing a ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "Column 'released' contains NaNs or non-year strings; splitting and astype(int) will raise ValueError on invalid entries.",
+    "detection": true
+  }
+]

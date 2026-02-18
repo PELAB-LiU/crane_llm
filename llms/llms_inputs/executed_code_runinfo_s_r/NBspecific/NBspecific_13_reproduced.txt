@@ -1,0 +1,23 @@
+# Executed Cells:
+## Cell 1:
+
+import pandas as pd
+from matplotlib import pyplot as plt
+
+## Cell 2:
+
+df = pd.read_csv("data/heart.csv")
+
+# Current relevent runtime information:
+{'DecisionTreeClassifier': {'type': "<class 'abc.ABCMeta'>"},
+ 'X': {'shape': (299, 109), 'type': 'pandas.core.frame.DataFrame'},
+ 'accuracy_score': {'type': "<class 'function'>"},
+ 'model': {'type': "<class 'torchvision.models.alexnet.AlexNet'>"},
+ 'y': {'dtype': 'float64', 'length': 299, 'type': 'pandas.core.series.Series'}}
+# Target Cell:
+
+from sklearn.tree import DecisionTreeClassifier
+model = DecisionTreeClassifier()
+model .fit(X,y)
+y_hat = model.predict(X)
+print ( accuracy_score(y_hat,y))

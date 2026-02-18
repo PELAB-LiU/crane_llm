@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are likely of object type (strings) and need to be numerically encoded before fitting the LinearRegression model, which expects numerical input.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are likely of object type (strings) and need to be numerically encoded before fitting the LinearRegression model, which expects numerical input.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are likely of object type (strings) and need to be numerically encoded before fitting the LinearRegression model, which expects numerical input.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are likely of object type (strings) and need to be numerically encoded before fitting the LinearRegression model, which expects numerical input.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'street', 'statezip', and 'country' columns in X_train are likely of object type, which will cause a ValueError when the LinearRegression model attempts to fit numerical data.",
+    "detection": true
+  }
+]

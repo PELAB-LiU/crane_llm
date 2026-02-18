@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "balanced_accuracy_score expects discrete class labels but preds are continuous from AdaBoostRegressor; this will raise a ValueError due to mismatched input types.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects discrete class labels, but preds are continuous from AdaBoostRegressor; it will not crash and will compute a score, albeit meaningless. Shapes align and no NaNs.",
+    "detection": false
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects discrete class labels; preds are continuous floats from a regressor, which will cause a ValueError. Likely crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects discrete class labels, but preds are continuous regression outputs from AdaBoostRegressor, causing a ValueError when computing confusion matrix-based metric. Likely requires thresholding first.",
+    "detection": true
+  },
+  {
+    "reasoning": "balanced_accuracy_score expects class labels; preds are continuous floats from AdaBoostRegressor, not discrete classes. This will likely raise a ValueError about input type or produce incorrect metric; sklearn typically allows continuous but treats as labels? It will error due to mismatch lengths/types? It usually requires y_pred to be in {classes}. Continuous floats not matching 0/1 will cause UndefinedMetricWarning or ValueError.",
+    "detection": true
+  }
+]

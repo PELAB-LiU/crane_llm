@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "residuals is a pandas Series of length 92; requesting 180 lags in ACF/PACF typically errors because lags must be less than the number of observations.",
+    "detection": true
+  },
+  {
+    "reasoning": "plot_acf/pacf accept a pandas Series; residuals exists with length 92. Requesting 180 lags will be capped to nobs-1 without error. All required imports and plt are available.",
+    "detection": false
+  },
+  {
+    "reasoning": "residuals length is 92, but lags=180 exceeds series length; statsmodels' plot_acf/plot_pacf raise ValueError when lags >= nobs.",
+    "detection": true
+  },
+  {
+    "reasoning": "residuals has length 92 but lags=180; statsmodels plot_acf/plot_pacf require lags < nobs and will raise ValueError.",
+    "detection": true
+  },
+  {
+    "reasoning": "residuals has length 92; requesting lags=180 in plot_acf/plot_pacf requires lags < nobs, which will raise a ValueError.",
+    "detection": true
+  }
+]

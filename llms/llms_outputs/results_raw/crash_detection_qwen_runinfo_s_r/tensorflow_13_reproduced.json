@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `pad_sequences` function expects a list of sequences, but `tokenize_text(i)` returns a single sequence. Wrapping `tokenize_text(i)` in another `np.array` is unnecessary and will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `pad_sequences` function expects a list of sequences, but `tokenize_text(i)` returns a single sequence. Wrapping `tokenize_text(i)` in another `np.array` is unnecessary and will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `pad_sequences` function expects a list of sequences, but `tokenize_text(i)` returns a single sequence. Wrapping `tokenize_text(i)` in another `np.array` is unnecessary and will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `pad_sequences` function expects a list of sequences, but `tokenize_text(i)` returns a single sequence. Wrapping `tokenize_text(i)` in another `np.array` is unnecessary and will cause a crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `pad_sequences` function expects a list of sequences, but `tokenize_text(i)` returns a single sequence. Wrapping `tokenize_text(i)` in another `np.array` is unnecessary and will cause a crash.",
+    "detection": true
+  }
+]

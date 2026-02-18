@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "df['Installs'] is strings like '1,000+'; chained str.replace with '+' and ',' to remove them, then astype('int') is valid. No NaNs remain.",
+    "detection": false
+  },
+  {
+    "reasoning": "pandas str.replace with '+' needs regex=False; otherwise '+' is a regex quantifier causing a regex error. This will likely raise a regex-related exception.",
+    "detection": true
+  },
+  {
+    "reasoning": "df['Installs'] is a string column with values like '1,000+'; using .str.replace with literal '+' needs regex=False or escaping. str.replace('+','') treats '+' as regex and will raise a regex error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Installs column is strings like '1,000+'; str.replace with '+' will raise a regex error unless regex=False. Pandas' default treats '+' as regex quantifier, causing error.",
+    "detection": true
+  },
+  {
+    "reasoning": "Pandas .str.replace with '+' is interpreted as regex, causing a regex error; also .astype('int') is fine after clean. The first replace will raise unless regex=False.",
+    "detection": true
+  }
+]

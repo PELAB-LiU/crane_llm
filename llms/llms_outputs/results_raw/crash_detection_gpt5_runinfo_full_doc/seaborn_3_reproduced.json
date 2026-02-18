@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "sns.barplot is called with positional arguments (col, df) but expects data keyword; this will raise a TypeError. Other parts likely run but this call will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "The loops call sns.barplot with incorrect arguments (providing the column name and DataFrame positionally), which will raise a TypeError since barplot expects data first. Other parts likely work.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot is called with positional args (col, df), but its signature expects data as first arg and x/y as keywords; this will raise a TypeError. Also, seaborn functions require keyword arguments for x and data.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot is called with positional args (col, df), but its signature expects data first and x=...; this will raise a TypeError. Other parts likely run, but this call will crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot is called with positional args (col, df), but signature expects data first and x/y as keywords; this will raise a TypeError. Other parts likely run.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `X_train` and `y_train` shapes are incompatible for training the XGBClassifier. `X_train` is a 4D array with shape (123, 32, 32, 3), while `y_train` is a list with length 123. XGBClassifier expects `X_train` to be 2D.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `X_train` and `y_train` shapes are incompatible for training the XGBClassifier. `X_train` is a 4D array with shape (123, 32, 32, 3), while `y_train` is a list with length 123. XGBClassifier expects `X_train` to be 2D.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `X_train` and `y_train` shapes are incompatible for training the XGBClassifier. `X_train` is a 4D array with shape (123, 32, 32, 3), while `y_train` is a list with length 123. XGBClassifier expects `X_train` to be 2D.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `X_train` and `y_train` shapes are incompatible for training the XGBClassifier. `X_train` is a 4D array with shape (123, 32, 32, 3), while `y_train` is a list with length 123. XGBClassifier expects `X_train` to be 2D.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `X_train` and `y_train` shapes are incompatible for training the XGBClassifier. `X_train` is a 4D array with shape (123, 32, 32, 3), while `y_train` is a list with length 123. XGBClassifier expects `X_train` to be 2D.",
+    "detection": true
+  }
+]

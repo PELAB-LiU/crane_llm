@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "sns.barplot(col, df) uses positional args incorrectly; barplot expects x, y (or data=). Passing a Series/name and the DataFrame will raise a TypeError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The loops use seaborn with incorrect argument order: sns.barplot(col, df) should be sns.barplot(x=col, data=df). This will raise a TypeError due to unexpected positional arguments.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot is called with positional args (col, df), but the signature expects x=, y= or data=; passing the DataFrame as y will raise a TypeError. Other loops are fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "Seaborn's barplot is called with positional args (col, df), but the correct signature requires keyword arguments like x= and data=. This will raise a TypeError. Other parts (describe, hist, boxplot) are fine.",
+    "detection": true
+  },
+  {
+    "reasoning": "sns.barplot is called with positional args (col, df), but seaborn expects data keyword and x/y column names; passing a Series as x and a DataFrame as y will raise a TypeError. The other loops are fine.",
+    "detection": true
+  }
+]

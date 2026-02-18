@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "Cell 3 already dropped row 10472. Attempting to drop it again will raise a KeyError because the index no longer exists.",
+    "detection": true
+  },
+  {
+    "reasoning": "Cell 3 already dropped row 10472. Attempting to drop it again will raise a KeyError because the index no longer exists.",
+    "detection": true
+  },
+  {
+    "reasoning": "Cell 3 already dropped row 10472. Attempting to drop it again will raise a KeyError because the index no longer exists.",
+    "detection": true
+  },
+  {
+    "reasoning": "Cell 3 already dropped row 10472. Attempting to drop it again will result in a KeyError because the index no longer exists.",
+    "detection": true
+  },
+  {
+    "reasoning": "Cell 3 already dropped row 10472. Attempting to drop it again will raise a KeyError because the index no longer exists.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "labels[i] is a one-hot vector (shape 58), but class_names expects an integer index; using it to index list will raise a TypeError. Also images[i] are float32 in [~-0.1,0.097], astype('uint8') will zero them but not crash.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels are one-hot tensors; using labels[i] as index into class_names will error because it's a tensor/array, not an integer. Should use tf.argmax(labels[i]) or similar.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels is a one-hot float tensor with shape (batch, 58); indexing class_names with labels[i] (a tensor/array) is invalid. Should use argmax to get class index.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels are one-hot vectors (shape 58), but code indexes class_names with labels[i] (a vector), causing TypeError; also images are float in [-0.1,0.097] so uint8 cast yields zeros but not a crash. The primary issue is incorrect indexing.",
+    "detection": true
+  },
+  {
+    "reasoning": "labels is one-hot vectors (shape 58), but the code indexes class_names with labels[i] instead of argmax, causing a TypeError: list indices must be integers or slices, not EagerTensor. Also images[i] is float32 in [~ -0.1, 0.097], converting to uint8 yields zeros but not a crash.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "DataFrame 'data' exists and has column 'PDweek' (int8) and 'Duration'; converting to ordered Categorical with categories 0-6 then renaming works. Groupby on the new categorical index and plotting should execute without errors.",
+    "detection": false
+  },
+  {
+    "reasoning": "data exists with column PDweek (int8) and Duration; pd.Categorical with categories=range(7) is valid; rename_categories length matches; groupby and plotting are standard. No obvious type or missing-column issues.",
+    "detection": false
+  },
+  {
+    "reasoning": "data exists with column PDweek (int8) and Duration. Converting to ordered categorical with categories 0-6 is valid; renaming categories to 7 names matches. Groupby on categorical and plotting should work.",
+    "detection": false
+  },
+  {
+    "reasoning": "data has column PDweek and Duration; pd.Categorical with categories range(7) then rename to 7 names is valid; groupby on categorical index and plotting labels will work.",
+    "detection": false
+  },
+  {
+    "reasoning": "data has PDweek and Duration columns; pd.Categorical with categories=range(7) is valid, renaming categories to 7 names matches. Groupby on categorical works, and plotting with matplotlib is fine.",
+    "detection": false
+  }
+]

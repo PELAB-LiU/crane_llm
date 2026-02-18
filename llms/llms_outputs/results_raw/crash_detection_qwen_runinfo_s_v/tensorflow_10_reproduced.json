@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `train_data` is a pandas Series of text data, not numerical data, which is incompatible with the model's input requirements. The model expects numerical tensor inputs, not raw text.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_data` is a pandas Series of text data, not numerical data, which is incompatible with the model's input requirements. The model expects numerical tensor inputs, not raw text.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_data` is a pandas Series of text data, not numerical data, which is incompatible with the model's input requirements. The model expects numerical tensor inputs, not raw text.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_data` is a pandas Series of text data, not numerical data, which is incompatible with the model's input requirements. The model expects numerical tensor inputs, not raw text.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `train_data` is a pandas Series of text data, not numerical data, which is incompatible with the model's input requirements. The model expects numerical tensor inputs, not raw text.",
+    "detection": true
+  }
+]

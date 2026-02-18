@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not one-hot encoded. The `argmax` function cannot be applied to this variable as intended.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not one-hot encoded. The `argmax` function cannot be applied to this variable as intended.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not one-hot encoded. The `argmax` function cannot be applied to this variable as intended.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not one-hot encoded. The `argmax` function cannot be applied to this variable as intended.",
+    "detection": true
+  },
+  {
+    "reasoning": "The variable `y_true_onehot` is incorrectly assigned the value of `test_generator.classes`, which is not one-hot encoded. The `argmax` function cannot be applied to this variable as intended.",
+    "detection": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The 'MORTDUE' column contains NaN values, and the `np.histogram` function will raise a ValueError if it receives NaN values. Although `df[col].dropna().values` is used for the first histogram, subsequent histograms use `g.get_group('PAID')[col].values` and `g.get_group('DEFAULT')[col].values` directly, which may still contain NaNs for 'MORTDUE' within those groups.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'MORTDUE' column contains NaN values, and the `np.histogram` function will raise a ValueError if it receives NaN values. Although `df[col].dropna().values` is used for the first histogram, the subsequent histograms for 'PAID' and 'DEFAULT' groups do not explicitly drop NaNs before passing values to `np.histogram`, which could lead to a crash if those groups still contain NaNs in 'MORTDUE'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'MORTDUE' column contains NaN values, and the `np.histogram` function will raise a ValueError if it receives NaN values. Although `df[col].dropna().values` is used for the first histogram, subsequent histograms use `g.get_group('PAID')[col].values` and `g.get_group('DEFAULT')[col].values` directly, which may still contain NaNs for 'MORTDUE' within those groups.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'MORTDUE' column contains NaN values, and the `np.histogram` function will raise a ValueError if it receives NaN values. Although `df[col].dropna().values` is used for the first histogram, the subsequent histograms for 'PAID' and 'DEFAULT' groups do not explicitly drop NaNs before passing values to `np.histogram`, which could lead to a crash if those groups still contain NaNs in 'MORTDUE'.",
+    "detection": true
+  },
+  {
+    "reasoning": "The 'MORTDUE' column contains NaN values, and the `np.histogram` function will raise a ValueError if it receives NaN values. Although `df[col].dropna().values` is used for the first histogram, subsequent histograms use `g.get_group('PAID')[col].values` and `g.get_group('DEFAULT')[col].values` directly, which may still contain NaNs for 'MORTDUE' within those groups.",
+    "detection": true
+  }
+]

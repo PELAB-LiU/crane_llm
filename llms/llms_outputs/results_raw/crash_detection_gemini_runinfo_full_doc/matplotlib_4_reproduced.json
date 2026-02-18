@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "The `labels` variable is a tensor of shape (None, 58) with dtype tf.float32, representing one-hot encoded labels. Indexing it with `labels[i]` will return a one-hot encoded vector, not a single integer representing the class index. Therefore, `class_names[labels[i]]` will cause a TypeError because a list cannot be indexed by a tensor.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `labels` variable is a tensor of shape (None, 58) with dtype tf.float32, representing one-hot encoded labels. Indexing it with `labels[i]` will return a one-hot encoded vector, not a single integer representing the class index. Therefore, `class_names[labels[i]]` will cause a TypeError because a list cannot be indexed by a tensor.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `labels` variable is a tensor of shape (None, 58) with dtype tf.float32, representing one-hot encoded labels. Indexing `labels[i]` will return a one-hot encoded vector, not a single integer representing the class index, which is required to index `class_names`. This will cause a TypeError or IndexError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `labels` variable is a tensor of shape (None, 58) with dtype tf.float32, representing one-hot encoded labels. Indexing `labels[i]` will return a one-hot encoded vector, not a single integer representing the class index, which is required to index `class_names`. This will cause a TypeError or IndexError.",
+    "detection": true
+  },
+  {
+    "reasoning": "The `labels` variable is a tensor of shape (None, 58) with dtype tf.float32, representing one-hot encoded labels. Indexing it with `labels[i]` will return a one-hot encoded vector, not a single integer representing the class index. Therefore, `class_names[labels[i]]` will cause a TypeError because a list cannot be indexed by a tensor.",
+    "detection": true
+  }
+]

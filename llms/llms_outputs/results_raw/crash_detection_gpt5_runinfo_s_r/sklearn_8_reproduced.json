@@ -1,0 +1,22 @@
+[
+  {
+    "reasoning": "accuracy_score expects true labels and predicted labels of equal length, but x is a feature DataFrame; passing (X, y) will raise a ValueError. A model prediction vector is not provided here.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects true labels and predicted labels, but x is feature matrix; passing (X, y) will raise a ValueError due to shape mismatch. y has length 59381, x has shape (59381, 124).",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects true labels and predicted labels of equal length, but x is a feature matrix and y is labels; passing x as y_true will cause a shape/type mismatch error.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects (y_true, y_pred), but the cell passes (x, y), where x is a DataFrame of features; this will raise a ValueError due to shape/type mismatch.",
+    "detection": true
+  },
+  {
+    "reasoning": "accuracy_score expects true labels and predicted labels of equal length, but x is a DataFrame of features, not predictions; passing (X, y) will raise a ValueError about input shapes.",
+    "detection": true
+  }
+]
