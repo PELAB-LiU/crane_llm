@@ -3,7 +3,6 @@ import os
 
 here = os.path.dirname(__file__)
 sum_rule_config_path = os.path.join(here, "runinfo_parser", "summarize_config.json")
-notebook_folder = os.path.join(here, 'target_nbs')
 
 max_len_value = 5
 

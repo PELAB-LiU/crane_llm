@@ -1,41 +1,18 @@
-# # Results summary
-# from llms import result_check
+# Results summary
+from llms import result_check
 
-# # check parsed results by LLM as a Judge
-# from llms.config_llms import config
-
-# current_task = "result parsing llm diagnosis only" #"result parsing llm"
-# config.current_task = current_task
-# print(f"Current task: {config.current_task}")
-# target_checking_llms = ["gemini", "qwen", "gpt5"] #"gemini" , "qwen", "gpt5"
-# llm_judge_names = ["qwq32b"] #"llama8b", "qwq32b", "gpt5mini"
-
-# for llm_judge_name in llm_judge_names:
-#     for if_reverse in [False]: #, True
-#         result_check.check_all_parsed_results(target_checking_llms, llm_judge_name, if_reverse=if_reverse, if_variants=False)
-
-# # # Generate detection only results
-# # result_check.check_all_predictions_auto()
+# Generate detection only results
+result_check.check_all_predictions_auto()
 
 # ----------------------------------------------------------------------------------------------
 
 # Final results statistics
-# LLM as a judge evaluation
 from results import result_statistics
 from llms.config_llms import config
 
-current_task = "result parsing llm diagnosis only" #"result parsing llm"
+current_task = "result parsing llm diagnosis only"
 config.current_task = current_task
-# llm_judge_model_names = ["gpt5mini"] # "qwq32b", "gpt5mini", "llama8b"
 
-# for llm_judge_model_name in llm_judge_model_names:
-    # result_statistics.generate_llm_judge_result_statistics(llm_judge_model_name)
-
-    # # Cohen’s kappa between LLM judge with human results
-    # result_statistics.calculate_cohens_kappa(llm_judge_model_name) # detection and diagnosis
-    # result_statistics.smart_calculate_cohens_kappa(llm_judge_model_name) # only diagnosis
-
-# #     result_statistics.create_detailed_comparison_excel(llm_judge_model_name)
 result_statistics.calculate_cohens_kappa()
 # ----------------------------------------------------------------------------------------------
 
@@ -45,9 +22,6 @@ result_statistics.calculate_cohens_kappa()
 # generate_label_results_statistics('Libs-cause', 'accuracy')
 # generate_label_results_statistics('Libs-cause', 'crash_detection')
 # generate_label_results_statistics('label_root_cause', 'crash_detection')
-
-
-
 
 
 # # ----------------------------------------------------------------------------------------------
