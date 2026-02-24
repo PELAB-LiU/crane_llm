@@ -10,7 +10,7 @@ import matplotlib.lines as mlines
 from llms.config_llms import config
 
 def _load_and_merge_human_validation_data():
-    df_final = pd.read_excel("results/results_parsed_human.xlsx", sheet_name="Final_evaluation", engine="openpyxl")
+    df_final = pd.read_excel("results/results_parsed_detection_and_diagnosis.xlsx", sheet_name="Final_evaluation", engine="openpyxl")
     
     # Read all sheets from the validation file
     validation_file = "results/results_parsed_human_validation_samples_Jose_validated.xlsx"
@@ -329,8 +329,8 @@ def create_detailed_comparison_excel(llm_judge_model_name):
 
 def _load_and_prepare_data(metric_type='crash_detection'):
     """Load and prepare data for analysis"""
-    df_final = pd.read_excel("results/results_summary.xlsx", sheet_name="Final_evaluation", engine="openpyxl")
-    df_final = df_final.iloc[:222]
+    df_final = pd.read_excel("results/results_parsed_detection_and_diagnosis.xlsx", sheet_name="Final_evaluation", engine="openpyxl")
+    df_final = df_final.iloc[:223]
     df_label = pd.read_excel("results/benchmark_labels.xlsx", engine="openpyxl")
     df_label.rename(columns={'nb_name': 'instance'}, inplace=True)
     
@@ -372,25 +372,25 @@ def _get_label_model_definitions():
     """Get model column definitions for label analysis"""
     return {
         'Gemini 2.5 Flash': {
-            'with_runinfo': 'gemini_2_5_flash_crash_detection_code_runinfo',
-            'without_runinfo': 'gemini_2_5_flash_crash_detection_code'
+            'with_runinfo': 'crash_detection_gemini_runinfo',
+            'without_runinfo': 'crash_detection_gemini_code'
         },
-        'Qwen 2.5 32B Instruct': {
-            'with_runinfo': 'Qwen_2_5_32B_Instruct_crash_detection_code_runinfo',
-            'without_runinfo': 'Qwen_2_5_32B_Instruct_crash_detection_code'
+        'Qwen 2.5 Coder 32B Instruct': {
+            'with_runinfo': 'crash_detection_qwen_runinfo',
+            'without_runinfo': 'crash_detection_qwen_code'
         },
         'GPT-5': {
-            'with_runinfo': 'gpt_5_crash_detection_code_runinfo',
-            'without_runinfo': 'gpt_5_crash_detection_code'
+            'with_runinfo': 'crash_detection_gpt5_runinfo',
+            'without_runinfo': 'crash_detection_gpt5_code'
         },
-        'PyLint': {
-            'with_runinfo': 'pylint_crash_detection_code_runinfo',
-            'without_runinfo': 'pylint_crash_detection_code'
-        },
-        'PyRight': {
-            'with_runinfo': 'pyright_crash_detection_code_runinfo',
-            'without_runinfo': 'pyright_crash_detection_code'
-        }
+        # 'PyLint': {
+        #     'with_runinfo': 'pylint_crash_detection_code_runinfo',
+        #     'without_runinfo': 'pylint_crash_detection_code'
+        # },
+        # 'PyRight': {
+        #     'with_runinfo': 'pyright_crash_detection_code_runinfo',
+        #     'without_runinfo': 'pyright_crash_detection_code'
+        # }
     }
 
 def _apply_custom_ordering(causes, cause_type):
@@ -619,9 +619,9 @@ def generate_label_results_statistics(cause_type='label_root_cause', metric_type
     # Get model definitions
     models = _get_label_model_definitions()
     
-    # Filter out Static Analysis tools if requested
-    sa_tools = ['PyLint', 'PyRight']
-    models = {k: v for k, v in models.items() if k not in sa_tools}
+    # # Filter out Static Analysis tools if requested
+    # sa_tools = ['PyLint', 'PyRight']
+    # models = {k: v for k, v in models.items() if k not in sa_tools}
     
     # Get unique causes for the specified type
     causes = df_combined[cause_type].unique()

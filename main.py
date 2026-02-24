@@ -1,8 +1,8 @@
-# Results summary
-from llms import result_check
+# # Results summary
+# from llms import result_check
 
-# Generate detection only results
-result_check.check_all_predictions_auto()
+# # Generate detection only results
+# result_check.check_all_predictions_auto()
 
 # ----------------------------------------------------------------------------------------------
 
