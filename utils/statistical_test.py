@@ -15,7 +15,7 @@ WORKBOOK_PATH_DETECTION_ONLY = Path("results/results_parsed_detection_only.xlsx"
 DEFAULT_SHEET_NAME = "Final_evaluation"
 DEFAULT_MAX_ROWS = 223
 DEFAULT_MODELS = ("gemini", "qwen", "gpt5")
-DEFAULT_SETTINGS = ("runinfo", "runinfo_s_v")
+DEFAULT_SETTINGS = ("code", "runinfo")
 
 def _resolve_sheet_name(workbook_path: Path, sheet_name: str) -> str:
     workbook = pd.ExcelFile(workbook_path, engine="openpyxl")
@@ -214,13 +214,13 @@ def main() -> None:
     parser.add_argument(
         "--workbook",
         type=Path,
-        default=WORKBOOK_PATH_DETECTION_ONLY, #WORKBOOK_PATH_DETECTION_ONLY, # WORKBOOK_PATH_DIAGNOSIS,
+        default=WORKBOOK_PATH_DIAGNOSIS, #WORKBOOK_PATH_DETECTION_ONLY, # WORKBOOK_PATH_DIAGNOSIS,
         help="Path to results excel file",
     )
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("results/pairwise_significance_detection_only_runinfo_noR.json"), # pairwise_significance_detection_only.json # pairwise_significance_detection_and_diagnosis
+        default=Path("results/pairwise_significance_detection_and_diagnosis.json"), # pairwise_significance_detection_only.json # pairwise_significance_detection_and_diagnosis
         help="Path to the JSON report to write.",
     )
     args = parser.parse_args()

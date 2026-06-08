@@ -5,7 +5,9 @@ This is the official repository for our paper "CRANE-LLM: Runtime-Augmented LLMs
 ## Repository structure and reproducibility details
 We use [**Junobench**]((https://huggingface.co/datasets/PELAB-LiU/JunoBench)) dataset in our experiments.
 - [`config_llms.py`](./llms/config_llms.py): configuration for experiments, including prompts, LLM configs, and related input and output paths
-- [`main_LLM.py`](./main_LLM.py): script to run the CRANE-LLM pipeline
+- [`crane-llm.py`](./crane-llm.py): script to run CRANE-LLM given a target notebook
+- [`main_LLM.py`](./main_LLM.py): script to run the experiment pipeline, including batch run all notebooks in the dataset for a specific task and experimental setting
+- [`main.py`](./main.py): script to run result compilation and analysis
 - [`runinfo_parser`](./runinfo_parser): scripts and configuration for *runtime information extraction*
 - [`llms`](./llms): LLM-related experiments
     - [`llms_inputs/`](./llms/llms_inputs): generated inputs (executed code cells only, executed code cells with runtime information) to the LLMs
@@ -18,7 +20,8 @@ We use [**Junobench**]((https://huggingface.co/datasets/PELAB-LiU/JunoBench)) da
     - [`results_parsed_detection_and_diagnosis.xlsx`](./results/results_parsed_detection_and_diagnosis.xlsx): compiled results and statistics for CRANE-LLM performance on the joint crash prediction and diagnosis task
     - [`results_parsed_detection_only.xlsx`](./results/results_parsed_detection_only.xlsx): compiled results and statistics for CRANE-LLM performance, *runtime information category ablation study*, and *API documentation grounding study* on the crash detection-only task
     - [`cohens_kappa_human_validation.txt`](./results/cohens_kappa_human_validation.txt): statistics of human evaluation on crash diagnosis
-    - [`runtime_doc_token_analysis.txt`](./results/runtime_doc_token_analysis.txt): statistics of tokens of additional API documentation information
+    - [`runtime_doc_token_analysis.txt`](./results/runtime_doc_token_analysis.txt): statistics of tokens of additional API documentation information, results gained by running script [`token_analysis.py`](./utils/token_analysis.py)
+    - [`pairwise_significance_detection_and_diagnosis.json`](./results/pairwise_significance_detection_and_diagnosis.json) and [`pairwise_significance_detection_only.json`](./results/pairwise_significance_detection_only.json): statistical test results of the joint detection and diagnosis task and the detection-only task, the statistics tests are ran by script [statistical_test.py](./utils/statistical_test.py)
     - [`runtime_recording/`](./results/runtime_recording/): statistics of runtime for prior cell executions and querying CRANE-LLM with GPT-5
 
 ## Environment
@@ -33,7 +36,7 @@ docker run -v [volumn_mount_windows_path]:/cranellm_env -w /cranellm_env -p 8888
 ```
 Then you can attach this environment to **VS Code** "*Dev Containers: Attach to Running Container...*"
 
-For the commercial LLMs used in the experiments (Gemini and GPT-5), please ensure that the API keys are properly set up before running the scripts. Open-source LLMs (Qwen) can be run directly; however, note that execution may take longer depending on the computational resources available.
+For the commercial LLMs used in the experiments (Gemini and GPT-5), please ensure that the API keys are properly set up before running the scripts (for example, set as global environment variable or config in `.env`). Open-source LLMs (Qwen) can be run directly; however, note that execution may take longer depending on the computational resources available.
 
 ## License
 
