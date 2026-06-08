@@ -462,6 +462,31 @@ class LLMExecutor:
                 json.dump(previous_predictions, f, indent=2, ensure_ascii=False)
             print(f"Results are saved in {output_file}.")
 
+    def llm_cmd_openai(self):
+        import openai
+        from openai import OpenAI
+        import tokenize
+
+        client = OpenAI()
+
+        if self.user_message is None:
+            print(f"Failed to predict for {self._filename} because the extracted prompt is None")
+            return
+
+        print("Predicting crashes...")
+        self.predictions = self._llm_run_openai(client)
+        
+        if self.predictions:
+            # Parse API response if it's a JSON string with Unicode escapes
+            if isinstance(self.predictions, str):
+                try:
+                    clean_text = json.loads(self.predictions)
+                except json.JSONDecodeError:
+                    clean_text = self.predictions
+            else:
+                clean_text = self.predictions
+            print(f"Prediction: \n{clean_text}")
+
     def llm_run_bserver(self):
         client = Client(host='10.129.20.4:9090')
         response = client.chat(

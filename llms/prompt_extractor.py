@@ -23,7 +23,7 @@ def runtime_count_prior_cells(lib_name = "tensorflow", case_names = None):
             res_count[f"{case_name}_{version_name}"] = count
     return res_count
 
-def generate_prompt(lib_name = "tensorflow", case_names = None, force_regenerate = False, generate_all_combinations = False):
+def generate_prompt(lib_name = "tensorflow", case_names = None, version_names = None, force_regenerate = False, generate_all_combinations = False):
     # pattern for libname_id
     pattern = re.compile(r'^[A-Za-z]+_\d+$')
     if case_names is None:
@@ -31,11 +31,13 @@ def generate_prompt(lib_name = "tensorflow", case_names = None, force_regenerate
             name for name in os.listdir(config.path_nbs.joinpath(lib_name))
             if os.path.isdir(config.path_nbs.joinpath(lib_name).joinpath(name)) and pattern.match(name)
     ]
+    if version_names is None:
+        version_names = ["reproduced", "fixed"]
     mode_desc = "all combinations" if generate_all_combinations else "config-based"
     print(f"Generating prompts for {config.current_task} ({mode_desc})")
     
     for case_name in case_names:
-        for version_name in ["reproduced", "fixed"]:
+        for version_name in version_names:
             path_nb = config.path_nbs.joinpath(lib_name).joinpath(case_name).joinpath(f"{case_name}_{version_name}.ipynb")
             
             print(f"Processing {case_name}_{version_name}")
@@ -88,7 +90,7 @@ def generate_prompt(lib_name = "tensorflow", case_names = None, force_regenerate
                 # Original behavior - single output based on config
                 output_path = config.path_input.joinpath(lib_name).joinpath(f"{case_name}_{version_name}.txt")
                 if not force_regenerate and output_path.exists():
-                    print(f"Skipping {case_name}_{version_name} - already exists")
+                    # print(f"Skipping {case_name}_{version_name} - already exists")
                     continue
                 
                 prompt_text = format_for_prompt(extracter)
