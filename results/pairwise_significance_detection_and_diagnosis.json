@@ -1,0 +1,76 @@
+{
+  "workbook_path": "results\\results_parsed_detection_and_diagnosis.xlsx",
+  "sheet_name": "Final_evaluation",
+  "max_rows": 223,
+  "settings": [
+    "code",
+    "runinfo"
+  ],
+  "alpha": 0.05,
+  "method": "Exact McNemar (two-sided), paired by instance outcomes",
+  "comparisons_by_model": {
+    "gemini": {
+      "alpha": 0.05,
+      "method": "Exact McNemar (two-sided), paired by instance outcomes",
+      "comparisons": [
+        {
+          "setting_a": "code",
+          "setting_b": "runinfo",
+          "n_instances": 196,
+          "contingency_table": {
+            "n11_both_pass": 114,
+            "n10_a_pass_b_fail": 12,
+            "n01_a_fail_b_pass": 26,
+            "n00_both_fail": 44
+          },
+          "discordant_pairs": 38,
+          "delta_pass_rate_a_minus_b": -0.07142857142857142,
+          "mcnemar_exact_p_value": 0.03355243967962451,
+          "significant_at_0_05": true
+        }
+      ]
+    },
+    "qwen": {
+      "alpha": 0.05,
+      "method": "Exact McNemar (two-sided), paired by instance outcomes",
+      "comparisons": [
+        {
+          "setting_a": "code",
+          "setting_b": "runinfo",
+          "n_instances": 203,
+          "contingency_table": {
+            "n11_both_pass": 130,
+            "n10_a_pass_b_fail": 9,
+            "n01_a_fail_b_pass": 29,
+            "n00_both_fail": 35
+          },
+          "discordant_pairs": 38,
+          "delta_pass_rate_a_minus_b": -0.09852216748768473,
+          "mcnemar_exact_p_value": 0.0016580525261815637,
+          "significant_at_0_05": true
+        }
+      ]
+    },
+    "gpt5": {
+      "alpha": 0.05,
+      "method": "Exact McNemar (two-sided), paired by instance outcomes",
+      "comparisons": [
+        {
+          "setting_a": "code",
+          "setting_b": "runinfo",
+          "n_instances": 203,
+          "contingency_table": {
+            "n11_both_pass": 145,
+            "n10_a_pass_b_fail": 7,
+            "n01_a_fail_b_pass": 20,
+            "n00_both_fail": 31
+          },
+          "discordant_pairs": 27,
+          "delta_pass_rate_a_minus_b": -0.06403940886699508,
+          "mcnemar_exact_p_value": 0.0191572904586792,
+          "significant_at_0_05": true
+        }
+      ]
+    }
+  }
+}
