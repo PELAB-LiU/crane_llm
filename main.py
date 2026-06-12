@@ -7,21 +7,21 @@
 # ----------------------------------------------------------------------------------------------
 
 # Final results statistics
-from results import result_statistics
-from llms.config_llms import config
+# from results import result_statistics
+# from llms.config_llms import config
 
-current_task = "result parsing llm diagnosis only"
-config.current_task = current_task
+# current_task = "result parsing llm diagnosis only"
+# config.current_task = current_task
 
-result_statistics.calculate_cohens_kappa()
+# result_statistics.calculate_cohens_kappa()
 # ----------------------------------------------------------------------------------------------
 
-# # overall plots
-# from results.result_statistics import generate_label_results_statistics
+# overall plots
+from results.result_statistics import generate_label_results_statistics
 
 # generate_label_results_statistics('Libs-cause', 'accuracy')
-# generate_label_results_statistics('Libs-cause', 'crash_detection')
-# generate_label_results_statistics('label_root_cause', 'crash_detection')
+generate_label_results_statistics('Libs-cause', 'crash_detection', plot_legend=True)
+generate_label_results_statistics('label_root_cause', 'crash_detection', plot_legend=False)
 
 
 # # ----------------------------------------------------------------------------------------------

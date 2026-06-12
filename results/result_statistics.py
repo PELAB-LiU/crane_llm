@@ -478,7 +478,7 @@ def _calculate_rates(df_combined, models, causes, cause_type):
     
     return rates_data, cause_counts, filtered_causes
 
-def _create_plot(rates_data, causes, cause_counts, cause_type, metric_type):
+def _create_plot(rates_data, causes, cause_counts, cause_type, metric_type, plot_legend=False):
     models = list(rates_data.keys())
     
     # Set up the plot
@@ -572,13 +572,13 @@ def _create_plot(rates_data, causes, cause_counts, cause_type, metric_type):
                             label=f"{model_name}")
         )
 
-    if (not (metric_type == 'crash_detection' and cause_type == 'Libs-cause')) and (cause_type != 'label_root_cause'):
-        ax.legend(handles=improvement_lines, bbox_to_anchor=(0.5, 1.2), loc='upper center', title='', fontsize=20, frameon=True, ncol=len(improvement_lines))
+    if plot_legend:
+        ax.legend(handles=improvement_lines, bbox_to_anchor=(0.5, 1.25), loc='upper center', title='', fontsize=20, frameon=True, ncol=len(improvement_lines))
     # if cause_type == 'label_root_cause':
     #     ax.legend(handles=improvement_lines, bbox_to_anchor=(0.5, 1.3), loc='upper center', title='', fontsize=20, frameon=True, ncol=len(improvement_lines))
 
     # Adjust layout to accommodate top legends
-    plt.subplots_adjust(top=0.8)  # Increase top margin for legends
+    plt.subplots_adjust(top=0.6)  # Increase top margin for legends
     plt.tight_layout()
     
     # Save plot
@@ -601,7 +601,7 @@ def _create_plot(rates_data, causes, cause_counts, cause_type, metric_type):
     plt.show()
     plt.close()
 
-def generate_label_results_statistics(cause_type='label_root_cause', metric_type='crash_detection'):
+def generate_label_results_statistics(cause_type='label_root_cause', metric_type='crash_detection', plot_legend=False):
     """Generate statistics for crash detection results against crash labels"""
     
     # Load and prepare data (automatically filters based on metric_type)
@@ -637,7 +637,7 @@ def generate_label_results_statistics(cause_type='label_root_cause', metric_type
     # Create plot with filtered causes
     filtered_causes = [cause if cause != "tensorflow/keras" else "tensorflow\n/keras" for cause in filtered_causes]
     filtered_causes = [cause if cause != "implementation error" else "implementation\nerror" for cause in filtered_causes]
-    _create_plot(rates_data, filtered_causes, cause_counts, cause_type, metric_type)
+    _create_plot(rates_data, filtered_causes, cause_counts, cause_type, metric_type, plot_legend)
 
 
 def calculate_cohens_kappa(llm_judge_model_name=None):
