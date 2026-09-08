@@ -1,0 +1,2 @@
+recursive-include nb_extension *.js *.ts *.json *.css
+recursive-include nb_extension labextension/*

@@ -2,6 +2,32 @@ from pathlib import Path
 
 class Config:
     def __init__(self):
+
+        # crane-llm notebook 7 extension configurations ----
+        self.openai_llm_model = "gpt-5"
+        self.max_output_tokens = 1024 # 2048
+        self.system_prompt_crane_llm_enforcejson = """You are an automated crash predictor for ML notebooks.
+Given:
+- a set of [Executed Cells] that have already run successfully,
+- a [Target Cell] that may or may not crash when executed,
+- and additional [Current relevant runtime information] such as variable values or types that are relevent to the [Target Cell],
+
+Your task is to reason step by step whether executing the [Target Cell] will crash.
+
+Important output rules:
+- Output EXACTLY one JSON object and NOTHING else. Use JSON booleans true and false (lowercase).
+- Schema:
+  {
+    "reasoning": string,
+    "prediction": boolean
+  }
+- Give a short explanation in `reasoning` (concise: 1-2 sentences).
+- If you are not CERTAIN the cell will crash, you MUST output `"prediction": false`.
+- Your output must ONLY be the JSON object.
+
+--- Input Begins Below ---
+        """
+
         # current configuration setup ---- 
 
         # [crash detection] with [executed code cells / executed code cells and runinfo / runinfo]

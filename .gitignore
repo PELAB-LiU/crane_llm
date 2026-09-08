@@ -27,3 +27,20 @@ target_nbs
 tmp*/
 test*
 batch_script*
+
+# Python package build metadata
+*.egg-info/
+
+# JupyterLab extension dependencies and generated logs
+nb_extension/node_modules/
+nb_extension/.yarn/cache/
+nb_extension/.yarn/install-state.gz
+nb_extension/*build*.log
+nb_extension/*debug*.log
+nb_extension/labextension/build_log.json
+nb_extension/lib/
+nb_extension/labextension/
+
+# Locally generated dataset artifacts
+target_nbs_thestackdedup/cluster_sampled_labeled_final_filtered.xlsx
+target_nbs_thestackdedup/stack_jupyter_meta.pkl
