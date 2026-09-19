@@ -110,6 +110,21 @@ If your machine allows neither, use the regular install of
 build. That copies the bundle rather than linking it, so no privilege is
 involved.
 
+Two things that trip people up here:
+
+- **`--overwrite` cannot replace an existing link.** It tries to `rmtree` the
+  old path and stops with `OSError: Cannot call rmtree on a symbolic link`,
+  leaving the old link in place. Delete the link first, which removes only the
+  link and never its target:
+
+  ```powershell
+  (Get-Item "$prefix\share\jupyter\labextensions\crane-llm-jlab").Delete()
+  ```
+
+- **Newer versions print a deprecation notice.** `jupyter labextension develop`
+  now suggests `jupyter-builder develop` instead. Both do the same thing here;
+  the older spelling still works.
+
 ### Do not substitute a directory junction
 
 A junction looks like the obvious workaround, since it links a local directory
