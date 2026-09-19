@@ -97,29 +97,43 @@ OSError: Symlinks can be activated on Windows 10 for Python version 3.8 or
 higher by activating the 'Developer Mode'.
 ```
 
-Use a **directory junction** instead. It does the same job for a local
-directory, needs no special privilege, and JupyterLab cannot tell the
-difference. Run this once, in PowerShell, **from the repository root**, in
-place of the `develop` command:
+It has to be a **real symlink**. Pick whichever of these you can do, then re-run
+the `develop` command:
 
-```powershell
-$prefix = python -c "import sys; print(sys.prefix)"
-New-Item -ItemType Directory -Force -Path "$prefix\share\jupyter\labextensions" | Out-Null
-New-Item -ItemType Junction `
-  -Path   "$prefix\share\jupyter\labextensions\crane-llm-jlab" `
-  -Target "$PWD\nb_extension\labextension"
+1. **Enable Developer Mode.** Settings, Privacy & security, For developers,
+   Developer Mode. This is the one-time fix and needs no elevation afterwards.
+2. **Run it once from an Administrator PowerShell.** Administrators hold the
+   privilege that creating a symlink requires.
+
+If your machine allows neither, use the regular install of
+[section 1.3](#13-regular-setup) instead and reinstall after each frontend
+build. That copies the bundle rather than linking it, so no privilege is
+involved.
+
+### Do not substitute a directory junction
+
+A junction looks like the obvious workaround, since it links a local directory
+with no special privilege. It works only on older stacks and then fails
+silently, so it is worse than not linking at all.
+
+Tornado 6.5.9 stopped serving files through a directory link unless the handler
+opts in. `jupyter_server` added that opt-in and `jupyterlab_server` uses it for
+the extensions route, but the check is `os.path.islink()`, and on Windows a
+junction reports `islink` as **False**. The allowed directory is therefore never
+widened, Tornado resolves the real path, finds it outside the extensions root,
+and answers 403 for every file.
+
+The symptom is nasty: `jupyter labextension list` shows the extension as
+`enabled ok`, it appears in the page config the browser receives, and nothing
+in the UI appears. The only trace is one line in the server log:
+
+```
+403 GET /lab/extensions/crane-llm-jlab/static/remoteEntry.<hash>.js
+  ... is not in root static directory
 ```
 
-Asking Python for its own prefix is deliberate: it is correct for conda
-environments, virtualenvs and system installs alike.
-
-Once a junction is in place, **do not run `jupyter labextension develop` again**.
-It would try to replace the junction with a symlink, fail the same way, and can
-leave nothing at that path. Everywhere else in this document that tells you to
-run `develop`, use the junction instead if that is how you set things up.
-
-The junction survives `jlpm build:prod`, even though that deletes and recreates
-the directory it points at.
+A junction still works on Tornado older than 6.5.9, which is why it can seem
+fine and then break on an unrelated upgrade. Use a real symlink or a copy.
 
 ## 1.3 Regular setup
 
@@ -322,13 +336,12 @@ conda activate crane
 python -m pip uninstall -y crane_llm
 python -m pip install -e ".[widgets,build]"
 cd nb_extension && jlpm build && cd ..
-jupyter labextension develop . --overwrite      # or recreate the junction, see 1.2.1
+jupyter labextension develop . --overwrite
 ```
 
 `pip uninstall` removes the bundle files it installed, which is why `jlpm build`
-is repeated before re-linking. If you linked with a directory junction rather
-than `develop`, recreate the junction here instead; see
-[section 1.2.1](#121-if-the-last-command-fails-on-windows).
+is repeated before re-linking. On Windows the last command needs symlink
+permission; see [section 1.2.1](#121-if-the-last-command-fails-on-windows).
 
 ## C. Pinned dependencies
 
@@ -457,8 +470,8 @@ jupyter labextension develop . --overwrite                 # once: register it t
 jupyter labextension list                                  # check only
 ```
 
-Skip the fourth command if a directory junction is already linking the bundle,
-and skip it on Windows generally if symlinks are unavailable; see
+Skip the fourth command if the bundle is already linked. On Windows it needs
+symlink permission; see
 [section 1.2.1](#121-if-the-last-command-fails-on-windows).
 
 Whichever way it is linked, the link keeps pointing at your working copy, so
@@ -482,9 +495,10 @@ Never run `jupyter labextension install` or `jupyter labextension link` on this
 project. Those are the legacy commands that create this state.
 
 **`jupyter labextension develop` fails with `OSError: Symlinks can be activated
-on Windows 10 ... 'Developer Mode'`.** Use a directory junction instead, as
-described in [section 1.2.1](#121-if-the-last-command-fails-on-windows). Once
-you have one, stop running `develop` altogether.
+on Windows 10 ... 'Developer Mode'`.** Grant the privilege and re-run it, or use
+a regular install; see
+[section 1.2.1](#121-if-the-last-command-fails-on-windows). Do not substitute a
+directory junction, which is served as 403 by current versions.
 
 **"The kernel did not return a CRANE-LLM payload".** The backend is not
 importable from the kernel. Confirm with `import nb_extension.api` in a cell.
