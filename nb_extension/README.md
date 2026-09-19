@@ -49,6 +49,16 @@ If that prints `False`, stop and fix your environment. You also need Node.js
 20.19+ or 22.12+ on `PATH`, and an OpenAI API key in the environment or in the
 repository `.env`.
 
+Two things the install deliberately does not pull in:
+
+- **Notebook 7.** Installing this package brings JupyterLab, which is all the
+  extension needs. Add `pip install notebook` as well if you want the Notebook 7
+  interface rather than JupyterLab.
+- **The ML stack.** Runtime summarisation covers pandas, numpy, torch, sklearn
+  and TensorFlow objects when those packages are present, and quietly skips
+  them when they are not. Your notebooks will normally have already brought
+  whichever ones they use.
+
 ## 1.1 Choose a mode
 
 Pick one and **do not mix them**. Appendix B explains the difference.
@@ -89,13 +99,19 @@ higher by activating the 'Developer Mode'.
 
 Use a **directory junction** instead. It does the same job for a local
 directory, needs no special privilege, and JupyterLab cannot tell the
-difference. Run this once, in PowerShell, in place of the `develop` command:
+difference. Run this once, in PowerShell, **from the repository root**, in
+place of the `develop` command:
 
 ```powershell
+$prefix = python -c "import sys; print(sys.prefix)"
+New-Item -ItemType Directory -Force -Path "$prefix\share\jupyter\labextensions" | Out-Null
 New-Item -ItemType Junction `
-  -Path   "$env:CONDA_PREFIX\share\jupyter\labextensions\crane-llm-jlab" `
+  -Path   "$prefix\share\jupyter\labextensions\crane-llm-jlab" `
   -Target "$PWD\nb_extension\labextension"
 ```
+
+Asking Python for its own prefix is deliberate: it is correct for conda
+environments, virtualenvs and system installs alike.
 
 Once a junction is in place, **do not run `jupyter labextension develop` again**.
 It would try to replace the junction with a symlink, fail the same way, and can

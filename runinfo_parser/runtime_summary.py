@@ -83,7 +83,7 @@ def summarize_variable(
 
     callable_rule = next((rule for rule in rules if rule.__name__ == "summarize_callable"), None)
     if callable_rule is not None:
-        callable_summary = callable_rule(val, namespace=namespace, name=name)
+        callable_summary = _apply_rule(callable_rule, val, namespace=namespace, name=name)
         if callable_summary is not None:
             summary.update(callable_summary)
             return summary
@@ -91,11 +91,30 @@ def summarize_variable(
     for fn in rules:
         if fn.__name__ == "summarize_callable":
             continue
-        rule_summary = fn(val)
+        rule_summary = _apply_rule(fn, val)
         if rule_summary:
             summary.update(rule_summary)
 
     return summary
+
+
+def _apply_rule(fn, val: Any, **kwargs) -> Optional[Dict[str, Any]]:
+    """Run one rule, skipping it if the library it needs is not installed.
+
+    Several rules import numpy, pandas, torch or sklearn at the top of the
+    function body rather than behind a type check, so they raise ImportError
+    for *every* value when that library is absent. Without this guard a single
+    missing package makes summarising any variable fail, and the runtime
+    section of the prompt comes back empty with nothing to explain why.
+
+    Only ImportError is absorbed. Any other exception still propagates, so a
+    genuinely problematic value is handled by the caller exactly as before.
+    """
+
+    try:
+        return fn(val, **kwargs)
+    except ImportError:
+        return None
 
 
 # --- dependency extraction ----------------------------------------------

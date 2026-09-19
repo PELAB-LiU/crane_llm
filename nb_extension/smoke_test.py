@@ -134,6 +134,36 @@ def check_hostile_namespace_does_not_break_collection():
     assert "good" in runinfo
 
 
+def check_summarisation_survives_missing_libraries():
+    """Rules whose library is absent must be skipped, not fatal.
+
+    Several rules import numpy, pandas, torch or sklearn at the top of the
+    function body, so they raise for every value when that package is missing.
+    Before this was handled, an environment without the ML stack produced an
+    empty runtime section with no explanation.
+    """
+
+    import builtins
+
+    from runinfo_parser.runtime_summary import summarize_variable
+
+    real_import = builtins.__import__
+    blocked = ("pandas", "numpy", "torch", "sklearn", "tensorflow")
+
+    def fake_import(name, *args, **kwargs):
+        if name.split(".")[0] in blocked:
+            raise ModuleNotFoundError(f"No module named {name!r}")
+        return real_import(name, *args, **kwargs)
+
+    builtins.__import__ = fake_import
+    try:
+        summary = summarize_variable([1, 2, 3], {}, "values")
+    finally:
+        builtins.__import__ = real_import
+
+    assert "type" in summary, summary
+
+
 def check_namespace_is_not_mutated():
     namespace = {"model": [1, 2, 3]}
     before = set(namespace)
@@ -178,6 +208,7 @@ CHECKS = (
     check_internal_helper_cells_are_filtered,
     check_unparseable_target_cells_do_not_raise,
     check_hostile_namespace_does_not_break_collection,
+    check_summarisation_survives_missing_libraries,
     check_namespace_is_not_mutated,
     check_extension_runs_without_ipywidgets,
 )
