@@ -1,74 +1,46 @@
 from __future__ import annotations
 
-import re
-import time
-from typing import Callable
+from pathlib import Path
+from typing import Any, Dict, Optional
 
 
-def retry_with_suggested_backoff(func: Callable, max_retries: int = 5):
-    """Retry helper for transient LLM errors."""
+from llms.retry import retry_on_rate_limit
+
+
+_DOTENV_LOADED = False
+
+
+def _load_env_once() -> None:
+    """Pick up API keys from the repository ``.env``.
+
+    The batch runner calls ``load_dotenv()`` at import time, so anyone who
+    followed the project README and put ``OPENAI_API_KEY`` in ``.env`` expects
+    it to work here too.
+    """
+
+    global _DOTENV_LOADED
+    if _DOTENV_LOADED:
+        return
+    _DOTENV_LOADED = True
 
     try:
-        from openai import RateLimitError
+        from dotenv import load_dotenv
     except Exception:
-        class RateLimitError(Exception):
-            pass
+        return
 
-    def wrapper(*args, **kwargs):
-        num_retries = 0
-        while True:
-            try:
-                return func(*args, **kwargs)
-            except Exception as exc:
-                num_retries += 1
-                is_rate_limit = isinstance(exc, RateLimitError)
-                if not is_rate_limit:
-                    if hasattr(exc, "http_status") and getattr(exc, "http_status") == 429:
-                        is_rate_limit = True
-                    elif "rate limit" in str(exc).lower() or "please try again" in str(exc).lower():
-                        is_rate_limit = True
+    try:
+        load_dotenv()
+        load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+    except Exception:
+        pass
 
-                if num_retries > max_retries:
-                    raise Exception(
-                        f"{type(exc).__name__}: {exc}"
-                    ) from exc
-                    # raise Exception(f"Maximum number of retries ({max_retries}) exceeded.") from exc
 
-                if not is_rate_limit:
-                    raise
-                    # print(f"LLM call failed with error: {exc}. Retrying.")
-                    # continue
+def _supports_reasoning(model: str) -> bool:
+    return model.startswith("gpt-5") or model.startswith(("o1", "o3", "o4"))
 
-                delay = None
-                headers = getattr(exc, "headers", None)
-                if headers:
-                    retry_hdr = headers.get("retry-after") or headers.get("Retry-After")
-                    if retry_hdr is not None:
-                        try:
-                            delay = float(retry_hdr)
-                        except Exception:
-                            delay = None
 
-                if delay is None:
-                    match = re.search(r"(\d+(?:\.\d+)?)(ms|s|m)\b", str(exc), flags=re.IGNORECASE)
-                    if match:
-                        value = float(match.group(1))
-                        unit = match.group(2).lower()
-                        if unit == "ms":
-                            delay = value / 1000.0
-                        elif unit == "s":
-                            delay = value
-                        elif unit == "m":
-                            delay = value * 60.0
-
-                if delay is None:
-                    delay = min(2 ** num_retries, 60)
-
-                delay = float(delay) + 1.0
-                print(f"Rate limit encountered: retrying in {delay:.1f}s (attempt {num_retries}/{max_retries})")
-                time.sleep(delay)
-
-    return wrapper
+def _supports_verbosity(model: str) -> bool:
+    return model.startswith("gpt-5")
 
 
 class OpenAILLMClient:
@@ -76,34 +48,73 @@ class OpenAILLMClient:
         self.model = model
         self.system_prompt = system_prompt
         self.max_output_tokens = max_output_tokens
+        self._client = None
 
-    @retry_with_suggested_backoff
-    def _call(self, client, prompt: str) -> str:
-        response = client.responses.create(
-            model=self.model,
-            input=[
+    def _request_kwargs(self, prompt: str) -> Dict[str, Any]:
+        kwargs: Dict[str, Any] = {
+            "model": self.model,
+            "input": [
                 {"role": "system", "content": self.system_prompt},
                 {"role": "user", "content": prompt},
             ],
-            reasoning={"effort": "minimal"},
-            text={"verbosity": "low"},
-            max_output_tokens=self.max_output_tokens,
-        )
-        return response.output_text
+            "max_output_tokens": self.max_output_tokens,
+        }
+
+        # These are specific to the reasoning models. Sending them to, say,
+        # gpt-4o is an API error, and the model name is user-supplied.
+        if _supports_reasoning(self.model):
+            kwargs["reasoning"] = {"effort": "minimal"}
+        if _supports_verbosity(self.model):
+            kwargs["text"] = {"verbosity": "low"}
+
+        return kwargs
+
+    @retry_on_rate_limit(max_retries=5, retry_other_errors=False)
+    def _call(self, client, prompt: str) -> str:
+        response = client.responses.create(**self._request_kwargs(prompt))
+        return self._read_output(response)
+
+    def _read_output(self, response) -> str:
+        text = (getattr(response, "output_text", None) or "").strip()
+
+        status = getattr(response, "status", None)
+        if status is not None and status != "completed":
+            reason = getattr(getattr(response, "incomplete_details", None), "reason", None)
+            if reason == "max_output_tokens":
+                raise RuntimeError(
+                    "The model hit the output token limit "
+                    f"(max_output_tokens={self.max_output_tokens}) before finishing. "
+                    "Raise `max_output_tokens` in llms/config_llms.py and try again."
+                    + (f" Partial output: {text}" if text else "")
+                )
+            raise RuntimeError(
+                f"The model returned status {status!r}"
+                + (f" (reason: {reason})" if reason else "")
+                + (f". Partial output: {text}" if text else " with no output.")
+            )
+
+        if not text:
+            raise RuntimeError("The model returned an empty response.")
+
+        return text
+
+    def _get_client(self):
+        if self._client is None:
+            _load_env_once()
+            try:
+                from openai import OpenAI
+            except Exception as exc:
+                raise RuntimeError(
+                    f"OpenAI import failed: {type(exc).__name__}: {exc}"
+                ) from exc
+            self._client = OpenAI()
+        return self._client
 
     def run(self, prompt: str) -> str:
-        try:
-            from openai import OpenAI
-        except Exception as exc:
-            raise RuntimeError(
-                f"OpenAI import failed: {type(exc).__name__}: {exc}"
-            ) from exc
-
-        client = OpenAI()
-        return self._call(client, prompt)
+        return self._call(self._get_client(), prompt)
 
 
-def _resolve_model_name(model: str | None) -> str:
+def _resolve_model_name(model: Optional[str]) -> str:
     from llms.config_llms import config
 
     if isinstance(model, str):
@@ -113,7 +124,7 @@ def _resolve_model_name(model: str | None) -> str:
     return config.openai_llm_model
 
 
-def default_openai_client(model: str | None = None) -> OpenAILLMClient:
+def default_openai_client(model: Optional[str] = None) -> OpenAILLMClient:
     from llms.config_llms import config
 
     return OpenAILLMClient(

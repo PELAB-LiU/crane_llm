@@ -7,21 +7,20 @@
   "scripts": {
     "build": "jlpm build:lib && jlpm build:labextension:dev",
     "build:prod": "jlpm clean:all && jlpm build:lib:prod && jlpm build:labextension",
-    "build:labextension": "node ./node_modules/@jupyter/builder/lib/build-labextension.js --core-package-file ./node_modules/@jupyterlab/core-meta/core.package.json .",
-    "build:labextension:dev": "node ./node_modules/@jupyter/builder/lib/build-labextension.js --development --core-package-file ./node_modules/@jupyterlab/core-meta/core.package.json .",
+    "build:labextension": "node ./node_modules/@jupyter/builder/lib/build-labextension.js --core-package-file ./node_modules/@jupyterlab/core-meta/core.package.json . && node scripts/fix-build-load.mjs",
+    "build:labextension:dev": "node ./node_modules/@jupyter/builder/lib/build-labextension.js --development --core-package-file ./node_modules/@jupyterlab/core-meta/core.package.json . && node scripts/fix-build-load.mjs",
     "build:lib": "tsc --sourceMap",
     "build:lib:prod": "tsc -p tsconfig.json",
     "watch": "tsc -w -p tsconfig.json",
     "clean": "jlpm clean:lib",
-    "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
-    "clean:labextension": "rimraf labextension",
+    "clean:lib": "node scripts/clean.mjs lib tsconfig.tsbuildinfo",
+    "clean:labextension": "node scripts/clean.mjs labextension",
     "clean:all": "jlpm clean:lib && jlpm clean:labextension"
   },
   "files": [
     "lib/**/*",
-    "schema/**/*",
-    "style/**/*",
-    "package.json"
+    "package.json",
+    "scripts/**/*"
   ],
   "dependencies": {
     "@jupyterlab/application": "^4.0.0",
@@ -33,11 +32,12 @@
   "devDependencies": {
     "@jupyter/builder": "^1.0.0",
     "@rspack/core": "2.0.2",
-    "rimraf": "^6.0.1",
     "typescript": "^5.5.4"
   },
   "resolutions": {
-    "@rspack/core": "2.0.2"
+    "@rspack/core": "2.0.2",
+    "glob": "13.0.5",
+    "fast-uri": "3.1.3"
   },
   "jupyterlab": {
     "extension": true,

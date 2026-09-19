@@ -1,6 +1,7 @@
 from ollama import Client
 import json
 from llms.config_llms import config
+from llms.retry import retry_on_rate_limit
 import time
 import os
 import re
@@ -14,75 +15,12 @@ from transformers import GenerationConfig
 
 load_dotenv()
 
-# define a retry decorator for openai API calls with suggested backoff time
+# Retry helper shared with the notebook extension (see llms/retry.py).
+# The batch runner retries non-rate-limit errors too, because long unattended
+# jobs should survive a transient provider blip.
 def retry_with_suggested_backoff(func, max_retries: int = 10):
-    import openai
-    from openai import RateLimitError
+    return retry_on_rate_limit(func, max_retries=max_retries, retry_other_errors=True)
 
-    """Retry a function with exponential backoff."""
-    def wrapper(*args, **kwargs):
-        # Initialize variables
-        num_retries = 0
-        # Loop until a successful response or max_retries is hit or an exception is raised
-        while True:
-            try:
-                return func(*args, **kwargs)
-            # Retry on specific errors
-            except Exception as e:
-                # Increment retries
-                num_retries += 1
-                is_rate_limit = False
-                if isinstance(e, RateLimitError):
-                    is_rate_limit = True
-                else:
-                    # some wrappers or libs may expose http status; check for 429
-                    if hasattr(e, "http_status") and getattr(e, "http_status") == 429:
-                        is_rate_limit = True
-                    elif "rate limit" in str(e).lower() or "please try again" in str(e).lower():
-                        is_rate_limit = True
-
-                # Check if max retries has been reached
-                if num_retries > max_retries:
-                    raise Exception(
-                        f"Maximum number of retries ({max_retries}) exceeded."
-                    )
-                if not is_rate_limit:
-                    print(f"LLM call failed with error: {e}. Retrying.")
-                else:
-                    # Try to extract retry time from common sources
-                    delay = None
-                    # 1) try headers (if present)
-                    headers = getattr(e, "headers", None)
-                    if headers:
-                        retry_hdr = headers.get("retry-after") or headers.get("Retry-After")
-                        if retry_hdr is not None:
-                            try:
-                                delay = float(retry_hdr)
-                            except Exception:
-                                pass
-
-                    # 2) try message patterns like "Please try again in 2s" or "Please try again in 1500ms"
-                    if delay is None:
-                        m = re.search(r"(\d+(?:\.\d+)?)(ms|s|m)\b", str(e), flags=re.IGNORECASE)
-                        if m:
-                            val = float(m.group(1))
-                            unit = m.group(2).lower()
-                            if unit == "ms":
-                                delay = val / 1000.0
-                            elif unit == "s":
-                                delay = val
-                            elif unit == "m":
-                                delay = val * 60.0
-
-                    # 3) fallback to exponential backoff capped to 60s
-                    if delay is None:
-                        delay = min(2 ** num_retries, 60)
-
-                    # add a small buffer
-                    delay = float(delay) + 1.0
-                    print(f"Rate limit encountered: retrying in {delay:.1f}s (attempt {num_retries}/{max_retries})")
-                    time.sleep(delay)
-    return wrapper
 
 class LLMExecutor:
     def __init__(self, model: str = None, libname: str = None, filename: str = None, user_message: str = None, runs: int = 5, MAX_RETRIES: int = 5, RETRY_DELAY: int = 10):

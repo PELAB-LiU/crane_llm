@@ -1,38 +1,41 @@
 from __future__ import annotations
 
-from IPython.core.magic import Magics, magics_class, cell_magic, needs_local_scope
 from IPython import get_ipython
+from IPython.core.magic import Magics, cell_magic, magics_class
 
 from .api import get_extension
 
 
 @magics_class
 class CraneLLMMagics(Magics):
-    def __init__(self, shell=None):
-        super().__init__(shell=shell)
-        self.extension = get_extension()
-
     @cell_magic
-    @needs_local_scope
-    def crane_llm(self, line, cell, local_ns=None):
-        """Run CRANE-LLM against the current cell body.
+    def crane_llm(self, line, cell):
+        """Predict whether the cell body would crash, without running it.
 
-        Usage:
+        Usage::
+
             %%crane_llm
-            x = ...
-            ...
+            model.fit(x, y)
+
+        The cell is analysed, not executed. An optional argument overrides the
+        model, for example ``%%crane_llm gpt-5-mini``.
         """
 
-        shell = get_ipython()
-        result = self.extension.run_target_cell(source=cell, shell=shell, render=True)
-        return result.response
+        model = line.strip() or None
+        extension = get_extension(model=model)
+        result = extension.run_target_cell(source=cell, shell=get_ipython(), render=True)
+
+        from IPython.display import Markdown, display
+
+        display(Markdown(f"```json\n{result.response}\n```"))
 
 
-def crane_llm(cell_source: str):
+def crane_llm(cell_source: str, model: str = None):
     """Convenience wrapper for direct Python invocation."""
 
-    shell = get_ipython()
-    result = get_extension().run_target_cell(source=cell_source, shell=shell, render=True)
+    result = get_extension(model=model).run_target_cell(
+        source=cell_source, shell=get_ipython(), render=True
+    )
     return result.response
 
 

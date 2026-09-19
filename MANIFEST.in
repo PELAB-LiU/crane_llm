@@ -1,2 +1,28 @@
-recursive-include nb_extension *.js *.ts *.json *.css
-recursive-include nb_extension labextension/*
+include LICENSE
+include README.md
+include config.py
+include runinfo_parser/summarize_config.json
+
+# Frontend sources and the built bundle.
+include nb_extension/package.json
+include nb_extension/tsconfig.json
+include nb_extension/install.json
+recursive-include nb_extension/src *.ts
+recursive-include nb_extension/labextension *
+
+# Keep the build off the large directories. Without these, setuptools walks
+# every one of them while assembling the file list, which dominates the
+# install time. target_nbs alone is ~17 GB.
+prune nb_extension/node_modules
+prune nb_extension/.yarn
+prune nb_extension/lib
+prune llms/llms_inputs
+prune llms/llms_outputs
+prune target_nbs
+prune target_nbs_thestackdedup
+prune target_nbs_notebookerrorsdataset
+prune test_nb
+prune results
+prune tmp
+prune build
+prune dist

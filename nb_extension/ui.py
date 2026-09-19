@@ -1,19 +1,18 @@
 from __future__ import annotations
 
-from typing import Optional
-
-import ipywidgets as widgets
-from IPython.display import display
-
 
 class CraneNotebookUI:
-    """Simple notebook UI for prompt/status/result display.
+    """Optional ipywidgets panel for the ``%%crane_llm`` magic.
 
-    The prompt and status are rendered in a compact side panel, while the final
-    response is emitted into the notebook output area by the caller.
+    The native JupyterLab frontend has its own sidebar and does not use this.
+    ipywidgets is imported lazily so that it stays an optional dependency: the
+    toolbar button must keep working in kernels that do not have it installed.
     """
 
     def __init__(self):
+        import ipywidgets as widgets
+
+        self._widgets = widgets
         self.status = widgets.HTML(value="<b>Status:</b> idle")
         self.prompt = widgets.Textarea(
             value="",
@@ -36,9 +35,18 @@ class CraneNotebookUI:
             ],
             layout=widgets.Layout(width="100%"),
         )
+        self._shown = False
 
     def show(self):
+        """Display the panel once; later calls just reuse the live widgets."""
+
+        if self._shown:
+            return
+
+        from IPython.display import display
+
         display(self.panel)
+        self._shown = True
 
     def set_status(self, text: str):
         self.status.value = f"<b>Status:</b> {text}"

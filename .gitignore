@@ -30,6 +30,8 @@ batch_script*
 
 # Python package build metadata
 *.egg-info/
+build/
+dist/
 
 # JupyterLab extension dependencies and generated logs
 nb_extension/node_modules/
