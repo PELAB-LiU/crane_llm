@@ -63,25 +63,33 @@ class CraneNotebookExtension:
         cell_id: str = "active-cell",
         execution_count: Optional[int] = None,
         render: bool = True,
+        include_runinfo: bool = True,
     ) -> NotebookExtensionResult:
         self.set_target_cell(cell_id=cell_id, source=source, execution_count=execution_count)
-        return self.run(shell=shell, render=render)
+        return self.run(shell=shell, render=render, include_runinfo=include_runinfo)
 
-    def run(self, shell=None, render: bool = True) -> NotebookExtensionResult:
+    def run(
+        self,
+        shell=None,
+        render: bool = True,
+        include_runinfo: bool = True,
+    ) -> NotebookExtensionResult:
         ui = self.ui if render else None
 
         if ui is not None:
             ui.show()
-            ui.set_status("parsing runtime information...")
+            ui.set_status(
+                "parsing runtime information..." if include_runinfo else "building prompt..."
+            )
 
-        prompt = self.assistant.build_prompt(shell=shell)
+        prompt = self.assistant.build_prompt(shell=shell, include_runinfo=include_runinfo)
 
         if ui is not None:
             ui.set_prompt(prompt)
             ui.set_status("calling LLM...")
 
         try:
-            response = self.assistant.call_llm(prompt)
+            response = self.assistant.call_llm(prompt, include_runinfo=include_runinfo)
         except Exception as exc:
             if ui is not None:
                 ui.set_status("error")

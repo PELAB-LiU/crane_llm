@@ -124,11 +124,27 @@ def _resolve_model_name(model: Optional[str]) -> str:
     return config.openai_llm_model
 
 
-def default_openai_client(model: Optional[str] = None) -> OpenAILLMClient:
+def default_openai_client(
+    model: Optional[str] = None,
+    include_runinfo: bool = True,
+) -> OpenAILLMClient:
+    """Build a client whose system prompt matches the prompt being sent.
+
+    With runtime information switched off the prompt has no
+    [Current relevant runtime information] section, so the system prompt must
+    not tell the model to expect one.
+    """
+
     from llms.config_llms import config
+
+    system_prompt = (
+        config.system_prompt_crane_llm_enforcejson
+        if include_runinfo
+        else config.system_prompt_crane_llm_enforcejson_code_only
+    )
 
     return OpenAILLMClient(
         model=_resolve_model_name(model),
-        system_prompt=config.system_prompt_crane_llm_enforcejson,
+        system_prompt=system_prompt,
         max_output_tokens=config.max_output_tokens,
     )

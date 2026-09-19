@@ -28,7 +28,32 @@ Important output rules:
 --- Input Begins Below ---
         """
 
-        # current configuration setup ---- 
+        # Same contract, for when the notebook extension has runtime
+        # information switched off. Identical to the prompt above except that it
+        # does not promise a [Current relevant runtime information] section,
+        # which would otherwise describe input the model is not being given.
+        self.system_prompt_crane_llm_enforcejson_code_only = """You are an automated crash predictor for ML notebooks.
+Given:
+- a set of [Executed Cells] that have already run successfully,
+- a [Target Cell] that may or may not crash when executed,
+
+Your task is to reason step by step whether executing the [Target Cell] will crash.
+
+Important output rules:
+- Output EXACTLY one JSON object and NOTHING else. Use JSON booleans true and false (lowercase).
+- Schema:
+  {
+    "reasoning": string,
+    "prediction": boolean
+  }
+- Give a short explanation in `reasoning` (concise: 1-2 sentences).
+- If you are not CERTAIN the cell will crash, you MUST output `"prediction": false`.
+- Your output must ONLY be the JSON object.
+
+--- Input Begins Below ---
+        """
+
+        # current configuration setup ----
 
         # [crash detection] with [executed code cells / executed code cells and runinfo / runinfo]
         # self.current_task = "crash detection with executed code cells"

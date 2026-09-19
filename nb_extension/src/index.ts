@@ -4,6 +4,7 @@ import { INotebookTracker, NotebookActions, NotebookPanel } from '@jupyterlab/no
 import { Widget } from '@lumino/widgets';
 
 const COMMAND_ID = 'crane-llm-jlab:run';
+const TOGGLE_RUNINFO_COMMAND_ID = 'crane-llm-jlab:toggle-runinfo';
 const SIDEBAR_ID = 'crane-llm-sidebar';
 
 /** Must match api.PAYLOAD_BEGIN / api.PAYLOAD_END. */
@@ -40,12 +41,79 @@ interface CranePayload {
   error: string;
 }
 
+/** Remembers the runtime-information switch across page reloads. */
+const RUNINFO_STORAGE_KEY = 'crane-llm:include-runinfo';
+
+function loadIncludeRuninfo(): boolean {
+  // Default on. Storage can be unavailable in private windows, so never let a
+  // failure here stop the extension from loading.
+  try {
+    return window.localStorage.getItem(RUNINFO_STORAGE_KEY) !== 'false';
+  } catch (_error) {
+    return true;
+  }
+}
+
+function saveIncludeRuninfo(value: boolean): void {
+  try {
+    window.localStorage.setItem(RUNINFO_STORAGE_KEY, String(value));
+  } catch (_error) {
+    // Not worth surfacing; the switch simply will not persist.
+  }
+}
+
+/**
+ * The runtime-information switch, shared by every control that shows it.
+ *
+ * The sidebar checkbox, the toolbar popover and the command palette entry are
+ * three views of this one value. Without a single owner they would drift apart
+ * as soon as the user changed it from one of them.
+ */
+class RuninfoSetting {
+  private value: boolean = loadIncludeRuninfo();
+  private listeners = new Set<(value: boolean) => void>();
+
+  get(): boolean {
+    return this.value;
+  }
+
+  set(value: boolean): void {
+    if (value === this.value) {
+      return;
+    }
+    this.value = value;
+    saveIncludeRuninfo(value);
+    for (const listener of this.listeners) {
+      listener(value);
+    }
+  }
+
+  toggle(): void {
+    this.set(!this.value);
+  }
+
+  /** Subscribe and receive the current value immediately. */
+  subscribe(listener: (value: boolean) => void): () => void {
+    this.listeners.add(listener);
+    listener(this.value);
+    return () => this.listeners.delete(listener);
+  }
+}
+
+function runinfoHintText(includeRuninfo: boolean): string {
+  return includeRuninfo
+    ? 'Prompt: executed cells, runtime state, target cell.'
+    : 'Prompt: executed cells and target cell only.';
+}
+
 class CraneSidebar extends Widget {
   private statusNode: HTMLDivElement;
   private promptNode: HTMLPreElement;
   private responseNode: HTMLPreElement;
+  private runinfoCheckbox: HTMLInputElement;
+  private runinfoHintNode: HTMLDivElement;
 
-  constructor() {
+  constructor(private setting: RuninfoSetting) {
     super();
     this.addClass('crane-llm-sidebar');
 
@@ -73,6 +141,36 @@ class CraneSidebar extends Widget {
     this.statusNode.style.cssText =
       'margin-bottom:10px;color:var(--jp-info-color1);font-weight:600;';
     this.statusNode.textContent = 'idle';
+
+    // Runtime-information switch. On by default, which is the configuration
+    // the approach is built around; turning it off falls back to a prompt of
+    // executed cells and the target cell alone.
+    const runinfoRow = document.createElement('label');
+    runinfoRow.style.cssText =
+      'display:flex;align-items:center;gap:8px;margin:0 0 4px;cursor:pointer;font-size:12px;';
+
+    this.runinfoCheckbox = document.createElement('input');
+    this.runinfoCheckbox.type = 'checkbox';
+    this.runinfoCheckbox.style.cssText = 'margin:0;cursor:pointer;';
+
+    const runinfoLabel = document.createElement('span');
+    runinfoLabel.textContent = 'Include runtime information';
+    runinfoLabel.style.cssText = 'font-weight:700;';
+
+    runinfoRow.appendChild(this.runinfoCheckbox);
+    runinfoRow.appendChild(runinfoLabel);
+
+    this.runinfoHintNode = document.createElement('div');
+    this.runinfoHintNode.style.cssText =
+      'font-size:11px;opacity:0.75;margin:0 0 10px 24px;';
+
+    this.runinfoCheckbox.onchange = () => this.setting.set(this.runinfoCheckbox.checked);
+
+    // Reflect changes made from the toolbar popover or the command palette.
+    this.setting.subscribe(value => {
+      this.runinfoCheckbox.checked = value;
+      this.runinfoHintNode.textContent = runinfoHintText(value);
+    });
 
     const promptLabel = document.createElement('div');
     promptLabel.textContent = 'Prompt';
@@ -108,6 +206,8 @@ class CraneSidebar extends Widget {
 
     this.node.appendChild(header);
     this.node.appendChild(this.statusNode);
+    this.node.appendChild(runinfoRow);
+    this.node.appendChild(this.runinfoHintNode);
     this.node.appendChild(promptLabel);
     this.node.appendChild(this.promptNode);
     this.node.appendChild(responseLabel);
@@ -125,6 +225,124 @@ class CraneSidebar extends Widget {
   setResponse(text: string): void {
     this.responseNode.textContent = text;
   }
+}
+
+/**
+ * Hang the runtime-information switch off the toolbar button, revealed on hover.
+ *
+ * The sidebar has the same switch, but it is easy to never open the sidebar at
+ * all, and a setting nobody can find is not really exposed. The popover is
+ * appended to document.body and positioned with fixed coordinates so that no
+ * ancestor's overflow can clip it out of the toolbar.
+ *
+ * Returns a teardown function; the caller runs it when the panel goes away.
+ */
+function installRuninfoPopover(anchor: HTMLElement, setting: RuninfoSetting): () => void {
+  const popover = document.createElement('div');
+  popover.className = 'crane-llm-runinfo-popover';
+  popover.style.cssText = [
+    'position:fixed',
+    'z-index:10000',
+    'display:none',
+    'min-width:250px',
+    'padding:10px 12px',
+    'border-radius:8px',
+    'background:var(--jp-layout-color1)',
+    'color:var(--jp-ui-font-color1)',
+    'border:1px solid var(--jp-border-color1)',
+    'box-shadow:0 4px 14px rgba(0,0,0,0.22)',
+    'font-size:12px'
+  ].join(';');
+
+  const row = document.createElement('label');
+  row.style.cssText =
+    'display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;';
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.style.cssText = 'margin:0;cursor:pointer;';
+
+  const labelText = document.createElement('span');
+  labelText.textContent = 'Include runtime information';
+
+  const hint = document.createElement('div');
+  hint.style.cssText = 'margin-top:6px;opacity:0.75;';
+
+  row.appendChild(checkbox);
+  row.appendChild(labelText);
+  popover.appendChild(row);
+  popover.appendChild(hint);
+  document.body.appendChild(popover);
+
+  const unsubscribe = setting.subscribe(value => {
+    checkbox.checked = value;
+    hint.textContent = runinfoHintText(value);
+  });
+
+  checkbox.onchange = () => setting.set(checkbox.checked);
+
+  // Clicking anywhere in the popover must not reach the button behind it.
+  popover.addEventListener('click', event => event.stopPropagation());
+
+  let hideTimer: number | undefined;
+
+  const cancelHide = () => {
+    if (hideTimer !== undefined) {
+      window.clearTimeout(hideTimer);
+      hideTimer = undefined;
+    }
+  };
+
+  const show = () => {
+    cancelHide();
+    const rect = anchor.getBoundingClientRect();
+    popover.style.display = 'block';
+    // Measure after it is displayed, then keep it inside the viewport.
+    const width = popover.offsetWidth;
+    const left = Math.max(8, Math.min(rect.right - width, window.innerWidth - width - 8));
+    popover.style.top = `${rect.bottom + 6}px`;
+    popover.style.left = `${left}px`;
+  };
+
+  // A grace period, so moving the pointer from the button into the popover
+  // does not close it on the way.
+  const scheduleHide = () => {
+    cancelHide();
+    hideTimer = window.setTimeout(() => {
+      popover.style.display = 'none';
+    }, 250);
+  };
+
+  const hideNow = () => {
+    cancelHide();
+    popover.style.display = 'none';
+  };
+
+  const onKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      hideNow();
+    }
+  };
+
+  anchor.addEventListener('mouseenter', show);
+  anchor.addEventListener('mouseleave', scheduleHide);
+  // Keyboard users never fire mouseenter, so tabbing to the button opens it too.
+  anchor.addEventListener('focusin', show);
+  popover.addEventListener('mouseenter', cancelHide);
+  popover.addEventListener('mouseleave', scheduleHide);
+  popover.addEventListener('focusin', cancelHide);
+  popover.addEventListener('focusout', scheduleHide);
+  document.addEventListener('keydown', onKeyDown);
+
+  return () => {
+    unsubscribe();
+    cancelHide();
+    anchor.removeEventListener('mouseenter', show);
+    anchor.removeEventListener('mouseleave', scheduleHide);
+    anchor.removeEventListener('focusin', show);
+    document.removeEventListener('keydown', onKeyDown);
+    popover.remove();
+  };
 }
 
 function getResponseManager(panel: NotebookPanel): CraneResponseManager {
@@ -729,7 +947,8 @@ function notebookNotReadyReason(
 async function runAnalysis(
   app: JupyterFrontEnd,
   panel: NotebookPanel,
-  sidebar: CraneSidebar
+  sidebar: CraneSidebar,
+  setting: RuninfoSetting
 ): Promise<void> {
   const activeCell = panel.content.activeCell;
   if (!activeCell || activeCell.model.type !== 'code') {
@@ -757,8 +976,14 @@ async function runAnalysis(
     const responseManager = getResponseManager(panel);
     responseManager.clearResponseForCell(activeCell);
 
+    const includeRuninfo = setting.get();
+
     app.shell.activateById(SIDEBAR_ID);
-    sidebar.setStatus('building prompt and calling LLM...');
+    sidebar.setStatus(
+      includeRuninfo
+        ? 'building prompt with runtime information...'
+        : 'building prompt from executed code only...'
+    );
     sidebar.setPrompt('');
     sidebar.setResponse('');
 
@@ -771,7 +996,9 @@ async function runAnalysis(
         'from nb_extension.api import run_crane_llm_payload',
         `print(run_crane_llm_payload(source=${JSON.stringify(
           cellSource(activeCell)
-        )}, cell_id=${JSON.stringify(cellId(activeCell))}))`
+        )}, cell_id=${JSON.stringify(cellId(activeCell))}, include_runinfo=${
+          includeRuninfo ? 'True' : 'False'
+        }))`
       ].join('\n')
     );
 
@@ -784,7 +1011,7 @@ async function runAnalysis(
       return;
     }
 
-    sidebar.setStatus('done');
+    sidebar.setStatus(includeRuninfo ? 'done' : 'done, without runtime information');
     sidebar.setResponse(payload.response);
     responseManager.renderResponse(activeCell, payload.response);
   } finally {
@@ -800,7 +1027,8 @@ function reportError(sidebar: CraneSidebar, error: unknown): void {
 function installToolbarButton(
   panel: NotebookPanel,
   app: JupyterFrontEnd,
-  sidebar: CraneSidebar
+  sidebar: CraneSidebar,
+  setting: RuninfoSetting
 ): void {
   if (INSTALLED_PANELS.has(panel)) {
     return;
@@ -809,16 +1037,22 @@ function installToolbarButton(
   INSTALLED_PANELS.add(panel);
   getResponseManager(panel);
 
-  panel.toolbar.addItem(
-    'crane-llm',
-    new ToolbarButton({
-      label: 'CRANE-LLM',
-      tooltip: 'Predict whether the selected cell will crash',
-      onClick: () => {
-        void runAnalysis(app, panel, sidebar).catch(error => reportError(sidebar, error));
-      }
-    })
-  );
+  const button = new ToolbarButton({
+    label: 'CRANE-LLM',
+    tooltip: 'Predict whether the selected cell will crash',
+    onClick: () => {
+      void runAnalysis(app, panel, sidebar, setting).catch(error =>
+        reportError(sidebar, error)
+      );
+    }
+  });
+
+  panel.toolbar.addItem('crane-llm', button);
+
+  // The switch also lives here, so it is discoverable without opening the
+  // sidebar. Torn down with the panel to avoid orphaning it on document.body.
+  const teardown = installRuninfoPopover(button.node, setting);
+  panel.disposed.connect(() => teardown());
 }
 
 const plugin: JupyterFrontEndPlugin<void> = {
@@ -831,7 +1065,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
     tracker: INotebookTracker,
     palette: ICommandPalette | null
   ) => {
-    const sidebar = new CraneSidebar();
+    const setting = new RuninfoSetting();
+    const sidebar = new CraneSidebar(setting);
     sidebar.id = SIDEBAR_ID;
     sidebar.title.label = 'CRANE-LLM';
     sidebar.title.caption = 'CRANE-LLM prompt and response';
@@ -848,7 +1083,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       // The command registry swallows rejections, so a failure triggered from
       // the palette has to be surfaced here.
       try {
-        await runAnalysis(app, panel, sidebar);
+        await runAnalysis(app, panel, sidebar, setting);
       } catch (error) {
         reportError(sidebar, error);
         await showErrorMessage(
@@ -864,23 +1099,39 @@ const plugin: JupyterFrontEndPlugin<void> = {
       execute
     });
 
+    app.commands.addCommand(TOGGLE_RUNINFO_COMMAND_ID, {
+      label: 'CRANE-LLM: Include Runtime Information',
+      caption:
+        'Include the live kernel state in the prompt. When off, only the executed cells and the target cell are sent.',
+      isToggleable: true,
+      isToggled: () => setting.get(),
+      execute: () => setting.toggle()
+    });
+
+    // Keep the palette's checkmark correct when the switch is changed from the
+    // sidebar or the toolbar popover instead.
+    setting.subscribe(() => {
+      app.commands.notifyCommandChanged(TOGGLE_RUNINFO_COMMAND_ID);
+    });
+
     if (palette) {
       palette.addItem({ command: COMMAND_ID, category: 'Notebook' });
+      palette.addItem({ command: TOGGLE_RUNINFO_COMMAND_ID, category: 'Notebook' });
     }
 
     tracker.widgetAdded.connect((_sender, panel) => {
-      installToolbarButton(panel, app, sidebar);
+      installToolbarButton(panel, app, sidebar, setting);
     });
 
     tracker.currentChanged.connect(() => {
       const panel = tracker.currentWidget;
       if (panel) {
-        installToolbarButton(panel, app, sidebar);
+        installToolbarButton(panel, app, sidebar, setting);
       }
     });
 
     tracker.forEach(panel => {
-      installToolbarButton(panel, app, sidebar);
+      installToolbarButton(panel, app, sidebar, setting);
     });
   }
 };

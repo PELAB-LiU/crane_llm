@@ -294,6 +294,32 @@ A prediction goes stale when you edit the cell or run any other cell, because
 both change what the prediction was based on. Re-running the analysed cell
 removes its prediction, and restarting the kernel clears all of them.
 
+## Runtime information switch
+
+The switch is reachable three ways, all showing the same value:
+
+- **Hover the CRANE-LLM toolbar button.** A small panel drops down with the
+  checkbox. Tabbing to the button opens it too, and Escape closes it.
+- **The sidebar**, which has the same checkbox.
+- **The command palette**, *CRANE-LLM: Include Runtime Information*, which you
+  can bind to a key.
+
+It is on by default and remembered across reloads.
+
+| Switch | What goes into the prompt |
+|---|---|
+| on (default) | executed cells, runtime state of the names the target cell uses, target cell |
+| off | executed cells and target cell only |
+
+Turning it off asks the model to predict from the code alone, which is the
+comparison the approach is built against. Nothing else changes: the same cells
+and the same target cell are sent either way, and the system prompt switches to
+a variant that does not tell the model to expect runtime information it is not
+being given.
+
+Turning it off is also worth trying when a prompt is too large, since the
+runtime section is usually the biggest part.
+
 The target cell is never executed, and predictions are not saved into the
 `.ipynb`.
 
@@ -308,9 +334,11 @@ The target cell is never executed, and predictions are not saved into the
 model.fit(x_train, y_train)
 ```
 
-The cell body is analysed, not executed. An argument overrides the model, for
-example `%%crane_llm gpt-5-mini`. This path renders an ipywidgets panel, so it
-needs the `widgets` extra; the toolbar button does not.
+The cell body is analysed, not executed. Arguments are optional:
+`--no-runinfo` builds the prompt from the executed cells alone, and anything
+else is read as a model name, so `%%crane_llm gpt-5-mini --no-runinfo` works.
+This path renders an ipywidgets panel, so it needs the `widgets` extra; the
+toolbar button does not.
 
 ---
 
@@ -428,8 +456,8 @@ Lower-level entry points, for use from a notebook cell:
 
 | Function | Purpose |
 |---|---|
-| `get_prompt(source, cell_id=...)` | the assembled prompt, no LLM call |
-| `run_crane_llm(source, cell_id=...)` | prompt and response |
+| `get_prompt(source, cell_id=..., include_runinfo=True)` | the assembled prompt, no LLM call |
+| `run_crane_llm(source, cell_id=..., include_runinfo=True)` | prompt and response |
 | `get_live_runinfo_json(target_code)` | runtime summary of the namespace |
 | `reload_crane_llm()` | reload the backend in a live kernel |
 

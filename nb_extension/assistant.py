@@ -24,17 +24,22 @@ class CraneNotebookAssistant:
     def __init__(self, model: Optional[str] = None, session_state: Optional[NotebookSessionState] = None):
         self.model = _resolve_model_name(model)
         self.session_state = session_state or NotebookSessionState()
-        self._client = None
+        # One client per mode; they differ only in their system prompt.
+        self._clients: dict = {}
 
-    def build_prompt(self, shell=None) -> str:
-        return build_crane_prompt(self.session_state, include_runinfo=True, shell=shell)
+    def build_prompt(self, shell=None, include_runinfo: bool = True) -> str:
+        return build_crane_prompt(
+            self.session_state, include_runinfo=include_runinfo, shell=shell
+        )
 
-    def call_llm(self, prompt: str) -> str:
-        if self._client is None:
-            self._client = default_openai_client(model=self.model)
-        return self._client.run(prompt)
+    def call_llm(self, prompt: str, include_runinfo: bool = True) -> str:
+        client = self._clients.get(include_runinfo)
+        if client is None:
+            client = default_openai_client(model=self.model, include_runinfo=include_runinfo)
+            self._clients[include_runinfo] = client
+        return client.run(prompt)
 
-    def run(self, shell=None) -> AssistantResult:
-        prompt = self.build_prompt(shell=shell)
-        response = self.call_llm(prompt)
+    def run(self, shell=None, include_runinfo: bool = True) -> AssistantResult:
+        prompt = self.build_prompt(shell=shell, include_runinfo=include_runinfo)
+        response = self.call_llm(prompt, include_runinfo=include_runinfo)
         return AssistantResult(prompt=prompt, response=response)

@@ -53,6 +53,41 @@ def check_prompt_shape():
     assert "print(a)" in prompt
 
 
+def check_runinfo_switch_changes_the_prompt():
+    """The runtime-information switch must add or remove exactly that section."""
+
+    state = NotebookSessionState()
+    state.record_executed_cell("cell-1", "values = [1, 2, 3]", execution_count=1)
+    state.set_target_cell("cell-2", "values.append(4)")
+    shell = FakeShell({"values": [1, 2, 3]})
+
+    with_runinfo = build_crane_prompt(state, include_runinfo=True, shell=shell)
+    without_runinfo = build_crane_prompt(state, include_runinfo=False, shell=shell)
+
+    assert "# Current relevent runtime information:" in with_runinfo
+    assert "# Current relevent runtime information:" not in without_runinfo
+
+    # Everything else is identical: same executed cells, same target cell.
+    for prompt in (with_runinfo, without_runinfo):
+        assert "values = [1, 2, 3]" in prompt
+        assert prompt.rstrip().endswith("values.append(4)")
+
+
+def check_runinfo_switch_selects_the_matching_system_prompt():
+    """A prompt with no runtime section must not claim to have one."""
+
+    from nb_extension.llm_client import default_openai_client
+
+    with_runinfo = default_openai_client(model="gpt-5", include_runinfo=True).system_prompt
+    without_runinfo = default_openai_client(model="gpt-5", include_runinfo=False).system_prompt
+
+    assert "runtime information" in with_runinfo
+    assert "runtime information" not in without_runinfo
+    # Both must still demand the same output contract.
+    for prompt in (with_runinfo, without_runinfo):
+        assert '"prediction": boolean' in prompt
+
+
 def check_target_cell_excluded_from_executed_list():
     """A previously run cell must not be listed as executed while it is the target."""
 
@@ -181,7 +216,9 @@ def check_extension_runs_without_ipywidgets():
     extension = CraneNotebookExtension()
     extension.session_state = state
     extension.assistant.session_state = state
-    extension.assistant.call_llm = lambda prompt: '{"reasoning": "ok", "prediction": false}'
+    extension.assistant.call_llm = (
+        lambda prompt, include_runinfo=True: '{"reasoning": "ok", "prediction": false}'
+    )
 
     blocked = {"ipywidgets": None}
     saved = {name: sys.modules.get(name) for name in blocked}
@@ -201,6 +238,8 @@ def check_extension_runs_without_ipywidgets():
 
 CHECKS = (
     check_prompt_shape,
+    check_runinfo_switch_changes_the_prompt,
+    check_runinfo_switch_selects_the_matching_system_prompt,
     check_target_cell_excluded_from_executed_list,
     check_reexecution_is_deduplicated,
     check_failed_cells_are_not_recorded,

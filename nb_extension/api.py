@@ -109,12 +109,21 @@ def run_crane_llm(
     source: str,
     model: Optional[str] = None,
     cell_id: str = "active-cell",
+    include_runinfo: bool = True,
 ) -> "extension_module.NotebookExtensionResult":
-    """Build the prompt and run the LLM in one call."""
+    """Build the prompt and run the LLM in one call.
+
+    ``include_runinfo=False`` builds the prompt from the executed cells and the
+    target cell alone, with no runtime information section.
+    """
 
     extension = get_extension(model=model)
     return extension.run_target_cell(
-        source=source, shell=get_ipython(), cell_id=cell_id, render=False
+        source=source,
+        shell=get_ipython(),
+        cell_id=cell_id,
+        render=False,
+        include_runinfo=include_runinfo,
     )
 
 
@@ -125,7 +134,12 @@ def get_live_runinfo_json(target_code: str = "") -> str:
     return json.dumps(runinfo, ensure_ascii=False, default=str)
 
 
-def get_prompt(source: str = "", model: Optional[str] = None, cell_id: str = "active-cell") -> str:
+def get_prompt(
+    source: str = "",
+    model: Optional[str] = None,
+    cell_id: str = "active-cell",
+    include_runinfo: bool = True,
+) -> str:
     """Return the current CRANE prompt assembled by the Python backend.
 
     ``cell_id`` is the notebook's own id for the cell under analysis. It lets
@@ -135,7 +149,9 @@ def get_prompt(source: str = "", model: Optional[str] = None, cell_id: str = "ac
 
     extension = get_extension(model=model)
     extension.set_target_cell(cell_id=cell_id, source=source)
-    return extension.assistant.build_prompt(shell=get_ipython())
+    return extension.assistant.build_prompt(
+        shell=get_ipython(), include_runinfo=include_runinfo
+    )
 
 
 # The frontend reads the payload back off the kernel's stdout. Anything a user
@@ -150,6 +166,7 @@ def run_crane_llm_payload(
     source: str = "",
     cell_id: str = "active-cell",
     model: Optional[str] = None,
+    include_runinfo: bool = True,
 ) -> str:
     """Build the prompt, call the LLM, and return a delimited JSON payload.
 
@@ -158,18 +175,28 @@ def run_crane_llm_payload(
     kernel traceback.
     """
 
-    payload = {"ok": False, "prompt": "", "response": "", "error": ""}
+    payload = {
+        "ok": False,
+        "prompt": "",
+        "response": "",
+        "error": "",
+        "include_runinfo": bool(include_runinfo),
+    }
 
     try:
         extension = get_extension(model=model)
         extension.set_target_cell(cell_id=cell_id, source=source)
-        payload["prompt"] = extension.assistant.build_prompt(shell=get_ipython())
+        payload["prompt"] = extension.assistant.build_prompt(
+            shell=get_ipython(), include_runinfo=include_runinfo
+        )
     except Exception as exc:
         payload["error"] = f"Prompt building failed. {type(exc).__name__}: {exc}"
         return PAYLOAD_BEGIN + json.dumps(payload, ensure_ascii=False) + PAYLOAD_END
 
     try:
-        payload["response"] = extension.assistant.call_llm(payload["prompt"])
+        payload["response"] = extension.assistant.call_llm(
+            payload["prompt"], include_runinfo=include_runinfo
+        )
         payload["ok"] = True
     except Exception as exc:
         payload["error"] = f"{type(exc).__name__}: {exc}"
@@ -177,7 +204,10 @@ def run_crane_llm_payload(
     return PAYLOAD_BEGIN + json.dumps(payload, ensure_ascii=False) + PAYLOAD_END
 
 
-def run_prompt(prompt: str, model: Optional[str] = None) -> str:
+def run_prompt(prompt: str, model: Optional[str] = None, include_runinfo: bool = True) -> str:
     """Run a single prompt through the LLM without rebuilding notebook state."""
 
-    return llm_client_module.default_openai_client(model=model).run(prompt)
+    client = llm_client_module.default_openai_client(
+        model=model, include_runinfo=include_runinfo
+    )
+    return client.run(prompt)
