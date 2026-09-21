@@ -4,7 +4,7 @@ from pprint import pformat
 from typing import Any, Dict
 
 
-from runinfo_parser.runtime_summary import (
+from ..runinfo_parser.runtime_summary import (
     collect_runtime_info,
     extract_dependencies,
     get_summarize_rules,

@@ -1,6 +1,6 @@
 """Offline checks for the notebook extension backend.
 
-Run with ``python -m nb_extension.smoke_test``. No LLM call is made.
+Run with ``python -m crane_llm.nb_extension.smoke_test``. No LLM call is made.
 
 Each check corresponds to a defect that previously reached a live kernel, so
 they are worth keeping even though they are quick.
@@ -10,12 +10,12 @@ from __future__ import annotations
 
 import sys
 
-from nb_extension.cell_filter import is_internal_helper_cell
-from nb_extension.extension import CraneNotebookExtension
-from nb_extension.ipython_hooks import IPythonSessionTracker, _source_key
-from nb_extension.prompt_builder import build_crane_prompt
-from nb_extension.runinfo import collect_live_runinfo
-from nb_extension.session_state import NotebookSessionState
+from crane_llm.nb_extension.cell_filter import is_internal_helper_cell
+from crane_llm.nb_extension.extension import CraneNotebookExtension
+from crane_llm.nb_extension.ipython_hooks import IPythonSessionTracker, _source_key
+from crane_llm.nb_extension.prompt_builder import build_crane_prompt
+from crane_llm.nb_extension.runinfo import collect_live_runinfo
+from crane_llm.nb_extension.session_state import NotebookSessionState
 
 
 class FakeShell:
@@ -76,16 +76,140 @@ def check_runinfo_switch_changes_the_prompt():
 def check_runinfo_switch_selects_the_matching_system_prompt():
     """A prompt with no runtime section must not claim to have one."""
 
-    from nb_extension.llm_client import default_openai_client
+    from crane_llm.nb_extension.llm_client import default_client
 
-    with_runinfo = default_openai_client(model="gpt-5", include_runinfo=True).system_prompt
-    without_runinfo = default_openai_client(model="gpt-5", include_runinfo=False).system_prompt
+    with_runinfo = default_client(model="gpt-5", include_runinfo=True).system_prompt
+    without_runinfo = default_client(model="gpt-5", include_runinfo=False).system_prompt
 
     assert "runtime information" in with_runinfo
     assert "runtime information" not in without_runinfo
     # Both must still demand the same output contract.
     for prompt in (with_runinfo, without_runinfo):
         assert '"prediction": boolean' in prompt
+
+
+class _IsolatedSettings:
+    """Run a check against a throwaway configuration file.
+
+    Without this the checks would read, and ``set_api_key`` would overwrite,
+    the developer's real ``~/.crane_llm/config.json``. Stray environment
+    variables are cleared for the same reason: a check that passes only on a
+    machine with ``OPENAI_API_KEY`` set is not a check.
+    """
+
+    _CLEARED = (
+        "CRANE_LLM_API_KEY",
+        "CRANE_LLM_BASE_URL",
+        "CRANE_LLM_MODEL",
+        "CRANE_LLM_API_STYLE",
+        "OPENAI_API_KEY",
+        "OPENAI_BASE_URL",
+    )
+
+    def __enter__(self):
+        import os
+        import tempfile
+
+        from crane_llm.nb_extension import settings
+
+        self._saved = {name: os.environ.pop(name, None) for name in self._CLEARED}
+        self._saved["CRANE_LLM_CONFIG"] = os.environ.get("CRANE_LLM_CONFIG")
+
+        self._dir = tempfile.mkdtemp()
+        os.environ["CRANE_LLM_CONFIG"] = os.path.join(self._dir, "config.json")
+        return settings
+
+    def __exit__(self, *exc_info):
+        import os
+        import shutil
+
+        for name, value in self._saved.items():
+            if value is None:
+                os.environ.pop(name, None)
+            else:
+                os.environ[name] = value
+        shutil.rmtree(self._dir, ignore_errors=True)
+        return False
+
+
+def check_missing_api_key_is_explained():
+    """No key must produce the setup instructions, not an SDK stack trace."""
+
+    from crane_llm.nb_extension.llm_client import default_client
+
+    with _IsolatedSettings():
+        try:
+            default_client().run("hello")
+        except RuntimeError as exc:
+            message = str(exc)
+        else:
+            raise AssertionError("expected a RuntimeError when no key is configured")
+
+    assert "No API key found" in message
+    assert "set_api_key" in message
+    assert "CRANE_LLM_API_KEY" in message
+
+
+def check_api_key_roundtrips_through_the_config_file():
+    """``set_api_key`` is the documented setup path, so it has to be read back."""
+
+    import crane_llm
+
+    with _IsolatedSettings() as settings:
+        assert settings.resolve().api_key is None
+
+        path = crane_llm.set_api_key("sk-test-123")
+        assert path.exists()
+        assert settings.resolve().api_key == "sk-test-123"
+
+        # An environment variable outranks the stored value.
+        import os
+
+        os.environ["CRANE_LLM_API_KEY"] = "sk-from-env"
+        try:
+            assert settings.resolve().api_key == "sk-from-env"
+        finally:
+            del os.environ["CRANE_LLM_API_KEY"]
+
+
+def check_base_url_selects_the_chat_completions_client():
+    """Anything but a bare OpenAI account must go through Chat Completions."""
+
+    import crane_llm
+    from crane_llm.nb_extension import llm_client
+
+    with _IsolatedSettings() as settings:
+        assert settings.resolve().api_style == "responses"
+        assert isinstance(llm_client.default_client(), llm_client.OpenAILLMClient)
+
+        crane_llm.set_api_key(
+            "sk-or-test",
+            base_url="https://openrouter.ai/api/v1",
+            model="anthropic/claude-sonnet-4.5",
+        )
+
+        client = llm_client.default_client()
+        assert isinstance(client, llm_client.ChatCompletionsLLMClient)
+        assert client.base_url == "https://openrouter.ai/api/v1"
+        assert client.model == "anthropic/claude-sonnet-4.5"
+        # An explicit argument still wins over the stored model.
+        assert llm_client.default_client(model="gpt-5-mini").model == "gpt-5-mini"
+
+
+def check_local_endpoint_needs_no_key():
+    """A local inference server has no account, so a key must not be demanded."""
+
+    import crane_llm
+    from crane_llm.nb_extension import llm_client
+
+    with _IsolatedSettings():
+        crane_llm.set_api_key(
+            base_url="http://localhost:11434/v1", model="qwen2.5-coder:32b"
+        )
+        client = llm_client.default_client()
+        # Builds the SDK object; a missing key would raise here rather than on
+        # the request, which is the failure this guards against.
+        client._get_client()
 
 
 def check_target_cell_excluded_from_executed_list():
@@ -138,10 +262,10 @@ def check_history_seeded_cell_merges_with_real_execution():
 
 def check_internal_helper_cells_are_filtered():
     assert is_internal_helper_cell("")
-    assert is_internal_helper_cell("from nb_extension.api import run_crane_llm_payload\nprint(1)")
-    assert is_internal_helper_cell("from nb_extension.api import load_crane_llm\nload_crane_llm()")
+    assert is_internal_helper_cell("from crane_llm.nb_extension.api import run_crane_llm_payload\nprint(1)")
+    assert is_internal_helper_cell("from crane_llm.nb_extension.api import load_crane_llm\nload_crane_llm()")
     # Ordinary user code that merely mentions the extension is notebook content.
-    assert not is_internal_helper_cell("# from nb_extension.api import get_prompt\nmodel.fit(x)")
+    assert not is_internal_helper_cell("# from crane_llm.nb_extension.api import get_prompt\nmodel.fit(x)")
 
 
 def check_unparseable_target_cells_do_not_raise():
@@ -180,7 +304,7 @@ def check_summarisation_survives_missing_libraries():
 
     import builtins
 
-    from runinfo_parser.runtime_summary import summarize_variable
+    from crane_llm.runinfo_parser.runtime_summary import summarize_variable
 
     real_import = builtins.__import__
     blocked = ("pandas", "numpy", "torch", "sklearn", "tensorflow")
@@ -240,6 +364,10 @@ CHECKS = (
     check_prompt_shape,
     check_runinfo_switch_changes_the_prompt,
     check_runinfo_switch_selects_the_matching_system_prompt,
+    check_missing_api_key_is_explained,
+    check_api_key_roundtrips_through_the_config_file,
+    check_base_url_selects_the_chat_completions_client,
+    check_local_endpoint_needs_no_key,
     check_target_cell_excluded_from_executed_list,
     check_reexecution_is_deduplicated,
     check_failed_cells_are_not_recorded,

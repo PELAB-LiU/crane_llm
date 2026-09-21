@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
-from .llm_client import default_openai_client, _resolve_model_name
+from .llm_client import default_client, _resolve_model_name
 from .prompt_builder import build_crane_prompt
 from .session_state import NotebookSessionState
 
@@ -35,7 +35,7 @@ class CraneNotebookAssistant:
     def call_llm(self, prompt: str, include_runinfo: bool = True) -> str:
         client = self._clients.get(include_runinfo)
         if client is None:
-            client = default_openai_client(model=self.model, include_runinfo=include_runinfo)
+            client = default_client(model=self.model, include_runinfo=include_runinfo)
             self._clients[include_runinfo] = client
         return client.run(prompt)
 

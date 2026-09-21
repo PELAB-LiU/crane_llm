@@ -3,8 +3,8 @@ import os
 import pprint
 import pandas as pd
 import re
-from llms.config_llms import config
-from llms import llm_executor
+from .config_llms import config
+from . import llm_executor
 from collections import Counter
 from pathlib import Path
 

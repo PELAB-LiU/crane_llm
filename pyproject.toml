@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crane-llm"
+description = "CRANE-LLM: runtime-augmented crash prediction and diagnosis for ML notebooks"
+readme = "README.md"
+license = { text = "BSD-3-Clause" }
+requires-python = ">=3.9"
+dynamic = ["version"]
+authors = [{ name = "PELAB, Linköping University" }]
+keywords = ["jupyter", "jupyterlab", "jupyterlab-extension", "notebook", "llm", "crash-prediction"]
+classifiers = [
+    "Framework :: Jupyter",
+    "Framework :: Jupyter :: JupyterLab",
+    "Framework :: Jupyter :: JupyterLab :: 4",
+    "Framework :: Jupyter :: JupyterLab :: Extensions",
+    "Framework :: Jupyter :: JupyterLab :: Extensions :: Prebuilt",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Science/Research",
+]
+dependencies = [
+    "ipython>=8.5",
+    "jupyterlab>=4.0.0,<5",
+    "nbformat>=5.7",
+    # The OpenAI SDK is also the client for every OpenAI-compatible endpoint
+    # (OpenRouter, Groq, Together, Azure, vLLM, Ollama), so one dependency
+    # covers all of the providers the extension can talk to.
+    "openai>=1.40",
+    "python-dotenv>=1.0",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+# Only the %%crane_llm magic renders an ipywidgets panel; the browser
+# extension has its own sidebar and does not need this.
+widgets = ["ipywidgets>=8.0"]
+# Needed to rebuild the frontend bundle, not to run it.
+build = ["jupyter-builder>=1.0.0,<2"]
+# Batch experiment pipeline (crane_llm/llms/llm_executor.py).
+experiments = [
+    "google-genai",
+    "ollama",
+    "torch",
+    "transformers",
+]
+
+[project.urls]
+Homepage = "https://github.com/PELAB-LiU/crane-llm"
+Repository = "https://github.com/PELAB-LiU/crane-llm"
+Issues = "https://github.com/PELAB-LiU/crane-llm/issues"
+
+[tool.setuptools]
+# Ship only the data files listed under [tool.setuptools.package-data] below.
+# Left at its default of true, setuptools instead sweeps in everything under a
+# package directory that the sdist manifest happens to include, which picked up
+# stray Python scripts from inside node_modules.
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = { attr = "crane_llm.__version__" }
+
+# Only `crane_llm` is installed. The repository's experiment drivers
+# (main.py, main_LLM.py, utils/, results/) are run from a checkout and are
+# deliberately not part of the distribution.
+[tool.setuptools.packages.find]
+include = ["crane_llm", "crane_llm.*"]
+# Without this, discovery defaults to including namespace packages and sweeps in
+# every directory under the package that has no __init__.py: node_modules, src,
+# scripts and the built labextension. That produced thousands of bogus package
+# entries. The frontend bundle reaches the install through data_files in
+# setup.py, not as a Python package.
+namespaces = false
+
+[tool.setuptools.package-data]
+"crane_llm.nb_extension" = ["package.json", "tsconfig.json", "install.json", "src/*.ts"]
+"crane_llm.runinfo_parser" = ["*.json"]

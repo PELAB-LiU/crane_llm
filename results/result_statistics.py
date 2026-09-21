@@ -7,7 +7,7 @@ import seaborn as sns
 import os
 import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
-from llms.config_llms import config
+from crane_llm.llms.config_llms import config
 
 def _load_and_merge_human_validation_data():
     df_final = pd.read_excel("results/results_parsed_detection_and_diagnosis.xlsx", sheet_name="Final_evaluation", engine="openpyxl")
@@ -716,7 +716,7 @@ def calculate_cohens_kappa(llm_judge_model_name=None):
 
 def smart_calculate_cohens_kappa(llm_judge_model_name):
     from sklearn.metrics import cohen_kappa_score
-    from llms import result_check
+    from crane_llm.llms import result_check
 
     df_combined = _load_and_merge_judge_data(llm_judge_model_name)
   

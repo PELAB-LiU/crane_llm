@@ -6,8 +6,8 @@ from typing import Any, Dict, List
 
 from rich.console import Console
 
-from runinfo_parser import preprocess_notebook
-from runinfo_parser import utils
+from . import preprocess_notebook
+from . import utils
 from .cell_executor import IPythonExecutor
 from .runinfo_tracker import RuninfoTracker
 # Summarisation is shared with the notebook extension; see runtime_summary.

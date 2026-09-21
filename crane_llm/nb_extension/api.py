@@ -21,6 +21,7 @@ from . import llm_client as llm_client_module
 from . import prompt_builder as prompt_builder_module
 from . import runinfo as runinfo_module
 from . import session_state as session_state_module
+from . import settings as settings_module
 from . import ui as ui_module
 
 
@@ -33,10 +34,11 @@ _INSTANCE: Optional["extension_module.CraneNotebookExtension"] = None
 # function objects, which is why editing runinfo.py or llm_client.py used to
 # have no effect until a kernel restart.
 _RELOAD_ORDER = (
-    "runinfo_parser.summary_rules",
-    "runinfo_parser.runtime_summary",
+    "crane_llm.runinfo_parser.summary_rules",
+    "crane_llm.runinfo_parser.runtime_summary",
     lambda: cell_filter_module,
     lambda: session_state_module,
+    lambda: settings_module,
     lambda: llm_client_module,
     lambda: runinfo_module,
     lambda: prompt_builder_module,
@@ -207,7 +209,7 @@ def run_crane_llm_payload(
 def run_prompt(prompt: str, model: Optional[str] = None, include_runinfo: bool = True) -> str:
     """Run a single prompt through the LLM without rebuilding notebook state."""
 
-    client = llm_client_module.default_openai_client(
+    client = llm_client_module.default_client(
         model=model, include_runinfo=include_runinfo
     )
     return client.run(prompt)

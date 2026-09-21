@@ -1,8 +1,8 @@
 import argparse
 import os, json
-from llms import prompt_extractor
-from llms.config_llms import config
-from llms import llm_executor
+from crane_llm.llms import prompt_extractor
+from crane_llm.llms.config_llms import config
+from crane_llm.llms import llm_executor
 
 parser = argparse.ArgumentParser(description="Run crash detection for a reproduced case.")
 parser.add_argument(

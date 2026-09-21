@@ -1,7 +1,7 @@
 from ollama import Client
 import json
-from llms.config_llms import config
-from llms.retry import retry_on_rate_limit
+from .config_llms import config
+from .retry import retry_on_rate_limit
 import time
 import os
 import re

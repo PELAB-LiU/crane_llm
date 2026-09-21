@@ -4,8 +4,13 @@ A JupyterLab 4 / Notebook 7 extension that predicts whether the selected code
 cell will crash, using the already-executed cells and the live kernel namespace
 as context.
 
-It has two halves that are built and reloaded differently, which is the source
-of most confusion:
+**This document is for people changing the extension.** If you only want to
+*use* it, install the published wheel instead of building anything: see
+[Installing](../../README.md#installing) in the top-level README. Nothing below
+is needed for that.
+
+The extension has two halves, built and reloaded in different ways. Knowing
+which half you are editing tells you what to run afterwards:
 
 - a **frontend** bundle that runs in the browser, written in TypeScript under
   `src/`, compiled with `jlpm`
@@ -26,6 +31,13 @@ of most confusion:
 
 # 1. Build from scratch
 
+Before you start you need three things:
+
+- a Python environment with **JupyterLab 4** installed
+- **Node.js** 20.19+ or 22.12+ on `PATH`, to compile the frontend
+- an **API key** for whichever model you want to call; see
+  [Setting up a model](../../README.md#setting-up-a-model)
+
 ## 1.0 Activate the right environment first
 
 Every command below must run in the environment that has JupyterLab installed.
@@ -45,9 +57,7 @@ why. Check before you start:
 python -c "import sys, importlib.util; print(sys.prefix, importlib.util.find_spec('jupyterlab') is not None)"
 ```
 
-If that prints `False`, stop and fix your environment. You also need Node.js
-20.19+ or 22.12+ on `PATH`, and an OpenAI API key in the environment or in the
-repository `.env`.
+If that prints `False`, stop and fix your environment before going on.
 
 Two things the install deliberately does not pull in:
 
@@ -73,7 +83,7 @@ Pick one and **do not mix them**. Appendix B explains the difference.
 ```bash
 conda activate crane
 python -m pip install -e ".[widgets,build]"
-cd nb_extension && jlpm install && jlpm build && cd ..
+cd crane_llm/nb_extension && jlpm install && jlpm build && cd ../..
 jupyter labextension develop . --overwrite
 ```
 
@@ -110,7 +120,7 @@ If your machine allows neither, use the regular install of
 build. That copies the bundle rather than linking it, so no privilege is
 involved.
 
-Two things that trip people up here:
+Two more things to know about this command:
 
 - **`--overwrite` cannot replace an existing link.** It tries to `rmtree` the
   old path and stops with `OSError: Cannot call rmtree on a symbolic link`,
@@ -138,9 +148,9 @@ junction reports `islink` as **False**. The allowed directory is therefore never
 widened, Tornado resolves the real path, finds it outside the extensions root,
 and answers 403 for every file.
 
-The symptom is nasty: `jupyter labextension list` shows the extension as
-`enabled ok`, it appears in the page config the browser receives, and nothing
-in the UI appears. The only trace is one line in the server log:
+The failure is hard to recognise: `jupyter labextension list` shows the
+extension as `enabled ok`, it appears in the page config the browser receives,
+and nothing appears in the UI. The only trace is one line in the server log:
 
 ```
 403 GET /lab/extensions/crane-llm-jlab/static/remoteEntry.<hash>.js
@@ -157,7 +167,7 @@ place and cannot do so if it does not exist yet.
 
 ```bash
 conda activate crane
-cd nb_extension && jlpm install && jlpm build:prod && cd ..
+cd crane_llm/nb_extension && jlpm install && jlpm build:prod && cd ../..
 python -m pip install .
 ```
 
@@ -180,9 +190,9 @@ the toolbar, and a CRANE-LLM panel available under *View, Right Sidebar*.
 Frontend code is everything under `src/`. It must be compiled and bundled.
 
 ```bash
-cd nb_extension
+cd crane_llm/nb_extension
 jlpm build
-cd ..
+cd ../..
 ```
 
 In the regular install of section 1.3, follow that with `python -m pip install .`
@@ -202,7 +212,7 @@ Backend code is every `.py` file in this directory. Nothing is compiled and
 nothing is reinstalled. Save the file, then in any notebook cell:
 
 ```python
-from nb_extension.api import reload_crane_llm
+from crane_llm.nb_extension.api import reload_crane_llm
 reload_crane_llm()
 ```
 
@@ -217,8 +227,9 @@ kernel is always safe and is never wrong, just slower.
 
 # 4. Seeing your changes take effect
 
-Different changes need different things reloaded. Nothing here is optional: the
-most common "my fix did nothing" is a stale bundle in the browser cache.
+Different changes need different things reloaded. If a change seems to have had
+no effect, this table is the first thing to check: usually the browser tab is
+still showing the page it loaded before the rebuild.
 
 | Changed | Hard-refresh browser | Restart Jupyter server | Restart kernel |
 |---|---|---|---|
@@ -241,7 +252,7 @@ JupyterLab is looking rather than a caching problem.
 For the backend, check what the kernel imported:
 
 ```python
-import nb_extension; print(nb_extension.__file__)
+import crane_llm; print(crane_llm.__file__)
 ```
 
 If that path is not inside your working copy, you are running a copy in
@@ -252,7 +263,7 @@ JupyterLab is reading the one you built:
 
 ```bash
 jupyter labextension list        # the path shown should be your working copy
-ls -l nb_extension/labextension/static/
+ls -l crane_llm/nb_extension/labextension/static/
 ```
 
 If the button still behaves the old way after a hard refresh, open the
@@ -326,7 +337,7 @@ The target cell is never executed, and predictions are not saved into the
 ## From Python
 
 ```python
-%load_ext nb_extension
+%load_ext crane_llm
 ```
 
 ```python
@@ -362,7 +373,7 @@ Optional install extras:
 |---|---|
 | `widgets` | the ipywidgets panel used by the `%%crane_llm` magic |
 | `build` | `jupyter-builder`, needed to rebuild the frontend |
-| `experiments` | the batch pipeline in `llms/llm_executor.py` |
+| `experiments` | the batch pipeline in `crane_llm/llms/llm_executor.py` |
 
 ## B. Development versus regular install, and how to switch
 
@@ -378,7 +389,7 @@ To move from a regular install back to a development install:
 conda activate crane
 python -m pip uninstall -y crane_llm
 python -m pip install -e ".[widgets,build]"
-cd nb_extension && jlpm build && cd ..
+cd crane_llm/nb_extension && jlpm build && cd ../..
 jupyter labextension develop . --overwrite
 ```
 
@@ -437,15 +448,16 @@ node -e "console.log(require('./labextension/package.json').jupyterlab._build.lo
 | `prompt_builder.py` | assembles the CRANE prompt |
 | `runinfo.py` | live-namespace runtime summary |
 | `cell_filter.py` | excludes the extension's own helper cells |
-| `llm_client.py` | OpenAI Responses API client |
+| `llm_client.py` | LLM clients: OpenAI Responses, and Chat Completions for any OpenAI-compatible endpoint |
+| `settings.py` | resolves the API key, model, endpoint and API style |
 
 The frontend talks to the backend by running a short snippet in the user's
 kernel and reading a delimited JSON payload back off stdout. `api.py` is
 therefore a contract: renaming things there breaks the button.
 
 Runtime summarisation is shared with the offline pipeline through
-`runinfo_parser/runtime_summary.py`, and retry handling through
-`llms/retry.py`, so the extension and the batch experiments cannot drift apart.
+`crane_llm/runinfo_parser/runtime_summary.py`, and retry handling through
+`crane_llm/llms/retry.py`, so the extension and the batch experiments cannot drift apart.
 
 The executed-cell ledger is keyed on the notebook's own cell id, which the
 kernel receives with every execute request. Re-running a cell replaces its
@@ -464,13 +476,15 @@ Lower-level entry points, for use from a notebook cell:
 ## E. Validating a change
 
 ```bash
-python -m py_compile setup.py nb_extension/*.py
-python -m nb_extension.smoke_test
-cd nb_extension && jlpm build && cd ..
+python -m py_compile setup.py crane_llm/nb_extension/*.py
+python -m crane_llm.nb_extension.smoke_test
+cd crane_llm/nb_extension && jlpm build && cd ../..
 ```
 
 `smoke_test.py` covers prompt assembly, the executed-cell ledger, cells that
-cannot be parsed, and hostile kernel namespaces. It makes no LLM call.
+cannot be parsed, hostile kernel namespaces, and how the API key, model and
+endpoint are resolved. It makes no LLM call and does not read or write your own
+`~/.crane_llm/config.json`.
 
 ## F. Troubleshooting
 
@@ -480,7 +494,7 @@ under *Other labextensions*. Then hard-refresh the tab.
 
 **Backend edits have no effect.** You are probably running a regular install,
 so the kernel is importing the copy in `site-packages`. Check with
-`import nb_extension; print(nb_extension.__file__)` and see appendix B.
+`import crane_llm; print(crane_llm.__file__)` and see appendix B.
 
 **Frontend edits have no effect.** Rarely a cache problem, because the bundle
 filename carries a content hash. Far more often JupyterLab is loading the
@@ -488,54 +502,45 @@ extension from somewhere other than the directory `jlpm build` writes to. Check
 `jupyter labextension list` and see the "Build recommended" entry below.
 
 **The server logs "Build recommended" and "crane-llm-jlab content changed".**
-The extension has been registered the old way, as a *source* extension, in
-addition to or instead of the prebuilt way. JupyterLab then compiles `lib/`
-into its own application bundle and ignores `labextension/` entirely, so
-`jlpm build` cannot take effect and every start warns that a rebuild is due.
+The extension has been registered as a *source* extension, the way JupyterLab 3
+did it. JupyterLab then compiles `lib/` into its own application bundle and
+ignores `labextension/` entirely, so `jlpm build` cannot take effect.
+
+You get into this state by running `jupyter labextension install` or
+`jupyter labextension link`, which many older tutorials still recommend. Do not
+run either on this project; `jupyter labextension develop`, from
+[section 1.2](#12-development-setup-recommended), is the current equivalent.
 
 Confirm it by looking at where `jupyter labextension list` puts the extension.
 Under the first heading, next to the `labextensions` path, is correct. Under
 *Other labextensions (built into JupyterLab)* or *local extensions* is the
-legacy registration. `share/jupyter/lab/settings/build_config.json` will also
-have a `local_extensions` entry for it.
+legacy registration.
 
-This is a **one-time repair**, not something to repeat per change. Once the
-extension is registered as prebuilt again, the everyday loop goes back to being
-just `jlpm build` (see [section 2](#2-after-changing-frontend-code)).
-
-Stop the Jupyter server, then:
+To repair it, stop the Jupyter server and run:
 
 ```bash
-jupyter labextension uninstall crane-llm-jlab --no-build   # once: drop the legacy entry
-jupyter lab clean                                          # once: purge the compiled app dir
-cd nb_extension && jlpm build && cd ..                     # the only recurring step
-jupyter labextension develop . --overwrite                 # once: register it the modern way
-jupyter labextension list                                  # check only
+jupyter labextension uninstall crane-llm-jlab --no-build   # drop the legacy entry
+jupyter lab clean                                          # purge the compiled app dir
+cd crane_llm/nb_extension && jlpm build && cd ../..
+jupyter labextension develop . --overwrite                 # register it the modern way
+jupyter labextension list                                  # check
 ```
 
-Skip the fourth command if the bundle is already linked. On Windows it needs
-symlink permission; see
-[section 1.2.1](#121-if-the-last-command-fails-on-windows).
+This is a one-time repair. Afterwards the everyday loop is just `jlpm build`
+again, as in [section 2](#2-after-changing-frontend-code).
 
-Whichever way it is linked, the link keeps pointing at your working copy, so
-every later `jlpm build` is picked up with nothing to re-register. You only
-redo this step if the link is removed, which `pip uninstall crane_llm` does.
-
-Plain `jupyter lab clean` removes only the staging directory and any source
-extensions compiled into the app directory. Prebuilt extensions live outside it
-and are unaffected.
-
-**Do not add `--static` or `--all`.** Despite the name, `<app-dir>/static` is
-not a user build: the `jupyterlab` wheel installs it there, 295 files of it.
-Deleting it leaves the server serving `JupyterLab application assets not found`
-on every page. If you do it by accident, restore the files with:
+**Do not add `--static` or `--all` to `jupyter lab clean`.** Despite the name,
+`<app-dir>/static` is not a user build: the `jupyterlab` wheel installs it
+there, 295 files of it. Deleting it leaves the server serving `JupyterLab
+application assets not found` on every page. Restore them with:
 
 ```bash
 python -m pip install --force-reinstall --no-deps jupyterlab==4.5.9
 ```
 
-Never run `jupyter labextension install` or `jupyter labextension link` on this
-project. Those are the legacy commands that create this state.
+Plain `jupyter lab clean` is safe: it removes only the staging directory and
+any source extensions compiled into the app directory, and prebuilt extensions
+live outside it.
 
 **`jupyter labextension develop` fails with `OSError: Symlinks can be activated
 on Windows 10 ... 'Developer Mode'`.** Grant the privilege and re-run it, or use
@@ -544,7 +549,7 @@ a regular install; see
 directory junction, which is served as 403 by current versions.
 
 **"The kernel did not return a CRANE-LLM payload".** The backend is not
-importable from the kernel. Confirm with `import nb_extension.api` in a cell.
+importable from the kernel. Confirm with `import crane_llm.nb_extension.api` in a cell.
 
 **A build fails inside `node_modules` with `MODULE_NOT_FOUND` or a `TypeError`
 from a package you never installed.** Yarn can leave an extracted package that
@@ -552,7 +557,7 @@ does not match `yarn.lock`, so the version on disk is not the version that was
 pinned. Force a clean tree:
 
 ```bash
-cd nb_extension
+cd crane_llm/nb_extension
 node scripts/clean.mjs node_modules .yarn/install-state.gz
 jlpm install
 ```
@@ -560,8 +565,12 @@ jlpm install
 Check the result before rebuilding, for example
 `node -e "console.log(require('glob/package.json').version)"`.
 
-**Authentication errors.** Set `OPENAI_API_KEY` in the environment or in the
-repository `.env`.
+**Authentication errors.** The extension looks for a key in an explicit
+argument, then `CRANE_LLM_API_KEY`, then `OPENAI_API_KEY`, then
+`~/.crane_llm/config.json`. A `.env` file is not a step of its own: it is read
+first and fills in whichever of those variables the environment does not
+already define. The error text lists the ways to supply a key. See
+[Setting up a model](../../README.md#setting-up-a-model).
 
 **"The model hit the output token limit".** Raise `max_output_tokens` in
-`llms/config_llms.py`. Reasoning tokens count against that budget.
+`crane_llm/llms/config_llms.py`. Reasoning tokens count against that budget.

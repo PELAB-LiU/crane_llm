@@ -15,7 +15,7 @@ import re
 # that ordinary user code merely mentioning the extension is still treated as
 # notebook content.
 _INTERNAL_IMPORT_RE = re.compile(
-    r"^\s*(?:from\s+nb_extension(?:\.\w+)*\s+import\b|import\s+nb_extension\b)",
+    r"^\s*(?:from\s+crane_llm(?:\.\w+)*\s+import\b|import\s+crane_llm\b)",
 )
 
 

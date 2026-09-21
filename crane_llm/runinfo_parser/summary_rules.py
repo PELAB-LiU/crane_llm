@@ -3,7 +3,7 @@ import re
 import site
 import os, json
 from collections import defaultdict
-import config
+from .. import config
 
 config_path = config.sum_rule_config_path
 with open(config_path) as f:

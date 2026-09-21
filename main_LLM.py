@@ -1,9 +1,9 @@
 # Prompt generation
 # Executed code + target cell, or executed code with runinfo + target cell, depending on the task
 
-from llms import prompt_extractor
-from llms.config_llms import config
-from llms import result_check
+from crane_llm.llms import prompt_extractor
+from crane_llm.llms.config_llms import config
+from crane_llm.llms import result_check
 
 # current_task = "crash detection with executed code cells"
 current_task = "crash detection with executed code cells and runinfo"
@@ -25,10 +25,10 @@ for lib_name in lib_names:
 
 # Predict if a target cell in a Jupyter notebook will crash or not, with bug allocation.
 # Using OpenAI API / Google Gemini API / local server - Qwen model from Huggingface
-from llms.config_llms import config
+from crane_llm.llms.config_llms import config
 import os, json
-from llms import llm_executor
-from llms.huggingface_model_loader import get_qwen_model
+from crane_llm.llms import llm_executor
+from crane_llm.llms.huggingface_model_loader import get_qwen_model
 
 # settings
 runs = 5

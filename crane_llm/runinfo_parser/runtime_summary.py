@@ -19,7 +19,7 @@ import json
 import os
 from typing import Any, Dict, Iterable, Optional, Set, Tuple
 
-import config as crane_config
+from .. import config as crane_config
 
 from . import summary_rules
 from .dependency_visitor import DependencyVisitor

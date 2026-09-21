@@ -1,8 +1,8 @@
-from llms.config_llms import config
+from .config_llms import config
 import os
 import re
-from runinfo_parser import notebook_runtime_extractor
-from runinfo_parser.summary_rules import filter_all_category_combinations
+from ..runinfo_parser import notebook_runtime_extractor
+from ..runinfo_parser.summary_rules import filter_all_category_combinations
 import pprint
 
 def runtime_count_prior_cells(lib_name = "tensorflow", case_names = None):

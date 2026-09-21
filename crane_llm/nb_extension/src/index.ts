@@ -993,7 +993,7 @@ async function runAnalysis(
     const streamText = await requestKernelText(
       panel,
       [
-        'from nb_extension.api import run_crane_llm_payload',
+        'from crane_llm.nb_extension.api import run_crane_llm_payload',
         `print(run_crane_llm_payload(source=${JSON.stringify(
           cellSource(activeCell)
         )}, cell_id=${JSON.stringify(cellId(activeCell))}, include_runinfo=${
