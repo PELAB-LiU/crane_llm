@@ -87,11 +87,9 @@ jobs:
         # cannot come from the source tree being importable by accident.
         run: |
           cd /tmp
-          /tmp/check/bin/python -m jupyterlab.labextensions list 2>&1 | tee /tmp/list.txt
-          # JupyterLab changed this from "enabled ok" to "enabled OK" in 4.6.4, so the
-          # match is case-insensitive. "disabled" does not contain "enabled", so
-          # this still fails if the extension is present but switched off.
-          grep -qi "crane-llm-jlab.*enabled ok" /tmp/list.txt
+          /tmp/check/bin/python -m jupyterlab.labextensions list > /tmp/list.txt 2>&1 || true
+          cat /tmp/list.txt
+          python "$GITHUB_WORKSPACE/.github/scripts/check_labextension_listed.py" /tmp/list.txt
 
       - name: Run the backend checks
         run: |

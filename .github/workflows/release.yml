@@ -77,11 +77,9 @@ jobs:
           /tmp/check/bin/python -m pip install --upgrade pip
           /tmp/check/bin/python -m pip install dist/*.whl
           cd /tmp
-          /tmp/check/bin/python -m jupyterlab.labextensions list 2>&1 | tee /tmp/list.txt
-          # JupyterLab changed this from "enabled ok" to "enabled OK" in 4.6.4, so the
-          # match is case-insensitive. "disabled" does not contain "enabled", so
-          # this still fails if the extension is present but switched off.
-          grep -qi "crane-llm-jlab.*enabled ok" /tmp/list.txt
+          /tmp/check/bin/python -m jupyterlab.labextensions list > /tmp/list.txt 2>&1 || true
+          cat /tmp/list.txt
+          python "$GITHUB_WORKSPACE/.github/scripts/check_labextension_listed.py" /tmp/list.txt
           /tmp/check/bin/python -m crane_llm.nb_extension.smoke_test
 
       - name: Attach the wheel to a GitHub Release
