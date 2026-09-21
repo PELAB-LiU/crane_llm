@@ -18,7 +18,7 @@ jupyter lab
 Or, to install a specific release directly from GitHub without PyPI:
 
 ```bash
-pip install https://github.com/PELAB-LiU/crane-llm/releases/download/v0.1.0/crane_llm-0.1.0-py3-none-any.whl
+pip install https://github.com/yarinamomo/crane_llm/releases/download/v0.1.0/crane_llm-0.1.0-py3-none-any.whl
 ```
 
 Check that it registered:
@@ -39,7 +39,7 @@ and quietly skips them when they are not.
 
 To work on the extension rather than use it, see
 [the extension README](./crane_llm/nb_extension/README.md), which covers the
-source build.
+source build. To publish a new version of it, see [RELEASING.md](./RELEASING.md).
 
 ### Setting up a model
 
@@ -58,6 +58,7 @@ this order, and takes the first one it finds:
 2. the `CRANE_LLM_API_KEY`, `CRANE_LLM_MODEL` and `CRANE_LLM_BASE_URL` environment variables
 3. the provider's own variables, `OPENAI_API_KEY` and `OPENAI_BASE_URL`
 4. `~/.crane_llm/config.json`
+5. for the model only, the default in [`config_llms.py`](./crane_llm/llms/config_llms.py)
 
 **A `.env` file is not a step of its own.** Before the lookup runs, any `.env`
 in the directory you started Jupyter from, or in a directory above it, is read
@@ -73,7 +74,6 @@ variable name they were written with. Two consequences:
   copy will appear to do nothing
 - `OPENAI_API_KEY=...` in `.env` beats a key in `~/.crane_llm/config.json`,
   because it is read at step 3 and the file is step 4
-6. the default model in [`config_llms.py`](./crane_llm/llms/config_llms.py)
 
 #### Using a model other than OpenAI
 
@@ -111,12 +111,14 @@ Chat Completions, because almost no compatible server implements `/responses`.
 Azure OpenAI is the exception: it needs a `base_url` *and* the Responses API,
 so set `CRANE_LLM_API_STYLE=responses` there.
 
-## Repository structure and reproducibility details
-Dataset: We use [**Junobench**]((https://huggingface.co/datasets/PELAB-LiU/JunoBench)) dataset in our experiments.
+## Paper Artefacts: Repository structure and reproducibility details
+### Dataset: 
+We use [**Junobench**]((https://huggingface.co/datasets/PELAB-LiU/JunoBench)) dataset in our experiments.
 
-LLMs: LLMs include Gemini (Gemini-2.5-Flash), Qwen (Qwen-2.5-Coder-32B-Instruct), GPT-5.
+### LLMs: 
+LLMs include Gemini (Gemini-2.5-Flash), Qwen (Qwen-2.5-Coder-32B-Instruct), GPT-5.
 
-Repository structure:
+### Repository structure:
 
 All importable Python code lives under the single package
 [`crane_llm/`](./crane_llm), which is also what the installable wheel contains.
@@ -158,7 +160,7 @@ checkout rather than installed. Generated experiment inputs and outputs stay in
     - [`cohens_kappa_human_validation.txt`](./results/cohens_kappa_human_validation.txt): statistics of human evaluation on crash diagnosis outputs
     - [`runtime_recording/`](./results/runtime_recording/): statistics of runtime for prior cell executions and querying CRANE-LLM (when using GPT-5).
 
-## Environment
+### Environment
 
 To ensure full reproducibility, we provide a docker image (digest: sha256:ecb5753d1cdfc9f0d5dfeb59818cde5be5be2f79541c5facf99761393919e171):
 ```bash

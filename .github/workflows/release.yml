@@ -42,21 +42,33 @@ jobs:
       - name: Build the wheel and sdist
         run: python -m build
 
-      - name: Check the tag matches the package version
+      - name: Check the tag matches both version numbers
         # Publishing 0.1.0 under the tag v0.2.0 is not recoverable on PyPI,
-        # where a version number can never be reused.
+        # where a version number can never be reused. The frontend carries its
+        # own version in package.json, which is what `jupyter labextension list`
+        # prints, so it has to agree too or users see one version reported and
+        # a different one installed.
         run: |
           python - <<'PY'
-          import glob, os, sys
+          import glob, json, os, sys
           tag = os.environ["GITHUB_REF_NAME"].lstrip("v")
-          wheels = glob.glob("dist/*.whl")
-          version = os.path.basename(wheels[0]).split("-")[1]
-          print(f"tag={tag} wheel version={version}")
-          if tag != version:
-              sys.exit(
-                  f"tag {tag!r} does not match crane_llm.__version__ {version!r}; "
-                  "bump the version in crane_llm/__init__.py or retag"
+          wheel = os.path.basename(glob.glob("dist/*.whl")[0]).split("-")[1]
+          with open("crane_llm/nb_extension/package.json") as fh:
+              frontend = json.load(fh)["version"]
+          print(f"tag={tag} wheel={wheel} package.json={frontend}")
+          problems = []
+          if tag != wheel:
+              problems.append(
+                  f"tag {tag!r} != crane_llm.__version__ {wheel!r} "
+                  "(edit crane_llm/__init__.py)"
               )
+          if tag != frontend:
+              problems.append(
+                  f"tag {tag!r} != package.json version {frontend!r} "
+                  "(edit crane_llm/nb_extension/package.json)"
+              )
+          if problems:
+              sys.exit("; ".join(problems) + " -- or delete the tag and retag")
           PY
 
       - name: Verify the wheel installs and registers

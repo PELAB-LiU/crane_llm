@@ -37,6 +37,25 @@ jobs:
       - name: Build the wheel and sdist
         run: python -m build
 
+      - name: Check the two version numbers agree
+        # Caught here on every push rather than at release time, when the only
+        # remedy is deleting a tag.
+        run: |
+          python - <<'PY'
+          import json, re, sys
+          version = re.search(
+              r'__version__\s*=\s*"([^"]+)"', open("crane_llm/__init__.py").read()
+          ).group(1)
+          with open("crane_llm/nb_extension/package.json") as fh:
+              frontend = json.load(fh)["version"]
+          print(f"crane_llm.__version__={version} package.json={frontend}")
+          if version != frontend:
+              sys.exit(
+                  "crane_llm/__init__.py and crane_llm/nb_extension/package.json "
+                  "must carry the same version"
+              )
+          PY
+
       - name: Check the bundle really is in the wheel
         # setup.py already fails the build when the bundle is missing entirely.
         # This catches the subtler case of a wheel that has the directory but
