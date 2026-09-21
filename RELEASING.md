@@ -8,6 +8,23 @@ Releases are built by GitHub Actions, not on your machine. **Pushing a tag is
 the entire release action.** Everything else here is either one-time setup or
 a check.
 
+## What triggers what
+
+| You do | `build.yml` | `release.yml` | Reaches PyPI |
+|---|---|---|---|
+| push to `dev` or `master` | runs | — | no |
+| open a pull request | runs | — | no |
+| push a tag `v*` | — | runs | **yes** |
+
+Ordinary pushes can never publish: `build.yml` builds the wheel, verifies it
+and discards it, and has no publish step. Only a tag reaches PyPI.
+
+A tag push does not run `build.yml`, because a tag is not a branch.
+`release.yml` repeats the same verification itself before publishing. This also
+means the tag chooses what is released: the workflow checks out the tagged
+commit, so the code and the workflow files both come from there rather than
+from the tip of the branch.
+
 ---
 
 ## The short version
