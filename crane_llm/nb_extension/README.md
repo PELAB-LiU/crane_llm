@@ -177,7 +177,7 @@ python -m pip install .
 jupyter labextension list
 ```
 
-You want a line reading `crane-llm-jlab v0.1.0 enabled ok`. A trailing `*`
+You want a line reading `crane-llm-jlab <version> enabled ok`. A trailing `*`
 means it is a local (development) install, which is correct for section 1.2.
 
 Then start Jupyter and open a notebook. The **CRANE-LLM** button should be in

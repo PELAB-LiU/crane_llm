@@ -16,7 +16,7 @@ Subpackages:
 - ``crane_llm.config`` -- summarisation constants shared by the above
 """
 
-__version__ = "0.1.0"
+__version__ = "0.0.0"
 
 __all__ = ["__version__", "load_ipython_extension", "set_api_key"]
 

@@ -15,16 +15,18 @@ pip install crane-llm
 jupyter lab
 ```
 
-Or, to install a specific release directly from GitHub without PyPI:
+Or, to install a specific release directly from GitHub without PyPI. Take the
+version from the [releases page](https://github.com/yarinamomo/crane_llm/releases)
+and substitute it in both places:
 
 ```bash
-pip install https://github.com/yarinamomo/crane_llm/releases/download/v0.1.0/crane_llm-0.1.0-py3-none-any.whl
+pip install https://github.com/yarinamomo/crane_llm/releases/download/v0.0.0/crane_llm-0.0.0-py3-none-any.whl
 ```
 
 Check that it registered:
 
 ```bash
-jupyter labextension list        # expect: crane-llm-jlab v0.1.0 enabled ok
+jupyter labextension list        # expect: crane-llm-jlab <version> enabled ok
 ```
 
 Then open a notebook, run a few cells, select the cell you want to check, and
