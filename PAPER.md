@@ -1,18 +1,12 @@
 # Paper artefacts and reproducibility
 
-Everything needed to reproduce the results in "CRANE-LLM: Runtime-Augmented
-LLMs for Crash Prediction and Diagnosis in ML Notebooks": the dataset, the
-models, what each directory holds, and the environment the experiments were run
-in.
+Artefacts for our paper "[CRANE-LLM: Runtime-Augmented LLMs for Crash Prediction and Diagnosis in ML Notebooks](https://arxiv.org/abs/2602.18537)".
 
-If you are here to *use* the notebook extension rather than reproduce the
-paper, see the [main README](./README.md) instead. Nothing on this page is
-needed for that.
+If you are here to *use* the notebook extension rather than reproduce the paper, see the [main README](./README.md) instead.
 
 ## Dataset
 
-We use the [**JunoBench**](https://huggingface.co/datasets/PELAB-LiU/JunoBench)
-dataset in our experiments.
+We use the [**JunoBench**](https://huggingface.co/datasets/PELAB-LiU/JunoBench) dataset in our experiments.
 
 ## LLMs
 

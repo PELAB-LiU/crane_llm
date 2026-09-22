@@ -6,7 +6,7 @@ as context.
 
 **This document is for people changing the extension.** If you only want to
 *use* it, install the published wheel instead of building anything: see
-[Installing](../../README.md#installing) in the top-level README. Nothing below
+[Installing](../../README_PYPI.md#install) in the user guide. Nothing below
 is needed for that.
 
 The extension has two halves, built and reloaded in different ways. Knowing
@@ -36,7 +36,7 @@ Before you start you need three things:
 - a Python environment with **JupyterLab 4** installed
 - **Node.js** 20.19+ or 22.12+ on `PATH`, to compile the frontend
 - an **API key** for whichever model you want to call; see
-  [Setting up a model](../../README.md#setting-up-a-model)
+  [Setting up a model](../../README_PYPI.md#set-up-a-model)
 
 ## 1.0 Activate the right environment first
 
@@ -570,7 +570,7 @@ argument, then `CRANE_LLM_API_KEY`, then `OPENAI_API_KEY`, then
 `~/.crane_llm/config.json`. A `.env` file is not a step of its own: it is read
 first and fills in whichever of those variables the environment does not
 already define. The error text lists the ways to supply a key. See
-[Setting up a model](../../README.md#setting-up-a-model).
+[Setting up a model](../../README_PYPI.md#set-up-a-model).
 
 **"The model hit the output token limit".** Raise `max_output_tokens` in
 `crane_llm/llms/config_llms.py`. Reasoning tokens count against that budget.
