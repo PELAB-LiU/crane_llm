@@ -5,7 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "crane-llm"
 description = "CRANE-LLM: runtime-augmented crash prediction and diagnosis for ML notebooks"
-readme = "README.md"
+# The repository README covers the paper artefacts and the experiment pipeline
+# as well as the extension. This one is the project page someone lands on after
+# `pip install`, so it describes the extension alone, and uses absolute links
+# because PyPI resolves relative ones against pypi.org.
+readme = "README_PYPI.md"
 license = { text = "BSD-3-Clause" }
 requires-python = ">=3.9"
 dynamic = ["version"]

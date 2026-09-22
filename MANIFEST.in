@@ -1,5 +1,6 @@
 include LICENSE
 include README.md
+include README_PYPI.md
 include pyproject.toml
 include crane_llm/runinfo_parser/summarize_config.json
 

@@ -42,6 +42,14 @@ jobs:
       - name: Build the wheel and sdist
         run: python -m build
 
+      - name: Check the PyPI page will render
+        # The long description comes from README_PYPI.md. A malformed one is
+        # accepted by the upload and then shows as raw text on the project
+        # page, which cannot be fixed without publishing a new version.
+        run: |
+          python -m pip install twine
+          python -m twine check dist/*
+
       - name: Check the tag matches both version numbers
         # Publishing 0.1.0 under the tag v0.2.0 is not recoverable on PyPI,
         # where a version number can never be reused. The frontend carries its
