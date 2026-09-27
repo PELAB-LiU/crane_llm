@@ -8,7 +8,7 @@ Releases are built by GitHub Actions, not on your machine. **Pushing a tag is th
 
 | You do | `build.yml` | `release.yml` | Reaches PyPI |
 |---|---|---|---|
-| push to `dev` or `master` | runs | — | no |
+| push to `master` | runs | — | no |
 | open a pull request | runs | — | no |
 | push a tag `v*` | — | runs | **yes** |
 
