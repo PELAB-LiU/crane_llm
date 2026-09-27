@@ -2,11 +2,9 @@
 
 **Predict whether an ML notebook cell will crash — before you run it.**
 
-This is the official repository for our paper "*[CRANE-LLM: Runtime-Augmented LLMs for Crash Prediction and Diagnosis in ML Notebooks](https://arxiv.org/abs/2602.18537)*". In this paper, we propose CRANE-LLM, a novel approach that prompts LLMs with static code and runtime information extracted from the notebook kernel state to enhance their prediction and explanation of ML notebook crashes.
-
 The repository holds two things: the JupyterLab extension that anyone can install and use, and the artefacts that reproduce the paper.
 
-> **Looking for the artefacts from our SCAM 2026 paper?** The repository as it was published with *CRANE-LLM: Runtime-Augmented LLMs for Crash Prediction and Diagnosis in ML Notebooks* is on the [`paper_scam26`](../../tree/paper_scam26) branch. That branch is frozen; development continues here.
+> **Looking for the artefacts from our SCAM 2026 paper "*[CRANE-LLM: Runtime-Augmented LLMs for Crash Prediction and Diagnosis in ML Notebooks](https://arxiv.org/abs/2602.18537)*"?** The repository is on the [`paper_scam26`](../../tree/paper_scam26) branch. That branch is frozen; development continues here.
 
 ## Quick start
 
