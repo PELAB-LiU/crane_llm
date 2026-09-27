@@ -93,6 +93,31 @@ The notebook must be idle. Reading the kernel namespace means running code in th
 
 A checkbox on the toolbar button, in the sidebar and in the command palette turns the runtime information off, which asks the model to predict from the code alone. That is the comparison the approach is built against, and it is also worth trying when a prompt gets too large.
 
+### What the runtime information contains
+
+Only the variables the target cell uses are included: every name it reads that exists in the kernel, plus the attributes and methods it uses on them.
+
+| Object | What the prompt includes |
+|---|---|
+| `int`, `float`, `str`, `bool` | the value itself, including the full text of a string |
+| `list`, `tuple`, `set` | length. A flat list also gets the value summary below |
+| `dict` | length, and depending on the contents: the metric names and epoch count of a Keras training history; the keys and data/target shapes of a scikit-learn dataset; the keys of a dict of numbers; otherwise the first 5 entries, with each value shown up to 50 characters |
+| NumPy array | shape, dtype, whether it contains NaN, minimum and maximum |
+| pandas Series | dtype, length, whether it contains NaN |
+| pandas DataFrame | shape, whether it contains NaN, and for each of the first 20 columns: dtype, number of distinct values, and either the minimum and maximum (numeric columns) or up to 5 values, each shortened to 20 characters (other columns) |
+| PyTorch tensor | shape, dtype, device, `requires_grad`, whether it contains NaN |
+| PyTorch `DataLoader` and `Subset` | number of batches and examples, batch size, the dataset's fields, and the shapes of its first 10 samples and of a batch built from them |
+| TensorFlow `tf.data` dataset | its element spec |
+| Keras `DirectoryIterator` and `DataFrameIterator` | number of samples and classes, batch size, image shape |
+| scikit-learn estimator | class, whether it has been fitted, and once fitted, the number of input features and outputs. A fitted `LabelEncoder` adds its number of classes |
+| functions, methods, classes, modules | the type only |
+
+**Value summary:** 
+
+A 1-D array, a Series or a flat list is also described by its values: *binary* with the two values, *categorical* with the number of distinct values (listed when there are 5 or fewer), or *continuous* with its minimum and maximum.
+
+Some of this is your data itself: whole strings, a few values per column, dictionary entries. It is sent to the model provider along with your code, so turn runtime information off for notebooks whose data must not leave your machine. Collecting it does not change your variables.
+
 ### The cell magic
 
 Where the toolbar button is not available, put the code you want to check in a cell under `%%crane_llm`:
