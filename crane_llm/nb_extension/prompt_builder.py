@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .cell_filter import is_internal_helper_cell
+from .cell_filter import is_internal_helper_cell, redact_secrets
 from .runinfo import collect_live_runinfo, format_runinfo_for_prompt
 from .session_state import NotebookSessionState
 
@@ -43,4 +43,4 @@ def build_crane_prompt(
     else:
         prompt_parts.append("")
 
-    return "".join(prompt_parts)
+    return redact_secrets("".join(prompt_parts))

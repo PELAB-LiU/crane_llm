@@ -9,7 +9,7 @@ The repository holds two things: the JupyterLab extension that anyone can instal
 ## Quick start
 
 ```bash
-pip install crane-llm
+pip install "crane-llm[lab]"
 jupyter lab
 ```
 
@@ -22,7 +22,7 @@ crane_llm.set_api_key("sk-...")
 
 Then run a few cells, select the cell you want to check, and click **CRANE-LLM** in the toolbar.
 
-Using a provider other than OpenAI, where the extension looks for its settings, the runtime-information switch and the `%%crane_llm` cell magic are all covered in the [user guide](./README_PYPI.md).
+Kaggle and Colab cannot load the toolbar button. There, you use the `%%crane_llm` cell magic instead and keep the key in a notebook secret; the [user guide](./README_PYPI.md) has the steps. It also covers providers other than OpenAI, where the extension looks for its settings, and the runtime-information switch.
 
 ## Documentation
 

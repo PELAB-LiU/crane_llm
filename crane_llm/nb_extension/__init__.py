@@ -19,7 +19,7 @@ def load_ipython_extension(ipython):
     """Support ``%load_ext crane_llm``.
 
     Imported lazily so that merely importing the package does not pull in
-    ipywidgets and the OpenAI client.
+    IPython and the OpenAI client.
     """
 
     from .magic import load_ipython_extension as _load_magics

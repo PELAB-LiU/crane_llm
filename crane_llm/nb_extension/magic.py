@@ -29,16 +29,18 @@ class CraneLLMMagics(Magics):
         model = remaining[0] if remaining else None
 
         extension = get_extension(model=model)
-        result = extension.run_target_cell(
-            source=cell,
-            shell=get_ipython(),
-            render=True,
-            include_runinfo=include_runinfo,
-        )
-
-        from IPython.display import Markdown, display
-
-        display(Markdown(f"```json\n{result.response}\n```"))
+        try:
+            extension.run_target_cell(
+                source=cell,
+                shell=get_ipython(),
+                render=True,
+                include_runinfo=include_runinfo,
+            )
+        except Exception:
+            # Already shown in the cell output, in words meant for the user.
+            # A traceback on top would bury the setup instructions a missing
+            # key produces, and would stop a Run All at this cell.
+            pass
 
 
 def crane_llm(cell_source: str, model: str = None, include_runinfo: bool = True):

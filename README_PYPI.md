@@ -6,14 +6,19 @@ CRANE-LLM is a JupyterLab 4 / Notebook 7 extension. Select a cell, click a butto
 
 This is the tool from the paper *[CRANE-LLM: Runtime-Augmented LLMs for Crash Prediction and Diagnosis in ML Notebooks](https://arxiv.org/abs/2602.18537)*.
 
+CRANE-LLM works in two ways:
+
+- **In JupyterLab**, as a toolbar button with a sidebar. This is the full experience.
+- **Anywhere else a notebook runs Python** — Kaggle, Colab, VS Code, classic Notebook — as the `%%crane_llm` cell magic. See *On Kaggle and Colab* below.
+
 ## Install
 
 ```bash
-pip install crane-llm
+pip install "crane-llm[lab]"
 jupyter lab
 ```
 
-That is all — the package ships the compiled frontend, so there is nothing to build and no `jupyter labextension` command to run. Check it registered:
+The `[lab]` part installs JupyterLab 4 alongside; leave it out if the environment already has JupyterLab 4: `pip install "crane-llm"`. Check it registered:
 
 ```bash
 jupyter labextension list        # expect: crane-llm-jlab <version> enabled ok
@@ -28,12 +33,15 @@ import crane_llm
 crane_llm.set_api_key("sk-...")
 ```
 
-That writes `~/.crane_llm/config.json`. Settings are resolved in this order, and the first one found wins:
+That writes `~/.crane_llm/config.json`. On Kaggle and Colab, store the key as a notebook secret instead, as described under *On Kaggle and Colab* below.
+
+Settings are resolved in this order, and the first one found wins:
 
 1. an explicit argument, e.g. `%%crane_llm gpt-5-mini`
 2. the `CRANE_LLM_API_KEY`, `CRANE_LLM_MODEL` and `CRANE_LLM_BASE_URL` environment variables
 3. the provider's own variables, `OPENAI_API_KEY` and `OPENAI_BASE_URL`
 4. `~/.crane_llm/config.json`
+5. on Kaggle and Colab, a notebook secret named `CRANE_LLM_API_KEY` or `OPENAI_API_KEY`
 
 A `.env` file is not a step of its own. It is read first, from the directory you started Jupyter in or any directory above it, and fills in whichever of those variables the environment does not already define.
 
@@ -85,7 +93,9 @@ The notebook must be idle. Reading the kernel namespace means running code in th
 
 A checkbox on the toolbar button, in the sidebar and in the command palette turns the runtime information off, which asks the model to predict from the code alone. That is the comparison the approach is built against, and it is also worth trying when a prompt gets too large.
 
-There is a cell magic as well, which needs the `widgets` extra (`pip install crane-llm[widgets]`):
+### The cell magic
+
+Where the toolbar button is not available, put the code you want to check in a cell under `%%crane_llm`:
 
 ```python
 %load_ext crane_llm
@@ -96,14 +106,43 @@ There is a cell magic as well, which needs the `widgets` extra (`pip install cra
 model.fit(x_train, y_train)
 ```
 
-The cell body is analysed, not executed.
+The cell body is analysed, not executed. The verdict appears as the cell's output, in the same colours as above, with the prompt and raw response folded under *Prompt and raw response*. It turns grey once you run any other cell, because the kernel state it was based on may have changed; checking another cell with `%%crane_llm` does not count, since nothing is executed.
+
+`%%crane_llm --no-runinfo` turns runtime information off, and a model name overrides the configured one, as in `%%crane_llm gpt-5-mini`.
+
+## On Kaggle and Colab
+
+Hosted notebooks cannot load JupyterLab extensions, so there is no toolbar button or sidebar; the cell magic does the same job.
+
+**1. Store your API key as a secret**, once per account, so that it never appears in the notebook:
+
+- *Kaggle:* in the notebook editor, **Add-ons → Secrets → Add a new secret**, with the label `CRANE_LLM_API_KEY` and your key as the value. Tick the checkbox next to it in each notebook that should use it.
+- *Colab:* the key icon in the left sidebar, a secret named `CRANE_LLM_API_KEY`, with **Notebook access** switched on.
+
+CRANE-LLM reads the secret itself; there is no setup cell to write.
+
+**2. Install and load it** in the notebook. On Kaggle, first switch **Internet** on in the notebook's settings panel, which requires a phone-verified account.
+
+```python
+%pip install crane-llm
+%load_ext crane_llm
+```
+
+**3. Run your notebook as usual, then check a cell** by copying its code under `%%crane_llm`:
+
+```python
+%%crane_llm
+# your code (in the target cell)
+```
+
+Hosted sessions start from a fresh image each time, so the `%pip install` cell has to be run again in every new session. Competitions that require Internet to be off cannot use CRANE-LLM, since both the install and the model call need it.
 
 ## Requirements and what is not included
 
-Python 3.9+, and JupyterLab 4 which is installed as a dependency. Two things are deliberately left out:
+Python 3.9+. The toolbar button needs JupyterLab 4, which `crane-llm[lab]` installs; the cell magic needs only IPython. Two things are deliberately left out:
 
 - **Notebook 7.** Add `pip install notebook` if you want that interface rather than JupyterLab.
-- **The ML stack.** Runtime summarisation understands pandas, numpy, torch, scikit-learn and TensorFlow objects when those packages are present in your kernel, and quietly skips them when they are not. Your own notebooks will already have brought whichever ones they use.
+- **The ML stack.** Runtime summarisation understands *pandas, numpy, torch, scikit-learn, TensorFlow* objects when those packages are present in your kernel, and quietly skips them when they are not. Your own notebooks will already have brought whichever ones they use.
 
 ## Links
 

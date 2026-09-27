@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import List, Optional
+
+from IPython import get_ipython
 
 from .assistant import CraneNotebookAssistant
+from .cell_filter import is_internal_helper_cell
 from .ipython_hooks import IPythonSessionTracker
 from .session_state import NotebookSessionState
 
@@ -17,41 +20,65 @@ class NotebookExtensionResult:
 class CraneNotebookExtension:
     """High-level notebook entry point.
 
-    Coordinates session tracking, prompt generation, optional ipywidgets
-    rendering, and the single-shot LLM call.
+    Coordinates session tracking, prompt generation, the magic's cell output,
+    and the single-shot LLM call.
     """
 
     def __init__(self, model: Optional[str] = None):
         self.session_state = NotebookSessionState()
         self.tracker = IPythonSessionTracker(self.session_state)
         self.assistant = CraneNotebookAssistant(model=model, session_state=self.session_state)
-        self._ui = None
+        # Verdicts shown by the magic that are not stale yet.
+        self._live_views: List = []
+        self._stale_shell = None
 
     @property
     def model(self) -> str:
         return self.assistant.model
 
-    @property
-    def ui(self):
-        """The ipywidgets panel, created on first use.
-
-        Building it eagerly would make ipywidgets a hard requirement of the
-        whole backend, including the native frontend path that never renders it.
-        """
-
-        if self._ui is None:
-            from .ui import CraneNotebookUI
-
-            self._ui = CraneNotebookUI()
-        return self._ui
-
     def start_tracking(self):
-        return self.tracker.register()
+        registration = self.tracker.register()
+        self._register_stale_hook()
+        return registration
 
     def dispose(self) -> None:
         """Detach kernel hooks. Always call this before dropping the instance."""
 
         self.tracker.dispose()
+        if self._stale_shell is not None:
+            try:
+                self._stale_shell.events.unregister("post_run_cell", self._mark_views_stale)
+            except Exception:
+                pass
+            self._stale_shell = None
+
+    # --- stale marking ---------------------------------------------------
+
+    def _register_stale_hook(self) -> None:
+        shell = get_ipython()
+        if shell is None or self._stale_shell is not None:
+            return
+        shell.events.register("post_run_cell", self._mark_views_stale)
+        self._stale_shell = shell
+
+    def _mark_views_stale(self, result) -> None:
+        """Any user cell that ran may have changed what the verdicts rested on.
+
+        The extension's own cells do not count: a ``%%crane_llm`` cell analyses
+        its body without running it, so checking a second cell must not retire
+        the first check. That includes the check that has just been shown,
+        whose own cell is the one this hook fires for first.
+        """
+
+        raw_cell = getattr(getattr(result, "info", None), "raw_cell", None)
+        if not isinstance(raw_cell, str) or is_internal_helper_cell(raw_cell):
+            return
+
+        views, self._live_views = self._live_views, []
+        for view in views:
+            view.mark_stale()
+
+    # --- running ---------------------------------------------------------
 
     def set_target_cell(self, cell_id: str, source: str, execution_count: Optional[int] = None):
         self.tracker.set_target_cell(cell_id=cell_id, source=source, execution_count=execution_count)
@@ -74,30 +101,42 @@ class CraneNotebookExtension:
         render: bool = True,
         include_runinfo: bool = True,
     ) -> NotebookExtensionResult:
-        ui = self.ui if render else None
+        """Build the prompt and call the model.
 
-        if ui is not None:
-            ui.show()
-            ui.set_status(
-                "parsing runtime information..." if include_runinfo else "building prompt..."
+        With ``render`` the progress and the verdict are shown as this cell's
+        output. Failures are shown there too and then re-raised, so a caller
+        can still tell that no prediction was made.
+        """
+
+        view = None
+        if render:
+            from .ui import VerdictView
+
+            view = VerdictView()
+            view.show(
+                "collecting runtime information..." if include_runinfo else "building the prompt..."
             )
 
-        prompt = self.assistant.build_prompt(shell=shell, include_runinfo=include_runinfo)
+        try:
+            prompt = self.assistant.build_prompt(shell=shell, include_runinfo=include_runinfo)
+        except Exception as exc:
+            if view is not None:
+                view.show_error(f"Prompt building failed. {type(exc).__name__}: {exc}")
+            raise
 
-        if ui is not None:
-            ui.set_prompt(prompt)
-            ui.set_status("calling LLM...")
+        if view is not None:
+            view.set_prompt(prompt)
+            view.set_status("waiting for the model...")
 
         try:
             response = self.assistant.call_llm(prompt, include_runinfo=include_runinfo)
         except Exception as exc:
-            if ui is not None:
-                ui.set_status("error")
-                ui.set_response(f"{type(exc).__name__}: {exc}")
+            if view is not None:
+                view.show_error(f"{type(exc).__name__}: {exc}")
             raise
 
-        if ui is not None:
-            ui.set_status("done")
-            ui.set_response(response)
+        if view is not None:
+            view.show_result(response)
+            self._live_views.append(view)
 
         return NotebookExtensionResult(prompt=prompt, response=response)

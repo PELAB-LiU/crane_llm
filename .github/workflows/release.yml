@@ -83,7 +83,7 @@ jobs:
         run: |
           python -m venv /tmp/check
           /tmp/check/bin/python -m pip install --upgrade pip
-          /tmp/check/bin/python -m pip install dist/*.whl
+          /tmp/check/bin/python -m pip install "$(ls dist/*.whl)[lab]"
           cd /tmp
           /tmp/check/bin/python -m jupyterlab.labextensions list > /tmp/list.txt 2>&1 || true
           cat /tmp/list.txt

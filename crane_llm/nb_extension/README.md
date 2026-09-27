@@ -48,7 +48,8 @@ If that prints `False`, stop and fix your environment before going on.
 
 Two things the install deliberately does not pull in:
 
-- **Notebook 7.** Installing this package brings JupyterLab, which is all the extension needs. Add `pip install notebook` as well if you want the Notebook 7 interface rather than JupyterLab.
+- **JupyterLab itself.** It is not a dependency, so that hosted kernels such as Kaggle and Colab, which only use the magic, are not handed a second Jupyter stack. The environment checked above already has it; in a fresh one, install `crane-llm[lab]`.
+- **Notebook 7.** Add `pip install notebook` as well if you want the Notebook 7 interface rather than JupyterLab.
 - **The ML stack.** Runtime summarisation covers pandas, numpy, torch, sklearn and TensorFlow objects when those packages are present, and quietly skips them when they are not. Your notebooks will normally have already brought whichever ones they use.
 
 ## 1.1 Choose a mode
@@ -62,7 +63,7 @@ Pick one and **do not mix them**. Appendix B explains the difference.
 
 ```bash
 conda activate crane
-python -m pip install -e ".[widgets,build]"
+python -m pip install -e ".[lab,build]"
 cd crane_llm/nb_extension && jlpm install && jlpm build && cd ../..
 jupyter labextension develop . --overwrite
 ```
@@ -255,7 +256,7 @@ The target cell is never executed, and predictions are not saved into the `.ipyn
 model.fit(x_train, y_train)
 ```
 
-The cell body is analysed, not executed. Arguments are optional: `--no-runinfo` builds the prompt from the executed cells alone, and anything else is read as a model name, so `%%crane_llm gpt-5-mini --no-runinfo` works. This path renders an ipywidgets panel, so it needs the `widgets` extra; the toolbar button does not.
+The cell body is analysed, not executed. Arguments are optional: `--no-runinfo` builds the prompt from the executed cells alone, and anything else is read as a model name, so `%%crane_llm gpt-5-mini --no-runinfo` works. The output shows the verdict with the prompt and raw response folded under it, and turns grey once another cell runs. It uses only the standard display protocol, so it works where the frontend cannot load: Kaggle, Colab, VS Code and classic Notebook.
 
 ---
 
@@ -277,7 +278,7 @@ Optional install extras:
 
 | Extra | Provides |
 |---|---|
-| `widgets` | the ipywidgets panel used by the `%%crane_llm` magic |
+| `lab` | JupyterLab 4, for an environment that does not have it yet |
 | `build` | `jupyter-builder`, needed to rebuild the frontend |
 | `experiments` | the batch pipeline in `crane_llm/llms/llm_executor.py` |
 
@@ -290,7 +291,7 @@ To move from a regular install back to a development install:
 ```bash
 conda activate crane
 python -m pip uninstall -y crane_llm
-python -m pip install -e ".[widgets,build]"
+python -m pip install -e ".[lab,build]"
 cd crane_llm/nb_extension && jlpm build && cd ../..
 jupyter labextension develop . --overwrite
 ```

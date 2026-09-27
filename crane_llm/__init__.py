@@ -41,7 +41,7 @@ def load_ipython_extension(ipython):
     """Support ``%load_ext crane_llm``.
 
     Delegates to the extension package. Imported lazily so that merely
-    importing ``crane_llm`` does not pull in ipywidgets or an LLM client.
+    importing ``crane_llm`` does not pull in IPython or an LLM client.
     """
 
     from .nb_extension import load_ipython_extension as _load

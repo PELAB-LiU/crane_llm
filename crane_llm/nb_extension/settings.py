@@ -8,7 +8,13 @@ module defines one resolution order that works for both audiences:
 2. a ``CRANE_LLM_*`` environment variable
 3. the provider's own environment variable, e.g. ``OPENAI_API_KEY``
 4. the user configuration file, ``~/.crane_llm/config.json``
-5. the built-in default from ``crane_llm.llms.config_llms``
+5. for the API key only: a Kaggle or Colab secret named ``CRANE_LLM_API_KEY``
+   or ``OPENAI_API_KEY``, on those platforms
+6. the built-in default from ``crane_llm.llms.config_llms``
+
+Step 5 exists because a hosted notebook has no durable home directory, so the
+configuration file is gone next session, and the alternative, a key typed into
+a cell, is published along with the notebook.
 
 A ``.env`` file is deliberately **not** a step here. ``_load_dotenv_once`` runs
 before the lookup and loads it into the environment without overriding what is
@@ -213,6 +219,62 @@ def _is_local(base_url: Optional[str]) -> bool:
     )
 
 
+# Looked up in a hosted notebook's secret store, in this order, when no key was
+# found anywhere else.
+HOSTED_SECRET_NAMES = ("CRANE_LLM_API_KEY", "OPENAI_API_KEY")
+
+# A secret, once read, is kept for the rest of the process: each read is a
+# request to the platform's backend. A miss is not kept, so a secret attached
+# to the notebook after the first attempt is still found without a restart.
+_HOSTED_SECRET_CACHE: Dict[str, str] = {}
+
+
+def hosted_platform() -> Optional[str]:
+    """``"kaggle"`` or ``"colab"`` when running in one, else ``None``."""
+
+    if os.environ.get("KAGGLE_KERNEL_RUN_TYPE") or os.environ.get("KAGGLE_URL_BASE"):
+        return "kaggle"
+    if os.environ.get("COLAB_RELEASE_TAG") or os.environ.get("COLAB_GPU") is not None:
+        return "colab"
+    return None
+
+
+def _read_hosted_secret(name: str) -> Optional[str]:
+    """One secret from Kaggle Secrets or Colab's Secrets panel, if available.
+
+    Neither module exists outside its platform, and both raise when the secret
+    is missing or not shared with this notebook, so every failure means "not
+    found" rather than an error of its own.
+    """
+
+    platform = hosted_platform()
+    try:
+        if platform == "kaggle":
+            from kaggle_secrets import UserSecretsClient
+
+            return UserSecretsClient().get_secret(name)
+        if platform == "colab":
+            from google.colab import userdata
+
+            return userdata.get(name)
+    except Exception:
+        return None
+    return None
+
+
+def hosted_secret_api_key() -> Optional[str]:
+    """The API key from the hosted platform's secret store, if one is shared."""
+
+    for name in HOSTED_SECRET_NAMES:
+        if name in _HOSTED_SECRET_CACHE:
+            return _HOSTED_SECRET_CACHE[name]
+        value = _first(_read_hosted_secret(name))
+        if value:
+            _HOSTED_SECRET_CACHE[name] = value
+            return value
+    return None
+
+
 class Settings(NamedTuple):
     api_key: Optional[str]
     base_url: Optional[str]
@@ -254,6 +316,8 @@ def resolve(
     )
     if resolved_api_key is None and _is_local(resolved_base_url):
         resolved_api_key = "local"
+    if resolved_api_key is None:
+        resolved_api_key = hosted_secret_api_key()
 
     from ..llms.config_llms import config
 
@@ -294,6 +358,29 @@ def missing_key_message() -> str:
     wrong for someone who has just installed the wheel, and the sidebar shows
     it verbatim.
     """
+
+    platform = hosted_platform()
+    if platform == "kaggle":
+        return (
+            "No API key found. On Kaggle, store it as a secret:\n"
+            "\n"
+            "  1. In the notebook editor, open Add-ons > Secrets.\n"
+            "  2. Add a secret with the label CRANE_LLM_API_KEY and your key as the value.\n"
+            "  3. Tick the checkbox next to it, so this notebook may read it.\n"
+            "\n"
+            "Then run the %%crane_llm cell again; no restart is needed. Keep the key\n"
+            "out of the notebook itself, which others can read once it is shared."
+        )
+    if platform == "colab":
+        return (
+            "No API key found. On Colab, store it as a secret:\n"
+            "\n"
+            "  1. Click the key icon in the left sidebar (Secrets).\n"
+            "  2. Add a secret named CRANE_LLM_API_KEY with your key as the value.\n"
+            "  3. Switch on 'Notebook access' for it.\n"
+            "\n"
+            "Then run the %%crane_llm cell again; no restart is needed."
+        )
 
     return (
         "No API key found. Set one up in any of these ways, then retry.\n"

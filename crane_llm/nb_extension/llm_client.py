@@ -56,7 +56,17 @@ class _BaseLLMClient:
             if not self.api_key:
                 raise RuntimeError(settings_module.missing_key_message())
 
-            kwargs: Dict[str, Any] = {"api_key": self.api_key}
+            kwargs: Dict[str, Any] = {
+                "api_key": self.api_key,
+                # Without this the HTTP client offers brotli whenever a brotli
+                # module is importable, and a hosted image can pair a new HTTP
+                # client with an old or impostor one (Kaggle ships brotlipy
+                # under the name ``brotli``). The reply then fails to decode
+                # with "Decompressor.decompress() got an unexpected keyword
+                # argument 'output_buffer_limit'". The replies are small JSON,
+                # so gzip costs nothing.
+                "default_headers": {"Accept-Encoding": "gzip, deflate"},
+            }
             if self.base_url:
                 kwargs["base_url"] = self.base_url
             self._client = OpenAI(**kwargs)
@@ -181,17 +191,22 @@ def _resolve_model_name(model: Optional[str] = None) -> str:
 def default_client(
     model: Optional[str] = None,
     include_runinfo: bool = True,
+    resolved: Optional["settings_module.Settings"] = None,
 ) -> _BaseLLMClient:
     """Build a client whose system prompt matches the prompt being sent.
 
     With runtime information switched off the prompt has no
     [Current relevant runtime information] section, so the system prompt must
     not tell the model to expect one.
+
+    ``resolved`` lets a caller that has already resolved the settings pass them
+    in instead of looking them up a second time.
     """
 
     from ..llms.config_llms import config
 
-    resolved = settings_module.resolve(model=model)
+    if resolved is None:
+        resolved = settings_module.resolve(model=model)
 
     system_prompt = (
         config.system_prompt_crane_llm_enforcejson
@@ -211,7 +226,3 @@ def default_client(
         base_url=resolved.base_url,
     )
 
-
-# The name this module exposed before it supported anything but OpenAI. Kept so
-# that a notebook or script written against the earlier version still runs.
-default_openai_client = default_client

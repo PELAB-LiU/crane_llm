@@ -25,9 +25,14 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Intended Audience :: Science/Research",
 ]
+# JupyterLab is not a dependency. The toolbar button needs it, but the prebuilt
+# frontend in the wheel is picked up by whichever JupyterLab 4 is installed, and
+# hosted kernels (Kaggle, Colab) cannot load the frontend at all: they use the
+# %%crane_llm magic, which needs only IPython, and a second Jupyter stack in
+# them would be dead weight that can conflict with the image. The `lab` extra
+# below is for a fresh environment.
 dependencies = [
     "ipython>=8.5",
-    "jupyterlab>=4.0.0,<5",
     "nbformat>=5.7",
     # The OpenAI SDK is also the client for every OpenAI-compatible endpoint
     # (OpenRouter, Groq, Together, Azure, vLLM, Ollama), so one dependency
@@ -38,9 +43,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# Only the %%crane_llm magic renders an ipywidgets panel; the browser
-# extension has its own sidebar and does not need this.
-widgets = ["ipywidgets>=8.0"]
+# `pip install crane-llm[lab]` in an environment with no JupyterLab yet.
+lab = ["jupyterlab>=4.0.0,<5"]
 # Needed to rebuild the frontend bundle, not to run it.
 build = ["jupyter-builder>=1.0.0,<2"]
 # Batch experiment pipeline (crane_llm/llms/llm_executor.py).
