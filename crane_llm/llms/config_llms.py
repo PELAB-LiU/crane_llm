@@ -19,9 +19,11 @@ Important output rules:
 - Schema:
   {
     "reasoning": string,
-    "prediction": boolean
+    "prediction": boolean,
+    "variables": [string]
   }
 - Give a short explanation in `reasoning` (concise: 1-2 sentences).
+- In `variables`, only list the variable(s) responsible for the predicted crash, for example ["var1"]. Use [] when no crash is predicted.
 - If you are not CERTAIN the cell will crash, you MUST output `"prediction": false`.
 - Your output must ONLY be the JSON object.
 
@@ -44,9 +46,11 @@ Important output rules:
 - Schema:
   {
     "reasoning": string,
-    "prediction": boolean
+    "prediction": boolean,
+    "variables": [string]
   }
 - Give a short explanation in `reasoning` (concise: 1-2 sentences).
+- In `variables`, only list the variable(s) responsible for the predicted crash, for example ["var1"]. Use [] when no crash is predicted.
 - If you are not CERTAIN the cell will crash, you MUST output `"prediction": false`.
 - Your output must ONLY be the JSON object.
 

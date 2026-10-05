@@ -1,0 +1,142 @@
+{
+  "_about": "Every text CRANE-LLM shows to users, for both the JupyterLab extension and the %%crane_llm magic. Words in {braces} are filled in at runtime; keep them. After editing: run reload_crane_llm() in a notebook for the magic and the backend, and `jlpm build` in crane_llm/nb_extension, then refresh the browser, for JupyterLab.",
+
+  "toolbar": {
+    "label": "CRANE-LLM",
+    "tooltip": "Predict whether the selected cell will crash"
+  },
+
+  "commands": {
+    "run_label": "Run CRANE-LLM",
+    "run_caption": "Build the CRANE prompt from the active notebook cell and run the LLM",
+    "toggle_label": "CRANE-LLM: Include Runtime Information",
+    "toggle_caption": "Include the live kernel state in the prompt. When off, only the executed cells and the target cell are sent.",
+    "toggle_llm_label": "CRANE-LLM: Use the LLM",
+    "toggle_llm_caption": "Ask the LLM when the built-in checker finds no crash. When off, only the built-in checker runs and nothing is sent."
+  },
+
+  "runinfo": {
+    "label": "Include runtime information",
+    "hint_on": "Prompt: executed cells, runtime state, target cell.",
+    "hint_off": "Prompt: executed cells and target cell only.",
+    "hint_llm_off": "Only used when the LLM is on."
+  },
+
+  "llm": {
+    "label": "Use the LLM",
+    "hint_on": "The LLM is asked when the built-in checker finds no crash.",
+    "hint_off": "Only the built-in checker runs. Nothing is sent to an LLM."
+  },
+
+  "sidebar": {
+    "title": "CRANE-LLM",
+    "caption": "CRANE-LLM prompt and response",
+    "idle": "idle",
+    "prompt_heading": "Prompt",
+    "response_heading": "Response",
+    "status_check_done": "done: built-in check, no LLM call",
+    "status_model_done": "done: LLM prediction ({model})",
+    "status_model_done_no_name": "done: LLM prediction",
+    "status_without_runinfo": ", without runtime information",
+    "status_check_only_done": "done: built-in checker only, LLM off",
+    "no_prompt_llm_off": "No prompt was sent. The LLM is switched off, so only the built-in checker ran.",
+    "no_prompt_check": "The built-in checker found a crash, so the LLM was not called.",
+    "status_busy": "not run: the notebook is busy",
+    "status_error": "error"
+  },
+
+  "progress": {
+    "done_mark": "✓",
+    "current": "CRANE-LLM: {step}",
+    "starting": "starting...",
+    "checking": "Running the built-in checker...",
+    "no_finding": "Built-in checker: no crash found. Asking the LLM...",
+    "building": "Building the prompt...",
+    "waiting": "Waiting for {model}...",
+    "waiting_no_name": "Waiting for the LLM..."
+  },
+
+  "verdict": {
+    "title": "CRANE-LLM: {label}",
+    "title_stale": "CRANE-LLM: {label} (stale)",
+    "label_check_crash": "will crash",
+    "label_model_crash": "crash predicted",
+    "label_model_safe": "no crash predicted",
+    "label_unknown": "response not understood",
+    "label_error": "could not get a prediction",
+    "label_no_finding": "no crash found by the checker",
+    "close": "Close",
+    "badge_check": "Built-in check · certain",
+    "badge_model": "LLM prediction · {model}",
+    "badge_model_no_name": "LLM prediction",
+    "badge_check_only": "Built-in check only · LLM off",
+    "note_check": "Crash found by CRANE-LLM's built-in checker, without calling the LLM. The cell will raise when it runs.",
+    "note_model_after_check": "Predicted by the LLM. This is a prediction, and it can be wrong.",
+    "note_check_only": "The built-in checker found no crash,  no LLM prediction was made. The cell may still crash: the checker only reports crashes it is certain of.",
+    "note_model_code_only": "Predicted by the LLM from the code alone. This is a prediction, and it can be wrong.",
+    "stale_explanation": "A cell has run since this check, so the kernel state it was based on may have changed. Run the check again for a current prediction.",
+    "prompt_and_response": "Prompt and raw response",
+    "prompt_heading": "Prompt",
+    "response_heading": "Response"
+  },
+
+  "origins": {
+    "heading": "Origin of the crash",
+    "roles": {
+      "assigned": "assigned",
+      "modified": "modified",
+      "possibly_modified": "possibly modified",
+      "deleted": "deleted",
+      "defines": "defines it"
+    },
+    "summary": "`{variable}`: {steps}.",
+    "summary_step": "{role} in {cell}",
+    "summary_join": ", then ",
+    "summary_undefined_one": "`{variable}` is not defined. It is assigned in a cell of this notebook that did not define it in this session.",
+    "summary_undefined_many": "`{variable}` is not defined. It is assigned in {count} cells of this notebook that did not define it in this session.",
+    "cell_with_count": "cell [{count}]",
+    "cell_with_position": "cell #{position}",
+    "cell_unknown": "a cell",
+    "cell_missing": "a cell no longer in this notebook",
+    "step": "{role} in {cell}",
+    "step_line": "{role} in {cell}, line {line}",
+    "edited": "edited since it ran",
+    "go_to_cell": "Go to this cell",
+    "cell_note": "CRANE-LLM: this cell {action} `{variable}`, behind the crash in {target}.",
+    "cell_note_line": "CRANE-LLM: this cell {action} `{variable}` (line {line}), behind the crash in {target}.",
+    "cell_note_action_defines": "would define",
+    "notes": {
+      "not_run": "has not run in this kernel session",
+      "raised_before": "raised before defining it",
+      "edited": "has been edited since it ran",
+      "ran_no_define": "ran, but did not define it",
+      "partial_run": "this run raised an error partway",
+      "code_only": "read from the code; ran before tracking started"
+    }
+  },
+
+  "checker": {
+    "reasoning": "Line {line}: `{snippet}` raises {exception}: {message}",
+    "is_none": "`{name}` is None.",
+    "columns": "`{name}` has columns: {columns}.",
+    "columns_unnamed": "The DataFrame has columns: {columns}.",
+    "sequence_length": "`{name}` has {count} items.",
+    "not_fitted": "`{name}` has not been fitted.",
+    "feature_count": "`{data}` has {columns} columns but `{model}` was fitted on {expected}.",
+    "array_shape": "`{name}` has shape {shape}."
+  },
+
+  "errors": {
+    "dialog_title": "CRANE-LLM",
+    "select_code_cell": "Select a code cell first.",
+    "open_notebook": "Open a notebook first.",
+    "no_kernel": "No kernel is connected to this notebook. Start the kernel first.",
+    "kernel_dead": "The kernel is not running. Restart it first.",
+    "kernel_restarting": "The kernel is restarting. Wait for it to come back, then try again.",
+    "notebook_busy": "CRANE-LLM cannot run while the notebook is executing. Wait for the running cells to finish, then try again.",
+    "kernel_timeout": "The kernel did not respond within {seconds}s. It may still be busy running another cell.",
+    "no_payload": "The kernel did not return a CRANE-LLM payload. Output was:\n{output}",
+    "unknown_error": "The kernel reported an unknown error.",
+    "prompt_failed": "Prompt building failed. {error}"
+  }
+}

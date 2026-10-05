@@ -3,13 +3,63 @@ import { ICommandPalette, showErrorMessage, ToolbarButton } from '@jupyterlab/ap
 import { INotebookTracker, NotebookActions, NotebookPanel } from '@jupyterlab/notebook';
 import { Widget } from '@lumino/widgets';
 
+import TEXTS from './ui_texts.json';
+
 const COMMAND_ID = 'crane-llm-jlab:run';
 const TOGGLE_RUNINFO_COMMAND_ID = 'crane-llm-jlab:toggle-runinfo';
+const TOGGLE_LLM_COMMAND_ID = 'crane-llm-jlab:toggle-llm';
 const SIDEBAR_ID = 'crane-llm-sidebar';
 
-/** Must match api.PAYLOAD_BEGIN / api.PAYLOAD_END. */
+/** Must match api.PAYLOAD_BEGIN / api.PAYLOAD_END / api.STAGE_MARKER. */
 const PAYLOAD_BEGIN = '<<<CRANE-LLM:BEGIN>>>';
 const PAYLOAD_END = '<<<CRANE-LLM:END>>>';
+const STAGE_MARKER = '<<<CRANE-LLM:STAGE>>>';
+
+/**
+ * The text at a dotted key of ui_texts.json, with its {placeholders} filled
+ * in. Every user-facing text lives in that file. Mirrors texts.text in the
+ * backend: a placeholder with no value is left as written.
+ */
+function t(key: string, values: Record<string, string | number> = {}): string {
+  let node: any = TEXTS;
+  for (const part of key.split('.')) {
+    node = node?.[part];
+  }
+  if (typeof node !== 'string') {
+    return key;
+  }
+  return node.replace(/\{(\w+)\}/g, (match: string, name: string) =>
+    name in values ? String(values[name]) : match
+  );
+}
+
+/** Shown until the backend reports its first step; never listed as a finished step. */
+const STARTING = t('progress.starting');
+
+/** One progress step, printed by the backend while it works. Must match api.progress. */
+interface StageEvent {
+  stage: string;
+  model: string;
+  prompt: string;
+}
+
+/** Mirrors ui.stage_message in the backend; the stage names are assistant.STAGE_*. */
+function stageMessage(event: StageEvent): string {
+  switch (event.stage) {
+    case 'checking':
+      return t('progress.checking');
+    case 'no-finding':
+      return t('progress.no_finding');
+    case 'building':
+      return t('progress.building');
+    case 'waiting':
+      return event.model
+        ? t('progress.waiting', { model: event.model })
+        : t('progress.waiting_no_name');
+    default:
+      return event.stage;
+  }
+}
 
 /** Kernel calls are cheap, but a busy kernel queues them behind user code. */
 const KERNEL_TIMEOUT_MS = 10 * 60 * 1000;
@@ -18,20 +68,56 @@ const INSTALLED_PANELS = new WeakSet<NotebookPanel>();
 const RESPONSE_MANAGERS = new WeakMap<NotebookPanel, CraneResponseManager>();
 const RUNNING_PANELS = new WeakSet<NotebookPanel>();
 
-type PredictionTone = 'crash' | 'safe' | 'unknown' | 'stale';
+/** 'none': the checker ran alone, with the LLM off, and found nothing. */
+type PredictionTone = 'crash' | 'safe' | 'unknown' | 'none' | 'stale';
 
+/** Must match verdict.Verdict.to_json in the backend. */
 interface Verdict {
-  tone: PredictionTone;
+  tone: 'crash' | 'safe' | 'unknown' | 'none';
   label: string;
+  reasoning: string;
+  /** 'check': a built-in check, certain. 'model': an LLM prediction. */
+  source: 'check' | 'model';
+  certain: boolean;
+  model: string;
+  variables: string[];
+  /** For a model verdict: the built-in checks ran first and found nothing. */
+  checks_ran: boolean;
+}
+
+/** Must match provenance.OriginStep.to_json. */
+interface OriginStep {
+  cell_id: string;
+  execution_count: number | null;
+  role: string;
+  line: number;
+  line_text: string;
+  /** The cell's source as it ran, to find it again and to notice later edits. */
+  source: string;
+  note: string;
+}
+
+interface Origin {
+  variable: string;
+  summary: string;
+  steps: OriginStep[];
 }
 
 interface ResponseEntry {
   container: HTMLDivElement;
-  titleNode: HTMLDivElement;
-  responseNode: HTMLPreElement;
+  titleNode: HTMLSpanElement;
+  originsNode: HTMLDivElement;
   /** The cell widget's node, so the accent can be cleared when the entry goes. */
   cellNode: HTMLElement;
+  verdict: Verdict;
+  /** Notes placed on the cells the crash comes from, removed with the entry. */
+  originMarks: OriginMark[];
   stale: boolean;
+}
+
+interface OriginMark {
+  cellNode: HTMLElement;
+  noteNode: HTMLDivElement;
 }
 
 interface CranePayload {
@@ -39,39 +125,44 @@ interface CranePayload {
   prompt: string;
   response: string;
   error: string;
+  include_runinfo: boolean;
+  use_llm: boolean;
+  verdict: Verdict | null;
+  origins: Origin[];
 }
 
-/** Remembers the runtime-information switch across page reloads. */
-const RUNINFO_STORAGE_KEY = 'crane-llm:include-runinfo';
+/** The colour that marks cells a crash comes from. Distinct from every verdict tone. */
+const ORIGIN_COLOR = '#7c3aed';
 
-function loadIncludeRuninfo(): boolean {
-  // Default on. Storage can be unavailable in private windows, so never let a
-  // failure here stop the extension from loading.
-  try {
-    return window.localStorage.getItem(RUNINFO_STORAGE_KEY) !== 'false';
-  } catch (_error) {
-    return true;
-  }
-}
-
-function saveIncludeRuninfo(value: boolean): void {
-  try {
-    window.localStorage.setItem(RUNINFO_STORAGE_KEY, String(value));
-  } catch (_error) {
-    // Not worth surfacing; the switch simply will not persist.
-  }
-}
+/** How many live verdicts mark each origin cell, so one closing keeps the others' outline. */
+const ORIGIN_MARK_COUNTS = new WeakMap<HTMLElement, number>();
 
 /**
- * The runtime-information switch, shared by every control that shows it.
+ * An on/off switch shared by every control that shows it, remembered across
+ * page reloads.
  *
  * The sidebar checkbox, the toolbar popover and the command palette entry are
- * three views of this one value. Without a single owner they would drift apart
- * as soon as the user changed it from one of them.
+ * three views of one value. Without a single owner they would drift apart as
+ * soon as the user changed it from one of them.
  */
-class RuninfoSetting {
-  private value: boolean = loadIncludeRuninfo();
+class ToggleSetting {
+  private value: boolean;
   private listeners = new Set<(value: boolean) => void>();
+
+  /** On by default; the stored value wins once the user has changed it. */
+  constructor(private storageKey: string) {
+    this.value = this.load();
+  }
+
+  private load(): boolean {
+    // Storage can be unavailable in private windows, so never let a failure
+    // here stop the extension from loading.
+    try {
+      return window.localStorage.getItem(this.storageKey) !== 'false';
+    } catch (_error) {
+      return true;
+    }
+  }
 
   get(): boolean {
     return this.value;
@@ -82,7 +173,11 @@ class RuninfoSetting {
       return;
     }
     this.value = value;
-    saveIncludeRuninfo(value);
+    try {
+      window.localStorage.setItem(this.storageKey, String(value));
+    } catch (_error) {
+      // Not worth surfacing; the switch simply will not persist.
+    }
     for (const listener of this.listeners) {
       listener(value);
     }
@@ -100,20 +195,107 @@ class RuninfoSetting {
   }
 }
 
+/**
+ * The two switches. Runtime information decides what the LLM is sent; the
+ * LLM switch decides whether it is asked at all, so with it off the runtime
+ * switch has nothing to act on.
+ */
+interface CraneSettings {
+  runinfo: ToggleSetting;
+  llm: ToggleSetting;
+}
+
+/**
+ * One switch as a checkbox row with a hint below it. Used by the sidebar and
+ * the toolbar popover alike. Returns the row and an unsubscribe function.
+ */
+function switchRow(
+  setting: ToggleSetting,
+  label: string,
+  hint: (value: boolean) => string,
+  rowStyle: string,
+  hintStyle: string
+): { node: HTMLDivElement; teardown: () => void; setEnabled: (enabled: boolean, note: string) => void } {
+  const node = document.createElement('div');
+  const row = document.createElement('label');
+  row.style.cssText = rowStyle;
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.style.cssText = 'margin:0;cursor:pointer;';
+
+  const labelNode = document.createElement('span');
+  labelNode.textContent = label;
+  labelNode.style.cssText = 'font-weight:700;';
+
+  const hintNode = document.createElement('div');
+  hintNode.style.cssText = hintStyle;
+
+  row.appendChild(checkbox);
+  row.appendChild(labelNode);
+  node.appendChild(row);
+  node.appendChild(hintNode);
+
+  let enabled = true;
+  let disabledNote = '';
+  const render = (value: boolean) => {
+    checkbox.checked = value;
+    hintNode.textContent = enabled ? hint(value) : disabledNote;
+  };
+  checkbox.onchange = () => setting.set(checkbox.checked);
+  const teardown = setting.subscribe(render);
+
+  const setEnabled = (value: boolean, note: string) => {
+    enabled = value;
+    disabledNote = note;
+    checkbox.disabled = !value;
+    row.style.opacity = value ? '1' : '0.5';
+    row.style.cursor = value ? 'pointer' : 'default';
+    render(setting.get());
+  };
+
+  return { node, teardown, setEnabled };
+}
+
 function runinfoHintText(includeRuninfo: boolean): string {
-  return includeRuninfo
-    ? 'Prompt: executed cells, runtime state, target cell.'
-    : 'Prompt: executed cells and target cell only.';
+  return includeRuninfo ? t('runinfo.hint_on') : t('runinfo.hint_off');
+}
+
+function llmHintText(useLlm: boolean): string {
+  return useLlm ? t('llm.hint_on') : t('llm.hint_off');
+}
+
+/**
+ * Both switches, LLM first since it decides whether the other matters. The
+ * runtime-information row is greyed out while the LLM is off.
+ */
+function switchRows(
+  settings: CraneSettings,
+  rowStyle: string,
+  hintStyle: string
+): { nodes: HTMLDivElement[]; teardown: () => void } {
+  const llm = switchRow(settings.llm, t('llm.label'), llmHintText, rowStyle, hintStyle);
+  const runinfo = switchRow(settings.runinfo, t('runinfo.label'), runinfoHintText, rowStyle, hintStyle);
+  const unsubscribe = settings.llm.subscribe(useLlm =>
+    runinfo.setEnabled(useLlm, t('runinfo.hint_llm_off'))
+  );
+  return {
+    nodes: [llm.node, runinfo.node],
+    teardown: () => {
+      llm.teardown();
+      runinfo.teardown();
+      unsubscribe();
+    }
+  };
 }
 
 class CraneSidebar extends Widget {
+  /** Steps of the current run that are done, listed above the status. */
+  private stepsNode: HTMLDivElement;
   private statusNode: HTMLDivElement;
   private promptNode: HTMLPreElement;
   private responseNode: HTMLPreElement;
-  private runinfoCheckbox: HTMLInputElement;
-  private runinfoHintNode: HTMLDivElement;
-
-  constructor(private setting: RuninfoSetting) {
+  constructor(settings: CraneSettings) {
     super();
     this.addClass('crane-llm-sidebar');
 
@@ -132,7 +314,7 @@ class CraneSidebar extends Widget {
       'display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;';
 
     const title = document.createElement('div');
-    title.textContent = 'CRANE-LLM';
+    title.textContent = t('sidebar.title');
     title.style.cssText = 'font-size:14px;font-weight:700;';
 
     header.appendChild(title);
@@ -140,40 +322,22 @@ class CraneSidebar extends Widget {
     this.statusNode = document.createElement('div');
     this.statusNode.style.cssText =
       'margin-bottom:10px;color:var(--jp-info-color1);font-weight:600;';
-    this.statusNode.textContent = 'idle';
+    this.statusNode.textContent = t('sidebar.idle');
 
-    // Runtime-information switch. On by default, which is the configuration
-    // the approach is built around; turning it off falls back to a prompt of
-    // executed cells and the target cell alone.
-    const runinfoRow = document.createElement('label');
-    runinfoRow.style.cssText =
-      'display:flex;align-items:center;gap:8px;margin:0 0 4px;cursor:pointer;font-size:12px;';
+    this.stepsNode = document.createElement('div');
+    this.stepsNode.style.cssText = 'margin-bottom:4px;font-size:12px;opacity:0.7;';
 
-    this.runinfoCheckbox = document.createElement('input');
-    this.runinfoCheckbox.type = 'checkbox';
-    this.runinfoCheckbox.style.cssText = 'margin:0;cursor:pointer;';
-
-    const runinfoLabel = document.createElement('span');
-    runinfoLabel.textContent = 'Include runtime information';
-    runinfoLabel.style.cssText = 'font-weight:700;';
-
-    runinfoRow.appendChild(this.runinfoCheckbox);
-    runinfoRow.appendChild(runinfoLabel);
-
-    this.runinfoHintNode = document.createElement('div');
-    this.runinfoHintNode.style.cssText =
-      'font-size:11px;opacity:0.75;margin:0 0 10px 24px;';
-
-    this.runinfoCheckbox.onchange = () => this.setting.set(this.runinfoCheckbox.checked);
-
-    // Reflect changes made from the toolbar popover or the command palette.
-    this.setting.subscribe(value => {
-      this.runinfoCheckbox.checked = value;
-      this.runinfoHintNode.textContent = runinfoHintText(value);
-    });
+    // The two switches. Both on by default, which is the configuration the
+    // approach is built around. They reflect changes made from the toolbar
+    // popover or the command palette too.
+    const switches = switchRows(
+      settings,
+      'display:flex;align-items:center;gap:8px;margin:0 0 4px;cursor:pointer;font-size:12px;',
+      'font-size:11px;opacity:0.75;margin:0 0 10px 24px;'
+    );
 
     const promptLabel = document.createElement('div');
-    promptLabel.textContent = 'Prompt';
+    promptLabel.textContent = t('sidebar.prompt_heading');
     promptLabel.style.cssText = 'font-size:12px;font-weight:700;margin:8px 0 4px;';
 
     this.promptNode = document.createElement('pre');
@@ -189,7 +353,7 @@ class CraneSidebar extends Widget {
     ].join(';');
 
     const responseLabel = document.createElement('div');
-    responseLabel.textContent = 'Response';
+    responseLabel.textContent = t('sidebar.response_heading');
     responseLabel.style.cssText = 'font-size:12px;font-weight:700;margin:8px 0 4px;';
 
     this.responseNode = document.createElement('pre');
@@ -205,9 +369,11 @@ class CraneSidebar extends Widget {
     ].join(';');
 
     this.node.appendChild(header);
+    this.node.appendChild(this.stepsNode);
     this.node.appendChild(this.statusNode);
-    this.node.appendChild(runinfoRow);
-    this.node.appendChild(this.runinfoHintNode);
+    for (const node of switches.nodes) {
+      this.node.appendChild(node);
+    }
     this.node.appendChild(promptLabel);
     this.node.appendChild(this.promptNode);
     this.node.appendChild(responseLabel);
@@ -218,12 +384,58 @@ class CraneSidebar extends Widget {
     this.statusNode.textContent = text;
   }
 
+  /** Forget the steps and status of the previous run. */
+  resetSteps(): void {
+    this.stepsNode.replaceChildren();
+    this.setStatus('');
+  }
+
+  /**
+   * Show the step now under way. The one before it moves to the list above
+   * the status, ticked, so the user sees that the checker ran and found
+   * nothing before the model was asked.
+   */
+  showStep(text: string): void {
+    const current = this.statusNode.textContent ?? '';
+    if (current && current !== STARTING) {
+      const line = document.createElement('div');
+      line.textContent = `${t('progress.done_mark')} ${current}`;
+      this.stepsNode.appendChild(line);
+    }
+    this.setStatus(text);
+  }
+
   setPrompt(text: string): void {
     this.promptNode.textContent = text;
   }
 
   setResponse(text: string): void {
     this.responseNode.textContent = text;
+  }
+
+  /** Show a finished verdict: who gave it, what was sent, what came back. */
+  showVerdict(payload: CranePayload): void {
+    const verdict = payload.verdict as Verdict;
+    if (verdict.certain) {
+      this.setStatus(t('sidebar.status_check_done'));
+      this.setPrompt(t('sidebar.no_prompt_check'));
+      this.setResponse(verdict.reasoning);
+      return;
+    }
+    if (verdict.source === 'check') {
+      this.setStatus(t('sidebar.status_check_only_done'));
+      this.setPrompt(t('sidebar.no_prompt_llm_off'));
+      this.setResponse(sourceNoteText(verdict));
+      return;
+    }
+    this.setStatus(
+      (verdict.model
+        ? t('sidebar.status_model_done', { model: verdict.model })
+        : t('sidebar.status_model_done_no_name')) +
+        (payload.include_runinfo ? '' : t('sidebar.status_without_runinfo'))
+    );
+    this.setPrompt(payload.prompt ?? '');
+    this.setResponse(payload.response);
   }
 }
 
@@ -237,7 +449,7 @@ class CraneSidebar extends Widget {
  *
  * Returns a teardown function; the caller runs it when the panel goes away.
  */
-function installRuninfoPopover(anchor: HTMLElement, setting: RuninfoSetting): () => void {
+function installSwitchPopover(anchor: HTMLElement, settings: CraneSettings): () => void {
   const popover = document.createElement('div');
   popover.className = 'crane-llm-runinfo-popover';
   popover.style.cssText = [
@@ -254,32 +466,16 @@ function installRuninfoPopover(anchor: HTMLElement, setting: RuninfoSetting): ()
     'font-size:12px'
   ].join(';');
 
-  const row = document.createElement('label');
-  row.style.cssText =
-    'display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;';
-
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  checkbox.style.cssText = 'margin:0;cursor:pointer;';
-
-  const labelText = document.createElement('span');
-  labelText.textContent = 'Include runtime information';
-
-  const hint = document.createElement('div');
-  hint.style.cssText = 'margin-top:6px;opacity:0.75;';
-
-  row.appendChild(checkbox);
-  row.appendChild(labelText);
-  popover.appendChild(row);
-  popover.appendChild(hint);
+  const switches = switchRows(
+    settings,
+    'display:flex;align-items:center;gap:8px;cursor:pointer;',
+    'margin:4px 0 8px 0;opacity:0.75;'
+  );
+  for (const node of switches.nodes) {
+    popover.appendChild(node);
+  }
   document.body.appendChild(popover);
-
-  const unsubscribe = setting.subscribe(value => {
-    checkbox.checked = value;
-    hint.textContent = runinfoHintText(value);
-  });
-
-  checkbox.onchange = () => setting.set(checkbox.checked);
+  const unsubscribe = switches.teardown;
 
   // Clicking anywhere in the popover must not reach the button behind it.
   popover.addEventListener('click', event => event.stopPropagation());
@@ -328,6 +524,9 @@ function installRuninfoPopover(anchor: HTMLElement, setting: RuninfoSetting): ()
   anchor.addEventListener('mouseleave', scheduleHide);
   // Keyboard users never fire mouseenter, so tabbing to the button opens it too.
   anchor.addEventListener('focusin', show);
+  // Clicking the button starts a check; the switch has done its job by then,
+  // and left open it would cover the progress shown under the toolbar.
+  anchor.addEventListener('click', hideNow);
   popover.addEventListener('mouseenter', cancelHide);
   popover.addEventListener('mouseleave', scheduleHide);
   popover.addEventListener('focusin', cancelHide);
@@ -340,6 +539,7 @@ function installRuninfoPopover(anchor: HTMLElement, setting: RuninfoSetting): ()
     anchor.removeEventListener('mouseenter', show);
     anchor.removeEventListener('mouseleave', scheduleHide);
     anchor.removeEventListener('focusin', show);
+    anchor.removeEventListener('click', hideNow);
     document.removeEventListener('keydown', onKeyDown);
     popover.remove();
   };
@@ -356,14 +556,20 @@ function getResponseManager(panel: NotebookPanel): CraneResponseManager {
 
 class CraneResponseManager {
   private responseEntries = new Map<any, ResponseEntry>();
+  /** Progress boxes of checks still under way, by cell model. */
+  private progressBoxes = new Map<any, HTMLDivElement>();
   private trackedCellModels = new WeakSet<any>();
   private executionCounts = new Map<any, number | null | undefined>();
   private connectedCells: any = null;
   /** Cells scheduled by the user that have not reported completion yet. */
   private pendingExecutions = 0;
+  /** The kernel the backend has been loaded into, so it is loaded once per kernel. */
+  private backendKernelId: string | null = null;
+  private loadingBackend = false;
 
   constructor(private panel: NotebookPanel) {
     this.attachSessionSignals();
+    void this.panel.sessionContext.ready.then(() => this.ensureBackendLoaded());
 
     // The document model is loaded asynchronously, so at the moment this
     // manager is created (when the panel is added to the tracker) the model is
@@ -414,10 +620,53 @@ class CraneResponseManager {
     this.refreshExecutionSnapshot();
   }
 
-  renderResponse(cell: any, response: string): void {
+  /**
+   * Show, under the cell, the steps of a check still under way: finished ones
+   * ticked, the current one last. Replaced by the verdict when it arrives.
+   */
+  showProgress(cell: any, done: string[], current: string): void {
+    let box = this.progressBoxes.get(cell.model);
+    if (!box) {
+      box = document.createElement('div');
+      box.className = 'crane-llm-progress';
+      box.style.cssText = [
+        'margin:8px 0 4px 0',
+        'padding:8px 12px',
+        `border-left:4px solid ${getToneColor('stale')}`,
+        'background:var(--jp-layout-color2)',
+        'border-radius:0 8px 8px 0',
+        'font-size:12px'
+      ].join(';');
+      // Inside the cell's node, for the same reason as the verdict box.
+      cell.node.appendChild(box);
+      this.progressBoxes.set(cell.model, box);
+    }
+    box.replaceChildren();
+    for (const step of done) {
+      const line = document.createElement('div');
+      line.textContent = `${t('progress.done_mark')} ${step}`;
+      line.style.cssText = 'opacity:0.7;';
+      box.appendChild(line);
+    }
+    const now = document.createElement('div');
+    now.textContent = t('progress.current', { step: current });
+    now.style.cssText = 'font-weight:700;';
+    box.appendChild(now);
+  }
+
+  clearProgress(cell: any): void {
+    const box = this.progressBoxes.get(cell?.model);
+    if (box) {
+      box.remove();
+      this.progressBoxes.delete(cell.model);
+    }
+  }
+
+  renderResponse(cell: any, verdict: Verdict, origins: Origin[]): void {
+    this.clearProgress(cell);
     this.removeEntry(cell.model);
 
-    const entry = this.createEntry(cell, response);
+    const entry = this.createEntry(cell, verdict, origins);
     this.responseEntries.set(cell.model, entry);
     this.refreshExecutionSnapshot();
   }
@@ -540,7 +789,46 @@ class CraneResponseManager {
       // would otherwise stay above zero and block analysis forever.
       this.pendingExecutions = 0;
       this.clearAll();
+      // A restarted kernel keeps its id but has lost the backend.
+      this.backendKernelId = null;
+    } else if (status === 'idle') {
+      this.ensureBackendLoaded();
     }
+  }
+
+  /**
+   * Load the backend into the kernel as soon as it is idle, not at the first
+   * check.
+   *
+   * The backend records what every cell does to the namespace, which is how a
+   * crash is traced back to the cell it comes from, but only for cells run
+   * after it is loaded. Cells run before that are known only from their code.
+   * A kernel without crane_llm installed fails the import; that is not
+   * retried and not reported, since the user has not asked for anything yet.
+   */
+  private ensureBackendLoaded(): void {
+    const kernel = this.panel.sessionContext.session?.kernel;
+    if (
+      !kernel ||
+      kernel.status !== 'idle' ||
+      this.loadingBackend ||
+      this.backendKernelId === kernel.id
+    ) {
+      return;
+    }
+    const kernelId = kernel.id;
+    this.loadingBackend = true;
+    // The trailing semicolon keeps IPython from displaying the return value,
+    // which would also overwrite the user's `_`.
+    requestKernelText(
+      this.panel,
+      'from crane_llm.nb_extension.api import load_crane_llm\nload_crane_llm();'
+    )
+      .catch(() => undefined)
+      .finally(() => {
+        this.backendKernelId = kernelId;
+        this.loadingBackend = false;
+      });
   }
 
   private handleKernelChanged(): void {
@@ -613,6 +901,7 @@ class CraneResponseManager {
 
     entry.container.remove();
     clearCellAccent(entry.cellNode);
+    clearOriginMarks(entry);
     this.responseEntries.delete(cellModel);
     return true;
   }
@@ -621,7 +910,12 @@ class CraneResponseManager {
     for (const entry of this.responseEntries.values()) {
       entry.container.remove();
       clearCellAccent(entry.cellNode);
+      clearOriginMarks(entry);
     }
+    for (const box of this.progressBoxes.values()) {
+      box.remove();
+    }
+    this.progressBoxes.clear();
 
     this.responseEntries.clear();
     this.executionCounts.clear();
@@ -637,12 +931,16 @@ class CraneResponseManager {
     }
   }
 
-  private createEntry(cell: any, response: string): ResponseEntry {
+  private createEntry(cell: any, verdict: Verdict, origins: Origin[]): ResponseEntry {
     const container = document.createElement('div');
     const header = document.createElement('div');
-    const titleNode = document.createElement('div');
+    const heading = document.createElement('div');
+    const titleNode = document.createElement('span');
+    const badgeNode = document.createElement('span');
     const closeButton = document.createElement('button');
-    const responseNode = document.createElement('pre');
+    const reasoningNode = document.createElement('div');
+    const noteNode = document.createElement('div');
+    const originsNode = document.createElement('div');
 
     container.className = 'crane-llm-result';
     container.style.cssText = [
@@ -655,24 +953,48 @@ class CraneResponseManager {
 
     header.style.cssText =
       'display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;';
+    heading.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:8px;';
 
     titleNode.style.cssText = 'font-size:12px;font-weight:700;';
 
+    // Who gave the verdict is the first thing to know about it: a built-in
+    // check is certain, a model prediction can be wrong.
+    badgeNode.textContent = sourceBadgeText(verdict);
+    badgeNode.title = sourceNoteText(verdict);
+    badgeNode.style.cssText = [
+      'font-size:11px',
+      'padding:1px 8px',
+      'border-radius:999px',
+      'white-space:nowrap',
+      verdict.certain
+        ? 'background:var(--jp-ui-font-color1);color:var(--jp-layout-color1);border:1px solid var(--jp-ui-font-color1);font-weight:700'
+        : 'background:transparent;color:var(--jp-ui-font-color2);border:1px solid var(--jp-border-color1)'
+    ].join(';');
+
     closeButton.type = 'button';
-    closeButton.textContent = 'Close';
+    closeButton.textContent = t('verdict.close');
     closeButton.className = 'jp-mod-styled jp-Button';
     closeButton.style.cssText = 'font-size:11px;padding:2px 8px;min-height:24px;';
     closeButton.onclick = () => {
       this.removeEntry(cell.model);
     };
 
-    responseNode.textContent = response;
-    responseNode.style.cssText = 'margin:0;white-space:pre-wrap;word-break:break-word;';
+    reasoningNode.textContent = verdict.reasoning;
+    reasoningNode.style.cssText = 'margin:0;white-space:pre-wrap;word-break:break-word;';
 
-    header.appendChild(titleNode);
+    noteNode.textContent = sourceNoteText(verdict);
+    noteNode.style.cssText = 'margin-top:6px;font-size:11px;opacity:0.7;';
+
+    heading.appendChild(titleNode);
+    heading.appendChild(badgeNode);
+    header.appendChild(heading);
     header.appendChild(closeButton);
     container.appendChild(header);
-    container.appendChild(responseNode);
+    if (verdict.reasoning) {
+      container.appendChild(reasoningNode);
+    }
+    container.appendChild(noteNode);
+    container.appendChild(originsNode);
 
     // Appended inside the cell's own node rather than beside it. A sibling
     // belongs to the notebook's Lumino layout, which addresses its children by
@@ -684,31 +1006,109 @@ class CraneResponseManager {
     const entry: ResponseEntry = {
       container,
       titleNode,
-      responseNode,
+      originsNode,
       cellNode: cell.node,
+      verdict,
+      originMarks: [],
       stale: false
     };
 
-    this.applyEntryStyle(entry, response);
+    this.renderOrigins(entry, cell, origins);
+    this.applyEntryStyle(entry);
     return entry;
   }
 
-  private applyEntryStyle(
-    entry: ResponseEntry,
-    responseText: string = entry.responseNode.textContent || ''
-  ): void {
-    const verdict = readVerdict(responseText);
+  /**
+   * List the cells the crash comes from, and mark those cells in the notebook.
+   *
+   * The cell under analysis is seldom where the mistake was made: the list
+   * names the cell that last set each blamed variable and every cell that
+   * changed it since, and each entry jumps to its cell.
+   */
+  private renderOrigins(entry: ResponseEntry, targetCell: any, origins: Origin[]): void {
+    if (!origins.length) {
+      return;
+    }
+
+    const heading = document.createElement('div');
+    heading.textContent = t('origins.heading');
+    heading.style.cssText = `margin-top:10px;font-size:12px;font-weight:700;color:${ORIGIN_COLOR};`;
+    entry.originsNode.appendChild(heading);
+
+    const targetLabel = cellLabel(this.panel, targetCell, null);
+
+    for (const origin of origins) {
+      const summary = document.createElement('div');
+      summary.textContent = origin.summary;
+      summary.style.cssText = 'margin-top:4px;font-size:12px;';
+      entry.originsNode.appendChild(summary);
+
+      for (const step of origin.steps) {
+        const cell = findCell(this.panel, step);
+        const edited = cell !== null && step.role !== 'defines' && cellSource(cell) !== step.source;
+        const label = cell ? cellLabel(this.panel, cell, step.execution_count) : t('origins.cell_missing');
+        const role = t(`origins.roles.${step.role}`);
+
+        const row = document.createElement('div');
+        row.style.cssText = [
+          'margin:3px 0 0 12px',
+          'padding:3px 8px',
+          `border-left:3px dashed ${ORIGIN_COLOR}`,
+          'font-size:12px',
+          cell ? 'cursor:pointer' : 'opacity:0.7'
+        ].join(';');
+
+        const where = document.createElement('span');
+        where.textContent = step.line
+          ? t('origins.step_line', { role, cell: label, line: step.line })
+          : t('origins.step', { role, cell: label });
+        where.style.cssText = cell ? `color:${ORIGIN_COLOR};text-decoration:underline;` : '';
+        row.appendChild(where);
+
+        if (step.line_text) {
+          const code = document.createElement('code');
+          code.textContent = step.line_text;
+          code.style.cssText = 'margin-left:6px;font-family:var(--jp-code-font-family);white-space:pre-wrap;';
+          row.appendChild(code);
+        }
+
+        const notes = [step.note, edited ? t('origins.edited') : ''].filter(Boolean);
+        if (notes.length) {
+          const note = document.createElement('span');
+          note.textContent = ` (${notes.join('; ')})`;
+          note.style.cssText = 'opacity:0.7;';
+          row.appendChild(note);
+        }
+
+        if (cell) {
+          row.title = t('origins.go_to_cell');
+          row.onclick = () => revealCell(this.panel, cell);
+          entry.originMarks.push(markOriginCell(cell, origin.variable, step, targetLabel));
+        }
+        entry.originsNode.appendChild(row);
+      }
+    }
+  }
+
+  private applyEntryStyle(entry: ResponseEntry): void {
+    const verdict = entry.verdict;
     const tone: PredictionTone = entry.stale ? 'stale' : verdict.tone;
     const color = getToneColor(tone);
 
     entry.container.style.borderLeftColor = color;
-    entry.titleNode.textContent = entry.stale
-      ? `CRANE-LLM: ${verdict.label} (stale)`
-      : `CRANE-LLM: ${verdict.label}`;
+    entry.titleNode.textContent = t(entry.stale ? 'verdict.title_stale' : 'verdict.title', {
+      label: verdict.label
+    });
 
     // Also mark the cell itself, which is where the verdict is actually
     // looked for. An inset shadow rather than a border, so nothing reflows.
     entry.cellNode.style.boxShadow = `inset 4px 0 0 0 ${color}`;
+
+    // Once stale, the origins describe a kernel state that has moved on.
+    if (entry.stale) {
+      clearOriginMarks(entry);
+      entry.originsNode.style.opacity = '0.5';
+    }
   }
 }
 
@@ -716,6 +1116,113 @@ function clearCellAccent(cellNode: HTMLElement | undefined): void {
   if (cellNode) {
     cellNode.style.boxShadow = '';
   }
+}
+
+function sourceBadgeText(verdict: Verdict): string {
+  if (verdict.certain) {
+    return t('verdict.badge_check');
+  }
+  if (verdict.source === 'check') {
+    return t('verdict.badge_check_only');
+  }
+  return verdict.model
+    ? t('verdict.badge_model', { model: verdict.model })
+    : t('verdict.badge_model_no_name');
+}
+
+/** Mirrors ui.source_note in the backend. */
+function sourceNoteText(verdict: Verdict): string {
+  if (verdict.certain) {
+    return t('verdict.note_check');
+  }
+  if (verdict.source === 'check') {
+    return t('verdict.note_check_only');
+  }
+  if (verdict.checks_ran) {
+    return t('verdict.note_model_after_check');
+  }
+  return t('verdict.note_model_code_only');
+}
+
+/** The cell a step refers to: by notebook id, or by source for cells replayed from history. */
+function findCell(panel: NotebookPanel, step: OriginStep): any | null {
+  const widgets = panel.content.widgets;
+  for (const widget of widgets) {
+    if (widget.model.type === 'code' && cellId(widget) === step.cell_id) {
+      return widget;
+    }
+  }
+  for (const widget of widgets) {
+    if (widget.model.type === 'code' && cellSource(widget) === step.source) {
+      return widget;
+    }
+  }
+  return null;
+}
+
+/** "cell [7]" after its execution count, or "cell #3" after its position when it has none. */
+function cellLabel(panel: NotebookPanel, cell: any, executionCount: number | null): string {
+  const count = executionCount ?? cell?.model?.executionCount;
+  if (typeof count === 'number') {
+    return t('origins.cell_with_count', { count });
+  }
+  const index = panel.content.widgets.indexOf(cell);
+  return index >= 0 ? t('origins.cell_with_position', { position: index + 1 }) : t('origins.cell_unknown');
+}
+
+function revealCell(panel: NotebookPanel, cell: any): void {
+  const index = panel.content.widgets.indexOf(cell);
+  if (index < 0) {
+    return;
+  }
+  panel.content.activeCellIndex = index;
+  const notebook = panel.content as any;
+  if (typeof notebook.scrollToCell === 'function') {
+    void notebook.scrollToCell(cell, 'center');
+  } else {
+    cell.node.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+}
+
+/** Outline an origin cell and say, inside it, what it did. */
+function markOriginCell(cell: any, variable: string, step: OriginStep, targetLabel: string): OriginMark {
+  const cellNode: HTMLElement = cell.node;
+  const count = ORIGIN_MARK_COUNTS.get(cellNode) ?? 0;
+  ORIGIN_MARK_COUNTS.set(cellNode, count + 1);
+  cellNode.style.outline = `2px dashed ${ORIGIN_COLOR}`;
+  cellNode.style.outlineOffset = '-2px';
+
+  const noteNode = document.createElement('div');
+  noteNode.className = 'crane-llm-origin-note';
+  const action =
+    step.role === 'defines' ? t('origins.cell_note_action_defines') : t(`origins.roles.${step.role}`);
+  noteNode.textContent = step.line
+    ? t('origins.cell_note_line', { action, variable, line: step.line, target: targetLabel })
+    : t('origins.cell_note', { action, variable, target: targetLabel });
+  noteNode.style.cssText = [
+    'margin:6px 0 4px 0',
+    'padding:4px 10px',
+    `border-left:4px dashed ${ORIGIN_COLOR}`,
+    'background:var(--jp-layout-color2)',
+    'border-radius:0 6px 6px 0',
+    'font-size:12px',
+    `color:${ORIGIN_COLOR}`
+  ].join(';');
+  cellNode.appendChild(noteNode);
+  return { cellNode, noteNode };
+}
+
+function clearOriginMarks(entry: ResponseEntry): void {
+  for (const mark of entry.originMarks) {
+    mark.noteNode.remove();
+    const count = (ORIGIN_MARK_COUNTS.get(mark.cellNode) ?? 1) - 1;
+    ORIGIN_MARK_COUNTS.set(mark.cellNode, count);
+    if (count <= 0) {
+      mark.cellNode.style.outline = '';
+      mark.cellNode.style.outlineOffset = '';
+    }
+  }
+  entry.originMarks = [];
 }
 
 function getToneColor(tone: PredictionTone): string {
@@ -728,57 +1235,13 @@ function getToneColor(tone: PredictionTone): string {
   if (tone === 'stale') {
     return '#6b7280';
   }
+  if (tone === 'none') {
+    // Neither green nor red: the checker found nothing, which is not "safe".
+    return '#0369a1';
+  }
   // 'unknown' must not reuse the brand colour, which is also the container's
   // default border: an unreadable response would then look like no verdict.
   return '#d97706';
-}
-
-/** Tolerate the model wrapping its JSON object in a Markdown code fence. */
-function stripCodeFence(text: string): string {
-  const match = /^\s*```(?:json)?\s*([\s\S]*?)\s*```\s*$/i.exec(text);
-  return match ? match[1] : text;
-}
-
-/** The outermost {...} span, for responses that carry prose around the object. */
-function firstJsonObject(text: string): string | null {
-  const start = text.indexOf('{');
-  const end = text.lastIndexOf('}');
-  return start !== -1 && end > start ? text.slice(start, end + 1) : null;
-}
-
-function parseResponseJson(responseText: string): Record<string, unknown> | null {
-  for (const candidate of [responseText, stripCodeFence(responseText), firstJsonObject(responseText)]) {
-    if (!candidate) {
-      continue;
-    }
-    try {
-      const parsed = JSON.parse(candidate);
-      if (parsed && typeof parsed === 'object') {
-        return parsed as Record<string, unknown>;
-      }
-    } catch (_error) {
-      // Try the next candidate.
-    }
-  }
-  return null;
-}
-
-function readVerdict(responseText: string): Verdict {
-  const parsed = parseResponseJson(responseText);
-
-  if (parsed) {
-    // `prediction` is this extension's schema; `detection` is the key the
-    // offline experiment prompts use. Accept either.
-    const raw = 'prediction' in parsed ? parsed.prediction : parsed.detection;
-    if (raw === true || raw === 'true') {
-      return { tone: 'crash', label: 'crash predicted' };
-    }
-    if (raw === false || raw === 'false') {
-      return { tone: 'safe', label: 'no crash predicted' };
-    }
-  }
-
-  return { tone: 'unknown', label: 'response not understood' };
 }
 
 function cellSource(cell: any): string {
@@ -826,10 +1289,14 @@ function cellId(cell: any): string {
  * stream message too, so library warnings and progress bars would otherwise be
  * spliced into whatever the caller parses out of the result.
  */
-function requestKernelText(panel: NotebookPanel, code: string): Promise<string> {
+function requestKernelText(
+  panel: NotebookPanel,
+  code: string,
+  onStdout?: (text: string) => void
+): Promise<string> {
   const kernel = panel.sessionContext.session?.kernel;
   if (!kernel) {
-    return Promise.reject(new Error('No kernel is connected to this notebook.'));
+    return Promise.reject(new Error(t('errors.no_kernel')));
   }
 
   return new Promise<string>((resolve, reject) => {
@@ -846,11 +1313,7 @@ function requestKernelText(panel: NotebookPanel, code: string): Promise<string> 
     const timer = setTimeout(() => {
       future.dispose();
       reject(
-        new Error(
-          `The kernel did not respond within ${Math.round(
-            KERNEL_TIMEOUT_MS / 1000
-          )}s. It may still be busy running another cell.`
-        )
+        new Error(t('errors.kernel_timeout', { seconds: Math.round(KERNEL_TIMEOUT_MS / 1000) }))
       );
     }, KERNEL_TIMEOUT_MS);
 
@@ -867,6 +1330,7 @@ function requestKernelText(panel: NotebookPanel, code: string): Promise<string> 
           stderr += content.text ?? '';
         } else {
           stdout += content.text ?? '';
+          onStdout?.(content.text ?? '');
         }
       } else if (msgType === 'error') {
         const content = message.content as { ename?: string; evalue?: string };
@@ -895,9 +1359,7 @@ function extractPayload(streamText: string): CranePayload {
   const end = streamText.lastIndexOf(PAYLOAD_END);
 
   if (start === -1 || end === -1 || end < start) {
-    throw new Error(
-      `The kernel did not return a CRANE-LLM payload. Output was:\n${streamText.trim()}`
-    );
+    throw new Error(t('errors.no_payload', { output: streamText.trim() }));
   }
 
   return JSON.parse(
@@ -922,15 +1384,15 @@ function notebookNotReadyReason(
   const kernel = panel.sessionContext.session?.kernel;
 
   if (!kernel) {
-    return 'No kernel is connected to this notebook. Start the kernel first.';
+    return t('errors.no_kernel');
   }
 
   if (kernel.status === 'dead') {
-    return 'The kernel is not running. Restart it first.';
+    return t('errors.kernel_dead');
   }
 
   if (kernel.status === 'restarting' || kernel.status === 'autorestarting') {
-    return 'The kernel is restarting. Wait for it to come back, then try again.';
+    return t('errors.kernel_restarting');
   }
 
   // Two independent signals. The counter catches cells queued through the
@@ -938,7 +1400,7 @@ function notebookNotReadyReason(
   // and covers the brief gap between two queued cells where the counter has
   // been decremented but the kernel is still busy.
   if (manager.hasPendingExecutions || kernel.status === 'busy') {
-    return 'CRANE-LLM cannot run while the notebook is executing. Wait for the running cells to finish, then try again.';
+    return t('errors.notebook_busy');
   }
 
   return null;
@@ -948,11 +1410,11 @@ async function runAnalysis(
   app: JupyterFrontEnd,
   panel: NotebookPanel,
   sidebar: CraneSidebar,
-  setting: RuninfoSetting
+  settings: CraneSettings
 ): Promise<void> {
   const activeCell = panel.content.activeCell;
   if (!activeCell || activeCell.model.type !== 'code') {
-    await showErrorMessage('CRANE-LLM', 'Select a code cell first.');
+    await showErrorMessage(t('errors.dialog_title'), t('errors.select_code_cell'));
     return;
   }
 
@@ -964,9 +1426,9 @@ async function runAnalysis(
 
   const notReadyReason = notebookNotReadyReason(panel, getResponseManager(panel));
   if (notReadyReason) {
-    sidebar.setStatus('not run: the notebook is busy');
+    sidebar.setStatus(t('sidebar.status_busy'));
     sidebar.setResponse(notReadyReason);
-    await showErrorMessage('CRANE-LLM', notReadyReason);
+    await showErrorMessage(t('errors.dialog_title'), notReadyReason);
     return;
   }
 
@@ -976,16 +1438,55 @@ async function runAnalysis(
     const responseManager = getResponseManager(panel);
     responseManager.clearResponseForCell(activeCell);
 
-    const includeRuninfo = setting.get();
+    const includeRuninfo = settings.runinfo.get();
+    const useLlm = settings.llm.get();
 
     app.shell.activateById(SIDEBAR_ID);
-    sidebar.setStatus(
-      includeRuninfo
-        ? 'building prompt with runtime information...'
-        : 'building prompt from executed code only...'
-    );
+    sidebar.resetSteps();
     sidebar.setPrompt('');
     sidebar.setResponse('');
+
+    // Each step is shown in the sidebar and under the cell as the backend
+    // reports it, so a check that falls through to the model says so.
+    const done: string[] = [];
+    let current = '';
+    const showStep = (text: string) => {
+      if (current && current !== STARTING) {
+        done.push(current);
+      }
+      current = text;
+      sidebar.showStep(text);
+      responseManager.showProgress(activeCell, done, text);
+    };
+    showStep(STARTING);
+
+    let pending = '';
+    const onStdout = (text: string) => {
+      pending += text;
+      const lines = pending.split('\n');
+      pending = lines.pop() ?? '';
+      for (const line of lines) {
+        const at = line.indexOf(STAGE_MARKER);
+        if (at === -1) {
+          continue;
+        }
+        try {
+          const event = JSON.parse(line.slice(at + STAGE_MARKER.length)) as StageEvent;
+          showStep(stageMessage(event));
+          if (event.prompt) {
+            sidebar.setPrompt(event.prompt);
+          }
+        } catch (_error) {
+          // A malformed progress line only costs the progress display.
+        }
+      }
+    };
+
+    // Every code cell of the notebook, so that a variable that does not exist
+    // can be traced to the cell that would define it.
+    const notebookCells = panel.content.widgets
+      .filter(widget => widget.model.type === 'code')
+      .map(widget => ({ id: cellId(widget), source: cellSource(widget) }));
 
     // A single round trip. Fetching the prompt into the browser and posting it
     // back for the LLM call doubled the latency and made the prompt itself
@@ -998,29 +1499,34 @@ async function runAnalysis(
           cellSource(activeCell)
         )}, cell_id=${JSON.stringify(cellId(activeCell))}, include_runinfo=${
           includeRuninfo ? 'True' : 'False'
-        }))`
-      ].join('\n')
+        }, use_llm=${useLlm ? 'True' : 'False'}, notebook_cells_json=${JSON.stringify(
+          JSON.stringify(notebookCells)
+        )}))`
+      ].join('\n'),
+      onStdout
     );
 
     const payload = extractPayload(streamText);
     sidebar.setPrompt(payload.prompt ?? '');
 
-    if (!payload.ok) {
-      sidebar.setStatus('error');
-      sidebar.setResponse(payload.error || 'The kernel reported an unknown error.');
+    if (!payload.ok || !payload.verdict) {
+      sidebar.setStatus(t('sidebar.status_error'));
+      sidebar.setResponse(payload.error || t('errors.unknown_error'));
       return;
     }
 
-    sidebar.setStatus(includeRuninfo ? 'done' : 'done, without runtime information');
-    sidebar.setResponse(payload.response);
-    responseManager.renderResponse(activeCell, payload.response);
+    sidebar.showStep('');
+    sidebar.showVerdict(payload);
+    responseManager.renderResponse(activeCell, payload.verdict, payload.origins ?? []);
   } finally {
+    // On failure the error is in the sidebar; the progress box must not stay.
+    getResponseManager(panel).clearProgress(activeCell);
     RUNNING_PANELS.delete(panel);
   }
 }
 
 function reportError(sidebar: CraneSidebar, error: unknown): void {
-  sidebar.setStatus('error');
+  sidebar.setStatus(t('sidebar.status_error'));
   sidebar.setResponse(error instanceof Error ? error.message : String(error));
 }
 
@@ -1028,7 +1534,7 @@ function installToolbarButton(
   panel: NotebookPanel,
   app: JupyterFrontEnd,
   sidebar: CraneSidebar,
-  setting: RuninfoSetting
+  settings: CraneSettings
 ): void {
   if (INSTALLED_PANELS.has(panel)) {
     return;
@@ -1038,10 +1544,10 @@ function installToolbarButton(
   getResponseManager(panel);
 
   const button = new ToolbarButton({
-    label: 'CRANE-LLM',
-    tooltip: 'Predict whether the selected cell will crash',
+    label: t('toolbar.label'),
+    tooltip: t('toolbar.tooltip'),
     onClick: () => {
-      void runAnalysis(app, panel, sidebar, setting).catch(error =>
+      void runAnalysis(app, panel, sidebar, settings).catch(error =>
         reportError(sidebar, error)
       );
     }
@@ -1051,7 +1557,7 @@ function installToolbarButton(
 
   // The switch also lives here, so it is discoverable without opening the
   // sidebar. Torn down with the panel to avoid orphaning it on document.body.
-  const teardown = installRuninfoPopover(button.node, setting);
+  const teardown = installSwitchPopover(button.node, settings);
   panel.disposed.connect(() => teardown());
 }
 
@@ -1065,73 +1571,87 @@ const plugin: JupyterFrontEndPlugin<void> = {
     tracker: INotebookTracker,
     palette: ICommandPalette | null
   ) => {
-    const setting = new RuninfoSetting();
-    const sidebar = new CraneSidebar(setting);
+    const settings: CraneSettings = {
+      runinfo: new ToggleSetting('crane-llm:include-runinfo'),
+      llm: new ToggleSetting('crane-llm:use-llm')
+    };
+    const sidebar = new CraneSidebar(settings);
     sidebar.id = SIDEBAR_ID;
-    sidebar.title.label = 'CRANE-LLM';
-    sidebar.title.caption = 'CRANE-LLM prompt and response';
+    sidebar.title.label = t('sidebar.title');
+    sidebar.title.caption = t('sidebar.caption');
     sidebar.title.closable = true;
     app.shell.add(sidebar, 'right');
 
     const execute = async () => {
       const panel = tracker.currentWidget;
       if (!panel) {
-        await showErrorMessage('CRANE-LLM', 'Open a notebook first.');
+        await showErrorMessage(t('errors.dialog_title'), t('errors.open_notebook'));
         return;
       }
 
       // The command registry swallows rejections, so a failure triggered from
       // the palette has to be surfaced here.
       try {
-        await runAnalysis(app, panel, sidebar, setting);
+        await runAnalysis(app, panel, sidebar, settings);
       } catch (error) {
         reportError(sidebar, error);
         await showErrorMessage(
-          'CRANE-LLM',
+          t('errors.dialog_title'),
           error instanceof Error ? error.message : String(error)
         );
       }
     };
 
     app.commands.addCommand(COMMAND_ID, {
-      label: 'Run CRANE-LLM',
-      caption: 'Build the CRANE prompt from the active notebook cell and run the LLM',
+      label: t('commands.run_label'),
+      caption: t('commands.run_caption'),
       execute
     });
 
     app.commands.addCommand(TOGGLE_RUNINFO_COMMAND_ID, {
-      label: 'CRANE-LLM: Include Runtime Information',
-      caption:
-        'Include the live kernel state in the prompt. When off, only the executed cells and the target cell are sent.',
+      label: t('commands.toggle_label'),
+      caption: t('commands.toggle_caption'),
       isToggleable: true,
-      isToggled: () => setting.get(),
-      execute: () => setting.toggle()
+      isToggled: () => settings.runinfo.get(),
+      execute: () => settings.runinfo.toggle()
+    });
+
+    app.commands.addCommand(TOGGLE_LLM_COMMAND_ID, {
+      label: t('commands.toggle_llm_label'),
+      caption: t('commands.toggle_llm_caption'),
+      isToggleable: true,
+      isToggled: () => settings.llm.get(),
+      execute: () => settings.llm.toggle()
     });
 
     // Keep the palette's checkmark correct when the switch is changed from the
     // sidebar or the toolbar popover instead.
-    setting.subscribe(() => {
+    settings.runinfo.subscribe(() => {
       app.commands.notifyCommandChanged(TOGGLE_RUNINFO_COMMAND_ID);
+    });
+    settings.llm.subscribe(() => {
+      app.commands.notifyCommandChanged(TOGGLE_LLM_COMMAND_ID);
     });
 
     if (palette) {
       palette.addItem({ command: COMMAND_ID, category: 'Notebook' });
       palette.addItem({ command: TOGGLE_RUNINFO_COMMAND_ID, category: 'Notebook' });
+      palette.addItem({ command: TOGGLE_LLM_COMMAND_ID, category: 'Notebook' });
     }
 
     tracker.widgetAdded.connect((_sender, panel) => {
-      installToolbarButton(panel, app, sidebar, setting);
+      installToolbarButton(panel, app, sidebar, settings);
     });
 
     tracker.currentChanged.connect(() => {
       const panel = tracker.currentWidget;
       if (panel) {
-        installToolbarButton(panel, app, sidebar, setting);
+        installToolbarButton(panel, app, sidebar, settings);
       }
     });
 
     tracker.forEach(panel => {
-      installToolbarButton(panel, app, sidebar, setting);
+      installToolbarButton(panel, app, sidebar, settings);
     });
   }
 };

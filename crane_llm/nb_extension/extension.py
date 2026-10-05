@@ -1,27 +1,33 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import List, Optional
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional
 
 from IPython import get_ipython
 
-from .assistant import CraneNotebookAssistant
+from .assistant import CraneNotebookAssistant, PromptBuildingError
 from .cell_filter import is_internal_helper_cell
 from .ipython_hooks import IPythonSessionTracker
+from .provenance import Origin
 from .session_state import NotebookSessionState
+from .texts import text
+from .verdict import Verdict
 
 
 @dataclass
 class NotebookExtensionResult:
+    # Both empty when a built-in check answered without calling the model.
     prompt: str
     response: str
+    verdict: Verdict
+    origins: List[Origin] = field(default_factory=list)
 
 
 class CraneNotebookExtension:
     """High-level notebook entry point.
 
-    Coordinates session tracking, prompt generation, the magic's cell output,
-    and the single-shot LLM call.
+    Coordinates session tracking, the built-in checks, prompt generation, the
+    magic's cell output, and the single-shot LLM call.
     """
 
     def __init__(self, model: Optional[str] = None):
@@ -91,17 +97,27 @@ class CraneNotebookExtension:
         execution_count: Optional[int] = None,
         render: bool = True,
         include_runinfo: bool = True,
+        notebook_cells: Optional[List[Dict[str, str]]] = None,
+        use_llm: bool = True,
     ) -> NotebookExtensionResult:
         self.set_target_cell(cell_id=cell_id, source=source, execution_count=execution_count)
-        return self.run(shell=shell, render=render, include_runinfo=include_runinfo)
+        return self.run(
+            shell=shell,
+            render=render,
+            include_runinfo=include_runinfo,
+            notebook_cells=notebook_cells,
+            use_llm=use_llm,
+        )
 
     def run(
         self,
         shell=None,
         render: bool = True,
         include_runinfo: bool = True,
+        notebook_cells: Optional[List[Dict[str, str]]] = None,
+        use_llm: bool = True,
     ) -> NotebookExtensionResult:
-        """Build the prompt and call the model.
+        """Judge the target cell: built-in checks first, then the model.
 
         With ``render`` the progress and the verdict are shown as this cell's
         output. Failures are shown there too and then re-raised, so a caller
@@ -113,30 +129,39 @@ class CraneNotebookExtension:
             from .ui import VerdictView
 
             view = VerdictView()
-            view.show(
-                "collecting runtime information..." if include_runinfo else "building the prompt..."
+            view.show(text("progress.starting"))
+
+        def progress(stage: str, prompt: str) -> None:
+            if view is None:
+                return
+            if prompt:
+                view.set_prompt(prompt)
+            view.progress(stage, self.model)
+
+        try:
+            result = self.assistant.run(
+                shell=shell,
+                include_runinfo=include_runinfo,
+                notebook_cells=notebook_cells,
+                progress=progress,
+                use_llm=use_llm,
             )
-
-        try:
-            prompt = self.assistant.build_prompt(shell=shell, include_runinfo=include_runinfo)
-        except Exception as exc:
+        except PromptBuildingError as exc:
             if view is not None:
-                view.show_error(f"Prompt building failed. {type(exc).__name__}: {exc}")
+                view.show_error(str(exc))
             raise
-
-        if view is not None:
-            view.set_prompt(prompt)
-            view.set_status("waiting for the model...")
-
-        try:
-            response = self.assistant.call_llm(prompt, include_runinfo=include_runinfo)
         except Exception as exc:
             if view is not None:
                 view.show_error(f"{type(exc).__name__}: {exc}")
             raise
 
         if view is not None:
-            view.show_result(response)
+            view.show_result(result.verdict, result.origins, result.response)
             self._live_views.append(view)
 
-        return NotebookExtensionResult(prompt=prompt, response=response)
+        return NotebookExtensionResult(
+            prompt=result.prompt,
+            response=result.response,
+            verdict=result.verdict,
+            origins=result.origins,
+        )

@@ -482,13 +482,343 @@ def check_requests_do_not_offer_brotli():
     assert "br" not in [part.strip() for part in offered.split(",")], offered
 
 
-def check_verdict_is_read_like_the_frontend():
-    from crane_llm.nb_extension.ui import read_verdict
+def check_model_responses_are_read():
+    from crane_llm.nb_extension.verdict import verdict_from_response
 
-    assert read_verdict('{"reasoning": "r", "prediction": true}') == ("crash", "crash predicted", "r")
-    assert read_verdict('```json\n{"prediction": false}\n```')[0] == "safe"
-    assert read_verdict('Sure: {"detection": "true", "reasoning": "x"}')[0] == "crash"
-    assert read_verdict("no idea")[0] == "unknown"
+    verdict = verdict_from_response('{"reasoning": "r", "prediction": true}', model="m")
+    assert (verdict.tone, verdict.label, verdict.reasoning) == ("crash", "crash predicted", "r")
+    assert verdict.source == "model" and not verdict.certain and verdict.model == "m"
+    assert verdict_from_response('```json\n{"prediction": false}\n```').tone == "safe"
+    assert verdict_from_response('Sure: {"detection": "true", "reasoning": "x"}').tone == "crash"
+    assert verdict_from_response("no idea").tone == "unknown"
+
+    # Blamed variables are reduced to the notebook names they start from.
+    blamed = verdict_from_response(
+        '{"reasoning": "r", "prediction": true, "variables": ["model.coef_", "X_test", 3]}'
+    )
+    assert blamed.variables == ["model", "X_test"], blamed.variables
+
+
+def _run_target(code: str, namespace: dict):
+    """Run a target cell for real, returning the exception it raised, if any."""
+
+    try:
+        exec(compile(code, "<cell>", "exec"), namespace)
+    except Exception as exc:
+        return exc
+    return None
+
+
+def check_builtin_checks_are_certain():
+    """Every crash a check reports must really happen, with that exception.
+
+    Each case is checked against the namespace first, then actually run.
+    """
+
+    from crane_llm.nb_extension.checks import run_checks
+
+    def namespace():
+        return {"nothing": None, "d": {"a": 1}, "lst": [1, 2, 3], "n": 0, "s": "abc"}
+
+    cases = [
+        ("undefined_thing + 1", "undefined-name"),
+        ("nothing.head()", "missing-attribute"),
+        ("nothing['a']", "not-subscriptable"),
+        ("len(nothing)", "len-unsized"),
+        ("nothing + 1", "operand-types"),
+        ("d['b']", "missing-key"),
+        ("lst[3]", "index-range"),
+        ("1 / n", "division-by-zero"),
+        ("int('3.5')", "conversion"),
+        ("a, b = lst", "unpack-count"),
+        ("import os\nos.nope", "missing-attribute"),
+        ("print(len(lst))\nd['b']", "missing-key"),
+        ("x = 1\nx.nope", "missing-attribute"),
+    ]
+    try:
+        import numpy as np
+        import pandas as pd
+    except ImportError:
+        pass
+    else:
+        def namespace(base=namespace):
+            ns = base()
+            ns.update(
+                np=np,
+                pd=pd,
+                df=pd.DataFrame({"age": [1, 2, 3], "fare": [4.0, 5.0, 6.0]}),
+                X=np.ones((5, 3)),
+                X4=np.ones((2, 4)),
+            )
+            return ns
+
+        cases += [
+            ("df['agee']", "missing-column"),
+            ("df[['age', 'fair']]", "missing-column"),
+            ("df.head()\ndf.drop(columns=['nope'])", "missing-column"),
+            ("df.groupby('nope')", "missing-column"),
+            ("df.nope", "missing-attribute"),
+            ("df['new'] = [1, 2]", "column-length"),
+            ("X @ X", "matmul-shape"),
+            ("X + X4", "broadcast"),
+            ("np.concatenate([X, X4])", "concatenate-shape"),
+            ("X.reshape(4, 4)", "reshape-size"),
+            ("X[5]", "index-range"),
+        ]
+
+    for code, rule in cases:
+        finding = run_checks(code, namespace())
+        assert finding is not None and finding.rule == rule, (code, finding)
+        raised = _run_target(code, namespace())
+        assert raised is not None, f"{code!r} was reported to crash but ran"
+        assert type(raised).__name__ == finding.exception, (code, raised, finding.exception)
+
+
+def check_builtin_checks_stop_at_unknown_code():
+    """Past code whose effect is unknown, nothing is claimed.
+
+    Each of these would crash on the namespace as it is now, but what runs
+    first may change that, so the model must be asked instead.
+    """
+
+    from crane_llm.nb_extension.checks import run_checks
+
+    def namespace():
+        return {"d": {"a": 1}, "lst": [1, 2, 3], "helper": lambda: None}
+
+    for code in (
+        "try:\n    d['b']\nexcept KeyError:\n    pass",
+        "for i in range(3):\n    d['b']",
+        "if lst:\n    d['b']",
+        "helper()\nd['b']",
+        "d.update(b=2)\nd['b']",
+        "lst.append(4)\nlst[3]",
+        "del d\nd['b']",
+        "def f():\n    return d['b']",
+        "d['b'] = 2\nd['b']",
+        "%matplotlib inline",
+    ):
+        assert run_checks(code, namespace()) is None, code
+
+
+def check_check_answers_without_calling_the_model():
+    """A certain crash is reported as a check, and the model is not called."""
+
+    extension = CraneNotebookExtension()
+
+    def no_model(prompt, include_runinfo=True):
+        raise AssertionError("the model must not be called when a check answers")
+
+    extension.assistant.call_llm = no_model
+    extension.set_target_cell("t", "df.head()")
+    result = extension.assistant.run(shell=FakeShell({"df": None}), include_runinfo=True)
+
+    assert result.verdict.certain and result.verdict.source == "check"
+    assert result.verdict.tone == "crash" and result.verdict.label == "will crash"
+    assert result.verdict.variables == ["df"]
+    assert result.prompt == "" and result.response == ""
+
+    # With runtime information switched off, the checks, which read the live
+    # kernel state, must not run either.
+    extension.assistant.call_llm = lambda prompt, include_runinfo=True: '{"prediction": false}'
+    result = extension.assistant.run(shell=FakeShell({"df": None}), include_runinfo=False)
+    assert result.verdict.source == "model"
+
+
+def check_progress_says_the_checker_found_nothing():
+    """When the checker finds nothing, the steps say so before the model is asked."""
+
+    extension = CraneNotebookExtension()
+    extension.assistant.call_llm = lambda prompt, include_runinfo=True: '{"prediction": false}'
+
+    def stages(source, namespace, include_runinfo=True):
+        seen = []
+        extension.set_target_cell("t", source)
+        result = extension.assistant.run(
+            shell=FakeShell(namespace),
+            include_runinfo=include_runinfo,
+            progress=lambda stage, prompt: seen.append(stage),
+        )
+        return seen, result.verdict
+
+    seen, verdict = stages("df.head()", {"df": None})
+    assert seen == ["checking"], seen
+    assert verdict.certain
+
+    seen, verdict = stages("x = 1", {})
+    assert seen == ["checking", "no-finding", "building", "waiting"], seen
+    assert verdict.checks_ran and not verdict.certain
+
+    seen, verdict = stages("x = 1", {}, include_runinfo=False)
+    assert seen == ["building", "waiting"], seen
+    assert not verdict.checks_ran
+
+
+def check_llm_switched_off_runs_only_the_checker():
+    """With the LLM off nothing is sent, and finding nothing is not "safe"."""
+
+    extension = CraneNotebookExtension()
+
+    def no_model(prompt, include_runinfo=True):
+        raise AssertionError("the model must not be called with the LLM switched off")
+
+    extension.assistant.call_llm = no_model
+
+    def judge(source, namespace, include_runinfo=True):
+        seen = []
+        extension.set_target_cell("t", source)
+        result = extension.assistant.run(
+            shell=FakeShell(namespace),
+            include_runinfo=include_runinfo,
+            use_llm=False,
+            progress=lambda stage, prompt: seen.append(stage),
+        )
+        return seen, result
+
+    seen, result = judge("df.head()", {"df": None})
+    assert result.verdict.certain and seen == ["checking"]
+
+    seen, result = judge("x = 1", {})
+    verdict = result.verdict
+    assert verdict.tone == "none" and verdict.source == "check" and not verdict.certain, verdict
+    assert seen == ["checking"] and result.prompt == "" and result.origins == []
+
+    # The checker still runs with runtime information off, since nothing is
+    # sent anywhere and there is no code-only comparison to protect.
+    seen, result = judge("df.head()", {"df": None}, include_runinfo=False)
+    assert result.verdict.certain
+
+    from crane_llm.nb_extension.ui import source_badge, source_note
+    from crane_llm.nb_extension.texts import text
+
+    assert source_badge(verdict) == text("verdict.badge_check_only")
+    assert source_note(verdict) == text("verdict.note_check_only")
+
+
+def check_every_text_key_exists():
+    """Every text the code asks for must be in ui_texts.json, in both halves."""
+
+    import json
+    import re
+    from pathlib import Path
+
+    from crane_llm.nb_extension.texts import TEXTS_PATH
+
+    texts = json.loads(TEXTS_PATH.read_text(encoding="utf-8"))
+    here = Path(__file__).parent
+
+    used = set()
+    for path in here.glob("*.py"):
+        used |= set(re.findall(r"""\btext\(\s*f?["']([\w.]+)["']""", path.read_text(encoding="utf-8")))
+    source = (here / "src" / "index.ts").read_text(encoding="utf-8")
+    used |= set(re.findall(r"""\bt\(\s*'([\w.]+)'""", source))
+    # Keys built at runtime: one per origin role.
+    used |= {f"origins.roles.{role}" for role in
+             ("assigned", "modified", "possibly_modified", "deleted", "defines")}
+
+    missing = []
+    for key in sorted(used):
+        node = texts
+        for part in key.split("."):
+            node = node.get(part) if isinstance(node, dict) else None
+        if not isinstance(node, str):
+            missing.append(key)
+    assert not missing, f"missing from ui_texts.json: {missing}"
+    assert len(used) > 50, len(used)
+
+
+def check_cell_writes_are_recorded():
+    """Assignments, in-place changes and deletions are told apart."""
+
+    from crane_llm.nb_extension.provenance import ProvenanceLog
+
+    log = ProvenanceLog()
+    ns = {"lst": [1, 2], "d": {"a": 1}, "gone": 1}
+
+    def run(cell_id, code, succeeded=True):
+        log.before_cell(code, ns)
+        error = _run_target(code, ns)
+        log.after_cell(code, cell_id, execution_count=len(log.events) + 1,
+                       succeeded=succeeded and error is None, namespace=ns)
+
+    run("c1", "x = 1\nlst.append(3)")
+    run("c2", "del gone")
+    run("c3", "d['b'] = 2")
+    run("c4", "y = 5\nraise ValueError('halfway')")
+
+    events = {event.cell_id: event for event in log.events}
+    assert events["c1"].assigned == {"x": 1}
+    assert events["c1"].modified == {"lst": 2}
+    assert events["c2"].deleted == {"gone": 1}
+    assert "d" in events["c3"].modified
+    # A cell that raised halfway still changed the state before it raised.
+    assert events["c4"].assigned == {"y": 1} and not events["c4"].succeeded
+
+
+def check_origins_lead_to_the_responsible_cells():
+    from crane_llm.nb_extension.provenance import ProvenanceLog, locate_origins
+
+    log = ProvenanceLog()
+    ns = {}
+
+    def run(cell_id, code):
+        log.before_cell(code, ns)
+        error = _run_target(code, ns)
+        log.after_cell(code, cell_id, execution_count=None, succeeded=error is None, namespace=ns)
+
+    run("c1", "data = [1, 2, 3]")
+    run("c2", "data.append(4)")
+    run("c3", "data = data.sort()")  # list.sort returns None
+    run("c4", "other = 1")
+
+    (origin,) = locate_origins(["data"], log, ns)
+    # Only the last assignment matters; the append before it is history.
+    assert [(s.cell_id, s.role) for s in origin.steps] == [("c3", "assigned")]
+    assert origin.steps[0].line_text == "data = data.sort()"
+
+    run("c5", "values = [1]")
+    run("c6", "values.append(2)")
+    (origin,) = locate_origins(["values"], log, ns)
+    assert [(s.cell_id, s.role) for s in origin.steps] == [("c5", "assigned"), ("c6", "modified")]
+
+    # A name that does not exist leads to the notebook cells that would define it.
+    run("c7", "result = missing_function()")
+    cells = [
+        {"id": "c7", "source": "result = missing_function()"},
+        {"id": "c8", "source": "result = 2"},
+        {"id": "t", "source": "print(result)"},
+    ]
+    (origin,) = locate_origins(["result"], log, ns, notebook_cells=cells, target_cell_id="t")
+    notes = {s.cell_id: s.note for s in origin.steps}
+    assert notes == {"c7": "raised before defining it", "c8": "has not run in this kernel session"}, notes
+
+
+def check_origins_are_traced_from_a_live_kernel():
+    """The hooks feed provenance, and a verdict comes back with its origins."""
+
+    from IPython.core.interactiveshell import InteractiveShell
+
+    from crane_llm.nb_extension import api
+
+    shell = InteractiveShell.instance()
+    api.reload_crane_llm()
+    try:
+        shell.run_cell("table = {'a': 1}", store_history=True, cell_id="c1")
+        shell.run_cell("table = table.clear()", store_history=True, cell_id="c2")
+
+        extension = api.get_extension()
+        extension.assistant.call_llm = lambda prompt, include_runinfo=True: (_ for _ in ()).throw(
+            AssertionError("a check should answer")
+        )
+        extension.set_target_cell("t", "table['a']")
+        result = extension.assistant.run(shell=shell, include_runinfo=True)
+    finally:
+        api._dispose_instance()
+
+    assert result.verdict.certain and result.verdict.rule == "not-subscriptable"
+    (origin,) = result.origins
+    assert origin.variable == "table"
+    assert [(s.cell_id, s.role) for s in origin.steps] == [("c2", "assigned")]
 
 
 def check_magic_output_goes_stale_when_a_cell_runs():
@@ -646,7 +976,16 @@ CHECKS = (
     check_key_set_after_first_use_is_picked_up,
     check_hosted_secret_supplies_the_key,
     check_requests_do_not_offer_brotli,
-    check_verdict_is_read_like_the_frontend,
+    check_model_responses_are_read,
+    check_builtin_checks_are_certain,
+    check_builtin_checks_stop_at_unknown_code,
+    check_check_answers_without_calling_the_model,
+    check_progress_says_the_checker_found_nothing,
+    check_llm_switched_off_runs_only_the_checker,
+    check_every_text_key_exists,
+    check_cell_writes_are_recorded,
+    check_origins_lead_to_the_responsible_cells,
+    check_origins_are_traced_from_a_live_kernel,
     check_magic_output_goes_stale_when_a_cell_runs,
     check_magic_shows_errors_instead_of_raising,
     check_unparseable_target_cells_do_not_raise,

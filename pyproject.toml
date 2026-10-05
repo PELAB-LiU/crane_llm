@@ -83,5 +83,5 @@ include = ["crane_llm", "crane_llm.*"]
 namespaces = false
 
 [tool.setuptools.package-data]
-"crane_llm.nb_extension" = ["package.json", "tsconfig.json", "install.json", "src/*.ts"]
+"crane_llm.nb_extension" = ["package.json", "tsconfig.json", "install.json", "src/*.ts", "src/*.json"]
 "crane_llm.runinfo_parser" = ["*.json"]

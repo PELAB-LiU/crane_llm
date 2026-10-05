@@ -55,6 +55,7 @@ class IPythonSessionTracker:
         self._kernel_session_number: Optional[int] = None
         self._shell = None
         self._callback = None
+        self._pre_callback = None
 
     # --- session lifecycle ---------------------------------------------
 
@@ -113,6 +114,11 @@ class IPythonSessionTracker:
                 execution_count=line_number,
                 cell_type="code",
             )
+            # What these cells did to the namespace was not observed, so it is
+            # read from their code instead.
+            self.session_state.provenance.record_from_code(
+                raw_cell, cell_id=_source_key(raw_cell), execution_count=line_number
+            )
 
     # --- hook registration ---------------------------------------------
 
@@ -127,11 +133,18 @@ class IPythonSessionTracker:
         if self._registered:
             return HookRegistration(enabled=True, message="Hooks already registered")
 
+        def _pre_run_cell(info):
+            self._sync_with_current_session(shell)
+            self._snapshot_before(info, shell)
+
         def _post_run_cell(result):
             self._sync_with_current_session(shell)
+            self._record_provenance(result, shell)
             self._record_result(result)
 
+        self._pre_callback = _pre_run_cell
         self._callback = _post_run_cell
+        shell.events.register("pre_run_cell", _pre_run_cell)
         shell.events.register("post_run_cell", _post_run_cell)
         self._registered = True
         return HookRegistration(enabled=True, message="Hooks registered")
@@ -149,16 +162,52 @@ class IPythonSessionTracker:
             return
 
         shell = self._shell or get_ipython()
-        if shell is not None and self._callback is not None:
-            try:
-                shell.events.unregister("post_run_cell", self._callback)
-            except Exception:
-                pass
+        if shell is not None:
+            for event, callback in (("pre_run_cell", self._pre_callback), ("post_run_cell", self._callback)):
+                if callback is None:
+                    continue
+                try:
+                    shell.events.unregister(event, callback)
+                except Exception:
+                    pass
 
         self._registered = False
         self._callback = None
+        self._pre_callback = None
 
     # --- recording ------------------------------------------------------
+
+    def _snapshot_before(self, info, shell) -> None:
+        raw_cell = getattr(info, "raw_cell", None)
+        if not isinstance(raw_cell, str) or is_internal_helper_cell(raw_cell):
+            return
+        try:
+            self.session_state.provenance.before_cell(raw_cell, shell.user_ns)
+        except Exception:
+            # Bookkeeping must never get in the way of the user's own cell.
+            pass
+
+    def _record_provenance(self, result, shell) -> None:
+        """Record what the cell did to the namespace, whether or not it raised.
+
+        A cell that fails halfway has still run its first half, and that is
+        exactly the kind of hidden state that makes a later cell crash.
+        """
+
+        info = getattr(result, "info", None)
+        raw_cell = getattr(info, "raw_cell", None)
+        if not isinstance(raw_cell, str) or is_internal_helper_cell(raw_cell):
+            return
+        try:
+            self.session_state.provenance.after_cell(
+                raw_cell,
+                cell_id=getattr(info, "cell_id", None) or _source_key(raw_cell),
+                execution_count=getattr(result, "execution_count", None),
+                succeeded=_execution_succeeded(result),
+                namespace=shell.user_ns,
+            )
+        except Exception:
+            pass
 
     def _record_result(self, result) -> None:
         info = getattr(result, "info", None)

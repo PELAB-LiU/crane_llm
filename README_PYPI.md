@@ -84,14 +84,56 @@ The verdict appears under the cell, and the right sidebar shows the full prompt 
 
 | Colour | Meaning |
 |---|---|
-| red | a crash is predicted |
+| red | a crash is certain or predicted |
 | green | no crash is predicted |
 | amber | the response could not be read as a verdict |
 | grey | the prediction has gone stale |
 
+A badge next to the verdict says where it came from:
+
+- **Built-in check · certain**: CRANE-LLM found the crash itself, from the live kernel state, and did not call the model. The cell will raise when it runs.
+- **LLM prediction · *model***: the model judged the cell. This is a prediction, and it can be wrong.
+
 The notebook must be idle. Reading the kernel namespace means running code in the kernel, and a kernel serves requests in order, so with cells still running the answer would describe the state *afterwards* rather than the one you asked about. A prediction goes stale when you edit the cell or run another one.
 
-A checkbox on the toolbar button, in the sidebar and in the command palette turns the runtime information off, which asks the model to predict from the code alone. That is the comparison the approach is built against, and it is also worth trying when a prompt gets too large.
+Two switches sit on the toolbar button (hover over it), in the sidebar and in the command palette:
+
+- **Use the LLM.** On by default. Turned off, only the built-in checks run and nothing is sent to any model, so no API key is needed. When the checks find no certain crash, the verdict says so in blue: that is not a "no crash" prediction, since the checks only report crashes they are certain of.
+- **Include runtime information.** Turned off, the model predicts from the code alone. That is the comparison the approach is built against, and it is also worth trying when a prompt gets too large. With it off, the built-in checks are skipped too, because they read the live kernel state. It has no effect while the LLM is off.
+
+### Built-in checks
+
+Before calling the model, CRANE-LLM checks the cell against the live kernel state for crashes that can be detected for certain. When one of these is found, you get the answer immediately, without waiting for the model or spending tokens on it:
+
+| The cell... | Raises |
+|---|---|
+| uses a name that is not defined | `NameError` |
+| reads an attribute that does not exist, including on `None` (`df = df.dropna(inplace=True)` leaves `df` as `None`) and APIs a library has removed, such as `DataFrame.append` or `np.float` | `AttributeError` |
+| selects, drops, groups, sorts or indexes by a DataFrame column that does not exist | `KeyError` |
+| reads a missing dict key, or a list, tuple or array index out of range | `KeyError`, `IndexError` |
+| assigns a list of the wrong length as a DataFrame column | `ValueError` |
+| multiplies, adds, stacks or reshapes NumPy arrays whose shapes do not fit | `ValueError` |
+| calls `predict` on a scikit-learn model that has not been fitted, or passes it a different number of features than it was fitted on | `NotFittedError`, `ValueError` |
+| fits a scikit-learn model, or calls `train_test_split`, with `X` and `y` of different lengths | `ValueError` |
+| divides by zero, adds incompatible types such as `None + 1`, unpacks the wrong number of values, or cannot be parsed | `ZeroDivisionError`, `TypeError`, `ValueError`, `SyntaxError` |
+
+A check reports only crashes that are certain. It reads the cell from the top in the order Python runs it. The moment the cell would run code whose effect it cannot know, such as a call to one of your own functions, a loop, an `if` or a `try` block, it stops and leaves the cell to the model. That is why the checks catch `df.head()` followed by `df['nope']`, but not the same line inside a `for` loop. A check never declares a cell safe: when nothing certain is found, the model is asked exactly as before.
+
+While a check runs, the sidebar and a box under the cell list each step as it happens: the built-in checker, then, if it found nothing certain, building the prompt and waiting for the model. A verdict from the model also says that the checker ran first and found nothing.
+
+The checks run inside your kernel and send nothing anywhere.
+
+### Origin of the crash
+
+The cell that crashes is rarely where the mistake was made. When a crash is found or predicted, CRANE-LLM lists under **Origin of the crash** the cells that gave the variables involved their current state:
+
+- the cell that last **assigned** the variable, and the line that did it,
+- every cell that **modified** it since, for example by dropping columns in place or fitting a model,
+- for a variable that does not exist, the cells of the notebook that **define it** and why they did not: not run yet, or raised before reaching the assignment. This one needs the whole notebook, so it appears in JupyterLab only, not with the cell magic.
+
+Click an entry to jump to its cell. The cells themselves are outlined with a dashed violet line and carry a short note saying what they did, until the verdict goes stale.
+
+This works from the order the cells actually ran in, which the notebook file does not record. CRANE-LLM records it from the moment the kernel starts, or from `%load_ext crane_llm` with the cell magic. Cells run before that are known from their code only, and are marked as such.
 
 ### What the runtime information contains
 
@@ -131,9 +173,9 @@ Where the toolbar button is not available, put the code you want to check in a c
 model.fit(x_train, y_train)
 ```
 
-The cell body is analysed, not executed. The verdict appears as the cell's output, in the same colours as above, with the prompt and raw response folded under *Prompt and raw response*. It turns grey once you run any other cell, because the kernel state it was based on may have changed; checking another cell with `%%crane_llm` does not count, since nothing is executed.
+The cell body is analysed, not executed. The verdict appears as the cell's output, in the same colours and with the same badge as above, followed by the origin of the crash and, folded under *Prompt and raw response*, what was sent to the model. It turns grey once you run any other cell, because the kernel state it was based on may have changed; checking another cell with `%%crane_llm` does not count, since nothing is executed.
 
-`%%crane_llm --no-runinfo` turns runtime information off, and a model name overrides the configured one, as in `%%crane_llm gpt-5-mini`.
+`%%crane_llm --no-runinfo` turns runtime information off, `%%crane_llm --no-llm` runs only the built-in checks, and a model name overrides the configured one, as in `%%crane_llm gpt-5-mini`.
 
 ## On Kaggle and Colab
 

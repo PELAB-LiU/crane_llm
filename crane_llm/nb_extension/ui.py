@@ -3,7 +3,9 @@
 The JupyterLab frontend draws its verdict and sidebar itself. Everywhere else
 the extension cannot load -- Kaggle, Colab, VS Code, classic Notebook -- the
 magic's cell output is all the user sees, so it has to carry the same
-information: the verdict first, and the prompt and raw response on request.
+information: the verdict first, whether a built-in check or the model gave
+it, the cells the crash comes from, and the prompt and raw response on
+request.
 
 Only the standard display protocol is used, not ipywidgets. Each verdict is
 shown with a ``display_id``, which lets the kernel redraw it later, after its
@@ -14,9 +16,12 @@ runs, without any frontend code.
 from __future__ import annotations
 
 import html
-import json
-import re
-from typing import Any, Dict, Optional, Tuple
+from typing import List, Optional
+
+from .assistant import STAGE_BUILDING, STAGE_CHECKING, STAGE_NO_FINDING, STAGE_WAITING
+from .provenance import Origin
+from .texts import text
+from .verdict import SOURCE_CHECK, Verdict
 
 
 # The same colours as the JupyterLab frontend (getToneColor in src/index.ts).
@@ -24,50 +29,63 @@ _TONE_COLORS = {
     "crash": "#dc2626",
     "safe": "#16a34a",
     "unknown": "#d97706",
+    "none": "#0369a1",
     "stale": "#6b7280",
     "pending": "#6b7280",
 }
 
 
-def _strip_code_fence(text: str) -> str:
-    match = re.match(r"^\s*```(?:json)?\s*([\s\S]*?)\s*```\s*$", text, re.IGNORECASE)
-    return match.group(1) if match else text
+def source_badge(verdict: Verdict) -> str:
+    """Says who gave the verdict. Mirrors ``sourceBadgeText`` in the frontend."""
+
+    if verdict.certain:
+        return text("verdict.badge_check")
+    if verdict.source == SOURCE_CHECK:
+        return text("verdict.badge_check_only")
+    if verdict.model:
+        return text("verdict.badge_model", model=verdict.model)
+    return text("verdict.badge_model_no_name")
 
 
-def _first_json_object(text: str) -> Optional[str]:
-    start, end = text.find("{"), text.rfind("}")
-    return text[start : end + 1] if start != -1 and end > start else None
+def source_note(verdict: Verdict) -> str:
+    """Mirrors ``sourceNoteText`` in the frontend."""
+
+    if verdict.certain:
+        return text("verdict.note_check")
+    if verdict.source == SOURCE_CHECK:
+        return text("verdict.note_check_only")
+    if verdict.checks_ran:
+        return text("verdict.note_model_after_check")
+    return text("verdict.note_model_code_only")
 
 
-def _parse_response_json(text: str) -> Optional[Dict[str, Any]]:
-    for candidate in (text, _strip_code_fence(text), _first_json_object(text)):
-        if not candidate:
-            continue
-        try:
-            parsed = json.loads(candidate)
-        except ValueError:
-            continue
-        if isinstance(parsed, dict):
-            return parsed
-    return None
+_STAGE_KEYS = {
+    STAGE_CHECKING: "progress.checking",
+    STAGE_NO_FINDING: "progress.no_finding",
+    STAGE_BUILDING: "progress.building",
+}
 
 
-def read_verdict(response: str) -> Tuple[str, str, str]:
-    """``(tone, label, reasoning)`` for a model response.
+def stage_message(stage: str, model: str) -> str:
+    """One progress step. Mirrors ``stageMessage`` in the frontend."""
 
-    Mirrors ``readVerdict`` in the frontend, so both surfaces read a response
-    the same way. ``detection`` is the key the offline experiment prompts use.
-    """
+    if stage == STAGE_WAITING:
+        return text("progress.waiting", model=model) if model else text("progress.waiting_no_name")
+    return text(_STAGE_KEYS[stage]) if stage in _STAGE_KEYS else stage
 
-    parsed = _parse_response_json(response or "")
-    if parsed is not None:
-        raw = parsed["prediction"] if "prediction" in parsed else parsed.get("detection")
-        reasoning = str(parsed.get("reasoning") or "")
-        if raw is True or raw == "true":
-            return "crash", "crash predicted", reasoning
-        if raw is False or raw == "false":
-            return "safe", "no crash predicted", reasoning
-    return "unknown", "response not understood", ""
+
+def step_label(step) -> str:
+    """How an origin step is listed: its role, cell and line."""
+
+    cell = (
+        text("origins.cell_with_count", count=step.execution_count)
+        if step.execution_count
+        else text("origins.cell_unknown")
+    )
+    role = text(f"origins.roles.{step.role}")
+    if step.line:
+        return text("origins.step_line", role=role, cell=cell, line=step.line)
+    return text("origins.step", role=role, cell=cell)
 
 
 class VerdictView:
@@ -80,6 +98,10 @@ class VerdictView:
         self._tone = "pending"
         self._label = ""
         self._body = ""
+        self._verdict: Optional[Verdict] = None
+        self._origins: List[Origin] = []
+        # Progress steps already passed, shown while the verdict is pending.
+        self._steps: List[str] = []
         self.stale = False
 
     # --- lifecycle -------------------------------------------------------
@@ -97,14 +119,25 @@ class VerdictView:
     def set_prompt(self, prompt: str) -> None:
         self._prompt = prompt
 
-    def show_result(self, response: str) -> None:
+    def progress(self, stage: str, model: str) -> None:
+        """Show a step. Earlier steps stay listed above it until the verdict."""
+
+        if self._label and self._label != text("progress.starting"):
+            self._steps.append(self._label)
+        self.set_status(stage_message(stage, model))
+
+    def show_result(self, verdict: Verdict, origins: List[Origin], response: str = "") -> None:
+        self._steps = []
+        self._verdict = verdict
+        self._origins = list(origins)
         self._response = response
-        self._tone, self._label, self._body = read_verdict(response)
+        self._tone, self._label, self._body = verdict.tone, verdict.label, verdict.reasoning
         self._redraw()
 
     def show_error(self, message: str) -> None:
+        self._steps = []
         self._tone = "unknown"
-        self._label = "could not get a prediction"
+        self._label = text("verdict.label_error")
         self._body = message
         self._redraw()
 
@@ -133,21 +166,29 @@ class VerdictView:
     def _render(self) -> str:
         tone = "stale" if self.stale else self._tone
         color = _TONE_COLORS[tone]
-        title = f"CRANE-LLM: {self._label}"
-        if self.stale:
-            title += " (stale)"
+        title = text("verdict.title_stale" if self.stale else "verdict.title", label=self._label)
 
         parts = [
             f'<div style="border-left:4px solid {color};padding:6px 10px;'
             f'margin:4px 0;background:{color}14;">',
-            f'<div style="font-weight:600;color:{color};">{html.escape(title)}</div>',
         ]
+        for step in self._steps:
+            parts.append(
+                '<div style="opacity:0.7;font-size:0.9em;">'
+                f'{html.escape(text("progress.done_mark"))} {html.escape(step)}</div>'
+            )
+        parts += [
+            '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">',
+            f'<span style="font-weight:600;color:{color};">{html.escape(title)}</span>',
+        ]
+        if self._verdict is not None:
+            parts.append(self._render_badge(self._verdict))
+        parts.append("</div>")
 
         if self.stale:
             parts.append(
-                '<div style="opacity:0.75;font-size:0.9em;">A cell has run since this '
-                "check, so the kernel state it was based on may have changed. Run the "
-                "check again for a current prediction.</div>"
+                '<div style="opacity:0.75;font-size:0.9em;">'
+                f"{html.escape(text('verdict.stale_explanation'))}</div>"
             )
 
         if self._body:
@@ -156,20 +197,64 @@ class VerdictView:
                 f"{html.escape(self._body)}</div>"
             )
 
+        if self._verdict is not None:
+            parts.append(
+                '<div style="opacity:0.75;font-size:0.85em;margin-top:4px;">'
+                f"{html.escape(source_note(self._verdict))}</div>"
+            )
+
+        if self._origins and not self.stale:
+            parts.append(self._render_origins())
+
         if self._prompt or self._response:
             parts.append(
                 '<details style="margin-top:6px;"><summary style="cursor:pointer;">'
-                "Prompt and raw response</summary>"
+                f"{html.escape(text('verdict.prompt_and_response'))}</summary>"
             )
-            for heading, text in (("Prompt", self._prompt), ("Response", self._response)):
-                if text:
+            sections = (
+                (text("verdict.prompt_heading"), self._prompt),
+                (text("verdict.response_heading"), self._response),
+            )
+            for heading, body in sections:
+                if body:
                     parts.append(
-                        f'<div style="margin-top:6px;font-weight:600;">{heading}</div>'
+                        f'<div style="margin-top:6px;font-weight:600;">{html.escape(heading)}</div>'
                         '<pre style="white-space:pre-wrap;max-height:360px;overflow:auto;'
                         'margin:2px 0;">'
-                        f"{html.escape(text)}</pre>"
+                        f"{html.escape(body)}</pre>"
                     )
             parts.append("</details>")
 
         parts.append("</div>")
+        return "".join(parts)
+
+    @staticmethod
+    def _render_badge(verdict: Verdict) -> str:
+        if verdict.certain:
+            style = "background:#1f2937;color:#ffffff;border:1px solid #1f2937;"
+        else:
+            style = "background:transparent;color:inherit;border:1px solid currentColor;opacity:0.8;"
+        return (
+            f'<span style="{style}border-radius:999px;padding:1px 8px;font-size:0.8em;">'
+            f"{html.escape(source_badge(verdict))}</span>"
+        )
+
+    def _render_origins(self) -> str:
+        parts = [
+            '<div style="margin-top:8px;font-weight:600;">'
+            f"{html.escape(text('origins.heading'))}</div>",
+            '<ul style="margin:2px 0 0 0;padding-left:18px;">',
+        ]
+        for origin in self._origins:
+            parts.append(f"<li>{html.escape(origin.summary)}<ul style='padding-left:16px;'>")
+            for step in origin.steps:
+                note = f" ({html.escape(step.note)})" if step.note else ""
+                code = (
+                    f' <code style="white-space:pre-wrap;">{html.escape(step.line_text)}</code>'
+                    if step.line_text
+                    else ""
+                )
+                parts.append(f"<li>{html.escape(step_label(step))}:{code}{note}</li>")
+            parts.append("</ul></li>")
+        parts.append("</ul>")
         return "".join(parts)

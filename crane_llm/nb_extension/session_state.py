@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
+from .provenance import ProvenanceLog
+
 
 @dataclass
 class CellRecord:
@@ -23,6 +25,10 @@ class NotebookSessionState:
     Records are keyed by ``cell_id``. Re-executing a cell replaces its previous
     record rather than appending a second one, so the prompt reflects the
     notebook as it stands instead of the full execution history.
+
+    ``provenance`` is the opposite: every execution, failed ones included, in
+    order, with what each did to the namespace. It answers which cell gave a
+    variable its current state.
     """
 
     executed_cells: List[CellRecord] = field(default_factory=list)
@@ -30,9 +36,11 @@ class NotebookSessionState:
     session_metadata: Dict[str, Any] = field(default_factory=dict)
     current_session_number: Optional[int] = None
     next_session_sequence: int = 1
+    provenance: ProvenanceLog = field(default_factory=ProvenanceLog)
 
     def reset_for_session(self, session_number: Optional[int] = None) -> None:
         self.executed_cells.clear()
+        self.provenance.reset()
         self.target_cell = None
         self.current_session_number = session_number
         self.next_session_sequence = 1

@@ -8,7 +8,7 @@ include crane_llm/runinfo_parser/summarize_config.json
 include crane_llm/nb_extension/package.json
 include crane_llm/nb_extension/tsconfig.json
 include crane_llm/nb_extension/install.json
-recursive-include crane_llm/nb_extension/src *.ts
+recursive-include crane_llm/nb_extension/src *.ts *.json
 recursive-include crane_llm/nb_extension/labextension *
 
 # Keep the build off the large directories. Without these, setuptools walks

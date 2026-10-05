@@ -16,6 +16,7 @@ The extension has two halves, built and reloaded in different ways. Knowing whic
 | nothing yet, first setup | [section 1](#1-build-from-scratch) | start the server |
 | edited `src/*.ts` | `jlpm build` | hard-refresh the browser tab |
 | edited a `.py` file here | nothing | `reload_crane_llm()` in a cell |
+| edited `src/ui_texts.json` | `jlpm build` | hard-refresh the browser tab, and `reload_crane_llm()` in a cell |
 | edited `package.json` | `jlpm install && jlpm build` | hard-refresh the browser tab |
 | pulled new commits | `jlpm install && jlpm build` | browser tab and kernel |
 
@@ -211,16 +212,20 @@ If the button still behaves the old way after a hard refresh, open the browser's
 
 **The notebook must be idle.** If any cell is queued or running, CRANE-LLM refuses to start and tells you so, rather than doing anything. This is not a limitation that can be worked around: reading the kernel namespace means running code in the kernel, a kernel serves requests strictly in order, so the request would wait behind your cells and then report the namespace as it is *afterwards*, which is not the state you asked about. It also refuses if there is no kernel, or while one is restarting.
 
-The prediction appears under the selected cell, and the right sidebar shows the full prompt and the raw response. The verdict is stated in words above the response, and shown as a colour both down the left edge of the cell and on the response box.
+The verdict appears under the selected cell, and the right sidebar shows the full prompt and the raw response. The verdict is stated in words with its reasoning, and shown as a colour both down the left edge of the cell and on the verdict box.
 
 | Colour | Meaning |
 |---|---|
-| red | a crash is predicted |
+| red | a crash is certain or predicted |
 | green | no crash is predicted |
 | amber | the response could not be read as a verdict |
 | grey | the prediction has gone stale |
 
-Amber means the model returned something the extension could not parse. The raw text is still shown, so you can see what came back.
+Amber means the model returned something the extension could not parse. The raw text is still shown in the sidebar, so you can see what came back.
+
+A badge beside the verdict says who gave it. **Built-in check · certain** means a check in `checks.py` found the crash from the live kernel state and no model was called; the sidebar then shows no prompt. **LLM prediction · *model*** means the model was asked.
+
+When a crash is found or predicted, the box lists the **origin of the crash**: the cells that gave the blamed variables their current state. Each entry jumps to its cell, and those cells are outlined in violet with a note until the verdict goes stale.
 
 A prediction goes stale when you edit the cell or run any other cell, because both change what the prediction was based on. Re-running the analysed cell removes its prediction, and restarting the kernel clears all of them.
 
@@ -239,7 +244,7 @@ It is on by default and remembered across reloads.
 | on (default) | executed cells, runtime state of the names the target cell uses, target cell |
 | off | executed cells and target cell only |
 
-Turning it off asks the model to predict from the code alone, which is the comparison the approach is built against. Nothing else changes: the same cells and the same target cell are sent either way, and the system prompt switches to a variant that does not tell the model to expect runtime information it is not being given.
+Turning it off asks the model to predict from the code alone. The same cells and the same target cell are sent either way, and the system prompt switches to a variant that does not tell the model to expect runtime information it is not being given. The built-in checks are skipped as well, since they read the live kernel state.
 
 Turning it off is also worth trying when a prompt is too large, since the runtime section is usually the biggest part.
 
@@ -256,7 +261,7 @@ The target cell is never executed, and predictions are not saved into the `.ipyn
 model.fit(x_train, y_train)
 ```
 
-The cell body is analysed, not executed. Arguments are optional: `--no-runinfo` builds the prompt from the executed cells alone, and anything else is read as a model name, so `%%crane_llm gpt-5-mini --no-runinfo` works. The output shows the verdict with the prompt and raw response folded under it, and turns grey once another cell runs. It uses only the standard display protocol, so it works where the frontend cannot load: Kaggle, Colab, VS Code and classic Notebook.
+The cell body is analysed, not executed. Arguments are optional: `--no-runinfo` builds the prompt from the executed cells alone, and anything else is read as a model name, so `%%crane_llm gpt-5-mini --no-runinfo` works. The output shows the verdict with its badge, the origin of the crash, and the prompt and raw response folded under it, and turns grey once another cell runs. `%load_ext crane_llm` starts provenance tracking, so load it early in the notebook. It uses only the standard display protocol, so it works where the frontend cannot load: Kaggle, Colab, VS Code and classic Notebook.
 
 ---
 
@@ -328,18 +333,63 @@ node -e "console.log(require('./labextension/package.json').jupyterlab._build.lo
 
 | File | Role |
 |---|---|
-| `src/index.ts` | toolbar button, sidebar, per-cell response boxes |
+| `src/index.ts` | toolbar button, sidebar, per-cell verdict boxes, origin marks |
+| `src/ui_texts.json` | every text users see, for both the frontend and the magic; change wording here, not in code |
+| `texts.py` | reads `src/ui_texts.json` for the backend |
 | `api.py` | kernel-facing entry points; the frontend contract |
-| `extension.py` | coordinates tracking, prompt building and the LLM call |
-| `ipython_hooks.py` | records successfully executed cells from the kernel |
-| `session_state.py` | one ledger entry per cell, not per execution |
+| `extension.py` | coordinates tracking and the magic's output |
+| `assistant.py` | judges a cell: built-in checks first, then the model; locates origins |
+| `checks.py` | the built-in checker's engine: walks the cell and decides where to stop |
+| `check_rules.py` | the checker's rules, and the operations it may walk past; add and edit rules here |
+| `check_helpers.py` | what rules are written with: the four kinds of site and value tests |
+| `provenance.py` | records what each cell did to the namespace; traces variables back to cells |
+| `verdict.py` | one verdict shape for checks and model responses |
+| `ipython_hooks.py` | records executed cells and their effects from the kernel |
+| `session_state.py` | one ledger entry per cell, not per execution, plus the provenance log |
 | `prompt_builder.py` | assembles the CRANE prompt |
 | `runinfo.py` | live-namespace runtime summary |
 | `cell_filter.py` | excludes the extension's own helper cells |
+| `ui.py` | the `%%crane_llm` magic's output |
 | `llm_client.py` | LLM clients: OpenAI Responses, and Chat Completions for any OpenAI-compatible endpoint |
 | `settings.py` | resolves the API key, model, endpoint and API style |
 
-The frontend talks to the backend by running a short snippet in the user's kernel and reading a delimited JSON payload back off stdout. `api.py` is therefore a contract: renaming things there breaks the button.
+The frontend talks to the backend by running a short snippet in the user's kernel and reading a delimited JSON payload back off stdout. `api.py` is therefore a contract: renaming things there breaks the button. The frontend also loads the backend into each kernel as soon as it is idle, so that provenance is recorded from the start of the session rather than from the first check.
+
+### Built-in checks
+
+`checks.py` walks the target cell in Python's evaluation order against the live namespace, and reports a crash only when it reaches an operation known to raise for the values it will receive. The guarantee rests on where the walk stops: at anything that could run code whose effect is unknown, which includes calls to user functions, control flow, `try` blocks, stores into objects, and operations on values the walk did not compute. It continues only past operations that change nothing, such as `print`, `df.head()`, or constructing a scikit-learn estimator. If one of those raised instead, the cell would still crash, only earlier.
+
+A check therefore never declares a cell safe. When the walk stops, or ends without a finding, the model is asked as before. Any exception inside the walk counts as no finding.
+
+Each library behaviour a rule depends on was confirmed against the library itself, and `check_builtin_checks_are_certain` in the smoke test runs every case for real to confirm the reported exception is raised. Some behaviours are less obvious than they look, which is why the rules have exceptions:
+
+- `df.groupby([...])` with labels that are not columns does not raise when the list is as long as the frame: pandas then treats it as the group values.
+- A `MultiIndex` and the datetime-like indexes match partial keys, so a missing label is not a certain `KeyError` there.
+- Only the predict family is checked for an unfitted estimator. Stateless transformers such as `Normalizer` can `transform` without being fitted.
+- The feature-count rule relies on scikit-learn's own estimator checks, which require every estimator that takes 2-D input to reject the wrong number of features.
+
+The rules themselves are in `check_rules.py`, separate from the walk. Each is a short function registered for one kind of operation, a *site*: reading `obj[key]`, assigning `obj[key] = value`, a call, or an arithmetic operation. It receives the real values and calls `site.crash(...)` when the operation will raise. The top of that file explains how to add one, with a template. In short:
+
+```python
+@rule(Call, "my-rule")
+def my_rule(site: Call) -> None:
+    if site.method != "something" or not is_frame(site.receiver):
+        return
+    if ...:  # the call will certainly raise
+        site.crash("ValueError", "what Python would say", [site.receiver_root])
+```
+
+A rule that fails with an exception of its own counts as having found nothing, so a mistake in a rule can miss a crash but never invent one. Confirm the library's behaviour on every version you rely on, and add the case to `check_builtin_checks_are_certain` in the smoke test, which runs it for real.
+
+The end of `check_rules.py` also lists the operations the walk may continue past, such as `df.head()`. Adding to those lists lets the rules see further into cells, but only operations that never change anything belong there.
+
+### Provenance
+
+`provenance.py` takes a snapshot before each cell of every name the cell mentions: the object's id and a cheap fingerprint of its shape, columns, dtypes, length or fitted state. After the cell it compares. A different id means the cell **assigned** the name, and a different fingerprint on the same object means it **modified** it. Code that mutates a name without a visible change in the fingerprint, such as `df[c] = ...`, is recorded as **possibly modified**. Cells that raise are recorded as well, since they may have changed the state before raising. Cells that ran before the backend was loaded are read from IPython's history and analysed from their code alone.
+
+`locate_origins` follows a blamed variable back to its last assignment, together with every change after it. For a variable that does not exist, it searches the notebook's cells, which the frontend sends with each request, for the ones that would define it.
+
+The variables to trace come from the check that found the crash, or from the `variables` field the system prompt asks the model for. When the model leaves that empty, the names the target cell uses that appear in the model's reasoning are traced instead.
 
 Runtime summarisation is shared with the offline pipeline through `crane_llm/runinfo_parser/runtime_summary.py`, and retry handling through `crane_llm/llms/retry.py`, so the extension and the batch experiments cannot drift apart.
 
@@ -362,7 +412,7 @@ python -m crane_llm.nb_extension.smoke_test
 cd crane_llm/nb_extension && jlpm build && cd ../..
 ```
 
-`smoke_test.py` covers prompt assembly, the executed-cell ledger, cells that cannot be parsed, hostile kernel namespaces, and how the API key, model and endpoint are resolved. It makes no LLM call and does not read or write your own `~/.crane_llm/config.json`.
+`smoke_test.py` covers prompt assembly, the executed-cell ledger, the built-in checks (each reported crash is also run for real), provenance and origin tracing, cells that cannot be parsed, hostile kernel namespaces, and how the API key, model and endpoint are resolved. It makes no LLM call and does not read or write your own `~/.crane_llm/config.json`.
 
 ## F. Troubleshooting
 
