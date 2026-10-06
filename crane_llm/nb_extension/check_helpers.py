@@ -2,12 +2,19 @@
 
 A rule (see ``check_rules.py``) receives one *site*: an operation the target
 cell is about to perform, with the real values it will be performed on. The
-four kinds of site are:
+kinds of site are:
 
 - ``Subscript``: reading ``obj[key]``
 - ``Store``: assigning ``obj[key] = value``
 - ``Call``: calling ``func(*args, **kwargs)``, which includes method calls
 - ``BinOp``: an arithmetic operation ``left <op> right``
+- ``Compare``: a comparison ``left <op> right``, including ``in``
+- ``Iterate``: looping over ``obj``, in a ``for``, a comprehension or unpacking
+- ``Truth``: testing ``value`` for truth, in an ``if``, ``while``, ``and``,
+  ``or`` or ``not``
+- ``UnaryOp``: ``-x``, ``+x`` or ``~x``
+- ``Delete``: ``del obj[key]``
+- ``Unpack``: passing ``*obj`` or ``**obj`` as arguments to a call
 
 A rule that finds the operation will certainly raise calls ``site.crash``.
 Otherwise it simply returns.
@@ -170,6 +177,68 @@ class BinOp(Site):
     right: Any = None
     left_root: Optional[str] = None
     right_root: Optional[str] = None
+
+
+@dataclass
+class Compare(Site):
+    """``left <op> right``. ``op`` as written: ``"<"``, ``"=="``, ``"in"``, ``"not in"``, ...
+
+    Only the first comparison of a chain such as ``a < b < c`` is offered,
+    since the rest run only if it is true.
+    """
+
+    op: str = ""
+    left: Any = None
+    right: Any = None
+    left_root: Optional[str] = None
+    right_root: Optional[str] = None
+
+
+@dataclass
+class Iterate(Site):
+    """Iterating over ``obj``. ``context`` is ``"for"``, ``"comprehension"`` or
+    ``"unpack"`` (``a, b = obj``), which Python words its errors differently for."""
+
+    obj: Any = None
+    obj_root: Optional[str] = None
+    context: str = "for"
+
+
+@dataclass
+class Truth(Site):
+    """Testing ``value`` for truth: ``if value:``, ``while value:``,
+    ``value and ...``, ``not value``."""
+
+    value: Any = None
+    root: Optional[str] = None
+
+
+@dataclass
+class UnaryOp(Site):
+    """``-operand``, ``+operand`` or ``~operand``. ``op`` is ``"-"``, ``"+"`` or ``"~"``."""
+
+    op: str = ""
+    operand: Any = None
+    root: Optional[str] = None
+
+
+@dataclass
+class Delete(Site):
+    """``del obj[key]``."""
+
+    obj: Any = None
+    key: Any = None
+    obj_root: Optional[str] = None
+    key_root: Optional[str] = None
+
+
+@dataclass
+class Unpack(Site):
+    """``f(*obj)`` (``kind="*"``) or ``f(**obj)`` (``kind="**"``)."""
+
+    obj: Any = None
+    obj_root: Optional[str] = None
+    kind: str = "*"
 
 
 @dataclass
@@ -345,6 +414,29 @@ def sample_count(value: Any) -> Optional[int]:
     if is_frame(value) or is_series(value):
         return len(value.index)
     return None
+
+
+def special_method(kind: type, name: str) -> Any:
+    """``name`` as Python looks up special methods: on the type and its bases,
+    never on the instance and never through ``__getattr__``. MISSING if absent."""
+
+    for klass in kind.__mro__:
+        if name in vars(klass):
+            return vars(klass)[name]
+    return MISSING
+
+
+def scan_budget() -> int:
+    """How many data values a rule may read, from the user's settings.
+
+    Rules that must look at every value of a column or array check their data
+    against this first, and skip the check when it is larger: a skipped check
+    costs a missed crash, a guess could report a false one.
+    """
+
+    from .settings import scan_limit
+
+    return scan_limit()
 
 
 def shape_text(shape: Tuple[int, ...]) -> str:

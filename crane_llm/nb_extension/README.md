@@ -368,7 +368,7 @@ Each library behaviour a rule depends on was confirmed against the library itsel
 - Only the predict family is checked for an unfitted estimator. Stateless transformers such as `Normalizer` can `transform` without being fitted.
 - The feature-count rule relies on scikit-learn's own estimator checks, which require every estimator that takes 2-D input to reject the wrong number of features.
 
-The rules themselves are in `check_rules.py`, separate from the walk. Each is a short function registered for one kind of operation, a *site*: reading `obj[key]`, assigning `obj[key] = value`, a call, or an arithmetic operation. It receives the real values and calls `site.crash(...)` when the operation will raise. The top of that file explains how to add one, with a template. In short:
+The rules themselves are in `check_rules.py`, separate from the walk. Each is a short function registered for one kind of operation, a *site*: reading `obj[key]`, assigning `obj[key] = value`, a call, an arithmetic operation, a comparison, iterating (a `for`, a comprehension, unpacking), a truth test (an `if`, `while`, `and`, `or`, `not`), a unary operator, a `del`, or `*x` / `**x` arguments. It receives the real values and calls `site.crash(...)` when the operation will raise. The top of that file explains how to add one, with a template. In short:
 
 ```python
 @rule(Call, "my-rule")
@@ -380,6 +380,8 @@ def my_rule(site: Call) -> None:
 ```
 
 A rule that fails with an exception of its own counts as having found nothing, so a mistake in a rule can miss a crash but never invent one. Confirm the library's behaviour on every version you rely on, and add the case to `check_builtin_checks_are_certain` in the smoke test, which runs it for real.
+
+Rules that read every value of the data, such as `astype(int)`, check its size against `scan_budget()` first and skip larger data. The budget is the user's scan limit: `crane_llm.set_scan_limit(n)`, or `CRANE_LLM_SCAN_LIMIT`, default one million values.
 
 The end of `check_rules.py` also lists the operations the walk may continue past, such as `df.head()`. Adding to those lists lets the rules see further into cells, but only operations that never change anything belong there.
 

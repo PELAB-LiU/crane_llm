@@ -102,6 +102,7 @@ class _IsolatedSettings:
         "CRANE_LLM_BASE_URL",
         "CRANE_LLM_MODEL",
         "CRANE_LLM_API_STYLE",
+        "CRANE_LLM_SCAN_LIMIT",
         "OPENAI_API_KEY",
         "OPENAI_BASE_URL",
     )
@@ -534,6 +535,32 @@ def check_builtin_checks_are_certain():
         ("import os\nos.nope", "missing-attribute"),
         ("print(len(lst))\nd['b']", "missing-key"),
         ("x = 1\nx.nope", "missing-attribute"),
+        ("for x in nothing:\n    pass", "not-iterable"),
+        ("a, b = n", "not-iterable"),
+        ("[v for v in nothing]", "not-iterable"),
+        ("v = 1 in 5", "unsupported-comparison"),
+        ("1 < 'a'", "unsupported-comparison"),
+        ("d[[1]]", "unhashable-key"),
+        ("{[1]: 2}", "unhashable-key"),
+        ("t = (1, 2)\nt[0] = 5", "immutable-assignment"),
+        ("'{} {}'.format(1)", "bad-format"),
+        ("f'{1.5:d}'", "bad-format"),
+        ("nothing()", "not-callable"),
+        ("def f(a, b):\n    return a\nf(1)", "bad-argument"),
+        ("import definitely_not_installed_pkg", "missing-module"),
+        ("from os import nope_name", "missing-module"),
+        ("open('definitely_missing_file.txt')", "missing-file"),
+        ("'%d %d' % (1,)", "bad-format"),
+        ("-s", "bad-operand"),
+        ("del d['b']", "missing-key"),
+        ("t = (1, 2)\ndel t[0]", "immutable-assignment"),
+        ("print(*n)", "not-iterable"),
+        ("dict(**lst)", "not-a-mapping"),
+        ("for k, v in {'abc': 1}:\n    pass", "unpack-count"),
+        ("lst['a':]", "index-type"),
+        ("raise 5", "explicit-raise"),
+        ("raise ValueError('bad input')", "explicit-raise"),
+        ("import os\nos.environ['CRANE_LLM_SURELY_UNSET']", "missing-key"),
     ]
     try:
         import numpy as np
@@ -564,9 +591,50 @@ def check_builtin_checks_are_certain():
             ("np.concatenate([X, X4])", "concatenate-shape"),
             ("X.reshape(4, 4)", "reshape-size"),
             ("X[5]", "index-range"),
+            ("if df:\n    pass", "ambiguous-truth"),
+            ("df.shape()", "not-callable"),
+            ("pd.Series(['n/a', '1']).astype(int)", None),
+            ("df.iloc[10]", "index-range"),
+            ("df.loc[7]", "missing-label"),
+            ("df.loc[0, 'nope']", "missing-label"),
+            ("pd.read_csv('missing_dir/nope.csv')", "missing-file"),
+            ("X.sum(axis=3)", "axis-range"),
+            ("X['id']", "index-type"),
+            ("df['age'].str", "missing-attribute"),
+            ("df['age'] + [1, 2]", "length-mismatch"),
+            ("pd.concat([])", "empty-concat"),
+        ]
+
+        # A Series already in the namespace, so that astype can see its values.
+        def namespace(base=namespace):
+            ns = base()
+            ns["text_ids"] = pd.Series(["n/a", "1"])
+            return ns
+
+        cases += [("text_ids.astype(int)", "astype-int")]
+
+    try:
+        import torch
+    except ImportError:
+        pass
+    else:
+        def namespace(base=namespace):
+            ns = base()
+            ns.update(torch=torch, layer=torch.nn.Linear(4, 2), x5=torch.ones(3, 5),
+                      grad=torch.ones(2, requires_grad=True), t10=torch.ones(10))
+            return ns
+
+        cases += [
+            ("layer(x5)", "matmul-shape"),
+            ("grad.numpy()", "tensor-conversion"),
+            ("t10.view(3, 4)", "reshape-size"),
         ]
 
     for code, rule in cases:
+        if rule is None:
+            # Built inside the cell, so not a known value: nothing is claimed.
+            assert run_checks(code, namespace()) is None, code
+            continue
         finding = run_checks(code, namespace())
         assert finding is not None and finding.rule == rule, (code, finding)
         raised = _run_target(code, namespace())
@@ -595,10 +663,47 @@ def check_builtin_checks_stop_at_unknown_code():
         "lst.append(4)\nlst[3]",
         "del d\nd['b']",
         "def f():\n    return d['b']",
+        "if lst:\n    d['b']",
         "d['b'] = 2\nd['b']",
         "%matplotlib inline",
     ):
         assert run_checks(code, namespace()) is None, code
+
+
+def check_scan_limit_skips_data_reading_checks():
+    """Above the scan limit a check that reads every value is skipped, not guessed."""
+
+    import os
+
+    from crane_llm.nb_extension.checks import run_checks
+
+    try:
+        import pandas as pd
+    except ImportError:
+        return
+
+    def namespace():
+        return {"pd": pd, "ids": pd.Series(["n/a", "1"])}
+
+    with _IsolatedSettings() as settings:
+        assert settings.scan_limit() == settings.DEFAULT_SCAN_LIMIT
+        assert run_checks("ids.astype(int)", namespace()).rule == "astype-int"
+
+        os.environ["CRANE_LLM_SCAN_LIMIT"] = "1"
+        try:
+            assert settings.scan_limit() == 1
+            assert run_checks("ids.astype(int)", namespace()) is None
+        finally:
+            del os.environ["CRANE_LLM_SCAN_LIMIT"]
+
+        # The configuration file, through the documented setter.
+        import crane_llm
+
+        crane_llm.set_scan_limit(0)
+        assert settings.scan_limit() == 0
+        assert run_checks("ids.astype(int)", namespace()) is None
+        crane_llm.set_scan_limit(None)
+        assert settings.scan_limit() == settings.DEFAULT_SCAN_LIMIT
 
 
 def check_check_answers_without_calling_the_model():
@@ -979,6 +1084,7 @@ CHECKS = (
     check_model_responses_are_read,
     check_builtin_checks_are_certain,
     check_builtin_checks_stop_at_unknown_code,
+    check_scan_limit_skips_data_reading_checks,
     check_check_answers_without_calling_the_model,
     check_progress_says_the_checker_found_nothing,
     check_llm_switched_off_runs_only_the_checker,

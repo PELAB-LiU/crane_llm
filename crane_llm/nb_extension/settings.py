@@ -46,7 +46,12 @@ DEFAULT_CONFIG_NAME = "config.json"
 # Recognised keys in the configuration file. Anything else is preserved on
 # write but ignored on read, so a newer version's settings survive an older
 # version touching the file.
-_CONFIG_KEYS = ("api_key", "base_url", "model", "api_style")
+_CONFIG_KEYS = ("api_key", "base_url", "model", "api_style", "scan_limit")
+
+# The most values a built-in check may read from the user's data, for checks
+# that have to look at every value, such as whether a column converts to int.
+# Above it the check is skipped rather than guessed. 0 turns those checks off.
+DEFAULT_SCAN_LIMIT = 1_000_000
 
 _DOTENV_LOADED = False
 
@@ -192,6 +197,44 @@ def set_api_key(
         raise ValueError("Nothing to save: pass at least one of api_key, base_url, model, api_style.")
 
     return write_config(**normalised)
+
+
+def scan_limit() -> int:
+    """The most data values a built-in check may read, from the first of:
+    ``CRANE_LLM_SCAN_LIMIT``, ``scan_limit`` in the configuration file, or
+    ``DEFAULT_SCAN_LIMIT``. Read on every check, so a change applies at once.
+    """
+
+    _load_dotenv_once()
+    try:
+        config_value = read_config().get("scan_limit")
+    except RuntimeError:
+        config_value = None
+    for candidate in (os.environ.get("CRANE_LLM_SCAN_LIMIT"), config_value):
+        if candidate is None or candidate == "":
+            continue
+        try:
+            return max(0, int(candidate))
+        except (TypeError, ValueError):
+            continue
+    return DEFAULT_SCAN_LIMIT
+
+
+def set_scan_limit(limit: Optional[int]) -> Path:
+    """Save the most data values a built-in check may read.
+
+    Checks that must look at every value of a column or array -- whether it
+    converts to int, whether a target is continuous -- are skipped for data
+    larger than this, rather than guessed. ``0`` turns those checks off and
+    ``None`` restores the default::
+
+        import crane_llm
+        crane_llm.set_scan_limit(5_000_000)
+    """
+
+    if limit is not None and (not isinstance(limit, int) or limit < 0):
+        raise ValueError("The scan limit must be a whole number of values, 0 or more, or None.")
+    return write_config(scan_limit=limit)
 
 
 def _first(*candidates: Optional[str]) -> Optional[str]:

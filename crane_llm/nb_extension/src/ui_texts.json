@@ -123,7 +123,17 @@
     "sequence_length": "`{name}` has {count} items.",
     "not_fitted": "`{name}` has not been fitted.",
     "feature_count": "`{data}` has {columns} columns but `{model}` was fitted on {expected}.",
-    "array_shape": "`{name}` has shape {shape}."
+    "array_shape": "`{name}` has shape {shape}.",
+    "positions": "`{name}` has shape {shape}.",
+    "module_missing": "`{module}` is not installed in the environment this kernel runs in.",
+    "name_not_in_module": "`{module}` has no `{name}`; it may have been renamed or removed in the installed version.",
+    "file_missing": "`{path}` does not exist, relative to the kernel's working directory {cwd}.",
+    "bad_integer_value": "The data contains {value}, which cannot be converted to an integer.",
+    "feature_names": "`{data}` has columns {columns}, but `{model}` was fitted on {expected}.",
+    "env_missing": "The environment variable `{name}` is not set in this kernel.",
+    "contains_nan": "`{name}` contains missing or infinite values, which this estimator does not accept.",
+    "text_in_numbers": "The data contains the text {value}, which this estimator cannot use as a number.",
+    "linear_size": "`{data}` has {size} features in its last dimension, but `{layer}` expects {expected}."
   },
 
   "errors": {

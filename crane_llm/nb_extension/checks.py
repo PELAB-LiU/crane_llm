@@ -48,14 +48,21 @@ from .check_helpers import (
     TRUSTED,
     BinOp,
     Call,
+    Compare,
+    Delete,
+    Iterate,
     Opaque,
     RuleCrash,
     Store,
     Subscript,
+    Truth,
+    UnaryOp,
+    Unpack,
     bound_receiver,
     is_data,
     is_frame,
     is_hashable_key,
+    is_label,
     is_ndarray,
     is_one_of,
     is_series,
@@ -63,6 +70,7 @@ from .check_helpers import (
     is_sklearn_estimator_class,
     known,
     numpy,
+    scan_budget,
 )
 from .texts import text
 
@@ -266,18 +274,45 @@ class _Walker:
             self.import_from(node)
         elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             self.define_function(node)
+        elif isinstance(node, (ast.For, ast.AsyncFor)):
+            # The iterable is evaluated, and iteration begins, before the body
+            # runs at all. The body itself is not walked.
+            value, root = self.eval(node.iter)
+            if isinstance(node, ast.For) and not isinstance(value, Opaque):
+                self.apply_rules(Iterate(node.iter, obj=value, obj_root=root, context="for"))
+                self.unpack_first_item(node, value)
+            raise _Stop
+        elif isinstance(node, (ast.If, ast.While)):
+            # The test always runs, and is tested for truth, before either
+            # branch.
+            value, root = self.eval(node.test)
+            if not isinstance(value, Opaque):
+                self.apply_rules(Truth(node.test, value=value, root=root))
+            raise _Stop
+        elif isinstance(node, ast.Delete):
+            self.delete(node)
+        elif isinstance(node, ast.Raise):
+            self.raise_(node)
+        elif isinstance(node, (ast.With, ast.AsyncWith)):
+            # Only the first context expression: entering it runs code, after
+            # which nothing further is known.
+            self.eval(node.items[0].context_expr)
+            raise _Stop
         else:
-            # Control flow, try blocks, class bodies, deletions, annotated
-            # assignments: whether and how their code runs depends on things
-            # the walk does not model.
+            # Try blocks, class bodies, deletions, annotated assignments:
+            # whether and how their code runs depends on things the walk does
+            # not model. A try block in particular may catch the very crash a
+            # rule would report.
             raise _Stop
 
     def import_(self, node: ast.Import) -> None:
-        # Only modules that are already imported: importing anything else runs
-        # that module's code.
+        # Only modules that are already imported are bound: importing anything
+        # else runs that module's code. A module that cannot be found at all
+        # is a certain ModuleNotFoundError.
         for alias in node.names:
             module = sys.modules.get(alias.name)
             if module is None:
+                self.check_module_exists(node, alias.name)
                 raise _Stop
             if alias.asname:
                 self.local[alias.asname] = (module, None)
@@ -293,12 +328,136 @@ class _Walker:
             raise _Stop
         module = sys.modules.get(node.module)
         if module is None:
+            self.check_module_exists(node, node.module)
             raise _Stop
         module_dict = vars(module)
         for alias in node.names:
-            if alias.name == "*" or alias.name not in module_dict:
+            if alias.name == "*":
                 raise _Stop
-            self.local[alias.asname or alias.name] = (module_dict[alias.name], None)
+            if alias.name in module_dict:
+                self.local[alias.asname or alias.name] = (module_dict[alias.name], None)
+                continue
+            self.check_name_importable(node, module, alias.name)
+            raise _Stop
+
+    def unpack_first_item(self, node, iterable) -> None:
+        """``for a, b in items``: the first item is unpacked into the targets
+        before the body runs, so a first item of the wrong shape is a certain
+        crash. Taken only from a non-empty builtin sequence or dict, where
+        getting the first item changes nothing."""
+
+        if not isinstance(node.target, (ast.Tuple, ast.List)):
+            return
+        if type(iterable) not in (list, tuple, str, dict, range) or not len(iterable):
+            return
+        self.assign(node.target, next(iter(iterable)), None, node)
+
+    def delete(self, node: ast.Delete) -> None:
+        """``del name`` or ``del obj[key]``. Deleting changes the namespace or the
+        object, so the walk stops after the first target either way."""
+
+        target = node.targets[0]
+        if isinstance(target, ast.Name):
+            if target.id not in self.local and target.id not in self.namespace:
+                self.crash(target, "undefined-name", "NameError",
+                           f"name '{target.id}' is not defined", [target.id])
+        elif isinstance(target, ast.Subscript):
+            base, base_root = self.eval(target.value)
+            key, key_root = self.eval(target.slice)
+            if not isinstance(base, Opaque) and not isinstance(key, Opaque):
+                self.apply_rules(Delete(node, obj=base, key=key, obj_root=base_root, key_root=key_root))
+        raise _Stop
+
+    def raise_(self, node: ast.Raise) -> None:
+        """A ``raise`` the walk reaches always raises: the cell is certain to crash.
+
+        The walk never enters a ``try`` block, so nothing reached can catch it.
+        A bare ``raise`` is left alone, since whether there is an exception to
+        re-raise depends on how the cell is run.
+        """
+
+        if node.exc is None:
+            raise _Stop
+        value, root = self.eval(node.exc)
+        if isinstance(value, Opaque):
+            raise _Stop
+        if node.cause is not None:
+            cause, _ = self.eval(node.cause)
+            if isinstance(cause, Opaque):
+                raise _Stop
+            valid = cause is None or isinstance(cause, BaseException) or (
+                isinstance(cause, type) and issubclass(cause, BaseException))
+            if not valid:
+                self.crash(node, "explicit-raise", "TypeError",
+                           "exception causes must derive from BaseException", [root])
+        if isinstance(value, BaseException):
+            self.crash(node, "explicit-raise", type(value).__name__, str(value), [root])
+        if isinstance(value, type) and issubclass(value, BaseException):
+            # Raising a class instantiates it. A user-defined __init__ could
+            # raise something else first, so name the exception only when the
+            # constructor is a builtin one.
+            builtin_init = all(
+                klass.__module__ == "builtins"
+                for klass in value.__mro__
+                if "__init__" in vars(klass) or "__new__" in vars(klass)
+            )
+            if not builtin_init:
+                raise _Stop
+            self.crash(node, "explicit-raise", value.__name__, "", [root])
+        self.crash(node, "explicit-raise", "TypeError", "exceptions must derive from BaseException", [root])
+
+    def check_module_exists(self, node, name: str) -> None:
+        """Report ``import name`` when no module of that name can be found.
+
+        Only searched, never imported: finding a top-level module, or a
+        submodule of an already imported package, runs none of its code. For a
+        submodule of a package not yet imported, searching would import the
+        package, so nothing is claimed.
+        """
+
+        top = name.split(".")[0]
+        if top not in sys.modules:
+            try:
+                if importlib.util.find_spec(top) is None:
+                    self.crash_missing_module(node, top)
+            except _Crash:
+                raise
+            except Exception:
+                pass
+            return
+        if name.rpartition(".")[0] not in sys.modules:
+            return
+        try:
+            spec = importlib.util.find_spec(name)
+        except ModuleNotFoundError as exc:
+            self.crash(node, "missing-module", "ModuleNotFoundError", str(exc), [],
+                       text("checker.module_missing", module=name))
+        except Exception:
+            return
+        if spec is None:
+            self.crash_missing_module(node, name)
+
+    def crash_missing_module(self, node, name: str) -> None:
+        self.crash(node, "missing-module", "ModuleNotFoundError", f"No module named '{name}'", [],
+                   text("checker.module_missing", module=name))
+
+    def check_name_importable(self, node, module, name: str) -> None:
+        """Report ``from module import name`` when ``name`` is neither in the
+        module nor one of its submodules."""
+
+        if "__getattr__" in vars(module):
+            # PEP 562: the module computes some names on request.
+            return
+        module_name = getattr(module, "__name__", "?")
+        if hasattr(module, "__path__"):
+            try:
+                if importlib.util.find_spec(f"{module_name}.{name}") is not None:
+                    return
+            except Exception:
+                return
+        self.crash(node, "missing-module", "ImportError",
+                   f"cannot import name '{name}' from '{module_name}'", [],
+                   text("checker.name_not_in_module", name=name, module=module_name))
 
     def define_function(self, node) -> None:
         # Decorators are calls. Annotations are evaluated at definition time
@@ -318,7 +477,7 @@ class _Walker:
         for default in arguments.kw_defaults:
             if default is not None:
                 self.eval(default)
-        self.local[node.name] = (OPAQUE, None)
+        self.local[node.name] = (_signature_stub(node), None)
 
     def assign(self, target: ast.expr, value: Any, root: Optional[str], statement: ast.stmt) -> None:
         if isinstance(target, ast.Name):
@@ -329,6 +488,8 @@ class _Walker:
         if isinstance(target, (ast.Tuple, ast.List)):
             if any(isinstance(element, ast.Starred) for element in target.elts):
                 raise _Stop
+            if not isinstance(value, Opaque):
+                self.apply_rules(Iterate(statement, obj=value, obj_root=root, context="unpack"))
             if type(value) not in (tuple, list, str) or isinstance(value, Opaque):
                 raise _Stop
             expected, got = len(target.elts), len(value)
@@ -398,6 +559,9 @@ class _Walker:
                 raise _Stop
             key, _ = self.eval(key_node)
             value, _ = self.eval(value_node)
+            if type(key) in (list, dict, set, bytearray):
+                self.crash(key_node, "unhashable-key", "TypeError",
+                           f"unhashable type: '{type(key).__name__}'", [])
             # Hashing anything but a builtin scalar could run user code.
             if not is_hashable_key(key):
                 raise _Stop
@@ -408,7 +572,12 @@ class _Walker:
         return (result if complete else TRUSTED), None
 
     def eval_UnaryOp(self, node: ast.UnaryOp):
-        operand, _ = self.eval(node.operand)
+        operand, operand_root = self.eval(node.operand)
+        if isinstance(node.op, ast.Not) and not isinstance(operand, Opaque):
+            self.apply_rules(Truth(node.operand, value=operand, root=operand_root))
+        symbol = {ast.USub: "-", ast.UAdd: "+", ast.Invert: "~"}.get(type(node.op))
+        if symbol is not None and not isinstance(operand, Opaque):
+            self.apply_rules(UnaryOp(node, op=symbol, operand=operand, root=operand_root))
         if type(operand) in (int, float, bool):
             if isinstance(node.op, ast.USub):
                 return -operand, None
@@ -457,7 +626,14 @@ class _Walker:
             return TRUSTED
 
     def eval_Compare(self, node: ast.Compare):
-        values = [self.eval(node.left)[0]] + [self.eval(c)[0] for c in node.comparators]
+        left, left_root = self.eval(node.left)
+        right, right_root = self.eval(node.comparators[0])
+        op = check_rules.COMPARISONS.get(type(node.ops[0]))
+        if op is not None and not isinstance(left, Opaque) and not isinstance(right, Opaque):
+            # Only the first comparison of a chain is certain to run.
+            self.apply_rules(Compare(node, op=op, left=left, right=right,
+                                     left_root=left_root, right_root=right_root))
+        values = [left, right] + [self.eval(c)[0] for c in node.comparators[1:]]
         if all(type(v) in SCALARS for v in values) and all(
             isinstance(op, (ast.Eq, ast.NotEq, ast.Is, ast.IsNot)) for op in node.ops
         ):
@@ -470,7 +646,9 @@ class _Walker:
         # Which operands run depends on truthiness, known only for builtins.
         result = None
         for operand in node.values:
-            result, _ = self.eval(operand)
+            result, result_root = self.eval(operand)
+            if not isinstance(result, Opaque):
+                self.apply_rules(Truth(operand, value=result, root=result_root))
             if type(result) not in SCALARS and type(result) not in CONTAINERS:
                 raise _Stop
             truthy = bool(result)
@@ -481,7 +659,9 @@ class _Walker:
         return result, None
 
     def eval_IfExp(self, node: ast.IfExp):
-        test, _ = self.eval(node.test)
+        test, test_root = self.eval(node.test)
+        if not isinstance(test, Opaque):
+            self.apply_rules(Truth(node.test, value=test, root=test_root))
         if type(test) not in SCALARS and type(test) not in CONTAINERS:
             raise _Stop
         return self.eval(node.body if test else node.orelse)
@@ -489,12 +669,33 @@ class _Walker:
     def eval_JoinedStr(self, node: ast.JoinedStr):
         for part in node.values:
             if isinstance(part, ast.FormattedValue):
-                value, _ = self.eval(part.value)
+                value, root = self.eval(part.value)
                 if not is_data(value):
                     raise _Stop
                 if part.format_spec is not None:
                     self.eval(part.format_spec)
+                spec = _constant_spec(part.format_spec)
+                if part.conversion == -1 and spec is not None and not isinstance(value, Opaque):
+                    # f"{x:spec}" is format(x, spec), so it gets the same rules.
+                    self.apply_rules(Call(part, func=builtins.format, args=[value, spec],
+                                          arg_roots=[root, None]))
         return TRUSTED, None
+
+    # Comprehensions and generator expressions evaluate their first iterable,
+    # and start iterating it, immediately. The rest runs per item.
+    def eval_ListComp(self, node):
+        return self.comprehension(node)
+
+    eval_SetComp = eval_ListComp
+    eval_DictComp = eval_ListComp
+    eval_GeneratorExp = eval_ListComp
+
+    def comprehension(self, node):
+        first = node.generators[0]
+        value, root = self.eval(first.iter)
+        if not isinstance(value, Opaque):
+            self.apply_rules(Iterate(first.iter, obj=value, obj_root=root, context="comprehension"))
+        raise _Stop
 
     def eval_Lambda(self, node: ast.Lambda):
         for default in node.args.defaults + [d for d in node.args.kw_defaults if d is not None]:
@@ -513,7 +714,7 @@ class _Walker:
                 parts.append(None)
                 continue
             value, _ = self.eval(part)
-            if type(value) is not int and value is not None:
+            if type(value) not in SCALARS:
                 raise _Stop
             parts.append(value)
         return slice(*parts), None
@@ -565,7 +766,11 @@ class _Walker:
                 except Exception:
                     raise _Stop
                 if holds:
-                    return TRUSTED
+                    # The column itself, as for df["col"].
+                    try:
+                        return obj[name]
+                    except Exception:
+                        return TRUSTED
                 self.missing_attribute(node, obj, root, name)
             raise _Stop
 
@@ -575,6 +780,9 @@ class _Walker:
         """The value of an attribute known to exist, if reading it is pure."""
 
         if is_frame(obj) or is_series(obj):
+            if name in ("str", "dt", "cat") and len(obj) > scan_budget():
+                # Building an accessor reads every value to check the dtype.
+                return TRUSTED
             if name in check_rules.PANDAS_CHEAP_ATTRIBUTES or isinstance(raw, types.FunctionType):
                 return self.safe_getattr(node, obj, root, name)
             return TRUSTED
@@ -666,7 +874,15 @@ class _Walker:
 
         kind = type(obj)
         if is_frame(obj):
+            # A single column is a view, cheap to take for real, so that rules
+            # see it: df["col"].astype(int).
+            if is_label(key) and key in obj.columns:
+                return obj[key]
             return TRUSTED
+        if _is_pandas_indexer(obj):
+            if is_data(key):
+                return TRUSTED
+            raise _Stop
         if is_series(obj) or is_ndarray(obj):
             if is_data(key):
                 return TRUSTED
@@ -674,6 +890,8 @@ class _Walker:
         if kind is dict and is_hashable_key(key) and key in obj:
             return obj[key]
         if kind in (list, tuple, str) and type(key) in (int, slice):
+            if type(key) is slice and not all(type(p) in (int, bool, type(None)) for p in (key.start, key.stop, key.step)):
+                raise _Stop
             try:
                 return obj[key]
             except Exception:
@@ -687,14 +905,14 @@ class _Walker:
         args, arg_roots = [], []
         for argument in node.args:
             if isinstance(argument, ast.Starred):
-                raise _Stop
+                self.unpacked_argument(argument.value, "*")
             value, value_root = self.eval(argument)
             args.append(value)
             arg_roots.append(value_root)
         kwargs, kwarg_roots = {}, {}
         for keyword in node.keywords:
             if keyword.arg is None:
-                raise _Stop
+                self.unpacked_argument(keyword.value, "**")
             value, value_root = self.eval(keyword.value)
             kwargs[keyword.arg] = value
             kwarg_roots[keyword.arg] = value_root
@@ -704,6 +922,15 @@ class _Walker:
                     arg_roots=arg_roots, kwarg_roots=kwarg_roots)
         self.apply_rules(site)
         return self.call_value(site), None
+
+    def unpacked_argument(self, node, kind: str) -> None:
+        """``f(*x)`` or ``f(**x)``: check ``x`` can be unpacked, then stop, since
+        what the call receives is no longer known argument by argument."""
+
+        value, root = self.eval(node)
+        if not isinstance(value, Opaque):
+            self.apply_rules(Unpack(node, obj=value, obj_root=root, kind=kind))
+        raise _Stop
 
     def call_value(self, site: Call) -> Any:
         """What a call evaluates to, once no rule found it raises.
@@ -743,6 +970,16 @@ class _Walker:
             if name in check_rules.NUMPY_PURE_FUNCTIONS and plain:
                 return TRUSTED
             raise _Stop
+
+        if (
+            inspect.isclass(func)
+            and issubclass(func, BaseException)
+            and func.__module__ == "builtins"
+            and all(type(a) in SCALARS for a in args)
+            and not kwargs
+        ):
+            # ValueError("...") and friends: building one changes nothing.
+            return func(*args)
 
         if inspect.isclass(func) and is_sklearn_estimator_class(func):
             # By scikit-learn's own rules ``__init__`` only stores its
@@ -838,3 +1075,53 @@ def _static_lookup(kind: type, name: str) -> Any:
         if name in vars(klass):
             return vars(klass)[name]
     return MISSING
+
+
+def _is_pandas_indexer(value: Any) -> bool:
+    """``df.loc`` or ``df.iloc``, which subscripting changes nothing through."""
+
+    return type(value).__module__ == "pandas.core.indexing" and type(value).__name__ in (
+        "_LocIndexer",
+        "_iLocIndexer",
+    )
+
+
+def _constant_spec(spec: Optional[ast.AST]) -> Optional[str]:
+    """The format spec of an f-string part, when it is written out literally."""
+
+    if spec is None:
+        return ""
+    if isinstance(spec, ast.JoinedStr) and all(
+        isinstance(part, ast.Constant) and isinstance(part.value, str) for part in spec.values
+    ):
+        return "".join(part.value for part in spec.values)
+    return None
+
+
+def _signature_stub(node) -> Any:
+    """A function with the same parameters as the one the cell defines, and an
+    empty body, so that calls to it later in the cell can be checked against
+    its signature. It is never called."""
+
+    arguments = node.args
+    stub_arguments = ast.arguments(
+        posonlyargs=[ast.arg(a.arg) for a in arguments.posonlyargs],
+        args=[ast.arg(a.arg) for a in arguments.args],
+        vararg=ast.arg(arguments.vararg.arg) if arguments.vararg else None,
+        kwonlyargs=[ast.arg(a.arg) for a in arguments.kwonlyargs],
+        kw_defaults=[None if d is None else ast.Constant(None) for d in arguments.kw_defaults],
+        kwarg=ast.arg(arguments.kwarg.arg) if arguments.kwarg else None,
+        defaults=[ast.Constant(None) for _ in arguments.defaults],
+    )
+    definition = ast.FunctionDef(
+        name=node.name, args=stub_arguments, body=[ast.Pass()], decorator_list=[], returns=None
+    )
+    if sys.version_info >= (3, 12):
+        definition.type_params = []
+    module = ast.fix_missing_locations(ast.Module(body=[definition], type_ignores=[]))
+    namespace: Dict[str, Any] = {}
+    try:
+        exec(compile(module, "<signature>", "exec"), namespace)
+    except Exception:
+        return OPAQUE
+    return namespace[node.name]

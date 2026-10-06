@@ -101,23 +101,28 @@ Two switches sit on the toolbar button (hover over it), in the sidebar and in th
 - **Use the LLM.** On by default. Turned off, only the built-in checks run and nothing is sent to any model, so no API key is needed. When the checks find no certain crash, the verdict says so in blue: that is not a "no crash" prediction, since the checks only report crashes they are certain of.
 - **Include runtime information.** Turned off, the model predicts from the code alone. That is the comparison the approach is built against, and it is also worth trying when a prompt gets too large. With it off, the built-in checks are skipped too, because they read the live kernel state. It has no effect while the LLM is off.
 
+### What the runtime information contains
+
+Only the variables the target cell uses are included: every name it reads that exists in the kernel, plus the attributes and methods it uses on them.
+
+For each object, the prompt describes its type and the facts that crashes usually depend on: the value of a number or string, the shape, dtype and NaN status of an array, the columns of a DataFrame, whether a model has been fitted. What exactly is included for each kind of object is listed under [Runtime information sent to the model](https://github.com/yarinamomo/crane_llm#runtime-information-sent-to-the-model) in the project README.
+
+Some of this is your data itself: whole strings, a few values per column, dictionary entries. It is sent to the model provider along with your code, so turn runtime information off for notebooks whose data must not leave your machine. Collecting it does not change your variables.
+
 ### Built-in checks
 
-Before calling the model, CRANE-LLM checks the cell against the live kernel state for crashes that can be detected for certain. When one of these is found, you get the answer immediately, without waiting for the model or spending tokens on it:
+Before calling the model, CRANE-LLM checks the cell against the live kernel state for crashes that can be detected for certain: an undefined name, a column that does not exist, arrays whose shapes do not fit, a model that has not been fitted, a file that is missing, and many more. When one of these is found, you get the answer immediately, without waiting for the model or spending tokens on it. The full list, by library, is under [Built-in checks](https://github.com/yarinamomo/crane_llm#built-in-checks) in the project README.
 
-| The cell... | Raises |
-|---|---|
-| uses a name that is not defined | `NameError` |
-| reads an attribute that does not exist, including on `None` (`df = df.dropna(inplace=True)` leaves `df` as `None`) and APIs a library has removed, such as `DataFrame.append` or `np.float` | `AttributeError` |
-| selects, drops, groups, sorts or indexes by a DataFrame column that does not exist | `KeyError` |
-| reads a missing dict key, or a list, tuple or array index out of range | `KeyError`, `IndexError` |
-| assigns a list of the wrong length as a DataFrame column | `ValueError` |
-| multiplies, adds, stacks or reshapes NumPy arrays whose shapes do not fit | `ValueError` |
-| calls `predict` on a scikit-learn model that has not been fitted, or passes it a different number of features than it was fitted on | `NotFittedError`, `ValueError` |
-| fits a scikit-learn model, or calls `train_test_split`, with `X` and `y` of different lengths | `ValueError` |
-| divides by zero, adds incompatible types such as `None + 1`, unpacks the wrong number of values, or cannot be parsed | `ZeroDivisionError`, `TypeError`, `ValueError`, `SyntaxError` |
+A check reports only crashes that are certain. It reads the cell from the top in the order Python runs it. The moment the cell would run code whose effect it cannot know, such as a call to one of your own functions or the body of a loop, an `if` or a `try` block, it stops and leaves the cell to the model. The first line of a `for`, `if`, `while` or `with` is still checked, since it always runs: `for x in None:` and `with open("missing.csv")` are caught, but `df['nope']` inside the loop is not. A check never declares a cell safe: when nothing certain is found, the model is asked exactly as before.
 
-A check reports only crashes that are certain. It reads the cell from the top in the order Python runs it. The moment the cell would run code whose effect it cannot know, such as a call to one of your own functions, a loop, an `if` or a `try` block, it stops and leaves the cell to the model. That is why the checks catch `df.head()` followed by `df['nope']`, but not the same line inside a `for` loop. A check never declares a cell safe: when nothing certain is found, the model is asked exactly as before.
+Some checks read every value of your data: `astype(int)`, NaN and text in scikit-learn input, missing values passed to NumPy functions, `.str`/`.dt`/`.cat`, the continuous-target checks, and the classification metrics. They are skipped for data with more than a million values, so that a check never takes noticeably long, and the model is asked instead. Change the limit once with:
+
+```python
+import crane_llm
+crane_llm.set_scan_limit(5_000_000)   # 0 turns these checks off; None restores the default
+```
+
+or set the `CRANE_LLM_SCAN_LIMIT` environment variable.
 
 While a check runs, the sidebar and a box under the cell list each step as it happens: the built-in checker, then, if it found nothing certain, building the prompt and waiting for the model. A verdict from the model also says that the checker ran first and found nothing.
 
@@ -134,31 +139,6 @@ The cell that crashes is rarely where the mistake was made. When a crash is foun
 Click an entry to jump to its cell. The cells themselves are outlined with a dashed violet line and carry a short note saying what they did, until the verdict goes stale.
 
 This works from the order the cells actually ran in, which the notebook file does not record. CRANE-LLM records it from the moment the kernel starts, or from `%load_ext crane_llm` with the cell magic. Cells run before that are known from their code only, and are marked as such.
-
-### What the runtime information contains
-
-Only the variables the target cell uses are included: every name it reads that exists in the kernel, plus the attributes and methods it uses on them.
-
-| Object | What the prompt includes |
-|---|---|
-| `int`, `float`, `str`, `bool` | the value itself, including the full text of a string |
-| `list`, `tuple`, `set` | length. A flat list also gets the value summary below |
-| `dict` | length, and depending on the contents: the metric names and epoch count of a Keras training history; the keys and data/target shapes of a scikit-learn dataset; the keys of a dict of numbers; otherwise the first 5 entries, with each value shown up to 50 characters |
-| NumPy array | shape, dtype, whether it contains NaN, minimum and maximum |
-| pandas Series | dtype, length, whether it contains NaN |
-| pandas DataFrame | shape, whether it contains NaN, and for each of the first 20 columns: dtype, number of distinct values, and either the minimum and maximum (numeric columns) or up to 5 values, each shortened to 20 characters (other columns) |
-| PyTorch tensor | shape, dtype, device, `requires_grad`, whether it contains NaN |
-| PyTorch `DataLoader` and `Subset` | number of batches and examples, batch size, the dataset's fields, and the shapes of its first 10 samples and of a batch built from them |
-| TensorFlow `tf.data` dataset | its element spec |
-| Keras `DirectoryIterator` and `DataFrameIterator` | number of samples and classes, batch size, image shape |
-| scikit-learn estimator | class, whether it has been fitted, and once fitted, the number of input features and outputs. A fitted `LabelEncoder` adds its number of classes |
-| functions, methods, classes, modules | the type only |
-
-**Value summary:** 
-
-A 1-D array, a Series or a flat list is also described by its values: *binary* with the two values, *categorical* with the number of distinct values (listed when there are 5 or fewer), or *continuous* with its minimum and maximum.
-
-Some of this is your data itself: whole strings, a few values per column, dictionary entries. It is sent to the model provider along with your code, so turn runtime information off for notebooks whose data must not leave your machine. Collecting it does not change your variables.
 
 ### The cell magic
 

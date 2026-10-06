@@ -18,7 +18,7 @@ Subpackages:
 
 __version__ = "0.1.0"
 
-__all__ = ["__version__", "load_ipython_extension", "set_api_key"]
+__all__ = ["__version__", "load_ipython_extension", "set_api_key", "set_scan_limit"]
 
 
 def _jupyter_labextension_paths():
@@ -60,3 +60,14 @@ def set_api_key(*args, **kwargs):
     from .nb_extension.settings import set_api_key as _set_api_key
 
     return _set_api_key(*args, **kwargs)
+
+
+def set_scan_limit(limit):
+    """Set how many data values a built-in check may read before it is skipped.
+
+    See ``crane_llm.nb_extension.settings.set_scan_limit``.
+    """
+
+    from .nb_extension.settings import set_scan_limit as _set_scan_limit
+
+    return _set_scan_limit(limit)
