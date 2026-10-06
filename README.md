@@ -28,7 +28,7 @@ Kaggle and Colab cannot load the toolbar button. There, you use the `%%crane_llm
 
 | If you want to | Read |
 |---|---|
-| use the extension | [README_PYPI.md](./README_PYPI.md) — the user guide, which is also the PyPI project page |
+| use the extension | [README_PYPI.md](./README_PYPI.md) — the user guide, which is also the [PyPI project page](https://pypi.org/project/crane-llm/) |
 | see which crashes are detected for certain, and what is sent to the model | [Built-in checks and runtime information](#built-in-checks-and-runtime-information), below |
 | change or build the extension | [crane_llm/nb_extension/README.md](./crane_llm/nb_extension/README.md) |
 | reproduce the paper | [PAPER.md](./PAPER.md) |
