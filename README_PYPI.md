@@ -161,7 +161,7 @@ The cell body is analysed, not executed. The verdict appears as the cell's outpu
 
 Hosted notebooks cannot load JupyterLab extensions, so there is no toolbar button or sidebar; the cell magic does the same job.
 
-**1. Store your API key as a secret**, once per account, so that it never appears in the notebook:
+**1. Store your API key as a secret**, once per account, so that it never appears in the notebook. Skip this step if you only want the built-in checks, described in step 4.
 
 - *Kaggle:* in the notebook editor, **Add-ons → Secrets → Add a new secret**, with the label `CRANE_LLM_API_KEY` and your key as the value. Tick the checkbox next to it in each notebook that should use it.
 - *Colab:* the key icon in the left sidebar, a secret named `CRANE_LLM_API_KEY`, with **Notebook access** switched on.
@@ -182,7 +182,17 @@ CRANE-LLM reads the secret itself; there is no setup cell to write.
 # your code (in the target cell)
 ```
 
-Hosted sessions start from a fresh image each time, so the `%pip install` cell has to be run again in every new session. Competitions that require Internet to be off cannot use CRANE-LLM, since both the install and the model call need it.
+**4. Choose what runs**, with a flag on the first line. There are no switches on hosted notebooks, so the flag applies to that one check only and has to be written again on the next one.
+
+| First line | What happens | API key needed |
+|---|---|---|
+| `%%crane_llm` | The built-in checks run first. If they find no certain crash, the model is asked, with runtime information. | yes |
+| `%%crane_llm --no-llm` | Only the built-in checks run. Nothing is sent to any model. | no |
+| `%%crane_llm --no-runinfo` | The model judges the code alone. The built-in checks are skipped, since they read the live kernel state. | yes |
+
+With `--no-llm`, a cell where the checks find nothing gets a blue verdict saying so. That is not a prediction that the cell is safe: the checks only report crashes they are certain of. Adding `--no-runinfo` to `--no-llm` changes nothing, since without the model the checks are all that runs. A model name can be combined with the other flags, as in `%%crane_llm gpt-5-mini --no-runinfo`.
+
+Hosted sessions start from a fresh image each time, so the `%pip install` cell has to be run again in every new session. Competitions that require Internet to be off cannot use CRANE-LLM, since the install needs it, and so does the model call unless you use `--no-llm`.
 
 ## Requirements and what is not included
 
