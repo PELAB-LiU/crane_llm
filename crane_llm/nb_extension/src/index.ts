@@ -8,6 +8,7 @@ import TEXTS from './ui_texts.json';
 const COMMAND_ID = 'crane-llm-jlab:run';
 const TOGGLE_RUNINFO_COMMAND_ID = 'crane-llm-jlab:toggle-runinfo';
 const TOGGLE_LLM_COMMAND_ID = 'crane-llm-jlab:toggle-llm';
+const TOGGLE_GUARD_COMMAND_ID = 'crane-llm-jlab:toggle-guard';
 const SIDEBAR_ID = 'crane-llm-sidebar';
 
 /** Must match api.PAYLOAD_BEGIN / api.PAYLOAD_END / api.STAGE_MARKER. */
@@ -108,7 +109,9 @@ interface ResponseEntry {
   titleNode: HTMLSpanElement;
   originsNode: HTMLDivElement;
   /** The cell widget's node, so the accent can be cleared when the entry goes. */
-  cellNode: HTMLElement;
+  cellNode: HTMLElement | null;
+  /** The code the verdict is about; the verdict goes stale once the cell's code differs. */
+  source: string;
   verdict: Verdict;
   /** Notes placed on the cells the crash comes from, removed with the entry. */
   originMarks: OriginMark[];
@@ -149,8 +152,11 @@ class ToggleSetting {
   private value: boolean;
   private listeners = new Set<(value: boolean) => void>();
 
-  /** On by default; the stored value wins once the user has changed it. */
-  constructor(private storageKey: string) {
+  /** The stored value wins over the default once the user has changed it. */
+  constructor(
+    private storageKey: string,
+    private defaultValue = true
+  ) {
     this.value = this.load();
   }
 
@@ -158,9 +164,10 @@ class ToggleSetting {
     // Storage can be unavailable in private windows, so never let a failure
     // here stop the extension from loading.
     try {
-      return window.localStorage.getItem(this.storageKey) !== 'false';
+      const stored = window.localStorage.getItem(this.storageKey);
+      return stored === null ? this.defaultValue : stored !== 'false';
     } catch (_error) {
-      return true;
+      return this.defaultValue;
     }
   }
 
@@ -196,13 +203,16 @@ class ToggleSetting {
 }
 
 /**
- * The two switches. Runtime information decides what the LLM is sent; the
- * LLM switch decides whether it is asked at all, so with it off the runtime
- * switch has nothing to act on.
+ * The switches. Runtime information decides what the LLM is sent; the LLM
+ * switch decides whether it is asked at all, so with it off the runtime
+ * switch has nothing to act on. Both apply to the check the toolbar button
+ * starts. The guard is separate: it has the kernel run the built-in checker
+ * on every cell before it runs, and never involves the LLM.
  */
 interface CraneSettings {
   runinfo: ToggleSetting;
   llm: ToggleSetting;
+  guard: ToggleSetting;
 }
 
 /**
@@ -265,9 +275,30 @@ function llmHintText(useLlm: boolean): string {
   return useLlm ? t('llm.hint_on') : t('llm.hint_off');
 }
 
+function guardHintText(guard: boolean): string {
+  return guard ? t('guard.hint_on') : t('guard.hint_off');
+}
+
+/** The title over a group of switches. */
+function switchGroupHeading(text: string, divider: boolean): HTMLDivElement {
+  const node = document.createElement('div');
+  node.textContent = text;
+  node.style.cssText = [
+    'font-size:11px',
+    'font-weight:700',
+    'opacity:0.7',
+    'margin:0 0 6px',
+    divider ? 'border-top:1px solid var(--jp-border-color2);padding-top:8px' : ''
+  ].join(';');
+  return node;
+}
+
 /**
- * Both switches, LLM first since it decides whether the other matters. The
- * runtime-information row is greyed out while the LLM is off.
+ * All switches, in two groups, because they apply at different moments. The
+ * first two decide how the toolbar button checks the selected cell: the LLM
+ * switch first, since it decides whether the runtime-information one matters,
+ * whose row is greyed out while the LLM is off. The guard applies whenever a
+ * cell runs, and uses the built-in checker alone.
  */
 function switchRows(
   settings: CraneSettings,
@@ -276,14 +307,22 @@ function switchRows(
 ): { nodes: HTMLDivElement[]; teardown: () => void } {
   const llm = switchRow(settings.llm, t('llm.label'), llmHintText, rowStyle, hintStyle);
   const runinfo = switchRow(settings.runinfo, t('runinfo.label'), runinfoHintText, rowStyle, hintStyle);
+  const guard = switchRow(settings.guard, t('guard.label'), guardHintText, rowStyle, hintStyle);
   const unsubscribe = settings.llm.subscribe(useLlm =>
     runinfo.setEnabled(useLlm, t('runinfo.hint_llm_off'))
   );
   return {
-    nodes: [llm.node, runinfo.node],
+    nodes: [
+      switchGroupHeading(t('switches.button_heading'), false),
+      llm.node,
+      runinfo.node,
+      switchGroupHeading(t('switches.guard_heading'), true),
+      guard.node
+    ],
     teardown: () => {
       llm.teardown();
       runinfo.teardown();
+      guard.teardown();
       unsubscribe();
     }
   };
@@ -327,8 +366,9 @@ class CraneSidebar extends Widget {
     this.stepsNode = document.createElement('div');
     this.stepsNode.style.cssText = 'margin-bottom:4px;font-size:12px;opacity:0.7;';
 
-    // The two switches. Both on by default, which is the configuration the
-    // approach is built around. They reflect changes made from the toolbar
+    // The switches. The LLM and runtime information are on by default, which
+    // is the configuration the approach is built around; the guard is off
+    // until the user asks for it. They reflect changes made from the toolbar
     // popover or the command palette too.
     const switches = switchRows(
       settings,
@@ -456,7 +496,11 @@ function installSwitchPopover(anchor: HTMLElement, settings: CraneSettings): () 
     'position:fixed',
     'z-index:10000',
     'display:none',
-    'min-width:250px',
+    // A fixed width, so the panel does not resize with its hints; long ones wrap.
+    'width:300px',
+    'box-sizing:border-box',
+    'white-space:normal',
+    'overflow-wrap:break-word',
     'padding:10px 12px',
     'border-radius:8px',
     'background:var(--jp-layout-color1)',
@@ -514,19 +558,47 @@ function installSwitchPopover(anchor: HTMLElement, settings: CraneSettings): () 
     popover.style.display = 'none';
   };
 
-  const onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      hideNow();
+  // A click starts a check, and a check that cannot run opens a dialog. When
+  // the dialog closes, JupyterLab gives the focus back to the button, which
+  // must not reopen the panel: the pointer is elsewhere by then, so nothing
+  // would ever close it. Focus opens the panel again only once the pointer
+  // has come back to the button, or the user moves the focus with Tab.
+  let clicked = false;
+  const onClick = () => {
+    clicked = true;
+    hideNow();
+  };
+  const onMouseEnter = () => {
+    clicked = false;
+    show();
+  };
+  const onFocusIn = () => {
+    if (!clicked) {
+      show();
+    }
+  };
+  const onFocusOut = (event: FocusEvent) => {
+    if (!popover.contains(event.relatedTarget as Node | null)) {
+      scheduleHide();
     }
   };
 
-  anchor.addEventListener('mouseenter', show);
+  const onKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      hideNow();
+    } else if (event.key === 'Tab') {
+      clicked = false;
+    }
+  };
+
+  anchor.addEventListener('mouseenter', onMouseEnter);
   anchor.addEventListener('mouseleave', scheduleHide);
   // Keyboard users never fire mouseenter, so tabbing to the button opens it too.
-  anchor.addEventListener('focusin', show);
+  anchor.addEventListener('focusin', onFocusIn);
+  anchor.addEventListener('focusout', onFocusOut);
   // Clicking the button starts a check; the switch has done its job by then,
   // and left open it would cover the progress shown under the toolbar.
-  anchor.addEventListener('click', hideNow);
+  anchor.addEventListener('click', onClick);
   popover.addEventListener('mouseenter', cancelHide);
   popover.addEventListener('mouseleave', scheduleHide);
   popover.addEventListener('focusin', cancelHide);
@@ -536,19 +608,20 @@ function installSwitchPopover(anchor: HTMLElement, settings: CraneSettings): () 
   return () => {
     unsubscribe();
     cancelHide();
-    anchor.removeEventListener('mouseenter', show);
+    anchor.removeEventListener('mouseenter', onMouseEnter);
     anchor.removeEventListener('mouseleave', scheduleHide);
-    anchor.removeEventListener('focusin', show);
-    anchor.removeEventListener('click', hideNow);
+    anchor.removeEventListener('focusin', onFocusIn);
+    anchor.removeEventListener('focusout', onFocusOut);
+    anchor.removeEventListener('click', onClick);
     document.removeEventListener('keydown', onKeyDown);
     popover.remove();
   };
 }
 
-function getResponseManager(panel: NotebookPanel): CraneResponseManager {
+function getResponseManager(panel: NotebookPanel, settings: CraneSettings): CraneResponseManager {
   let manager = RESPONSE_MANAGERS.get(panel);
   if (!manager) {
-    manager = new CraneResponseManager(panel);
+    manager = new CraneResponseManager(panel, settings.guard);
     RESPONSE_MANAGERS.set(panel, manager);
   }
   return manager;
@@ -566,10 +639,17 @@ class CraneResponseManager {
   /** The kernel the backend has been loaded into, so it is loaded once per kernel. */
   private backendKernelId: string | null = null;
   private loadingBackend = false;
+  /** The guard switch as last sent to the kernel, null when not sent to this kernel yet. */
+  private sentGuard: boolean | null = null;
+  private unsubscribeGuard: () => void;
 
-  constructor(private panel: NotebookPanel) {
+  constructor(
+    private panel: NotebookPanel,
+    private guard: ToggleSetting
+  ) {
     this.attachSessionSignals();
     void this.panel.sessionContext.ready.then(() => this.ensureBackendLoaded());
+    this.unsubscribeGuard = guard.subscribe(() => this.sendGuard());
 
     // The document model is loaded asynchronously, so at the moment this
     // manager is created (when the panel is added to the tracker) the model is
@@ -590,6 +670,7 @@ class CraneResponseManager {
   }
 
   private dispose(): void {
+    this.unsubscribeGuard();
     NotebookActions.executionScheduled.disconnect(this.handleExecutionScheduled, this);
     NotebookActions.executed.disconnect(this.handleExecuted, this);
     this.clearAll();
@@ -606,6 +687,9 @@ class CraneResponseManager {
       return;
     }
     this.pendingExecutions += 1;
+    if (args.cell?.model) {
+      LIVE_CELLS.add(args.cell.model);
+    }
     this.removeEntry(args.cell?.model);
   }
 
@@ -671,8 +755,10 @@ class CraneResponseManager {
     this.refreshExecutionSnapshot();
   }
 
+  /** Clear the cell's verdicts, the guard's included, before it is checked again. */
   clearResponseForCell(cell: any): void {
     this.removeEntry(cell?.model);
+    retireGuardOutputs(cell?.model);
   }
 
   /** Idempotent: safe to call again whenever the model may have appeared. */
@@ -771,13 +857,15 @@ class CraneResponseManager {
 
   /**
    * Editing a cell invalidates any prediction made about it, because the
-   * verdict on screen describes code the user has since changed.
+   * verdict on screen describes code the user has since changed. The signal
+   * also fires when the cell's outputs change, which is not an edit, so the
+   * code is compared.
    */
   private handleCellContentChanged(sender: any): void {
     const entry = this.responseEntries.get(sender);
-    if (entry && !entry.stale) {
+    if (entry && !entry.stale && editedSince(entry, sender)) {
       entry.stale = true;
-      this.applyEntryStyle(entry);
+      applyEntryStyle(entry);
     }
   }
 
@@ -789,8 +877,10 @@ class CraneResponseManager {
       // would otherwise stay above zero and block analysis forever.
       this.pendingExecutions = 0;
       this.clearAll();
-      // A restarted kernel keeps its id but has lost the backend.
+      // A restarted kernel keeps its id but has lost the backend, and the
+      // guard with it.
       this.backendKernelId = null;
+      this.sentGuard = null;
     } else if (status === 'idle') {
       this.ensureBackendLoaded();
     }
@@ -805,6 +895,9 @@ class CraneResponseManager {
    * after it is loaded. Cells run before that are known only from their code.
    * A kernel without crane_llm installed fails the import; that is not
    * retried and not reported, since the user has not asked for anything yet.
+   *
+   * The guard lives in the kernel and is lost when it restarts, so the
+   * switch's value goes along with every load.
    */
   private ensureBackendLoaded(): void {
     const kernel = this.panel.sessionContext.session?.kernel;
@@ -817,18 +910,41 @@ class CraneResponseManager {
       return;
     }
     const kernelId = kernel.id;
+    const guard = this.guard.get();
     this.loadingBackend = true;
-    // The trailing semicolon keeps IPython from displaying the return value,
+    // The trailing semicolons keep IPython from displaying the return value,
     // which would also overwrite the user's `_`.
     requestKernelText(
       this.panel,
-      'from crane_llm.nb_extension.api import load_crane_llm\nload_crane_llm();'
+      'from crane_llm.nb_extension.api import load_crane_llm, set_guard\n' +
+        `load_crane_llm();\nset_guard(${guard ? 'True' : 'False'});`
     )
+      .then(() => {
+        this.sentGuard = guard;
+      })
       .catch(() => undefined)
       .finally(() => {
         this.backendKernelId = kernelId;
         this.loadingBackend = false;
+        // The switch may have changed while the load was under way.
+        this.sendGuard();
       });
+  }
+
+  /** Tell the kernel the guard switch's value, once the backend is loaded there. */
+  private sendGuard(): void {
+    const kernel = this.panel.sessionContext.session?.kernel;
+    const guard = this.guard.get();
+    if (!kernel || this.backendKernelId !== kernel.id || this.sentGuard === guard) {
+      return;
+    }
+    this.sentGuard = guard;
+    requestKernelText(
+      this.panel,
+      `from crane_llm.nb_extension.api import set_guard\nset_guard(${guard ? 'True' : 'False'});`
+    ).catch(() => {
+      this.sentGuard = null;
+    });
   }
 
   private handleKernelChanged(): void {
@@ -926,193 +1042,409 @@ class CraneResponseManager {
     for (const entry of this.responseEntries.values()) {
       if (!entry.stale) {
         entry.stale = true;
-        this.applyEntryStyle(entry);
+        applyEntryStyle(entry);
       }
     }
   }
 
   private createEntry(cell: any, verdict: Verdict, origins: Origin[]): ResponseEntry {
-    const container = document.createElement('div');
-    const header = document.createElement('div');
-    const heading = document.createElement('div');
-    const titleNode = document.createElement('span');
-    const badgeNode = document.createElement('span');
-    const closeButton = document.createElement('button');
-    const reasoningNode = document.createElement('div');
-    const noteNode = document.createElement('div');
-    const originsNode = document.createElement('div');
-
-    container.className = 'crane-llm-result';
-    container.style.cssText = [
-      'margin:8px 0 4px 0',
-      'padding:10px 12px',
-      'border-left:4px solid var(--jp-brand-color1)',
-      'background:var(--jp-layout-color2)',
-      'border-radius:0 8px 8px 0'
-    ].join(';');
-
-    header.style.cssText =
-      'display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;';
-    heading.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:8px;';
-
-    titleNode.style.cssText = 'font-size:12px;font-weight:700;';
-
-    // Who gave the verdict is the first thing to know about it: a built-in
-    // check is certain, a model prediction can be wrong.
-    badgeNode.textContent = sourceBadgeText(verdict);
-    badgeNode.title = sourceNoteText(verdict);
-    badgeNode.style.cssText = [
-      'font-size:11px',
-      'padding:1px 8px',
-      'border-radius:999px',
-      'white-space:nowrap',
-      verdict.certain
-        ? 'background:var(--jp-ui-font-color1);color:var(--jp-layout-color1);border:1px solid var(--jp-ui-font-color1);font-weight:700'
-        : 'background:transparent;color:var(--jp-ui-font-color2);border:1px solid var(--jp-border-color1)'
-    ].join(';');
-
-    closeButton.type = 'button';
-    closeButton.textContent = t('verdict.close');
-    closeButton.className = 'jp-mod-styled jp-Button';
-    closeButton.style.cssText = 'font-size:11px;padding:2px 8px;min-height:24px;';
-    closeButton.onclick = () => {
-      this.removeEntry(cell.model);
-    };
-
-    reasoningNode.textContent = verdict.reasoning;
-    reasoningNode.style.cssText = 'margin:0;white-space:pre-wrap;word-break:break-word;';
-
-    noteNode.textContent = sourceNoteText(verdict);
-    noteNode.style.cssText = 'margin-top:6px;font-size:11px;opacity:0.7;';
-
-    heading.appendChild(titleNode);
-    heading.appendChild(badgeNode);
-    header.appendChild(heading);
-    header.appendChild(closeButton);
-    container.appendChild(header);
-    if (verdict.reasoning) {
-      container.appendChild(reasoningNode);
-    }
-    container.appendChild(noteNode);
-    container.appendChild(originsNode);
-
+    const entry = buildEntry(this.panel, cell, verdict, origins, {
+      onClose: () => this.removeEntry(cell.model),
+      markOrigins: true
+    });
     // Appended inside the cell's own node rather than beside it. A sibling
     // belongs to the notebook's Lumino layout, which addresses its children by
     // index and detaches them under the windowed rendering modes: a foreign
     // sibling misplaces later insertions and is orphaned when the cell is
     // deleted. A child travels with the cell and dies with it.
-    cell.node.appendChild(container);
-
-    const entry: ResponseEntry = {
-      container,
-      titleNode,
-      originsNode,
-      cellNode: cell.node,
-      verdict,
-      originMarks: [],
-      stale: false
-    };
-
-    this.renderOrigins(entry, cell, origins);
-    this.applyEntryStyle(entry);
+    cell.node.appendChild(entry.container);
+    applyEntryStyle(entry);
     return entry;
   }
+}
 
-  /**
-   * List the cells the crash comes from, and mark those cells in the notebook.
-   *
-   * The cell under analysis is seldom where the mistake was made: the list
-   * names the cell that last set each blamed variable and every cell that
-   * changed it since, and each entry jumps to its cell.
-   */
-  private renderOrigins(entry: ResponseEntry, targetCell: any, origins: Origin[]): void {
-    if (!origins.length) {
-      return;
-    }
+interface EntryOptions {
+  /** Adds a Close button that calls this. */
+  onClose?: () => void;
+  /** A last line under the verdict; `backticked` parts are shown as code. */
+  footer?: string;
+  /** Outline the origin cells and put a note in each. */
+  markOrigins: boolean;
+}
 
-    const heading = document.createElement('div');
-    heading.textContent = t('origins.heading');
-    heading.style.cssText = `margin-top:10px;font-size:12px;font-weight:700;color:${ORIGIN_COLOR};`;
-    entry.originsNode.appendChild(heading);
+/**
+ * A verdict box, not yet placed anywhere: the verdict, who gave it, and the
+ * cells the crash comes from. Shared by the toolbar button's check and the
+ * guard's output. ``panel`` and ``cell`` are null when the box is shown
+ * outside a notebook; the origins are then listed without links.
+ */
+function buildEntry(
+  panel: NotebookPanel | null,
+  cell: any | null,
+  verdict: Verdict,
+  origins: Origin[],
+  options: EntryOptions
+): ResponseEntry {
+  const container = document.createElement('div');
+  const header = document.createElement('div');
+  const heading = document.createElement('div');
+  const titleNode = document.createElement('span');
+  const badgeNode = document.createElement('span');
+  const closeButton = document.createElement('button');
+  const reasoningNode = document.createElement('div');
+  const noteNode = document.createElement('div');
+  const footerNode = document.createElement('div');
+  const originsNode = document.createElement('div');
 
-    const targetLabel = cellLabel(this.panel, targetCell, null);
+  container.className = 'crane-llm-result';
+  container.style.cssText = [
+    'margin:8px 0 4px 0',
+    'padding:10px 12px',
+    'border-left:4px solid var(--jp-brand-color1)',
+    'background:var(--jp-layout-color2)',
+    'border-radius:0 8px 8px 0'
+  ].join(';');
 
-    for (const origin of origins) {
-      const summary = document.createElement('div');
-      summary.textContent = origin.summary;
-      summary.style.cssText = 'margin-top:4px;font-size:12px;';
-      entry.originsNode.appendChild(summary);
+  header.style.cssText =
+    'display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;';
+  heading.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:8px;';
 
-      for (const step of origin.steps) {
-        const cell = findCell(this.panel, step);
-        const edited = cell !== null && step.role !== 'defines' && cellSource(cell) !== step.source;
-        const label = cell ? cellLabel(this.panel, cell, step.execution_count) : t('origins.cell_missing');
-        const role = t(`origins.roles.${step.role}`);
+  titleNode.style.cssText = 'font-size:12px;font-weight:700;';
 
-        const row = document.createElement('div');
-        row.style.cssText = [
-          'margin:3px 0 0 12px',
-          'padding:3px 8px',
-          `border-left:3px dashed ${ORIGIN_COLOR}`,
-          'font-size:12px',
-          cell ? 'cursor:pointer' : 'opacity:0.7'
-        ].join(';');
+  // Who gave the verdict is the first thing to know about it: a built-in
+  // check is certain, a model prediction can be wrong.
+  badgeNode.textContent = sourceBadgeText(verdict);
+  badgeNode.title = sourceNoteText(verdict);
+  badgeNode.style.cssText = [
+    'font-size:11px',
+    'padding:1px 8px',
+    'border-radius:999px',
+    'white-space:nowrap',
+    verdict.certain
+      ? 'background:var(--jp-ui-font-color1);color:var(--jp-layout-color1);border:1px solid var(--jp-ui-font-color1);font-weight:700'
+      : 'background:transparent;color:var(--jp-ui-font-color2);border:1px solid var(--jp-border-color1)'
+  ].join(';');
 
-        const where = document.createElement('span');
-        where.textContent = step.line
-          ? t('origins.step_line', { role, cell: label, line: step.line })
-          : t('origins.step', { role, cell: label });
-        where.style.cssText = cell ? `color:${ORIGIN_COLOR};text-decoration:underline;` : '';
-        row.appendChild(where);
-
-        if (step.line_text) {
-          const code = document.createElement('code');
-          code.textContent = step.line_text;
-          code.style.cssText = 'margin-left:6px;font-family:var(--jp-code-font-family);white-space:pre-wrap;';
-          row.appendChild(code);
-        }
-
-        const notes = [step.note, edited ? t('origins.edited') : ''].filter(Boolean);
-        if (notes.length) {
-          const note = document.createElement('span');
-          note.textContent = ` (${notes.join('; ')})`;
-          note.style.cssText = 'opacity:0.7;';
-          row.appendChild(note);
-        }
-
-        if (cell) {
-          row.title = t('origins.go_to_cell');
-          row.onclick = () => revealCell(this.panel, cell);
-          entry.originMarks.push(markOriginCell(cell, origin.variable, step, targetLabel));
-        }
-        entry.originsNode.appendChild(row);
-      }
-    }
+  closeButton.type = 'button';
+  closeButton.textContent = t('verdict.close');
+  closeButton.className = 'jp-mod-styled jp-Button';
+  closeButton.style.cssText = 'font-size:11px;padding:2px 8px;min-height:24px;';
+  if (options.onClose) {
+    closeButton.onclick = options.onClose;
   }
 
-  private applyEntryStyle(entry: ResponseEntry): void {
-    const verdict = entry.verdict;
-    const tone: PredictionTone = entry.stale ? 'stale' : verdict.tone;
-    const color = getToneColor(tone);
+  reasoningNode.textContent = verdict.reasoning;
+  reasoningNode.style.cssText = 'margin:0;white-space:pre-wrap;word-break:break-word;';
 
-    entry.container.style.borderLeftColor = color;
-    entry.titleNode.textContent = t(entry.stale ? 'verdict.title_stale' : 'verdict.title', {
-      label: verdict.label
-    });
+  noteNode.textContent = sourceNoteText(verdict);
+  noteNode.style.cssText = 'margin-top:6px;font-size:11px;opacity:0.7;';
 
-    // Also mark the cell itself, which is where the verdict is actually
-    // looked for. An inset shadow rather than a border, so nothing reflows.
-    entry.cellNode.style.boxShadow = `inset 4px 0 0 0 ${color}`;
+  footerNode.style.cssText = 'margin-top:6px;font-size:12px;';
+  (options.footer ?? '').split('`').forEach((piece, index) => {
+    const node = document.createElement(index % 2 ? 'code' : 'span');
+    node.textContent = piece;
+    footerNode.appendChild(node);
+  });
 
-    // Once stale, the origins describe a kernel state that has moved on.
-    if (entry.stale) {
-      clearOriginMarks(entry);
-      entry.originsNode.style.opacity = '0.5';
+  heading.appendChild(titleNode);
+  heading.appendChild(badgeNode);
+  header.appendChild(heading);
+  if (options.onClose) {
+    header.appendChild(closeButton);
+  }
+  container.appendChild(header);
+  if (verdict.reasoning) {
+    container.appendChild(reasoningNode);
+  }
+  container.appendChild(noteNode);
+  if (options.footer) {
+    container.appendChild(footerNode);
+  }
+  container.appendChild(originsNode);
+
+  const entry: ResponseEntry = {
+    container,
+    titleNode,
+    originsNode,
+    cellNode: cell?.node ?? null,
+    source: cell ? cellSource(cell) : '',
+    verdict,
+    originMarks: [],
+    stale: false
+  };
+
+  renderOrigins(panel, entry, cell, origins, options.markOrigins);
+  return entry;
+}
+
+/**
+ * List the cells the crash comes from, and mark those cells in the notebook.
+ *
+ * The cell under analysis is seldom where the mistake was made: the list
+ * names the cell that last set each blamed variable and every cell that
+ * changed it since, and each entry jumps to its cell.
+ */
+function renderOrigins(
+  panel: NotebookPanel | null,
+  entry: ResponseEntry,
+  targetCell: any | null,
+  origins: Origin[],
+  mark: boolean
+): void {
+  if (!origins.length) {
+    return;
+  }
+
+  const heading = document.createElement('div');
+  heading.textContent = t('origins.heading');
+  heading.style.cssText = `margin-top:10px;font-size:12px;font-weight:700;color:${ORIGIN_COLOR};`;
+  entry.originsNode.appendChild(heading);
+
+  const targetLabel = cellLabel(panel, targetCell, null);
+
+  for (const origin of origins) {
+    const summary = document.createElement('div');
+    summary.textContent = origin.summary;
+    summary.style.cssText = 'margin-top:4px;font-size:12px;';
+    entry.originsNode.appendChild(summary);
+
+    for (const step of origin.steps) {
+      const cell = panel ? findCell(panel, step) : null;
+      const edited = cell !== null && step.role !== 'defines' && cellSource(cell) !== step.source;
+      const label =
+        cell || !panel ? cellLabel(panel, cell, step.execution_count) : t('origins.cell_missing');
+      const role = t(`origins.roles.${step.role}`);
+
+      const row = document.createElement('div');
+      row.style.cssText = [
+        'margin:3px 0 0 12px',
+        'padding:3px 8px',
+        `border-left:3px dashed ${ORIGIN_COLOR}`,
+        'font-size:12px',
+        cell ? 'cursor:pointer' : 'opacity:0.7'
+      ].join(';');
+
+      const where = document.createElement('span');
+      where.textContent = step.line
+        ? t('origins.step_line', { role, cell: label, line: step.line })
+        : t('origins.step', { role, cell: label });
+      where.style.cssText = cell ? `color:${ORIGIN_COLOR};text-decoration:underline;` : '';
+      row.appendChild(where);
+
+      if (step.line_text) {
+        const code = document.createElement('code');
+        code.textContent = step.line_text;
+        code.style.cssText = 'margin-left:6px;font-family:var(--jp-code-font-family);white-space:pre-wrap;';
+        row.appendChild(code);
+      }
+
+      const notes = [step.note, edited ? t('origins.edited') : ''].filter(Boolean);
+      if (notes.length) {
+        const note = document.createElement('span');
+        note.textContent = ` (${notes.join('; ')})`;
+        note.style.cssText = 'opacity:0.7;';
+        row.appendChild(note);
+      }
+
+      if (panel && cell) {
+        row.title = t('origins.go_to_cell');
+        row.onclick = () => revealCell(panel, cell);
+        if (mark) {
+          entry.originMarks.push(markOriginCell(cell, origin.variable, step, targetLabel));
+        }
+      }
+      entry.originsNode.appendChild(row);
     }
   }
 }
 
-function clearCellAccent(cellNode: HTMLElement | undefined): void {
+function applyEntryStyle(entry: ResponseEntry): void {
+  const verdict = entry.verdict;
+  const tone: PredictionTone = entry.stale ? 'stale' : verdict.tone;
+  const color = getToneColor(tone);
+
+  entry.container.style.borderLeftColor = color;
+  entry.titleNode.textContent = t(entry.stale ? 'verdict.title_stale' : 'verdict.title', {
+    label: verdict.label
+  });
+
+  // Also mark the cell itself, which is where the verdict is actually
+  // looked for. An inset shadow rather than a border, so nothing reflows.
+  if (entry.cellNode) {
+    entry.cellNode.style.boxShadow = `inset 4px 0 0 0 ${color}`;
+  }
+
+  // Once stale, the origins describe a kernel state that has moved on.
+  if (entry.stale) {
+    clearOriginMarks(entry);
+    entry.originsNode.style.opacity = '0.5';
+  }
+}
+
+/** Must match guard.MIME_TYPE in the backend. */
+const GUARD_MIME = 'application/vnd.crane-llm.guard+json';
+
+/** Must match the payload guard.CellGuard displays. */
+interface GuardPayload {
+  verdict: Verdict;
+  origins: Origin[];
+  footer: string;
+}
+
+/**
+ * Code cells run in this browser session. A guard output in any other cell
+ * was saved with the notebook and describes a kernel that is gone.
+ */
+const LIVE_CELLS = new WeakSet<any>();
+
+/** The guard outputs shown in each cell, by cell model, so a new check can retire them. */
+const GUARD_OUTPUTS = new WeakMap<any, Set<GuardOutput>>();
+
+/**
+ * Remove the guard's verdict from a cell that is being checked again with
+ * the toolbar button: the new verdict replaces it. The CrashPrevented error
+ * under it stays, as the record of the run that was stopped.
+ */
+function retireGuardOutputs(cellModel: any): void {
+  for (const output of GUARD_OUTPUTS.get(cellModel) ?? []) {
+    output.retire();
+  }
+}
+
+/**
+ * The guard's output, drawn as the same verdict box the toolbar button gives.
+ *
+ * The kernel sends it as HTML too, which is what other frontends show, but
+ * HTML cannot reach the notebook: here the origin entries jump to their
+ * cells, and those cells are outlined until another cell runs. The box is
+ * built when the output is attached, since only then is it inside its cell.
+ */
+class GuardOutput extends Widget {
+  private payload: GuardPayload | null = null;
+  private entry: ResponseEntry | null = null;
+  private cell: any = null;
+
+  constructor(private panel: NotebookPanel) {
+    super();
+    this.addClass('crane-llm-guard-output');
+  }
+
+  renderModel(model: any): Promise<void> {
+    this.payload = model.data[GUARD_MIME] as GuardPayload;
+    this.build();
+    return Promise.resolve();
+  }
+
+  protected onAfterAttach(msg: any): void {
+    super.onAfterAttach(msg);
+    this.build();
+  }
+
+  private build(): void {
+    if (this.entry || !this.payload || !this.isAttached) {
+      return;
+    }
+    this.cell = this.panel.content.widgets.find(widget => widget.node.contains(this.node)) ?? null;
+    const live = this.cell !== null && LIVE_CELLS.has(this.cell.model);
+    const entry = buildEntry(this.panel, this.cell, this.payload.verdict, this.payload.origins, {
+      footer: this.payload.footer,
+      markOrigins: live
+    });
+    if (!live) {
+      // Leave the cell itself alone: the output only records an old run.
+      entry.cellNode = null;
+      entry.stale = true;
+    }
+    this.node.appendChild(entry.container);
+    applyEntryStyle(entry);
+    this.entry = entry;
+    if (live) {
+      NotebookActions.executed.connect(this.handleExecuted, this);
+      this.panel.sessionContext.statusChanged.connect(this.handleStatus, this);
+      this.cell.model.contentChanged.connect(this.handleEdited, this);
+      let outputs = GUARD_OUTPUTS.get(this.cell.model);
+      if (!outputs) {
+        outputs = new Set();
+        GUARD_OUTPUTS.set(this.cell.model, outputs);
+      }
+      outputs.add(this);
+    }
+  }
+
+  /** Stale once the cell's code is no longer the code that was checked; outputs do not count. */
+  private handleEdited(): void {
+    if (this.entry && editedSince(this.entry, this.cell?.model)) {
+      this.markStale();
+    }
+  }
+
+  /** Hide the verdict and take its marks off the notebook. */
+  retire(): void {
+    this.cleanUp();
+    this.node.style.display = 'none';
+  }
+
+  /** Like the button's verdicts, this one goes stale when another cell runs. */
+  private handleExecuted(_sender: unknown, args: { notebook: any; cell: any }): void {
+    if (args?.notebook === this.panel.content && args.cell !== this.cell) {
+      this.markStale();
+    }
+  }
+
+  private handleStatus(_sender: unknown, status: string): void {
+    if (status === 'restarting' || status === 'autorestarting' || status === 'dead') {
+      this.markStale();
+    }
+  }
+
+  private markStale(): void {
+    this.disconnect();
+    if (this.entry && !this.entry.stale) {
+      this.entry.stale = true;
+      applyEntryStyle(this.entry);
+    }
+  }
+
+  private disconnect(): void {
+    NotebookActions.executed.disconnect(this.handleExecuted, this);
+    this.panel.sessionContext.statusChanged.disconnect(this.handleStatus, this);
+    this.cell?.model?.contentChanged?.disconnect(this.handleEdited, this);
+  }
+
+  private cleanUp(): void {
+    this.disconnect();
+    GUARD_OUTPUTS.get(this.cell?.model)?.delete(this);
+    if (this.entry) {
+      clearOriginMarks(this.entry);
+      clearCellAccent(this.entry.cellNode);
+      this.entry.cellNode = null;
+    }
+  }
+
+  /** Disposed when the output is cleared, for one when the cell runs again. */
+  dispose(): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this.cleanUp();
+    super.dispose();
+  }
+}
+
+/** Draw guard outputs in this notebook with GuardOutput instead of their HTML. */
+function installGuardRenderer(panel: NotebookPanel): void {
+  panel.content.rendermime.addFactory(
+    {
+      safe: true,
+      mimeTypes: [GUARD_MIME],
+      defaultRank: 0,
+      createRenderer: () => new GuardOutput(panel)
+    },
+    0
+  );
+}
+
+function clearCellAccent(cellNode: HTMLElement | null | undefined): void {
   if (cellNode) {
     cellNode.style.boxShadow = '';
   }
@@ -1160,13 +1492,16 @@ function findCell(panel: NotebookPanel, step: OriginStep): any | null {
   return null;
 }
 
-/** "cell [7]" after its execution count, or "cell #3" after its position when it has none. */
-function cellLabel(panel: NotebookPanel, cell: any, executionCount: number | null): string {
+/**
+ * "cell [7]" after the execution count, as the kernel names cells in the
+ * summary too, or "cell #3" after its position for a cell that has none.
+ */
+function cellLabel(panel: NotebookPanel | null, cell: any | null, executionCount: number | null): string {
   const count = executionCount ?? cell?.model?.executionCount;
   if (typeof count === 'number') {
     return t('origins.cell_with_count', { count });
   }
-  const index = panel.content.widgets.indexOf(cell);
+  const index = panel && cell ? panel.content.widgets.indexOf(cell) : -1;
   return index >= 0 ? t('origins.cell_with_position', { position: index + 1 }) : t('origins.cell_unknown');
 }
 
@@ -1242,6 +1577,11 @@ function getToneColor(tone: PredictionTone): string {
   // 'unknown' must not reuse the brand colour, which is also the container's
   // default border: an unreadable response would then look like no verdict.
   return '#d97706';
+}
+
+/** Whether the cell's code differs from the code a verdict was given for. */
+function editedSince(entry: ResponseEntry, cellModel: any): boolean {
+  return cellSource({ model: cellModel }) !== entry.source;
 }
 
 function cellSource(cell: any): string {
@@ -1424,7 +1764,7 @@ async function runAnalysis(
     return;
   }
 
-  const notReadyReason = notebookNotReadyReason(panel, getResponseManager(panel));
+  const notReadyReason = notebookNotReadyReason(panel, getResponseManager(panel, settings));
   if (notReadyReason) {
     sidebar.setStatus(t('sidebar.status_busy'));
     sidebar.setResponse(notReadyReason);
@@ -1435,7 +1775,7 @@ async function runAnalysis(
   RUNNING_PANELS.add(panel);
 
   try {
-    const responseManager = getResponseManager(panel);
+    const responseManager = getResponseManager(panel, settings);
     responseManager.clearResponseForCell(activeCell);
 
     const includeRuninfo = settings.runinfo.get();
@@ -1520,7 +1860,7 @@ async function runAnalysis(
     responseManager.renderResponse(activeCell, payload.verdict, payload.origins ?? []);
   } finally {
     // On failure the error is in the sidebar; the progress box must not stay.
-    getResponseManager(panel).clearProgress(activeCell);
+    getResponseManager(panel, settings).clearProgress(activeCell);
     RUNNING_PANELS.delete(panel);
   }
 }
@@ -1541,7 +1881,8 @@ function installToolbarButton(
   }
 
   INSTALLED_PANELS.add(panel);
-  getResponseManager(panel);
+  getResponseManager(panel, settings);
+  installGuardRenderer(panel);
 
   const button = new ToolbarButton({
     label: t('toolbar.label'),
@@ -1573,7 +1914,10 @@ const plugin: JupyterFrontEndPlugin<void> = {
   ) => {
     const settings: CraneSettings = {
       runinfo: new ToggleSetting('crane-llm:include-runinfo'),
-      llm: new ToggleSetting('crane-llm:use-llm')
+      llm: new ToggleSetting('crane-llm:use-llm'),
+      // Off by default: it stops cells from running, which nobody should
+      // meet before choosing it.
+      guard: new ToggleSetting('crane-llm:guard', false)
     };
     const sidebar = new CraneSidebar(settings);
     sidebar.id = SIDEBAR_ID;
@@ -1624,6 +1968,14 @@ const plugin: JupyterFrontEndPlugin<void> = {
       execute: () => settings.llm.toggle()
     });
 
+    app.commands.addCommand(TOGGLE_GUARD_COMMAND_ID, {
+      label: t('commands.toggle_guard_label'),
+      caption: t('commands.toggle_guard_caption'),
+      isToggleable: true,
+      isToggled: () => settings.guard.get(),
+      execute: () => settings.guard.toggle()
+    });
+
     // Keep the palette's checkmark correct when the switch is changed from the
     // sidebar or the toolbar popover instead.
     settings.runinfo.subscribe(() => {
@@ -1632,11 +1984,15 @@ const plugin: JupyterFrontEndPlugin<void> = {
     settings.llm.subscribe(() => {
       app.commands.notifyCommandChanged(TOGGLE_LLM_COMMAND_ID);
     });
+    settings.guard.subscribe(() => {
+      app.commands.notifyCommandChanged(TOGGLE_GUARD_COMMAND_ID);
+    });
 
     if (palette) {
       palette.addItem({ command: COMMAND_ID, category: 'Notebook' });
       palette.addItem({ command: TOGGLE_RUNINFO_COMMAND_ID, category: 'Notebook' });
       palette.addItem({ command: TOGGLE_LLM_COMMAND_ID, category: 'Notebook' });
+      palette.addItem({ command: TOGGLE_GUARD_COMMAND_ID, category: 'Notebook' });
     }
 
     tracker.widgetAdded.connect((_sender, panel) => {

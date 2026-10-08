@@ -261,6 +261,7 @@ def locate_origins(
         steps = _trace(variable, log)
         if variable not in namespace and not any(s.role == "deleted" for s in steps):
             steps = _definers(variable, log, notebook_cells or [], target_cell_id)
+        _name_by_last_run(steps, log)
         if steps:
             origins.append(Origin(variable=variable, steps=steps, summary=_summarise(variable, steps)))
     return origins
@@ -283,7 +284,52 @@ def _trace(variable: str, log: ProvenanceLog) -> List[OriginStep]:
         elif variable in event.possibly_modified:
             steps.append(_step(event, "possibly_modified", event.possibly_modified[variable]))
     steps.reverse()
-    return steps
+    return _merge_reruns(steps)
+
+
+_CHANGES = ("modified", "possibly_modified")
+
+
+def _merge_reruns(steps: List[OriginStep]) -> List[OriginStep]:
+    """One step per cell: a cell run three times is one cell.
+
+    Runs that changed the variable merge whether the change was visible or
+    not, as "modified" if any run visibly changed it. The latest run is kept,
+    where it falls in the order, since that run is the one that left the
+    variable as it is.
+    """
+
+    runs: Dict[Tuple[str, str], int] = {}
+    latest: Dict[Tuple[str, str], OriginStep] = {}
+    visible: Dict[Tuple[str, str], bool] = {}
+    for step in steps:
+        key = (step.cell_id, "changed" if step.role in _CHANGES else step.role)
+        runs[key] = runs.get(key, 0) + 1
+        visible[key] = visible.get(key, False) or step.role == "modified"
+        latest.pop(key, None)
+        latest[key] = step
+    merged = []
+    for key, step in latest.items():
+        if step.role in _CHANGES:
+            step.role = "modified" if visible[key] else "possibly_modified"
+        if runs[key] > 1:
+            count = text("origins.notes.runs", count=runs[key])
+            step.note = f"{step.note}; {count}" if step.note else count
+        merged.append(step)
+    return merged
+
+
+def _name_by_last_run(steps: List[OriginStep], log: "ProvenanceLog") -> None:
+    """Give every step the execution count of its cell's last run.
+
+    That is the number the notebook shows next to the cell, also when the
+    cell has run again since without changing the variable.
+    """
+
+    for step in steps:
+        run = log.last_runs.get(step.cell_id)
+        if run is not None and run.execution_count:
+            step.execution_count = run.execution_count
 
 
 def _definers(variable, log, notebook_cells, target_cell_id) -> List[OriginStep]:

@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 from IPython import get_ipython
-from IPython.core.magic import Magics, cell_magic, magics_class
+from IPython.core.magic import Magics, line_cell_magic, magics_class
 
-from .api import get_extension
+from . import guard as guard_module
+from .api import get_extension, set_guard
+from .texts import text
 
 
 @magics_class
 class CraneLLMMagics(Magics):
-    @cell_magic
-    def crane_llm(self, line, cell):
+    @line_cell_magic
+    def crane_llm(self, line, cell=None):
         """Predict whether the cell body would crash, without running it.
 
         Usage::
@@ -22,7 +24,15 @@ class CraneLLMMagics(Magics):
         ``--no-llm`` runs only the built-in checker and sends nothing, and
         anything else is taken as a model name, for example
         ``%%crane_llm gpt-5-mini``.
+
+        As a line magic, ``%crane_llm guard on`` checks every cell with the
+        built-in checker before it runs, and does not run a cell that would
+        crash. ``%crane_llm guard off`` stops that.
         """
+
+        if cell is None:
+            self._line(line)
+            return
 
         arguments = line.split()
         include_runinfo = "--no-runinfo" not in arguments
@@ -44,6 +54,17 @@ class CraneLLMMagics(Magics):
             # A traceback on top would bury the setup instructions a missing
             # key produces, and would stop a Run All at this cell.
             pass
+
+    @staticmethod
+    def _line(line: str) -> None:
+        arguments = line.split()
+        if arguments not in (["guard"], ["guard", "on"], ["guard", "off"]):
+            print(text("guard.magic_usage"))
+            return
+        if len(arguments) == 2:
+            set_guard(arguments[1] == "on")
+        on = guard_module.is_enabled(get_ipython())
+        print(text("guard.magic_on" if on else "guard.magic_off"))
 
 
 def crane_llm(cell_source: str, model: str = None, include_runinfo: bool = True, use_llm: bool = True):

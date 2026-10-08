@@ -30,9 +30,12 @@ from __future__ import annotations
 
 import ast
 import builtins
+import dis
 import importlib.util
 import inspect
+import os
 import sys
+import sysconfig
 import types
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
@@ -114,8 +117,10 @@ def run_checks(source: str, namespace: Dict[str, Any], shell: Any = None) -> Opt
     if not source or not source.strip():
         return None
     # AST transformers configured in IPython rewrite the code before it runs,
-    # so what runs is not what the walk would read.
-    if getattr(shell, "ast_transformers", None):
+    # so what runs is not what the walk would read. CRANE-LLM's own guard
+    # (guard.py) is one, but it never changes the code it lets through.
+    transformers = getattr(shell, "ast_transformers", None) or ()
+    if any(not getattr(t, "crane_llm_guard", False) for t in transformers):
         return None
 
     try:
@@ -127,17 +132,246 @@ def run_checks(source: str, namespace: Dict[str, Any], shell: Any = None) -> Opt
     if tree is None:
         return None
 
+    return _walk(tree, code, namespace)
+
+
+# --- walking past code whose effect is unknown -------------------------------
+
+# Ways for code to bind a notebook variable without a statement that names it:
+# the builtins that run code or return the namespace, IPython (magics become
+# ``get_ipython()`` calls), and the notebook's own module, reached as
+# ``sys.modules['__main__']`` or ``sys.modules[__name__]``. Matched against
+# names the code uses as variables or imports, not as attributes, so that
+# ``model.eval()`` or ``model.compile()`` does not count.
+_NAMESPACE_WRITERS = frozenset({
+    "exec", "eval", "globals", "locals", "vars", "__import__", "get_ipython",
+    "__builtins__", "builtins", "runpy", "IPython", "__main__", "__name__",
+})
+
+# Values that no code can change.
+_IMMUTABLE = (int, float, complex, bool, str, bytes, type(None), range, type(Ellipsis))
+
+# Rules about the world outside the namespace, which unknown code can change
+# as well: it may write the file, or install the module.
+_WORLD_RULES = frozenset({"missing-file", "missing-module"})
+
+
+def _walk(tree: ast.Module, code: str, namespace: Dict[str, Any]) -> Optional[CheckFinding]:
+    """Walk the cell, and carry on past code whose effect is unknown.
+
+    Such code may change any value the cell can reach, so the walk does not
+    follow it. But the rest of the cell is still walked, with every rule,
+    knowing only what that code cannot have changed: values that cannot
+    change at all (numbers, strings, None, tuples of them) under names it
+    cannot rebind, and which names exist. ``x = df.reset_index()`` followed
+    by ``data1.head()`` is then still a certain NameError, and
+    ``nothing.head()`` a certain AttributeError, while ``df['col']`` is left
+    to the model, since ``df`` may be a different object by then.
+    """
+
     walker = _Walker(code, namespace)
-    try:
-        for statement in tree.body:
+    resume: Optional[_Resume] = None
+    for statement in tree.body:
+        try:
             walker.statement(statement)
-    except _Crash as crash:
-        return crash.finding
-    except _Stop:
-        return None
-    except Exception:
-        return None
+        except _Crash as crash:
+            return crash.finding
+        except _Stop:
+            if resume is None:
+                resume = _Resume(tree, namespace)
+            walker = resume.after(walker, statement)
+            if walker is None:
+                return None
+        except Exception:
+            return None
     return None
+
+
+class _Resume:
+    """What code the walk could not follow may have changed.
+
+    It can rebind a notebook variable only through a statement in the cell
+    that names it, a notebook function that assigns it as a global, or code
+    that writes the namespace directly: ``globals()``, ``exec``, IPython
+    magics, ``sys.modules['__main__']``. A cell or notebook function that
+    does the latter could rebind anything, so nothing is claimed past an
+    unknown statement then.
+    """
+
+    def __init__(self, tree: ast.Module, namespace: Dict[str, Any]):
+        rebound = None
+        if not _identifiers(tree) & _NAMESPACE_WRITERS:
+            rebound = _globals_rebound_by_notebook_code(namespace)
+        self.possible = rebound is not None
+        self.rebound = rebound or set()
+
+    def after(self, walker: "_Walker", statement: ast.stmt) -> Optional["_Walker"]:
+        """A walker for the statements after ``statement``, or None to give up."""
+
+        if not self.possible or not _passable(statement):
+            return None
+        changeable = self.rebound | _bound_names(statement)
+
+        def keep(name: str, value: Any) -> bool:
+            return name not in changeable and _immutable(value)
+
+        view = {name: value if keep(name, value) else OPAQUE for name, value in walker.namespace.items()}
+        # Names notebook code may create are not certain to be missing.
+        for name in self.rebound:
+            view.setdefault(name, OPAQUE)
+        if "__builtins__" in walker.namespace:
+            view["__builtins__"] = walker.namespace["__builtins__"]
+
+        resumed = _Walker(walker.code, view)
+        resumed.after_unknown = True
+        resumed.local = {
+            name: entry if keep(name, entry[0]) else (OPAQUE, None)
+            for name, entry in walker.local.items()
+        }
+        for name in _bound_names(statement):
+            resumed.local[name] = (OPAQUE, None)
+        return resumed
+
+
+def _immutable(value: Any, depth: int = 0) -> bool:
+    kind = type(value)
+    if kind in _IMMUTABLE:
+        return True
+    if kind in (tuple, frozenset) and depth < 3 and len(value) <= 100:
+        return all(_immutable(item, depth + 1) for item in value)
+    return False
+
+
+def _passable(statement: ast.stmt) -> bool:
+    """Whether the walk may resume after a statement it could not follow.
+
+    The statement must end, by finishing or by raising, so that what follows
+    it runs or the cell crashes earlier. A ``while`` loop may never end, a
+    ``raise`` never lets what follows run, and importing a module that is not
+    an installed library runs code of unknown effect.
+    """
+
+    if isinstance(statement, ast.Raise):
+        return False
+    if any(isinstance(node, ast.While) for node in ast.walk(statement)):
+        return False
+    if isinstance(statement, ast.Import):
+        return all(_library_module(alias.name) for alias in statement.names)
+    if isinstance(statement, ast.ImportFrom):
+        return not statement.level and bool(statement.module) and _library_module(statement.module)
+    return True
+
+
+def _library_module(name: str) -> bool:
+    """Whether a module comes with Python or from an installed package."""
+
+    top = name.split(".")[0]
+    module = sys.modules.get(top)
+    try:
+        if module is not None:
+            origin = getattr(module, "__file__", None) or "built-in"
+        else:
+            spec = importlib.util.find_spec(top)
+            origin = spec.origin if spec is not None else None
+    except Exception:
+        return False
+    if origin in ("built-in", "frozen"):
+        return True
+    if not origin:
+        return False
+    paths = sysconfig.get_paths()
+    location = os.path.normcase(os.path.abspath(origin))
+    return any(
+        location.startswith(os.path.normcase(os.path.abspath(paths[key])) + os.sep)
+        for key in ("stdlib", "platstdlib", "purelib", "platlib")
+        if paths.get(key)
+    )
+
+
+def _identifiers(tree: ast.AST) -> set:
+    """Every variable name and imported module in the code, and ``'__main__'`` if it is in it."""
+
+    found = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name):
+            found.add(node.id)
+        elif isinstance(node, ast.Constant) and node.value == "__main__":
+            found.add(node.value)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            found.add(node.module.split(".")[0])
+        elif isinstance(node, ast.Import):
+            found.update(alias.name.split(".")[0] for alias in node.names)
+    return found
+
+
+def _bound_names(tree: ast.AST) -> set:
+    """Every name the code could bind or delete, anywhere in it."""
+
+    found = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and not isinstance(node.ctx, ast.Load):
+            found.add(node.id)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            found.add(node.name)
+        elif isinstance(node, (ast.Import, ast.ImportFrom)):
+            found.update((alias.asname or alias.name).split(".")[0] for alias in node.names)
+        elif isinstance(node, (ast.Global, ast.Nonlocal)):
+            found.update(node.names)
+        elif isinstance(node, ast.ExceptHandler) and node.name:
+            found.add(node.name)
+        elif hasattr(ast, "MatchAs") and isinstance(node, (ast.MatchAs, ast.MatchStar)) and node.name:
+            found.add(node.name)
+    return found
+
+
+def _globals_rebound_by_notebook_code(namespace: Dict[str, Any]) -> Optional[set]:
+    """The notebook variables that functions defined in the notebook assign or delete.
+
+    Read from their bytecode, so a function that only reads ``df`` does not
+    count. Only functions whose globals are the notebook's namespace are
+    read: library code does not assign notebook variables. None when some
+    function writes the namespace directly, and so could rebind any variable.
+    """
+
+    main = namespace.get("__name__", "__main__")
+    rebound: set = set()
+    used: set = set()
+    seen: set = set()
+
+    def add_code(code: types.CodeType) -> None:
+        if id(code) in seen:
+            return
+        seen.add(id(code))
+        if "__main__" in code.co_consts:
+            used.add("__main__")
+        for instruction in dis.get_instructions(code):
+            if instruction.opname in ("STORE_GLOBAL", "DELETE_GLOBAL"):
+                rebound.add(instruction.argval)
+            elif instruction.opname in ("LOAD_GLOBAL", "LOAD_NAME"):
+                used.add(instruction.argval)
+            elif instruction.opname == "IMPORT_NAME":
+                used.add(str(instruction.argval).split(".")[0])
+        for const in code.co_consts:
+            if isinstance(const, types.CodeType):
+                add_code(const)
+
+    def add_function(value: Any) -> None:
+        value = getattr(value, "__func__", value)
+        for part in (value, getattr(value, "fget", None), getattr(value, "fset", None)):
+            code = getattr(part, "__code__", None)
+            if isinstance(code, types.CodeType) and getattr(part, "__globals__", None) is namespace:
+                add_code(code)
+
+    for value in list(namespace.values()):
+        if isinstance(value, (types.FunctionType, types.MethodType)):
+            add_function(value)
+        klass = value if isinstance(value, type) else type(value)
+        if getattr(klass, "__module__", None) == main:
+            for member in list(vars(klass).values()):
+                add_function(member)
+    if used & _NAMESPACE_WRITERS:
+        return None
+    return rebound
 
 
 # --- control flow of the walk --------------------------------------------
@@ -220,11 +454,18 @@ class _Walker:
         self.local: Dict[str, Tuple[Any, Optional[str]]] = {}
         builtins_ns = namespace.get("__builtins__", builtins)
         self.builtins = builtins_ns if isinstance(builtins_ns, dict) else vars(builtins_ns)
+        # Set when the walk resumed past code it could not follow (_Resume).
+        self.after_unknown = False
 
     # --- reporting ------------------------------------------------------
 
     def crash(self, node: ast.AST, rule: str, exception: str, message: str,
               variables=(), detail: str = "") -> None:
+        if self.after_unknown:
+            if rule in _WORLD_RULES:
+                raise _Stop
+            if rule == "undefined-name" and not detail:
+                detail = text("checker.undefined_later", name=variables[0])
         snippet = ast.get_source_segment(self.code, node) or ""
         snippet = " ".join(snippet.split())
         if len(snippet) > 120:
@@ -825,6 +1066,10 @@ class _Walker:
 
     def module_attribute(self, node, module, root, name) -> Any:
         module_dict = vars(module)
+        if name not in module_dict and self.after_unknown:
+            # Code the walk did not follow may have imported a submodule, or
+            # set the attribute.
+            raise _Stop
         if name in module_dict:
             return module_dict[name]
 

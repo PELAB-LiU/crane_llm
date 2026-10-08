@@ -250,6 +250,12 @@ Turning it off is also worth trying when a prompt is too large, since the runtim
 
 The target cell is never executed, and predictions are not saved into the `.ipynb`.
 
+## Checking cells before they run
+
+The third switch, *Check cells before they run*, is off by default and reachable the same three ways. With it on, the kernel runs the built-in checker on every cell just before the cell runs. A cell with a certain crash is not run at all: its output shows the verdict and the origin of the crash, followed by a `CrashPrevented` error, which stops *Run All* like the crash would have. The model is never asked, and the other two switches do not apply. A line `# crane: run` anywhere in a cell lets it run regardless.
+
+The switch is remembered in the browser, and its value is sent to each notebook's kernel when the backend loads there and whenever it changes, since the guard itself lives in the kernel and is lost when it restarts. Where the frontend is not available, `%crane_llm guard on` does the same. How it hooks into IPython is described under [The guard](#the-guard).
+
 ## From Python
 
 ```python
@@ -261,7 +267,7 @@ The target cell is never executed, and predictions are not saved into the `.ipyn
 model.fit(x_train, y_train)
 ```
 
-The cell body is analysed, not executed. Arguments are optional: `--no-runinfo` builds the prompt from the executed cells alone, and anything else is read as a model name, so `%%crane_llm gpt-5-mini --no-runinfo` works. The output shows the verdict with its badge, the origin of the crash, and the prompt and raw response folded under it, and turns grey once another cell runs. `%load_ext crane_llm` starts provenance tracking, so load it early in the notebook. It uses only the standard display protocol, so it works where the frontend cannot load: Kaggle, Colab, VS Code and classic Notebook.
+The cell body is analysed, not executed. Arguments are optional: `--no-runinfo` builds the prompt from the executed cells alone, `--no-llm` runs only the built-in checker, and anything else is read as a model name, so `%%crane_llm gpt-5-mini --no-runinfo` works. The output shows the verdict with its badge, the origin of the crash, and the prompt and raw response folded under it, and turns grey once another cell runs. `%load_ext crane_llm` starts provenance tracking, so load it early in the notebook. It uses only the standard display protocol, so it works where the frontend cannot load: Kaggle, Colab, VS Code and classic Notebook. The line magic `%crane_llm guard on` (or `off`) switches checking cells before they run, until the kernel restarts; `%crane_llm guard` reports whether it is on.
 
 ---
 
@@ -342,6 +348,7 @@ node -e "console.log(require('./labextension/package.json').jupyterlab._build.lo
 | `checks.py` | the built-in checker's engine: walks the cell and decides where to stop |
 | `check_rules.py` | the checker's rules, and the operations it may walk past; add and edit rules here |
 | `check_helpers.py` | what rules are written with: the four kinds of site and value tests |
+| `guard.py` | checks every cell before it runs, and stops one with a certain crash |
 | `provenance.py` | records what each cell did to the namespace; traces variables back to cells |
 | `verdict.py` | one verdict shape for checks and model responses |
 | `ipython_hooks.py` | records executed cells and their effects from the kernel |
@@ -350,7 +357,7 @@ node -e "console.log(require('./labextension/package.json').jupyterlab._build.lo
 | `runinfo.py` | live-namespace runtime summary |
 | `cell_filter.py` | excludes the extension's own helper cells |
 | `ui.py` | the `%%crane_llm` magic's output |
-| `llm_client.py` | LLM clients: OpenAI Responses, and Chat Completions for any OpenAI-compatible endpoint |
+| `llm_client.py` | LLM clients: the OpenAI Responses API when no `base_url` is set, as in the paper's experiments, and Chat Completions otherwise, since almost no compatible server implements `/responses` |
 | `settings.py` | resolves the API key, model, endpoint and API style |
 
 The frontend talks to the backend by running a short snippet in the user's kernel and reading a delimited JSON payload back off stdout. `api.py` is therefore a contract: renaming things there breaks the button. The frontend also loads the backend into each kernel as soon as it is idle, so that provenance is recorded from the start of the session rather than from the first check.
@@ -360,6 +367,8 @@ The frontend talks to the backend by running a short snippet in the user's kerne
 `checks.py` walks the target cell in Python's evaluation order against the live namespace, and reports a crash only when it reaches an operation known to raise for the values it will receive. The guarantee rests on where the walk stops: at anything that could run code whose effect is unknown, which includes calls to user functions, control flow, `try` blocks, stores into objects, and operations on values the walk did not compute. It continues only past operations that change nothing, such as `print`, `df.head()`, or constructing a scikit-learn estimator. If one of those raised instead, the cell would still crash, only earlier.
 
 A check therefore never declares a cell safe. When the walk stops, or ends without a finding, the model is asked as before. Any exception inside the walk counts as no finding.
+
+When the walk stops at a statement, it resumes after it (`_walk` and `_Resume` in `checks.py`), with a fresh walker that knows only what the skipped code cannot have changed. Unknown code can rebind a notebook variable only through a statement in the cell that names it, a notebook function that assigns it as a global (`STORE_GLOBAL` in its bytecode), or code that writes the namespace directly: `globals()`, `exec`, `sys.modules['__main__']`, IPython magics. If the cell or any notebook function uses one of the latter, nothing is claimed past the stop. Otherwise every variable that could be rebound, and every value that is not immutable (numbers, strings, `None`, tuples of them), becomes unknown, and the rules run on the rest as usual. The rules about the world outside the kernel, missing files and modules and module attributes, are skipped after a stop, since the skipped code may have written the file or imported the submodule. The walk does not resume past a `while` loop, which may never end, a `raise`, or the first import of a module that is not part of Python or an installed package.
 
 Each library behaviour a rule depends on was confirmed against the library itself, and `check_builtin_checks_are_certain` in the smoke test runs every case for real to confirm the reported exception is raised. Some behaviours are less obvious than they look, which is why the rules have exceptions:
 
@@ -384,6 +393,16 @@ A rule that fails with an exception of its own counts as having found nothing, s
 Rules that read every value of the data, such as `astype(int)`, check its size against `scan_budget()` first and skip larger data. The budget is the user's scan limit: `crane_llm.set_scan_limit(n)`, or `CRANE_LLM_SCAN_LIMIT`, default one million values.
 
 The end of `check_rules.py` also lists the operations the walk may continue past, such as `df.head()`. Adding to those lists lets the rules see further into cells, but only operations that never change anything belong there.
+
+### The guard
+
+`guard.py` runs the checker on each cell the user runs, before it runs. It is an IPython AST transformer, because IPython applies those only to code it is about to execute. `transform_cell` would not do: the checker and the provenance tracker call it themselves to parse cells, so a guard there would also fire on those calls, and from inside the checker. The transformer sees only the parsed code, so the guard takes the raw source from the `pre_run_cell` event just before, and skips executions that do not store history (frontend requests), the extension's own cells, cell magics, and cells with a `# crane: run` line.
+
+To stop a cell, the transformer raises `CrashPrevented`, a subclass of IPython's `InputRejected`, which is IPython's own way for a transformer to refuse a cell: nothing is executed, the execution counts as failed, and the transformer stays registered. Any other exception inside the guard counts as no finding, because IPython unregisters a transformer that raises anything else. `_render_traceback_` replaces the traceback with one line, since no line of the cell ran.
+
+The verdict is displayed once, in two forms: HTML, which every frontend can show, and the same verdict and origins as JSON under `application/vnd.crane-llm.guard+json`. The JupyterLab extension registers a renderer for that type in each notebook (`GuardOutput` in `src/index.ts`), which takes precedence over the HTML and draws the button's own verdict box, so the origin entries jump to their cells and those cells are outlined. Other frontends do not know the type and show the HTML. The outlines appear only for outputs produced in the current browser session, and go when another cell runs; a guard output saved in the notebook and reopened later is shown greyed out.
+
+The checker refuses to run when the shell has AST transformers, since they could change what runs; the guard is exempt, because it changes nothing it lets through. `set_guard` in `api.py` is what the frontend calls; `reload_crane_llm()` keeps the guard on and re-installs it with the reloaded code.
 
 ### Provenance
 

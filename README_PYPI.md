@@ -72,7 +72,7 @@ Or entirely locally:
 crane_llm.set_api_key(base_url="http://localhost:11434/v1", model="qwen2.5-coder:32b")
 ```
 
-With no `base_url` the OpenAI Responses API is used, which is what the paper's experiments used. Setting a `base_url` switches to Chat Completions, because almost no compatible server implements `/responses`.
+With a `base_url`, requests use the Chat Completions API, which every OpenAI-compatible server supports.
 
 ## Use it
 
@@ -94,12 +94,12 @@ A badge next to the verdict says where it came from:
 - **Built-in check · certain**: CRANE-LLM found the crash itself, from the live kernel state, and did not call the model. The cell will raise when it runs.
 - **LLM prediction · *model***: the model judged the cell. This is a prediction, and it can be wrong.
 
-The notebook must be idle. Reading the kernel namespace means running code in the kernel, and a kernel serves requests in order, so with cells still running the answer would describe the state *afterwards* rather than the one you asked about. A prediction goes stale when you edit the cell or run another one.
+Wait for running cells to finish first: CRANE-LLM reads the kernel's current state, and refuses to start while the notebook is busy. A prediction goes stale when you edit the cell or run another one.
 
-Two switches sit on the toolbar button (hover over it), in the sidebar and in the command palette:
+Two switches decide how the button checks a cell. They sit in a panel on the toolbar button (hover over it), in the sidebar and in the command palette, next to a third, *Check cells before they run*, described under *Checking every cell before it runs* below:
 
 - **Use the LLM.** On by default. Turned off, only the built-in checks run and nothing is sent to any model, so no API key is needed. When the checks find no certain crash, the verdict says so in blue: that is not a "no crash" prediction, since the checks only report crashes they are certain of.
-- **Include runtime information.** Turned off, the model predicts from the code alone. That is the comparison the approach is built against, and it is also worth trying when a prompt gets too large. With it off, the built-in checks are skipped too, because they read the live kernel state. It has no effect while the LLM is off.
+- **Include runtime information.** Turned off, the model predicts from the code alone, which is also worth trying when a prompt gets too large. The built-in checks are then skipped too. It has no effect while the LLM is off.
 
 ### What the runtime information contains
 
@@ -111,11 +111,11 @@ Some of this is your data itself: whole strings, a few values per column, dictio
 
 ### Built-in checks
 
-Before calling the model, CRANE-LLM checks the cell against the live kernel state for crashes that can be detected for certain: an undefined name, a column that does not exist, arrays whose shapes do not fit, a model that has not been fitted, a file that is missing, and many more. When one of these is found, you get the answer immediately, without waiting for the model or spending tokens on it. The full list, by library, is under [Built-in checks](https://github.com/yarinamomo/crane_llm#built-in-checks) in the project README.
+Before calling the LLM model, CRANE-LLM checks the cell against the live kernel state for crashes that can be detected for certain: an undefined name, a column that does not exist, arrays whose shapes do not fit, a model that has not been fitted, a file that is missing, and many more. When one of these is found, you get the answer immediately, without waiting for the model or spending tokens on it. The full list, by library, is under [Built-in checks](https://github.com/yarinamomo/crane_llm#built-in-checks) in the project README.
 
-A check reports only crashes that are certain. It reads the cell from the top in the order Python runs it. The moment the cell would run code whose effect it cannot know, such as a call to one of your own functions or the body of a loop, an `if` or a `try` block, it stops and leaves the cell to the model. The first line of a `for`, `if`, `while` or `with` is still checked, since it always runs: `for x in None:` and `with open("missing.csv")` are caught, but `df['nope']` inside the loop is not. A check never declares a cell safe: when nothing certain is found, the model is asked exactly as before.
+A check reports only crashes that are certain. Code whose outcome it cannot know, such as a call to one of your own functions or the body of a loop, is left to the LLM. A check never declares a cell safe: when nothing certain is found, the LLM is asked.
 
-Some checks read every value of your data: `astype(int)`, NaN and text in scikit-learn input, missing values passed to NumPy functions, `.str`/`.dt`/`.cat`, the continuous-target checks, and the classification metrics. They are skipped for data with more than a million values, so that a check never takes noticeably long, and the model is asked instead. Change the limit once with:
+Some checks read every value of your data, such as `astype(int)` or NaN in scikit-learn input. They are skipped for data with more than a million values, so that a check never takes noticeably long. Change the limit once with:
 
 ```python
 import crane_llm
@@ -124,7 +124,7 @@ crane_llm.set_scan_limit(5_000_000)   # 0 turns these checks off; None restores 
 
 or set the `CRANE_LLM_SCAN_LIMIT` environment variable.
 
-While a check runs, the sidebar and a box under the cell list each step as it happens: the built-in checker, then, if it found nothing certain, building the prompt and waiting for the model. A verdict from the model also says that the checker ran first and found nothing.
+While a check runs, the sidebar and a box under the cell list each step as it happens: the built-in checker, then, if it found nothing certain, building the prompt and waiting for the LLM model. A verdict from the model also says that the checker ran first and found nothing.
 
 The checks run inside your kernel and send nothing anywhere.
 
@@ -138,7 +138,25 @@ The cell that crashes is rarely where the mistake was made. When a crash is foun
 
 Click an entry to jump to its cell. The cells themselves are outlined with a dashed violet line and carry a short note saying what they did, until the verdict goes stale.
 
-This works from the order the cells actually ran in, which the notebook file does not record. CRANE-LLM records it from the moment the kernel starts, or from `%load_ext crane_llm` with the cell magic. Cells run before that are known from their code only, and are marked as such.
+CRANE-LLM records the order the cells actually ran in from the moment the kernel starts, or from `%load_ext crane_llm` with the cell magic, so load it early. Cells run before that are known from their code only, and are marked as such.
+
+### Checking every cell before it runs
+
+The built-in checks can also run by themselves, on every cell you run, just before it runs. Turn on **Check cells before they run**: in the panel under the toolbar button, in the sidebar or in the command palette. Where the toolbar button is not available, run `%crane_llm guard on` after `%load_ext crane_llm`. It is off by default.
+
+When the checks find that a cell will crash, CRANE-LLM does not run it. The cell shows why, with the origin of the crash, and ends with a `CrashPrevented` error instead of the crash. No line of the cell runs, not even the lines before the one that would fail. Like any error, it stops *Run All* at that cell.
+
+Only the built-in checks are used, never the LLM model: nothing is sent anywhere, no API key is needed, and a cell is stopped only for a crash that is certain. A cell in which the checks find nothing runs as usual, which does not mean it is safe.
+
+To run a stopped cell anyway, for example to see Python's own error, add this line anywhere in it:
+
+```python
+# crane: run
+```
+
+Cells that start with a cell magic such as `%%time` are not checked.
+
+In JupyterLab the switch is remembered and applies to every notebook. `%crane_llm guard on` lasts until the kernel restarts. `%crane_llm guard off` turns it off, and `%crane_llm guard` says whether it is on.
 
 ### The cell magic
 
@@ -153,7 +171,7 @@ Where the toolbar button is not available, put the code you want to check in a c
 model.fit(x_train, y_train)
 ```
 
-The cell body is analysed, not executed. The verdict appears as the cell's output, in the same colours and with the same badge as above, followed by the origin of the crash and, folded under *Prompt and raw response*, what was sent to the model. It turns grey once you run any other cell, because the kernel state it was based on may have changed; checking another cell with `%%crane_llm` does not count, since nothing is executed.
+The cell body is analysed, not executed. The verdict appears as the cell's output, in the same colours and with the same badge as above, followed by the origin of the crash and, folded under *Prompt and raw response*, what was sent to the model. It turns grey once you run any other cell.
 
 `%%crane_llm --no-runinfo` turns runtime information off, `%%crane_llm --no-llm` runs only the built-in checks, and a model name overrides the configured one, as in `%%crane_llm gpt-5-mini`.
 
@@ -175,6 +193,8 @@ CRANE-LLM reads the secret itself; there is no setup cell to write.
 %load_ext crane_llm
 ```
 
+To have every cell checked before it runs, add `%crane_llm guard on` to that cell; see *Checking every cell before it runs* above.
+
 **3. Run your notebook as usual, then check a cell** by copying its code under `%%crane_llm`:
 
 ```python
@@ -190,7 +210,7 @@ CRANE-LLM reads the secret itself; there is no setup cell to write.
 | `%%crane_llm --no-llm` | Only the built-in checks run. Nothing is sent to any model. | no |
 | `%%crane_llm --no-runinfo` | The model judges the code alone. The built-in checks are skipped, since they read the live kernel state. | yes |
 
-With `--no-llm`, a cell where the checks find nothing gets a blue verdict saying so. That is not a prediction that the cell is safe: the checks only report crashes they are certain of. Adding `--no-runinfo` to `--no-llm` changes nothing, since without the model the checks are all that runs. A model name can be combined with the other flags, as in `%%crane_llm gpt-5-mini --no-runinfo`.
+With `--no-llm`, a cell where the checks find nothing gets a blue verdict saying so, which is not a prediction that the cell is safe. A model name can be combined with the other flags, as in `%%crane_llm gpt-5-mini --no-runinfo`.
 
 Hosted sessions start from a fresh image each time, so the `%pip install` cell has to be run again in every new session. Competitions that require Internet to be off cannot use CRANE-LLM, since the install needs it, and so does the model call unless you use `--no-llm`.
 

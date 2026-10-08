@@ -281,6 +281,7 @@ def check_extension_driving_cells_are_filtered():
         "%%crane_llm gpt-5-mini --no-runinfo\nmodel.fit(x, y)",
         "%load_ext crane_llm",
         "%reload_ext crane_llm",
+        "%crane_llm guard on",
         'crane_llm.set_api_key("sk-test")',
     ):
         assert is_internal_helper_cell(source), source
@@ -519,7 +520,11 @@ def check_builtin_checks_are_certain():
     from crane_llm.nb_extension.checks import run_checks
 
     def namespace():
-        return {"nothing": None, "d": {"a": 1}, "lst": [1, 2, 3], "n": 0, "s": "abc"}
+        ns = {"nothing": None, "d": {"a": 1}, "lst": [1, 2, 3], "n": 0, "s": "abc"}
+        # Notebook functions using names that are also namespace writers, as
+        # attributes only; they must not stop the checks after unknown code.
+        exec("def train(model):\n    model.compile()\n    model.eval()\n    setattr(model, 'x', 1)", ns)
+        return ns
 
     cases = [
         ("undefined_thing + 1", "undefined-name"),
@@ -561,6 +566,13 @@ def check_builtin_checks_are_certain():
         ("raise 5", "explicit-raise"),
         ("raise ValueError('bad input')", "explicit-raise"),
         ("import os\nos.environ['CRANE_LLM_SURELY_UNSET']", "missing-key"),
+        # Past code the walk cannot follow, every rule still applies to what
+        # that code cannot change: which names exist, and immutable values.
+        ("d.update(b=2)\nundefined_later.head()", "undefined-name"),
+        ("d.update(b=2)\nif lst:\n    pass\nprint(f'{undefined_later}')", "undefined-name"),
+        ("d.update(b=2)\nnothing.head()", "missing-attribute"),
+        ("d.update(b=2)\n1 / n", "division-by-zero"),
+        ("d.update(b=2)\ns + 1", "operand-types"),
     ]
     try:
         import numpy as np
@@ -603,6 +615,7 @@ def check_builtin_checks_are_certain():
             ("df['age'].str", "missing-attribute"),
             ("df['age'] + [1, 2]", "length-mismatch"),
             ("pd.concat([])", "empty-concat"),
+            ("df = df.reset_index().drop(columns=['index'])\ndata1.head(25)", "undefined-name"),
         ]
 
         # A Series already in the namespace, so that astype can see its values.
@@ -652,9 +665,26 @@ def check_builtin_checks_stop_at_unknown_code():
     from crane_llm.nb_extension.checks import run_checks
 
     def namespace():
-        return {"d": {"a": 1}, "lst": [1, 2, 3], "helper": lambda: None}
+        ns = {"d": {"a": 1}, "lst": [1, 2, 3], "helper": lambda: None, "n": 0}
+        # Notebook functions that assign variables as globals.
+        exec("def define_later():\n    global later\n    later = 1", ns)
+        exec("def bump():\n    global n\n    n = 1", ns)
+        return ns
 
     for code in (
+        # Past unknown code: values it can change, and names it can define.
+        "bump()\n1 / n",
+        "d.update(b=2)\nn = 5\n1 / n",
+        "d.update(b=2)\nopen('definitely_missing_file.txt')",
+        "d.update(b=2)\nimport os\nos.nope",
+        "d.update(b=2)\nwhile lst:\n    break\n1 / n",
+        "define_later()\nlater",
+        "d.update(b=2)\nexec('later = 1')\nlater",
+        "d.update(b=2)\nglobals()['later'] = 1\nlater",
+        "d.update(b=2)\nlater = 1\nlater",
+        "d.update(b=2)\nfor i in lst:\n    pass\nlater",
+        "d.update(b=2)\nx = later if lst else 0",
+        "d.update(b=2)\ntry:\n    later\nexcept NameError:\n    pass",
         "try:\n    d['b']\nexcept KeyError:\n    pass",
         "for i in range(3):\n    d['b']",
         "if lst:\n    d['b']",
@@ -886,6 +916,27 @@ def check_origins_lead_to_the_responsible_cells():
     (origin,) = locate_origins(["values"], log, ns)
     assert [(s.cell_id, s.role) for s in origin.steps] == [("c5", "assigned"), ("c6", "modified")]
 
+    # Running the same cell again is one cell, not one entry per run, also
+    # when a later run changed the variable without a visible difference.
+    run("c6", "values.append(2)")
+    run("c6", "values.sort()")
+    (origin,) = locate_origins(["values"], log, ns)
+    assert [(s.cell_id, s.role) for s in origin.steps] == [("c5", "assigned"), ("c6", "modified")]
+    assert origin.steps[1].note == "3 times", origin.steps[1].note
+
+    # A cell is named by its last run, the number the notebook shows next to
+    # it, even when that run did not change the variable.
+    numbered = ProvenanceLog()
+    for count, (cell_id, code) in enumerate(
+        [("n1", "items = [1]"), ("n2", "items.append(2)"), ("n2", "other = 1")], start=1
+    ):
+        numbered.before_cell(code, ns)
+        _run_target(code, ns)
+        numbered.after_cell(code, cell_id, execution_count=count, succeeded=True, namespace=ns)
+    (origin,) = locate_origins(["items"], numbered, ns)
+    assert [(s.cell_id, s.execution_count) for s in origin.steps] == [("n1", 1), ("n2", 3)]
+    assert "cell [3]" in origin.summary, origin.summary
+
     # A name that does not exist leads to the notebook cells that would define it.
     run("c7", "result = missing_function()")
     cells = [
@@ -924,6 +975,69 @@ def check_origins_are_traced_from_a_live_kernel():
     (origin,) = result.origins
     assert origin.variable == "table"
     assert [(s.cell_id, s.role) for s in origin.steps] == [("c2", "assigned")]
+
+
+def check_guard_stops_a_cell_that_would_crash():
+    """With the guard on, a certain crash is reported and nothing in the cell runs."""
+
+    from IPython.core.interactiveshell import InteractiveShell
+    from IPython.utils.capture import capture_output
+
+    from crane_llm.nb_extension import api, guard
+
+    shell = InteractiveShell.instance()
+    api.reload_crane_llm()
+    try:
+        api.set_guard(True)
+        api.set_guard(True)
+        assert len([t for t in shell.ast_transformers if isinstance(t, guard.CellGuard)]) == 1
+
+        shell.run_cell("table = {'a': 1}", store_history=True, cell_id="g1")
+        shell.run_cell("table = table.clear()", store_history=True, cell_id="g2")
+
+        # The first line would run fine; it must not run either.
+        with capture_output() as captured:
+            result = shell.run_cell("guard_ran = True\ntable['a']", store_history=True, cell_id="g3")
+        assert isinstance(result.error_before_exec, guard.CrashPrevented), result.error_before_exec
+        assert "guard_ran" not in shell.user_ns
+        assert "is not subscriptable" in str(result.error_before_exec)
+
+        # One output: HTML for any frontend, and the verdict with its origins
+        # for the JupyterLab extension to draw with links to the cells.
+        (output,) = captured.outputs
+        assert "text/html" in output.data
+        payload = output.data[guard.MIME_TYPE]
+        assert payload["verdict"]["certain"]
+        (origin,) = payload["origins"]
+        assert origin["variable"] == "table" and origin["steps"][0]["cell_id"] == "g2"
+
+        # Cells the checker finds nothing in run as usual, and so does a cell
+        # the user has marked to run anyway.
+        result = shell.run_cell("fine = 1 + 1", store_history=True)
+        assert result.success and shell.user_ns["fine"] == 2
+        result = shell.run_cell("# crane: run\nguard_ran = True\ntable['a']", store_history=True)
+        assert isinstance(result.error_in_exec, TypeError) and shell.user_ns["guard_ran"]
+
+        # Executions that do not store history come from frontends, not the user.
+        result = shell.run_cell("table['a']", store_history=False)
+        assert isinstance(result.error_in_exec, TypeError)
+
+        # The guard does not stop the checker from answering the toolbar button.
+        extension = api.get_extension()
+        extension.set_target_cell("t", "table['a']")
+        assert extension.assistant.check(shell) is not None
+
+        # Reloading the backend keeps the guard on.
+        api.reload_crane_llm()
+        assert guard.is_enabled(shell)
+
+        api.set_guard(False)
+        assert not guard.is_enabled(shell)
+        result = shell.run_cell("table['a']", store_history=True)
+        assert isinstance(result.error_in_exec, TypeError)
+    finally:
+        guard.disable(shell)
+        api._dispose_instance()
 
 
 def check_magic_output_goes_stale_when_a_cell_runs():
@@ -1092,6 +1206,7 @@ CHECKS = (
     check_cell_writes_are_recorded,
     check_origins_lead_to_the_responsible_cells,
     check_origins_are_traced_from_a_live_kernel,
+    check_guard_stops_a_cell_that_would_crash,
     check_magic_output_goes_stale_when_a_cell_runs,
     check_magic_shows_errors_instead_of_raising,
     check_unparseable_target_cells_do_not_raise,

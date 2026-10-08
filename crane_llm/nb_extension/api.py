@@ -19,6 +19,7 @@ from . import check_helpers as check_helpers_module
 from . import check_rules as check_rules_module
 from . import checks as checks_module
 from . import extension as extension_module
+from . import guard as guard_module
 from . import ipython_hooks as ipython_hooks_module
 from . import llm_client as llm_client_module
 from . import prompt_builder as prompt_builder_module
@@ -61,6 +62,7 @@ _RELOAD_ORDER = (
     lambda: assistant_module,
     lambda: ui_module,
     lambda: extension_module,
+    lambda: guard_module,
 )
 
 
@@ -110,8 +112,12 @@ def reload_crane_llm(model: Optional[str] = None) -> "extension_module.CraneNote
     """
 
     _dispose_instance()
+    guarded = guard_module.is_enabled(get_ipython())
     _reload_backend_modules()
-    return get_extension(model=model)
+    extension = get_extension(model=model)
+    if guarded:
+        guard_module.enable(get_ipython())
+    return extension
 
 
 def load_crane_llm(model: Optional[str] = None):
@@ -120,6 +126,25 @@ def load_crane_llm(model: Optional[str] = None):
     if get_ipython() is None:
         raise RuntimeError("CRANE-LLM notebook helpers require an active IPython session.")
     return get_extension(model=model)
+
+
+def set_guard(enabled: bool) -> None:
+    """Check every cell with the built-in checker before it runs, or stop doing so.
+
+    A cell the checker finds will crash is then not run at all. Lasts until
+    the kernel restarts. Reloading the backend keeps the setting, and
+    re-installs the guard so that it runs the reloaded code.
+    """
+
+    shell = get_ipython()
+    if shell is None:
+        raise RuntimeError("CRANE-LLM notebook helpers require an active IPython session.")
+    # Origins are traced from the cells recorded since the backend loaded.
+    get_extension()
+    if enabled:
+        guard_module.enable(shell)
+    else:
+        guard_module.disable(shell)
 
 
 def run_crane_llm(

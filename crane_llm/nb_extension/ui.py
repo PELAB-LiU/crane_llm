@@ -88,11 +88,22 @@ def step_label(step) -> str:
     return text("origins.step", role=role, cell=cell)
 
 
+def _inline_code(sentence: str) -> str:
+    """Escape ``sentence`` and set its `backticked` parts as code."""
+
+    pieces = html.escape(sentence).split("`")
+    return "".join(
+        f"<code>{piece}</code>" if index % 2 else piece for index, piece in enumerate(pieces)
+    )
+
+
 class VerdictView:
     """One ``%%crane_llm`` result, redrawn in place as it progresses."""
 
-    def __init__(self):
+    def __init__(self, footer: str = ""):
         self._handle = None
+        # A last line under the verdict, such as how to get past the guard.
+        self._footer = footer
         self._prompt = ""
         self._response = ""
         self._tone = "pending"
@@ -133,6 +144,18 @@ class VerdictView:
         self._response = response
         self._tone, self._label, self._body = verdict.tone, verdict.label, verdict.reasoning
         self._redraw()
+
+    def show_once(self, verdict: Verdict, origins: List[Origin], data: Optional[dict] = None) -> None:
+        """Show a finished verdict that is never redrawn, such as the guard's.
+
+        ``data`` adds other representations of it, by MIME type, for frontends
+        that can draw it themselves.
+        """
+
+        from IPython.display import display
+
+        self.show_result(verdict, origins)
+        display({"text/html": self._render(), **(data or {})}, raw=True)
 
     def show_error(self, message: str) -> None:
         self._steps = []
@@ -201,6 +224,12 @@ class VerdictView:
             parts.append(
                 '<div style="opacity:0.75;font-size:0.85em;margin-top:4px;">'
                 f"{html.escape(source_note(self._verdict))}</div>"
+            )
+
+        if self._footer:
+            parts.append(
+                '<div style="margin-top:6px;font-size:0.9em;">'
+                f"{_inline_code(self._footer)}</div>"
             )
 
         if self._origins and not self.stale:

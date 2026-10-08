@@ -5,7 +5,8 @@ apart:
 
 - Which cells are the extension's own rather than the user's code. The frontend
   drives the backend by running short helper snippets in the user's kernel, and
-  the user drives it with ``%%crane_llm`` and ``%load_ext crane_llm``. All of
+  the user drives it with ``%%crane_llm``, ``%crane_llm guard on`` and
+  ``%load_ext crane_llm``. All of
   those reach the ``post_run_cell`` hook like any other cell, but none of them
   changed the kernel state, and a ``%%crane_llm`` cell in particular must not be
   listed as having "run successfully": its body was analysed, not executed.
@@ -27,7 +28,7 @@ _INTERNAL_CELL_RE = re.compile(
     r"from\s+crane_llm(?:\.\w+)*\s+import\b"
     r"|import\s+crane_llm\b"
     r"|crane_llm\.\w+"
-    r"|%%crane_llm\b"
+    r"|%%?crane_llm\b"
     r"|%(?:load|reload|unload)_ext\s+crane_llm\b"
     r")",
 )

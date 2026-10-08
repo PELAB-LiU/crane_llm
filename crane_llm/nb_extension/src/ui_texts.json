@@ -12,7 +12,26 @@
     "toggle_label": "CRANE-LLM: Include Runtime Information",
     "toggle_caption": "Include the live kernel state in the prompt. When off, only the executed cells and the target cell are sent.",
     "toggle_llm_label": "CRANE-LLM: Use the LLM",
-    "toggle_llm_caption": "Ask the LLM when the built-in checker finds no crash. When off, only the built-in checker runs and nothing is sent."
+    "toggle_llm_caption": "When you click CRANE-LLM: ask the LLM if the built-in checker finds no crash. When off, only the built-in checker runs and nothing is sent.",
+    "toggle_guard_label": "CRANE-LLM: Check Cells Before They Run",
+    "toggle_guard_caption": "Whenever you run a cell: run the built-in checker on it first, and do not run it if it will crash. The LLM is never used for this."
+  },
+
+  "switches": {
+    "button_heading": "When you click CRANE-LLM",
+    "guard_heading": "Whenever you run a cell"
+  },
+
+  "guard": {
+    "label": "Check cells before they run",
+    "hint_on": "The built-in checker checks each cell first, and a cell it finds will crash is not run. The LLM is never used for this.",
+    "hint_off": "Cells run without being checked. When on, only the built-in checker is used, never the LLM.",
+    "verdict_label": "not run, this cell would crash",
+    "footer": "Nothing in this cell was executed. To run it anyway, add the line `# crane: run` to it. To stop checking cells before they run, switch off \"Check cells before they run\" in JupyterLab, or run `%crane_llm guard off`.",
+    "error": "CRANE-LLM did not run this cell. {reasoning}",
+    "magic_on": "CRANE-LLM checks every cell before it runs, until the kernel restarts. A cell the built-in checker finds will crash is not run.",
+    "magic_off": "CRANE-LLM does not check cells before they run.",
+    "magic_usage": "Usage: %crane_llm guard on | %crane_llm guard off. To check a single cell, put %%crane_llm on its first line instead."
   },
 
   "runinfo": {
@@ -24,7 +43,7 @@
 
   "llm": {
     "label": "Use the LLM",
-    "hint_on": "The LLM is asked when the built-in checker finds no crash.",
+    "hint_on": "The built-in checker runs first. If it finds no crash, the LLM is asked.",
     "hint_off": "Only the built-in checker runs. Nothing is sent to an LLM."
   },
 
@@ -111,12 +130,14 @@
       "edited": "has been edited since it ran",
       "ran_no_define": "ran, but did not define it",
       "partial_run": "this run raised an error partway",
+      "runs": "{count} times",
       "code_only": "read from the code; ran before tracking started"
     }
   },
 
   "checker": {
     "reasoning": "Line {line}: `{snippet}` raises {exception}: {message}",
+    "undefined_later": "Nothing that runs before this line can define `{name}`.",
     "is_none": "`{name}` is None.",
     "columns": "`{name}` has columns: {columns}.",
     "columns_unnamed": "The DataFrame has columns: {columns}.",

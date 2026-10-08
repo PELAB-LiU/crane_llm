@@ -20,7 +20,7 @@ import crane_llm
 crane_llm.set_api_key("sk-...")
 ```
 
-Then run a few cells, select the cell you want to check, and click **CRANE-LLM** in the toolbar.
+Then run a few cells, select the cell you want to check, and click **CRANE-LLM** in the toolbar. You can also have every cell checked before it runs, so that a cell that would certainly crash is not run at all.
 
 Kaggle and Colab cannot load the toolbar button. There, you use the `%%crane_llm` cell magic instead and keep the key in a notebook secret; the [user guide](./README_PYPI.md) has the steps. It also covers providers other than OpenAI, where the extension looks for its settings, and the runtime-information switch.
 
@@ -40,6 +40,10 @@ CRANE-LLM answers in two ways. A built-in check reports a crash it can detect fo
 ### Built-in checks
 
 A check reports a crash only when it is certain, and never declares a cell safe: when it finds nothing, the model is asked. It reads the cell in the order Python runs it and stops at code whose effect it cannot know, such as a call to your own function or the body of a loop.
+
+Past such code it carries on, with every check below, but only on what that code cannot have changed: which variables exist, and values that cannot change at all, such as numbers, strings and `None`, under names that code cannot reassign. A cell that ends with `data1.head()` is therefore a certain `NameError` however much runs before it, as long as nothing in the cell and none of the notebook's functions can define `data1`. Values that can change, such as DataFrames and lists, and the world outside the kernel (files, installed packages) are not checked past that point, since the code before may have changed them.
+
+With *Check cells before they run* switched on, the same checks run on every cell just before it executes, and a cell they find will crash is not run.
 
 | Library | The cell... | Raises |
 |---|---|---|
