@@ -1,27 +1,15 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
 from IPython import get_ipython
 
-from .assistant import CraneNotebookAssistant, PromptBuildingError
+from .assistant import AssistantResult, CraneNotebookAssistant, describe_error
 from .cell_filter import is_internal_helper_cell
 from .guard import CrashPrevented
 from .ipython_hooks import IPythonSessionTracker
-from .provenance import Origin
 from .session_state import NotebookSessionState
 from .texts import text
-from .verdict import Verdict
-
-
-@dataclass
-class NotebookExtensionResult:
-    # Both empty when a built-in check answered without calling the model.
-    prompt: str
-    response: str
-    verdict: Verdict
-    origins: List[Origin] = field(default_factory=list)
 
 
 class CraneNotebookExtension:
@@ -39,10 +27,9 @@ class CraneNotebookExtension:
         self._live_views: List = []
         self._stale_shell = None
 
-    def start_tracking(self):
-        registration = self.tracker.register()
+    def start_tracking(self) -> None:
+        self.tracker.register()
         self._register_stale_hook()
-        return registration
 
     def dispose(self) -> None:
         """Detach kernel hooks. Always call this before dropping the instance."""
@@ -86,41 +73,21 @@ class CraneNotebookExtension:
 
     # --- running ---------------------------------------------------------
 
-    def set_target_cell(self, cell_id: str, source: str, execution_count: Optional[int] = None):
-        self.tracker.set_target_cell(cell_id=cell_id, source=source, execution_count=execution_count)
+    def set_target_cell(self, cell_id: str, source: str) -> None:
+        self.session_state.set_target_cell(cell_id=cell_id, source=source)
 
     def run_target_cell(
         self,
         source: str,
         shell=None,
         cell_id: str = "active-cell",
-        execution_count: Optional[int] = None,
         render: bool = True,
         include_runinfo: bool = True,
         notebook_cells: Optional[List[Dict[str, str]]] = None,
         use_llm: bool = True,
         model: Optional[str] = None,
-    ) -> NotebookExtensionResult:
-        self.set_target_cell(cell_id=cell_id, source=source, execution_count=execution_count)
-        return self.run(
-            shell=shell,
-            render=render,
-            include_runinfo=include_runinfo,
-            notebook_cells=notebook_cells,
-            use_llm=use_llm,
-            model=model,
-        )
-
-    def run(
-        self,
-        shell=None,
-        render: bool = True,
-        include_runinfo: bool = True,
-        notebook_cells: Optional[List[Dict[str, str]]] = None,
-        use_llm: bool = True,
-        model: Optional[str] = None,
-    ) -> NotebookExtensionResult:
-        """Judge the target cell: built-in checks first, then the model.
+    ) -> AssistantResult:
+        """Judge ``source``: built-in checks first, then the model.
 
         ``model`` overrides the configured model for this call only. With
         ``render`` the progress and the verdict are shown as this cell's
@@ -128,6 +95,7 @@ class CraneNotebookExtension:
         can still tell that no prediction was made.
         """
 
+        self.set_target_cell(cell_id=cell_id, source=source)
         view = None
         if render:
             from .ui import VerdictView
@@ -151,22 +119,12 @@ class CraneNotebookExtension:
                 use_llm=use_llm,
                 model=model,
             )
-        except PromptBuildingError as exc:
-            if view is not None:
-                view.show_error(str(exc))
-            raise
         except Exception as exc:
             if view is not None:
-                view.show_error(f"{type(exc).__name__}: {exc}")
+                view.show_error(describe_error(exc))
             raise
 
         if view is not None:
             view.show_result(result.verdict, result.origins, result.response)
             self._live_views.append(view)
-
-        return NotebookExtensionResult(
-            prompt=result.prompt,
-            response=result.response,
-            verdict=result.verdict,
-            origins=result.origins,
-        )
+        return result

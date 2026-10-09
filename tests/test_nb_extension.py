@@ -1,9 +1,7 @@
-"""Offline checks for the notebook extension backend.
+"""Tests for the notebook extension backend. No LLM call is made.
 
-Run with ``python -m crane_llm.nb_extension.smoke_test``. No LLM call is made.
-
-Each check corresponds to a defect that previously reached a live kernel, so
-they are worth keeping even though they are quick.
+Run from the repository root with ``python -m pytest``. CI runs the same tests
+against the installed wheel, from outside the checkout.
 """
 
 from __future__ import annotations
@@ -41,7 +39,7 @@ class FakeResult:
         self.execution_count = execution_count
 
 
-def check_prompt_shape():
+def test_prompt_shape():
     state = NotebookSessionState()
     state.record_executed_cell("cell-1", "a = 1", execution_count=1)
     state.set_target_cell("cell-2", "print(a)")
@@ -53,7 +51,7 @@ def check_prompt_shape():
     assert "print(a)" in prompt
 
 
-def check_runinfo_switch_changes_the_prompt():
+def test_runinfo_switch_changes_the_prompt():
     """The runtime-information switch must add or remove exactly that section."""
 
     state = NotebookSessionState()
@@ -73,7 +71,7 @@ def check_runinfo_switch_changes_the_prompt():
         assert prompt.rstrip().endswith("values.append(4)")
 
 
-def check_runinfo_switch_selects_the_matching_system_prompt():
+def test_runinfo_switch_selects_the_matching_system_prompt():
     """A prompt with no runtime section must not claim to have one."""
 
     from crane_llm.nb_extension.llm_client import default_client
@@ -133,7 +131,7 @@ class _IsolatedSettings:
         return False
 
 
-def check_missing_api_key_is_explained():
+def test_missing_api_key_is_explained():
     """No key must produce the setup instructions, not an SDK stack trace."""
 
     from crane_llm.nb_extension.llm_client import default_client
@@ -151,7 +149,7 @@ def check_missing_api_key_is_explained():
     assert "CRANE_LLM_API_KEY" in message
 
 
-def check_api_key_roundtrips_through_the_config_file():
+def test_api_key_roundtrips_through_the_config_file():
     """``set_api_key`` is the documented setup path, so it has to be read back."""
 
     import crane_llm
@@ -173,7 +171,7 @@ def check_api_key_roundtrips_through_the_config_file():
             del os.environ["CRANE_LLM_API_KEY"]
 
 
-def check_base_url_selects_the_chat_completions_client():
+def test_base_url_selects_the_chat_completions_client():
     """Anything but a bare OpenAI account must go through Chat Completions."""
 
     import crane_llm
@@ -197,7 +195,7 @@ def check_base_url_selects_the_chat_completions_client():
         assert llm_client.default_client(model="gpt-5-mini").model == "gpt-5-mini"
 
 
-def check_local_endpoint_needs_no_key():
+def test_local_endpoint_needs_no_key():
     """A local inference server has no account, so a key must not be demanded."""
 
     import crane_llm
@@ -213,7 +211,7 @@ def check_local_endpoint_needs_no_key():
         client._get_client()
 
 
-def check_target_cell_excluded_from_executed_list():
+def test_target_cell_excluded_from_executed_list():
     """A previously run cell must not be listed as executed while it is the target."""
 
     state = NotebookSessionState()
@@ -227,7 +225,7 @@ def check_target_cell_excluded_from_executed_list():
     assert "risky(a)" not in executed_section
 
 
-def check_reexecution_is_deduplicated():
+def test_reexecution_is_deduplicated():
     state = NotebookSessionState()
     state.record_executed_cell("cell-1", "a = 1", execution_count=1)
     state.record_executed_cell("cell-1", "a = 2", execution_count=2)
@@ -236,7 +234,7 @@ def check_reexecution_is_deduplicated():
     assert state.executed_cells[0].source == "a = 2"
 
 
-def check_failed_cells_are_not_recorded():
+def test_failed_cells_are_not_recorded():
     state = NotebookSessionState()
     tracker = IPythonSessionTracker(state)
 
@@ -249,7 +247,7 @@ def check_failed_cells_are_not_recorded():
     assert state.executed_cells == []
 
 
-def check_history_seeded_cell_merges_with_real_execution():
+def test_history_seeded_cell_merges_with_real_execution():
     state = NotebookSessionState()
     tracker = IPythonSessionTracker(state)
 
@@ -261,7 +259,7 @@ def check_history_seeded_cell_merges_with_real_execution():
     assert state.executed_cells[0].cell_id == "real-id"
 
 
-def check_internal_helper_cells_are_filtered():
+def test_internal_helper_cells_are_filtered():
     assert is_internal_helper_cell("")
     # What the JupyterLab frontend runs.
     assert is_internal_helper_cell(
@@ -286,7 +284,7 @@ def check_internal_helper_cells_are_filtered():
         assert not is_internal_helper_cell(source), source
 
 
-def check_extension_driving_cells_are_filtered():
+def test_extension_driving_cells_are_filtered():
     """Cells that only drive CRANE-LLM must not be listed as executed code.
 
     A ``%%crane_llm`` cell was recorded as having run successfully, so every
@@ -311,7 +309,7 @@ def check_extension_driving_cells_are_filtered():
     assert [cell.cell_id for cell in state.executed_cells] == ["c1"]
 
 
-def check_api_keys_never_reach_the_prompt():
+def test_api_keys_never_reach_the_prompt():
     """A key set in an executed cell must not be sent to the model."""
 
     state = NotebookSessionState()
@@ -338,7 +336,7 @@ def check_api_keys_never_reach_the_prompt():
     assert "print(x)" in prompt
 
 
-def check_key_set_after_first_use_is_picked_up():
+def test_key_set_after_first_use_is_picked_up():
     """A check run before the key was set must not stick with "no key"."""
 
     import os
@@ -382,7 +380,7 @@ def check_key_set_after_first_use_is_picked_up():
     assert built == [None, "sk-set-afterwards"], built
 
 
-def check_hosted_secret_supplies_the_key():
+def test_hosted_secret_supplies_the_key():
     """On Kaggle, a shared secret is found with no setup cell at all."""
 
     import os
@@ -437,7 +435,7 @@ def check_hosted_secret_supplies_the_key():
         assert "set_api_key" in settings.missing_key_message()
 
 
-def check_requests_do_not_offer_brotli():
+def test_requests_do_not_offer_brotli():
     """The reply must not come back brotli-encoded.
 
     Kaggle ships brotlipy under the name ``brotli``, and a new HTTP client then
@@ -502,7 +500,7 @@ def check_requests_do_not_offer_brotli():
     assert "br" not in [part.strip() for part in offered.split(",")], offered
 
 
-def check_model_responses_are_read():
+def test_model_responses_are_read():
     from crane_llm.nb_extension.verdict import verdict_from_response
 
     verdict = verdict_from_response('{"reasoning": "r", "prediction": true}', model="m")
@@ -529,13 +527,13 @@ def _run_target(code: str, namespace: dict):
     return None
 
 
-def check_builtin_checks_are_certain():
+def test_builtin_checks_are_certain():
     """Every crash a check reports must really happen, with that exception.
 
     Each case is checked against the namespace first, then actually run.
     """
 
-    from crane_llm.nb_extension.checks import run_checks
+    from crane_llm.nb_extension.checker import run_checks
 
     def namespace():
         ns = {"nothing": None, "d": {"a": 1}, "lst": [1, 2, 3], "n": 0, "s": "abc"}
@@ -650,13 +648,15 @@ def check_builtin_checks_are_certain():
         cases += [("text_ids.astype(int)", "astype-int")]
 
     try:
+        import numpy as np
         import pandas as pd
         from sklearn.linear_model import LinearRegression
     except ImportError:
         pass
     else:
         # A plain estimator does check the columns, unlike a ColumnTransformer
-        # (see check_builtin_checks_pass_working_code).
+        # (see test_builtin_checks_pass_working_code). Like scikit-learn, the
+        # names are checked before the count.
         def namespace(base=namespace):
             ns = base()
             train = pd.DataFrame({"a": [1.0, 2.0, 3.0], "b": [4.0, 5.0, 6.0]})
@@ -664,12 +664,14 @@ def check_builtin_checks_are_certain():
                 lr=LinearRegression().fit(train, [1.0, 2.0, 3.0]),
                 swapped=train[["b", "a"]],
                 one_column=train[["a"]],
+                one_column_array=np.ones((3, 1)),
             )
             return ns
 
         cases += [
             ("lr.predict(swapped)", "feature-names"),
-            ("lr.predict(one_column)", "feature-count"),
+            ("lr.predict(one_column)", "feature-names"),
+            ("lr.predict(one_column_array)", "feature-count"),
         ]
 
     try:
@@ -701,14 +703,14 @@ def check_builtin_checks_are_certain():
         assert type(raised).__name__ == finding.exception, (code, raised, finding.exception)
 
 
-def check_builtin_checks_stop_at_unknown_code():
+def test_builtin_checks_stop_at_unknown_code():
     """Past code whose effect is unknown, nothing is claimed.
 
     Each of these would crash on the namespace as it is now, but what runs
     first may change that, so the model must be asked instead.
     """
 
-    from crane_llm.nb_extension.checks import run_checks
+    from crane_llm.nb_extension.checker import run_checks
 
     def namespace():
         ns = {"d": {"a": 1}, "lst": [1, 2, 3], "helper": lambda: None, "n": 0}
@@ -746,14 +748,14 @@ def check_builtin_checks_stop_at_unknown_code():
         assert run_checks(code, namespace()) is None, code
 
 
-def check_builtin_checks_pass_working_code():
+def test_builtin_checks_pass_working_code():
     """Cells that run fine must not be reported to crash.
 
     With the guard on, such a report stops a working cell from running. Each
     case is run for real first, to confirm it works.
     """
 
-    from crane_llm.nb_extension.checks import run_checks
+    from crane_llm.nb_extension.checker import run_checks
 
     def namespace():
         return {"override": None, "limit": 3, "cfg": {}}
@@ -805,12 +807,12 @@ def check_builtin_checks_pass_working_code():
         assert finding is None, (code, finding)
 
 
-def check_scan_limit_skips_data_reading_checks():
+def test_scan_limit_skips_data_reading_checks():
     """Above the scan limit a check that reads every value is skipped, not guessed."""
 
     import os
 
-    from crane_llm.nb_extension.checks import run_checks
+    from crane_llm.nb_extension.checker import run_checks
 
     try:
         import pandas as pd
@@ -841,7 +843,7 @@ def check_scan_limit_skips_data_reading_checks():
         assert settings.scan_limit() == settings.DEFAULT_SCAN_LIMIT
 
 
-def check_check_answers_without_calling_the_model():
+def test_check_answers_without_calling_the_model():
     """A certain crash is reported as a check, and the model is not called."""
 
     extension = CraneNotebookExtension()
@@ -865,7 +867,7 @@ def check_check_answers_without_calling_the_model():
     assert result.verdict.source == "model"
 
 
-def check_progress_says_the_checker_found_nothing():
+def test_progress_says_the_checker_found_nothing():
     """When the checker finds nothing, the steps say so before the model is asked."""
 
     extension = CraneNotebookExtension()
@@ -894,7 +896,7 @@ def check_progress_says_the_checker_found_nothing():
     assert not verdict.checks_ran
 
 
-def check_llm_switched_off_runs_only_the_checker():
+def test_llm_switched_off_runs_only_the_checker():
     """With the LLM off nothing is sent, and finding nothing is not "safe"."""
 
     extension = CraneNotebookExtension()
@@ -937,14 +939,14 @@ def check_llm_switched_off_runs_only_the_checker():
         seen, result = judge("x = 1", {})
         assert result.verdict.tone == "none"
 
-    from crane_llm.nb_extension.ui import source_badge, source_note
     from crane_llm.nb_extension.texts import text
 
-    assert source_badge(verdict) == text("verdict.badge_check_only")
-    assert source_note(verdict) == text("verdict.note_check_only")
+    assert verdict.badge == text("verdict.badge_check_only")
+    assert verdict.note == text("verdict.note_check_only")
+    assert verdict.to_json()["badge"] == verdict.badge and verdict.to_json()["note"] == verdict.note
 
 
-def check_model_is_chosen_per_check():
+def test_model_is_chosen_per_check():
     """A model named for one check applies to that check only.
 
     It used to be stored on the session-wide extension, so naming a different
@@ -972,22 +974,25 @@ def check_model_is_chosen_per_check():
         assert judge(None) == "configured-model" and waiting == ["configured-model"]
 
 
-def check_every_text_key_exists():
+def test_every_text_key_exists():
     """Every text the code asks for must be in ui_texts.json, in both halves."""
 
     import json
     import re
-    from pathlib import Path
 
     from crane_llm.nb_extension.texts import TEXTS_PATH
 
     texts = json.loads(TEXTS_PATH.read_text(encoding="utf-8"))
-    here = Path(__file__).parent
+    # The package under test, installed or checked out; the texts are used
+    # throughout it, the checker's subpackages included.
+    package = TEXTS_PATH.parent.parent
 
     used = set()
-    for path in here.glob("*.py"):
+    for path in package.rglob("*.py"):
+        if "node_modules" in path.parts:
+            continue
         used |= set(re.findall(r"""\btext\(\s*f?["']([\w.]+)["']""", path.read_text(encoding="utf-8")))
-    source = (here / "src" / "index.ts").read_text(encoding="utf-8")
+    source = (package / "src" / "index.ts").read_text(encoding="utf-8")
     used |= set(re.findall(r"""\bt\(\s*'([\w.]+)'""", source))
     # Keys built at runtime: one per origin role.
     used |= {f"origins.roles.{role}" for role in
@@ -1004,7 +1009,7 @@ def check_every_text_key_exists():
     assert len(used) > 50, len(used)
 
 
-def check_cell_writes_are_recorded():
+def test_cell_writes_are_recorded():
     """Assignments, in-place changes and deletions are told apart."""
 
     from crane_llm.nb_extension.provenance import ProvenanceLog
@@ -1032,7 +1037,7 @@ def check_cell_writes_are_recorded():
     assert events["c4"].assigned == {"y": 1} and not events["c4"].succeeded
 
 
-def check_origins_lead_to_the_responsible_cells():
+def test_origins_lead_to_the_responsible_cells():
     from crane_llm.nb_extension.provenance import ProvenanceLog, locate_origins
 
     log = ProvenanceLog()
@@ -1091,7 +1096,7 @@ def check_origins_lead_to_the_responsible_cells():
     assert notes == {"c7": "raised before defining it", "c8": "has not run in this kernel session"}, notes
 
 
-def check_origins_are_traced_from_a_live_kernel():
+def test_origins_are_traced_from_a_live_kernel():
     """The hooks feed provenance, and a verdict comes back with its origins."""
 
     from IPython.core.interactiveshell import InteractiveShell
@@ -1119,7 +1124,7 @@ def check_origins_are_traced_from_a_live_kernel():
     assert [(s.cell_id, s.role) for s in origin.steps] == [("c2", "assigned")]
 
 
-def check_guard_stops_a_cell_that_would_crash():
+def test_guard_stops_a_cell_that_would_crash():
     """With the guard on, a certain crash is reported and nothing in the cell runs."""
 
     from IPython.core.interactiveshell import InteractiveShell
@@ -1182,7 +1187,7 @@ def check_guard_stops_a_cell_that_would_crash():
         api._dispose_instance()
 
 
-def check_magic_output_goes_stale_when_a_cell_runs():
+def test_magic_output_goes_stale_when_a_cell_runs():
     """The magic's verdict greys out after a user cell, not after another check."""
 
     from crane_llm.nb_extension import ui
@@ -1235,7 +1240,7 @@ def check_magic_output_goes_stale_when_a_cell_runs():
     assert not extension._live_views
 
 
-def check_magic_shows_errors_instead_of_raising():
+def test_magic_shows_errors_instead_of_raising():
     from crane_llm.nb_extension import ui
 
     class FakeHandle:
@@ -1266,7 +1271,7 @@ def check_magic_shows_errors_instead_of_raising():
     assert "Add-ons &gt; Secrets" in FakeHandle.html
 
 
-def check_unparseable_target_cells_do_not_raise():
+def test_unparseable_target_cells_do_not_raise():
     """Magics, shell escapes and half-typed cells must not break prompt building."""
 
     for source in ("%%time\nlen(values)", "%matplotlib inline", "!pip install torch", "df.head("):
@@ -1275,7 +1280,7 @@ def check_unparseable_target_cells_do_not_raise():
         build_crane_prompt(state, include_runinfo=True, shell=FakeShell({"values": [1, 2]}))
 
 
-def check_hostile_namespace_does_not_break_collection():
+def test_hostile_namespace_does_not_break_collection():
     """One object that raises on access must not take down the whole prompt."""
 
     class Exploding:
@@ -1291,7 +1296,7 @@ def check_hostile_namespace_does_not_break_collection():
     assert "good" in runinfo
 
 
-def check_summarisation_survives_missing_libraries():
+def test_summarisation_survives_missing_libraries():
     """Rules whose library is absent must be skipped, not fatal.
 
     Several rules import numpy, pandas, torch or sklearn at the top of the
@@ -1321,71 +1326,8 @@ def check_summarisation_survives_missing_libraries():
     assert "type" in summary, summary
 
 
-def check_namespace_is_not_mutated():
+def test_namespace_is_not_mutated():
     namespace = {"model": [1, 2, 3]}
     before = set(namespace)
     collect_live_runinfo(shell=FakeShell(namespace), target_code="model.append(4)")
     assert set(namespace) == before, f"leaked names: {set(namespace) - before}"
-
-
-CHECKS = (
-    check_prompt_shape,
-    check_runinfo_switch_changes_the_prompt,
-    check_runinfo_switch_selects_the_matching_system_prompt,
-    check_missing_api_key_is_explained,
-    check_api_key_roundtrips_through_the_config_file,
-    check_base_url_selects_the_chat_completions_client,
-    check_local_endpoint_needs_no_key,
-    check_target_cell_excluded_from_executed_list,
-    check_reexecution_is_deduplicated,
-    check_failed_cells_are_not_recorded,
-    check_history_seeded_cell_merges_with_real_execution,
-    check_internal_helper_cells_are_filtered,
-    check_extension_driving_cells_are_filtered,
-    check_api_keys_never_reach_the_prompt,
-    check_key_set_after_first_use_is_picked_up,
-    check_hosted_secret_supplies_the_key,
-    check_requests_do_not_offer_brotli,
-    check_model_responses_are_read,
-    check_builtin_checks_are_certain,
-    check_builtin_checks_stop_at_unknown_code,
-    check_builtin_checks_pass_working_code,
-    check_scan_limit_skips_data_reading_checks,
-    check_check_answers_without_calling_the_model,
-    check_progress_says_the_checker_found_nothing,
-    check_llm_switched_off_runs_only_the_checker,
-    check_model_is_chosen_per_check,
-    check_every_text_key_exists,
-    check_cell_writes_are_recorded,
-    check_origins_lead_to_the_responsible_cells,
-    check_origins_are_traced_from_a_live_kernel,
-    check_guard_stops_a_cell_that_would_crash,
-    check_magic_output_goes_stale_when_a_cell_runs,
-    check_magic_shows_errors_instead_of_raising,
-    check_unparseable_target_cells_do_not_raise,
-    check_hostile_namespace_does_not_break_collection,
-    check_summarisation_survives_missing_libraries,
-    check_namespace_is_not_mutated,
-)
-
-
-def main():
-    failures = []
-    for check in CHECKS:
-        try:
-            check()
-        except Exception as exc:
-            failures.append(f"{check.__name__}: {type(exc).__name__}: {exc}")
-            print(f"FAIL {check.__name__}")
-        else:
-            print(f"ok   {check.__name__}")
-
-    if failures:
-        print("\n" + "\n".join(failures))
-        raise SystemExit(f"{len(failures)} of {len(CHECKS)} checks failed.")
-
-    print(f"\nAll {len(CHECKS)} CRANE-LLM notebook extension checks passed.")
-
-
-if __name__ == "__main__":
-    main()

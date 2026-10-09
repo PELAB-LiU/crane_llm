@@ -1,0 +1,329 @@
+/*
+ * The look of the CRANE-LLM extension: the sidebar, the switches, the verdict
+ * boxes under cells and the marks on the cells a crash comes from.
+ *
+ * A verdict's colour comes from its tone, set as data-tone on the element:
+ * crash, safe, unknown, none (the checker ran alone and found nothing) or
+ * stale. The %%crane_llm magic's HTML output uses the same colours, in ui.py.
+ */
+
+:root {
+  --crane-llm-crash: #dc2626;
+  --crane-llm-safe: #16a34a;
+  /* Not the brand colour, which is the boxes' default border: an unreadable
+     response would then look like no verdict at all. */
+  --crane-llm-unknown: #d97706;
+  /* Neither green nor red: finding nothing is not "safe". */
+  --crane-llm-none: #0369a1;
+  --crane-llm-stale: #6b7280;
+  /* The cells a crash comes from. Distinct from every verdict tone. */
+  --crane-llm-origin: #7c3aed;
+}
+
+[data-tone='crash'],
+[data-crane-llm-tone='crash'] {
+  --crane-llm-tone: var(--crane-llm-crash);
+}
+
+[data-tone='safe'],
+[data-crane-llm-tone='safe'] {
+  --crane-llm-tone: var(--crane-llm-safe);
+}
+
+[data-tone='unknown'],
+[data-crane-llm-tone='unknown'] {
+  --crane-llm-tone: var(--crane-llm-unknown);
+}
+
+[data-tone='none'],
+[data-crane-llm-tone='none'] {
+  --crane-llm-tone: var(--crane-llm-none);
+}
+
+[data-tone='stale'],
+[data-crane-llm-tone='stale'] {
+  --crane-llm-tone: var(--crane-llm-stale);
+}
+
+/* --- sidebar ------------------------------------------------------------- */
+
+.crane-llm-sidebar {
+  padding: 12px;
+  height: 100%;
+  overflow: auto;
+  box-sizing: border-box;
+  background: var(--jp-layout-color1);
+  color: var(--jp-ui-font-color1);
+  border-left: 1px solid var(--jp-border-color2);
+}
+
+.crane-llm-sidebar-title {
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.crane-llm-sidebar-steps {
+  margin-bottom: 4px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.crane-llm-sidebar-status {
+  margin-bottom: 10px;
+  color: var(--jp-info-color1);
+  font-weight: 600;
+}
+
+.crane-llm-sidebar-heading {
+  margin: 8px 0 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.crane-llm-sidebar-text {
+  margin: 0 0 10px;
+  padding: 10px;
+  min-height: 120px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--jp-layout-color2);
+  border: 1px solid var(--jp-border-color2);
+  border-radius: 8px;
+}
+
+.crane-llm-sidebar-text.crane-llm-prompt {
+  min-height: 180px;
+}
+
+/* --- switches, in the sidebar and in the toolbar popover ------------------ */
+
+.crane-llm-switch-heading {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.crane-llm-switch-heading.crane-llm-divider {
+  padding-top: 8px;
+  border-top: 1px solid var(--jp-border-color2);
+}
+
+.crane-llm-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.crane-llm-switch input {
+  margin: 0;
+  cursor: pointer;
+}
+
+.crane-llm-switch-label {
+  font-weight: 700;
+}
+
+.crane-llm-switch.crane-llm-disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.crane-llm-switch-hint {
+  opacity: 0.75;
+}
+
+.crane-llm-sidebar .crane-llm-switch {
+  margin: 0 0 4px;
+  font-size: 12px;
+}
+
+.crane-llm-sidebar .crane-llm-switch-hint {
+  margin: 0 0 10px 24px;
+  font-size: 11px;
+}
+
+.crane-llm-popover .crane-llm-switch-hint {
+  margin: 4px 0 8px;
+}
+
+/* Appended to the page and placed with fixed coordinates, so that no
+   ancestor's overflow can clip it out of the toolbar. */
+.crane-llm-popover {
+  position: fixed;
+  z-index: 10000;
+  display: none;
+  /* A fixed width, so the panel does not resize with its hints. */
+  width: 300px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  white-space: normal;
+  overflow-wrap: break-word;
+  font-size: 12px;
+  background: var(--jp-layout-color1);
+  color: var(--jp-ui-font-color1);
+  border: 1px solid var(--jp-border-color1);
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+}
+
+.crane-llm-popover.crane-llm-open {
+  display: block;
+}
+
+/* --- under a cell: progress and verdict ----------------------------------- */
+
+.crane-llm-progress {
+  margin: 8px 0 4px;
+  padding: 8px 12px;
+  font-size: 12px;
+  background: var(--jp-layout-color2);
+  border-left: 4px solid var(--crane-llm-stale);
+  border-radius: 0 8px 8px 0;
+}
+
+.crane-llm-step-done {
+  opacity: 0.7;
+}
+
+.crane-llm-step-current {
+  font-weight: 700;
+}
+
+.crane-llm-result {
+  margin: 8px 0 4px;
+  padding: 10px 12px;
+  background: var(--jp-layout-color2);
+  border-left: 4px solid var(--crane-llm-tone, var(--jp-brand-color1));
+  border-radius: 0 8px 8px 0;
+}
+
+.crane-llm-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.crane-llm-result-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.crane-llm-result-title {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Who gave the verdict. A certain one, from a built-in check, stands out. */
+.crane-llm-badge {
+  padding: 1px 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  background: transparent;
+  color: var(--jp-ui-font-color2);
+  border: 1px solid var(--jp-border-color1);
+  border-radius: 999px;
+}
+
+.crane-llm-badge.crane-llm-certain {
+  font-weight: 700;
+  background: var(--jp-ui-font-color1);
+  color: var(--jp-layout-color1);
+  border-color: var(--jp-ui-font-color1);
+}
+
+.crane-llm-close {
+  min-height: 24px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.crane-llm-reasoning {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.crane-llm-note {
+  margin-top: 6px;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.crane-llm-footer {
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+/* Once stale, the origins describe a kernel state that has moved on. */
+.crane-llm-result[data-tone='stale'] .crane-llm-origins {
+  opacity: 0.5;
+}
+
+/* --- the cells a crash comes from ---------------------------------------- */
+
+.crane-llm-origins-heading {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--crane-llm-origin);
+}
+
+.crane-llm-origin-summary {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.crane-llm-origin-step {
+  margin: 3px 0 0 12px;
+  padding: 3px 8px;
+  font-size: 12px;
+  border-left: 3px dashed var(--crane-llm-origin);
+  opacity: 0.7;
+}
+
+.crane-llm-origin-step.crane-llm-linked {
+  cursor: pointer;
+  opacity: 1;
+}
+
+.crane-llm-origin-step.crane-llm-linked .crane-llm-origin-where {
+  color: var(--crane-llm-origin);
+  text-decoration: underline;
+}
+
+.crane-llm-origin-code {
+  margin-left: 6px;
+  font-family: var(--jp-code-font-family);
+  white-space: pre-wrap;
+}
+
+.crane-llm-origin-step-note {
+  opacity: 0.7;
+}
+
+/* An inset shadow and an outline rather than borders, so nothing reflows. */
+.jp-Cell[data-crane-llm-tone] {
+  box-shadow: inset 4px 0 0 0 var(--crane-llm-tone);
+}
+
+.jp-Cell.crane-llm-origin-cell {
+  outline: 2px dashed var(--crane-llm-origin);
+  outline-offset: -2px;
+}
+
+.crane-llm-origin-note {
+  margin: 6px 0 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--crane-llm-origin);
+  background: var(--jp-layout-color2);
+  border-left: 4px dashed var(--crane-llm-origin);
+  border-radius: 0 6px 6px 0;
+}

@@ -340,14 +340,16 @@ node -e "console.log(require('./labextension/package.json').jupyterlab._build.lo
 | File | Role |
 |---|---|
 | `src/index.ts` | toolbar button, sidebar, per-cell verdict boxes, origin marks |
+| `style/index.css` | the look of all of the above, with the verdict colours |
 | `src/ui_texts.json` | every text users see, for both the frontend and the magic; change wording here, not in code |
 | `texts.py` | reads `src/ui_texts.json` for the backend |
 | `api.py` | kernel-facing entry points; the frontend contract |
 | `extension.py` | coordinates tracking and the magic's output |
 | `assistant.py` | judges a cell: built-in checks first, then the model; locates origins |
-| `checks.py` | the built-in checker's engine: walks the cell and decides where to stop |
-| `check_rules.py` | the checker's rules, and the operations it may walk past; add and edit rules here |
-| `check_helpers.py` | what rules are written with: the four kinds of site and value tests |
+| `checker/walker.py` | the built-in checker's engine: walks the cell and decides where to stop |
+| `checker/rules/` | the checker's rules, one module per library (`python.py`, `pandas.py`, `numpy.py`, `sklearn.py`, ...); add and edit rules here |
+| `checker/sites.py` | what rules are written with: the kinds of site and the value tests |
+| `checker/pure.py` | the operations the walk may continue past |
 | `guard.py` | checks every cell before it runs, and stops one with a certain crash |
 | `provenance.py` | records what each cell did to the namespace; traces variables back to cells |
 | `verdict.py` | one verdict shape for checks and model responses |
@@ -364,20 +366,20 @@ The frontend talks to the backend by running a short snippet in the user's kerne
 
 ### Built-in checks
 
-`checks.py` walks the target cell in Python's evaluation order against the live namespace, and reports a crash only when it reaches an operation known to raise for the values it will receive. The guarantee rests on where the walk stops: at anything that could run code whose effect is unknown, which includes calls to user functions, control flow, `try` blocks, stores into objects, and operations on values the walk did not compute. It continues only past operations that change nothing, such as `print`, `df.head()`, or constructing a scikit-learn estimator. If one of those raised instead, the cell would still crash, only earlier.
+`checker/walker.py` walks the target cell in Python's evaluation order against the live namespace, and reports a crash only when it reaches an operation known to raise for the values it will receive. The guarantee rests on where the walk stops: at anything that could run code whose effect is unknown, which includes calls to user functions, control flow, `try` blocks, stores into objects, and operations on values the walk did not compute. It continues only past operations that change nothing, such as `print`, `df.head()`, or constructing a scikit-learn estimator. If one of those raised instead, the cell would still crash, only earlier.
 
 A check therefore never declares a cell safe. When the walk stops, or ends without a finding, the model is asked as before. Any exception inside the walk counts as no finding.
 
-When the walk stops at a statement, it resumes after it (`_walk` and `_Resume` in `checks.py`), with a fresh walker that knows only what the skipped code cannot have changed. Unknown code can rebind a notebook variable only through a statement in the cell that names it, a notebook function that assigns it as a global (`STORE_GLOBAL` in its bytecode), or code that writes the namespace directly: `globals()`, `exec`, `sys.modules['__main__']`, IPython magics. If the cell or any notebook function uses one of the latter, nothing is claimed past the stop. Otherwise every variable that could be rebound, and every value that is not immutable (numbers, strings, `None`, tuples of them), becomes unknown, and the rules run on the rest as usual. The rules about the world outside the kernel, missing files and modules and module attributes, are skipped after a stop, since the skipped code may have written the file or imported the submodule. The walk does not resume past a `while` loop, which may never end, a `raise`, or the first import of a module that is not part of Python or an installed package.
+When the walk stops at a statement, it resumes after it (`_walk` and `_Resume` in `checker/walker.py`), with a fresh walker that knows only what the skipped code cannot have changed. Unknown code can rebind a notebook variable only through a statement in the cell that names it, a notebook function that assigns it as a global (`STORE_GLOBAL` in its bytecode), or code that writes the namespace directly: `globals()`, `exec`, `sys.modules['__main__']`, IPython magics. If the cell or any notebook function uses one of the latter, nothing is claimed past the stop. Otherwise every variable that could be rebound, and every value that is not immutable (numbers, strings, `None`, tuples of them), becomes unknown, and the rules run on the rest as usual. The rules about the world outside the kernel, missing files and modules and module attributes, are skipped after a stop, since the skipped code may have written the file or imported the submodule. The walk does not resume past a `while` loop, which may never end, a `raise`, or the first import of a module that is not part of Python or an installed package.
 
-Each library behaviour a rule depends on was confirmed against the library itself, and `check_builtin_checks_are_certain` in the smoke test runs every case for real to confirm the reported exception is raised. Some behaviours are less obvious than they look, which is why the rules have exceptions:
+Each library behaviour a rule depends on was confirmed against the library itself, and `test_builtin_checks_are_certain` in `tests/test_nb_extension.py` runs every case for real to confirm the reported exception is raised. Some behaviours are less obvious than they look, which is why the rules have exceptions:
 
 - `df.groupby([...])` with labels that are not columns does not raise when the list is as long as the frame: pandas then treats it as the group values.
 - A `MultiIndex` and the datetime-like indexes match partial keys, so a missing label is not a certain `KeyError` there.
 - Only the predict family is checked for an unfitted estimator. Stateless transformers such as `Normalizer` can `transform` without being fitted.
-- The feature-count rule relies on scikit-learn's own estimator checks, which require every estimator that takes 2-D input to reject the wrong number of features.
+- The feature-count rule relies on scikit-learn's own estimator checks, which require every estimator that takes 2-D input to reject the wrong number of features. Composite estimators such as `ColumnTransformer` are exempt: they select their columns from a DataFrame by name, in any order, and ignore the rest.
 
-The rules themselves are in `check_rules.py`, separate from the walk. Each is a short function registered for one kind of operation, a *site*: reading `obj[key]`, assigning `obj[key] = value`, a call, an arithmetic operation, a comparison, iterating (a `for`, a comprehension, unpacking), a truth test (an `if`, `while`, `and`, `or`, `not`), a unary operator, a `del`, or `*x` / `**x` arguments. It receives the real values and calls `site.crash(...)` when the operation will raise. The top of that file explains how to add one, with a template. In short:
+The rules themselves are in `checker/rules/`, separate from the walk, one module per library. Each is a short function registered for one kind of operation, a *site*: reading `obj[key]`, assigning `obj[key] = value`, a call, an arithmetic operation, a comparison, iterating (a `for`, a comprehension, unpacking), a truth test (an `if`, `while`, `and`, `or`, `not`), a unary operator, a `del`, or `*x` / `**x` arguments. It receives the real values and calls `site.crash(...)` when the operation will raise. Rules are tried in the order they are registered, and the first that finds a crash reports it. `checker/rules/__init__.py` explains how to add one, with a template. In short:
 
 ```python
 @rule(Call, "my-rule")
@@ -388,11 +390,11 @@ def my_rule(site: Call) -> None:
         site.crash("ValueError", "what Python would say", [site.receiver_root])
 ```
 
-A rule that fails with an exception of its own counts as having found nothing, so a mistake in a rule can miss a crash but never invent one. Confirm the library's behaviour on every version you rely on, and add the case to `check_builtin_checks_are_certain` in the smoke test, which runs it for real.
+A rule that fails with an exception of its own counts as having found nothing, so a mistake in a rule can miss a crash but never invent one. Confirm the library's behaviour on every version you rely on, and add the case to `test_builtin_checks_are_certain` in `tests/test_nb_extension.py`, which runs it for real. If the rule could plausibly fire on code that works, add that code to `test_builtin_checks_pass_working_code`, which requires the checker to stay silent on it.
 
-Rules that read every value of the data, such as `astype(int)`, check its size against `scan_budget()` first and skip larger data. The budget is the user's scan limit: `crane_llm.set_scan_limit(n)`, or `CRANE_LLM_SCAN_LIMIT`, default one million values.
+Rules that read every value of the data, such as `astype(int)`, check its size against `scan_budget()` first and skip larger data. The budget is the user's scan limit: `crane_llm.set_scan_limit(n)`, or `CRANE_LLM_SCAN_LIMIT`, default one million values. It is read once per check.
 
-The end of `check_rules.py` also lists the operations the walk may continue past, such as `df.head()`. Adding to those lists lets the rules see further into cells, but only operations that never change anything belong there.
+`checker/pure.py` lists the operations the walk may continue past, such as `df.head()`. Adding to those lists lets the rules see further into cells, but only operations that never change anything belong there.
 
 ### The guard
 
@@ -427,13 +429,15 @@ Lower-level entry points, for use from a notebook cell:
 
 ## E. Validating a change
 
+From the repository root:
+
 ```bash
-python -m py_compile setup.py crane_llm/nb_extension/*.py
-python -m crane_llm.nb_extension.smoke_test
+pip install -e ".[test]"
+python -m pytest
 cd crane_llm/nb_extension && jlpm build && cd ../..
 ```
 
-`smoke_test.py` covers prompt assembly, the executed-cell ledger, the built-in checks (each reported crash is also run for real), provenance and origin tracing, cells that cannot be parsed, hostile kernel namespaces, and how the API key, model and endpoint are resolved. It makes no LLM call and does not read or write your own `~/.crane_llm/config.json`.
+`tests/test_nb_extension.py` covers prompt assembly, the executed-cell ledger, the built-in checks (each reported crash is also run for real, and so is each cell they must not report), provenance and origin tracing, cells that cannot be parsed, hostile kernel namespaces, and how the API key, model and endpoint are resolved. It makes no LLM call and does not read or write your own `~/.crane_llm/config.json`.
 
 ## F. Troubleshooting
 

@@ -170,6 +170,21 @@
     "kernel_timeout": "The kernel did not respond within {seconds}s. It may still be busy running another cell.",
     "no_payload": "The kernel did not return a CRANE-LLM payload. Output was:\n{output}",
     "unknown_error": "The kernel reported an unknown error.",
-    "prompt_failed": "Prompt building failed. {error}"
+    "prompt_failed": "Prompt building failed. {error}",
+    "no_ipython": "CRANE-LLM notebook helpers require an active IPython session.",
+    "config_not_json": "{path} is not valid JSON ({error}). Fix or delete it, then retry.",
+    "config_not_object": "{path} must contain a JSON object, not {kind}.",
+    "unknown_api_style": "Unknown API style '{style}'. Use 'responses' (OpenAI) or 'chat' (any OpenAI-compatible endpoint).",
+    "openai_import": "OpenAI import failed: {error}",
+    "model_truncated": "The model hit the output token limit (max_output_tokens={limit}) before finishing. Raise `max_output_tokens` in crane_llm/llms/config_llms.py and try again.",
+    "model_status": "The model returned status '{status}'.",
+    "model_status_reason": "The model returned status '{status}' (reason: {reason}).",
+    "model_partial_output": "Partial output: {output}",
+    "model_no_output": "The model returned no output.",
+    "model_empty": "The model returned an empty response.",
+    "model_no_choices": "The model returned no choices.",
+    "missing_key_kaggle": "No API key found. On Kaggle, store it as a secret:\n\n  1. In the notebook editor, open Add-ons > Secrets.\n  2. Add a secret with the label CRANE_LLM_API_KEY and your key as the value.\n  3. Tick the checkbox next to it, so this notebook may read it.\n\nThen run the %%crane_llm cell again; no restart is needed. Keep the key\nout of the notebook itself, which others can read once it is shared.",
+    "missing_key_colab": "No API key found. On Colab, store it as a secret:\n\n  1. Click the key icon in the left sidebar (Secrets).\n  2. Add a secret named CRANE_LLM_API_KEY with your key as the value.\n  3. Switch on 'Notebook access' for it.\n\nThen run the %%crane_llm cell again; no restart is needed.",
+    "missing_key": "No API key found. Set one up in any of these ways, then retry.\n\n  1. From a notebook cell, saved to {path} for future sessions:\n         import crane_llm\n         crane_llm.set_api_key(\"sk-...\")\n\n  2. As an environment variable before starting Jupyter:\n         CRANE_LLM_API_KEY=sk-...\n\n  3. In a .env file in the directory you started Jupyter from:\n         CRANE_LLM_API_KEY=sk-...\n\nAny OpenAI-compatible provider works. For one that is not OpenAI, add a\nbase_url and a model, for example OpenRouter (Claude, Gemini and others\nthrough a single key):\n         crane_llm.set_api_key(\"sk-or-...\",\n                               base_url=\"https://openrouter.ai/api/v1\",\n                               model=\"anthropic/claude-sonnet-4.5\")\n\nA local server needs no key at all, only a base_url:\n         crane_llm.set_api_key(base_url=\"http://localhost:11434/v1\",\n                               model=\"qwen2.5-coder:32b\")"
   }
 }

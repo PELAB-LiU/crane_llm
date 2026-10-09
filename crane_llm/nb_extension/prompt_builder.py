@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from pprint import pformat
+
 from .cell_filter import is_internal_helper_cell, redact_secrets
-from .runinfo import collect_live_runinfo, format_runinfo_for_prompt
+from .runinfo import collect_live_runinfo
 from .session_state import NotebookSessionState
 
 
@@ -34,7 +36,7 @@ def build_crane_prompt(
     if include_runinfo:
         prompt_parts.append("# Current relevent runtime information:\n")
         target_source = target_cell.source if target_cell is not None else ""
-        prompt_parts.append(format_runinfo_for_prompt(collect_live_runinfo(shell=shell, target_code=target_source)))
+        prompt_parts.append(pformat(collect_live_runinfo(shell=shell, target_code=target_source)))
         prompt_parts.append("\n")
 
     prompt_parts.append("# Target Cell:\n")

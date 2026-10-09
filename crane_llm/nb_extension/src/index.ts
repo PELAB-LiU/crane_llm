@@ -37,29 +37,19 @@ function t(key: string, values: Record<string, string | number> = {}): string {
 /** Shown until the backend reports its first step; never listed as a finished step. */
 const STARTING = t('progress.starting');
 
-/** One progress step, printed by the backend while it works. Must match api.progress. */
+/**
+ * One progress step, printed by the backend while it works, already worded
+ * for the user. Must match api.progress.
+ */
 interface StageEvent {
   stage: string;
-  model: string;
+  message: string;
   prompt: string;
 }
 
-/** Mirrors ui.stage_message in the backend; the stage names are assistant.STAGE_*. */
-function stageMessage(event: StageEvent): string {
-  switch (event.stage) {
-    case 'checking':
-      return t('progress.checking');
-    case 'no-finding':
-      return t('progress.no_finding');
-    case 'building':
-      return t('progress.building');
-    case 'waiting':
-      return event.model
-        ? t('progress.waiting', { model: event.model })
-        : t('progress.waiting_no_name');
-    default:
-      return event.stage;
-  }
+/** Whether a kernel status means the namespace is gone. */
+function isKernelGone(status: string): boolean {
+  return status === 'restarting' || status === 'autorestarting' || status === 'dead';
 }
 
 /** Kernel calls are cheap, but a busy kernel queues them behind user code. */
@@ -82,8 +72,10 @@ interface Verdict {
   certain: boolean;
   model: string;
   variables: string[];
-  /** For a model verdict: the built-in checks ran first and found nothing. */
-  checks_ran: boolean;
+  /** Says who gave the verdict. */
+  badge: string;
+  /** Says how far the verdict can be trusted. */
+  note: string;
 }
 
 /** Must match provenance.OriginStep.to_json. */
@@ -134,8 +126,19 @@ interface CranePayload {
   origins: Origin[];
 }
 
-/** The colour that marks cells a crash comes from. Distinct from every verdict tone. */
-const ORIGIN_COLOR = '#7c3aed';
+/** A new element with a class, and its text if given. The look is in style/index.css. */
+function element<K extends keyof HTMLElementTagNameMap>(
+  tag: K,
+  className: string,
+  text?: string
+): HTMLElementTagNameMap[K] {
+  const node = document.createElement(tag);
+  node.className = className;
+  if (text !== undefined) {
+    node.textContent = text;
+  }
+  return node;
+}
 
 /** How many live verdicts mark each origin cell, so one closing keeps the others' outline. */
 const ORIGIN_MARK_COUNTS = new WeakMap<HTMLElement, number>();
@@ -222,27 +225,16 @@ interface CraneSettings {
 function switchRow(
   setting: ToggleSetting,
   label: string,
-  hint: (value: boolean) => string,
-  rowStyle: string,
-  hintStyle: string
+  hint: (value: boolean) => string
 ): { node: HTMLDivElement; teardown: () => void; setEnabled: (enabled: boolean, note: string) => void } {
   const node = document.createElement('div');
-  const row = document.createElement('label');
-  row.style.cssText = rowStyle;
-
+  const row = element('label', 'crane-llm-switch');
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
-  checkbox.style.cssText = 'margin:0;cursor:pointer;';
-
-  const labelNode = document.createElement('span');
-  labelNode.textContent = label;
-  labelNode.style.cssText = 'font-weight:700;';
-
-  const hintNode = document.createElement('div');
-  hintNode.style.cssText = hintStyle;
+  const hintNode = element('div', 'crane-llm-switch-hint');
 
   row.appendChild(checkbox);
-  row.appendChild(labelNode);
+  row.appendChild(element('span', 'crane-llm-switch-label', label));
   node.appendChild(row);
   node.appendChild(hintNode);
 
@@ -259,8 +251,7 @@ function switchRow(
     enabled = value;
     disabledNote = note;
     checkbox.disabled = !value;
-    row.style.opacity = value ? '1' : '0.5';
-    row.style.cursor = value ? 'pointer' : 'default';
+    row.classList.toggle('crane-llm-disabled', !value);
     render(setting.get());
   };
 
@@ -281,15 +272,8 @@ function guardHintText(guard: boolean): string {
 
 /** The title over a group of switches. */
 function switchGroupHeading(text: string, divider: boolean): HTMLDivElement {
-  const node = document.createElement('div');
-  node.textContent = text;
-  node.style.cssText = [
-    'font-size:11px',
-    'font-weight:700',
-    'opacity:0.7',
-    'margin:0 0 6px',
-    divider ? 'border-top:1px solid var(--jp-border-color2);padding-top:8px' : ''
-  ].join(';');
+  const node = element('div', 'crane-llm-switch-heading', text);
+  node.classList.toggle('crane-llm-divider', divider);
   return node;
 }
 
@@ -300,14 +284,10 @@ function switchGroupHeading(text: string, divider: boolean): HTMLDivElement {
  * whose row is greyed out while the LLM is off. The guard applies whenever a
  * cell runs, and uses the built-in checker alone.
  */
-function switchRows(
-  settings: CraneSettings,
-  rowStyle: string,
-  hintStyle: string
-): { nodes: HTMLDivElement[]; teardown: () => void } {
-  const llm = switchRow(settings.llm, t('llm.label'), llmHintText, rowStyle, hintStyle);
-  const runinfo = switchRow(settings.runinfo, t('runinfo.label'), runinfoHintText, rowStyle, hintStyle);
-  const guard = switchRow(settings.guard, t('guard.label'), guardHintText, rowStyle, hintStyle);
+function switchRows(settings: CraneSettings): { nodes: HTMLDivElement[]; teardown: () => void } {
+  const llm = switchRow(settings.llm, t('llm.label'), llmHintText);
+  const runinfo = switchRow(settings.runinfo, t('runinfo.label'), runinfoHintText);
+  const guard = switchRow(settings.guard, t('guard.label'), guardHintText);
   const unsubscribe = settings.llm.subscribe(useLlm =>
     runinfo.setEnabled(useLlm, t('runinfo.hint_llm_off'))
   );
@@ -338,111 +318,43 @@ class CraneSidebar extends Widget {
     super();
     this.addClass('crane-llm-sidebar');
 
-    this.node.style.cssText = [
-      'padding:12px',
-      'height:100%',
-      'overflow:auto',
-      'box-sizing:border-box',
-      'background:var(--jp-layout-color1)',
-      'color:var(--jp-ui-font-color1)',
-      'border-left:1px solid var(--jp-border-color2)'
-    ].join(';');
-
-    const header = document.createElement('div');
-    header.style.cssText =
-      'display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;';
-
-    const title = document.createElement('div');
-    title.textContent = t('sidebar.title');
-    title.style.cssText = 'font-size:14px;font-weight:700;';
-
-    header.appendChild(title);
-
-    this.statusNode = document.createElement('div');
-    this.statusNode.style.cssText =
-      'margin-bottom:10px;color:var(--jp-info-color1);font-weight:600;';
-    this.statusNode.textContent = t('sidebar.idle');
-
-    this.stepsNode = document.createElement('div');
-    this.stepsNode.style.cssText = 'margin-bottom:4px;font-size:12px;opacity:0.7;';
+    this.stepsNode = element('div', 'crane-llm-sidebar-steps');
+    this.statusNode = element('div', 'crane-llm-sidebar-status', t('sidebar.idle'));
+    this.promptNode = element('pre', 'crane-llm-sidebar-text crane-llm-prompt');
+    this.responseNode = element('pre', 'crane-llm-sidebar-text');
 
     // The switches. The LLM and runtime information are on by default, which
     // is the configuration the approach is built around; the guard is off
     // until the user asks for it. They reflect changes made from the toolbar
     // popover or the command palette too.
-    const switches = switchRows(
-      settings,
-      'display:flex;align-items:center;gap:8px;margin:0 0 4px;cursor:pointer;font-size:12px;',
-      'font-size:11px;opacity:0.75;margin:0 0 10px 24px;'
+    const switches = switchRows(settings);
+
+    this.node.append(
+      element('div', 'crane-llm-sidebar-title', t('sidebar.title')),
+      this.stepsNode,
+      this.statusNode,
+      ...switches.nodes,
+      element('div', 'crane-llm-sidebar-heading', t('sidebar.prompt_heading')),
+      this.promptNode,
+      element('div', 'crane-llm-sidebar-heading', t('sidebar.response_heading')),
+      this.responseNode
     );
-
-    const promptLabel = document.createElement('div');
-    promptLabel.textContent = t('sidebar.prompt_heading');
-    promptLabel.style.cssText = 'font-size:12px;font-weight:700;margin:8px 0 4px;';
-
-    this.promptNode = document.createElement('pre');
-    this.promptNode.style.cssText = [
-      'white-space:pre-wrap',
-      'word-break:break-word',
-      'background:var(--jp-layout-color2)',
-      'border:1px solid var(--jp-border-color2)',
-      'border-radius:8px',
-      'padding:10px',
-      'min-height:180px',
-      'margin:0 0 10px 0'
-    ].join(';');
-
-    const responseLabel = document.createElement('div');
-    responseLabel.textContent = t('sidebar.response_heading');
-    responseLabel.style.cssText = 'font-size:12px;font-weight:700;margin:8px 0 4px;';
-
-    this.responseNode = document.createElement('pre');
-    this.responseNode.style.cssText = [
-      'white-space:pre-wrap',
-      'word-break:break-word',
-      'background:var(--jp-layout-color2)',
-      'border:1px solid var(--jp-border-color2)',
-      'border-radius:8px',
-      'padding:10px',
-      'min-height:120px',
-      'margin:0'
-    ].join(';');
-
-    this.node.appendChild(header);
-    this.node.appendChild(this.stepsNode);
-    this.node.appendChild(this.statusNode);
-    for (const node of switches.nodes) {
-      this.node.appendChild(node);
-    }
-    this.node.appendChild(promptLabel);
-    this.node.appendChild(this.promptNode);
-    this.node.appendChild(responseLabel);
-    this.node.appendChild(this.responseNode);
   }
 
   setStatus(text: string): void {
     this.statusNode.textContent = text;
   }
 
-  /** Forget the steps and status of the previous run. */
-  resetSteps(): void {
-    this.stepsNode.replaceChildren();
-    this.setStatus('');
-  }
-
   /**
-   * Show the step now under way. The one before it moves to the list above
-   * the status, ticked, so the user sees that the checker ran and found
-   * nothing before the model was asked.
+   * Show the steps already done, ticked, above the one now under way, so the
+   * user sees that the checker ran and found nothing before the model was
+   * asked.
    */
-  showStep(text: string): void {
-    const current = this.statusNode.textContent ?? '';
-    if (current && current !== STARTING) {
-      const line = document.createElement('div');
-      line.textContent = `${t('progress.done_mark')} ${current}`;
-      this.stepsNode.appendChild(line);
-    }
-    this.setStatus(text);
+  showSteps(done: string[], current: string): void {
+    this.stepsNode.replaceChildren(
+      ...done.map(step => element('div', '', `${t('progress.done_mark')} ${step}`))
+    );
+    this.setStatus(current);
   }
 
   setPrompt(text: string): void {
@@ -465,7 +377,7 @@ class CraneSidebar extends Widget {
     if (verdict.source === 'check') {
       this.setStatus(t('sidebar.status_check_only_done'));
       this.setPrompt(t('sidebar.no_prompt_llm_off'));
-      this.setResponse(sourceNoteText(verdict));
+      this.setResponse(verdict.note);
       return;
     }
     this.setStatus(
@@ -490,34 +402,9 @@ class CraneSidebar extends Widget {
  * Returns a teardown function; the caller runs it when the panel goes away.
  */
 function installSwitchPopover(anchor: HTMLElement, settings: CraneSettings): () => void {
-  const popover = document.createElement('div');
-  popover.className = 'crane-llm-runinfo-popover';
-  popover.style.cssText = [
-    'position:fixed',
-    'z-index:10000',
-    'display:none',
-    // A fixed width, so the panel does not resize with its hints; long ones wrap.
-    'width:300px',
-    'box-sizing:border-box',
-    'white-space:normal',
-    'overflow-wrap:break-word',
-    'padding:10px 12px',
-    'border-radius:8px',
-    'background:var(--jp-layout-color1)',
-    'color:var(--jp-ui-font-color1)',
-    'border:1px solid var(--jp-border-color1)',
-    'box-shadow:0 4px 14px rgba(0,0,0,0.22)',
-    'font-size:12px'
-  ].join(';');
-
-  const switches = switchRows(
-    settings,
-    'display:flex;align-items:center;gap:8px;cursor:pointer;',
-    'margin:4px 0 8px 0;opacity:0.75;'
-  );
-  for (const node of switches.nodes) {
-    popover.appendChild(node);
-  }
+  const popover = element('div', 'crane-llm-popover');
+  const switches = switchRows(settings);
+  popover.append(...switches.nodes);
   document.body.appendChild(popover);
   const unsubscribe = switches.teardown;
 
@@ -536,7 +423,7 @@ function installSwitchPopover(anchor: HTMLElement, settings: CraneSettings): () 
   const show = () => {
     cancelHide();
     const rect = anchor.getBoundingClientRect();
-    popover.style.display = 'block';
+    popover.classList.add('crane-llm-open');
     // Measure after it is displayed, then keep it inside the viewport.
     const width = popover.offsetWidth;
     const left = Math.max(8, Math.min(rect.right - width, window.innerWidth - width - 8));
@@ -549,13 +436,13 @@ function installSwitchPopover(anchor: HTMLElement, settings: CraneSettings): () 
   const scheduleHide = () => {
     cancelHide();
     hideTimer = window.setTimeout(() => {
-      popover.style.display = 'none';
+      popover.classList.remove('crane-llm-open');
     }, 250);
   };
 
   const hideNow = () => {
     cancelHide();
-    popover.style.display = 'none';
+    popover.classList.remove('crane-llm-open');
   };
 
   // A click starts a check, and a check that cannot run opens a dialog. When
@@ -734,31 +621,15 @@ class CraneResponseManager {
   showProgress(cell: any, done: string[], current: string): void {
     let box = this.progressBoxes.get(cell.model);
     if (!box) {
-      box = document.createElement('div');
-      box.className = 'crane-llm-progress';
-      box.style.cssText = [
-        'margin:8px 0 4px 0',
-        'padding:8px 12px',
-        `border-left:4px solid ${getToneColor('stale')}`,
-        'background:var(--jp-layout-color2)',
-        'border-radius:0 8px 8px 0',
-        'font-size:12px'
-      ].join(';');
+      box = element('div', 'crane-llm-progress');
       // Inside the cell's node, for the same reason as the verdict box.
       cell.node.appendChild(box);
       this.progressBoxes.set(cell.model, box);
     }
-    box.replaceChildren();
-    for (const step of done) {
-      const line = document.createElement('div');
-      line.textContent = `${t('progress.done_mark')} ${step}`;
-      line.style.cssText = 'opacity:0.7;';
-      box.appendChild(line);
-    }
-    const now = document.createElement('div');
-    now.textContent = t('progress.current', { step: current });
-    now.style.cssText = 'font-weight:700;';
-    box.appendChild(now);
+    box.replaceChildren(
+      ...done.map(step => element('div', 'crane-llm-step-done', `${t('progress.done_mark')} ${step}`)),
+      element('div', 'crane-llm-step-current', t('progress.current', { step: current }))
+    );
   }
 
   clearProgress(cell: any): void {
@@ -881,7 +752,7 @@ class CraneResponseManager {
   private handleSessionStatusChanged(_sender: unknown, status: string): void {
     // 'autorestarting' is what a kernel that died on its own reports. Without
     // it, every response box survives a crash that wiped the namespace.
-    if (status === 'restarting' || status === 'autorestarting' || status === 'dead') {
+    if (isKernelGone(status)) {
       // Executions in flight will never report completion now, so the counter
       // would otherwise stay above zero and block analysis forever.
       this.pendingExecutions = 0;
@@ -1016,17 +887,13 @@ class CraneResponseManager {
   }
 
   private clearAll(): void {
-    for (const entry of this.responseEntries.values()) {
-      entry.container.remove();
-      clearCellAccent(entry.cellNode);
-      clearOriginMarks(entry);
+    for (const cellModel of Array.from(this.responseEntries.keys())) {
+      this.removeEntry(cellModel);
     }
     for (const box of this.progressBoxes.values()) {
       box.remove();
     }
     this.progressBoxes.clear();
-
-    this.responseEntries.clear();
   }
 
   private markAllStale(): void {
@@ -1076,79 +943,36 @@ function buildEntry(
   origins: Origin[],
   options: EntryOptions
 ): ResponseEntry {
-  const container = document.createElement('div');
-  const header = document.createElement('div');
-  const heading = document.createElement('div');
-  const titleNode = document.createElement('span');
-  const badgeNode = document.createElement('span');
-  const closeButton = document.createElement('button');
-  const reasoningNode = document.createElement('div');
-  const noteNode = document.createElement('div');
-  const footerNode = document.createElement('div');
-  const originsNode = document.createElement('div');
-
-  container.className = 'crane-llm-result';
-  container.style.cssText = [
-    'margin:8px 0 4px 0',
-    'padding:10px 12px',
-    'border-left:4px solid var(--jp-brand-color1)',
-    'background:var(--jp-layout-color2)',
-    'border-radius:0 8px 8px 0'
-  ].join(';');
-
-  header.style.cssText =
-    'display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;';
-  heading.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:8px;';
-
-  titleNode.style.cssText = 'font-size:12px;font-weight:700;';
+  const container = element('div', 'crane-llm-result');
+  const header = element('div', 'crane-llm-result-header');
+  const heading = element('div', 'crane-llm-result-heading');
+  const titleNode = element('span', 'crane-llm-result-title');
+  const originsNode = element('div', 'crane-llm-origins');
 
   // Who gave the verdict is the first thing to know about it: a built-in
   // check is certain, a model prediction can be wrong.
-  badgeNode.textContent = sourceBadgeText(verdict);
-  badgeNode.title = sourceNoteText(verdict);
-  badgeNode.style.cssText = [
-    'font-size:11px',
-    'padding:1px 8px',
-    'border-radius:999px',
-    'white-space:nowrap',
-    verdict.certain
-      ? 'background:var(--jp-ui-font-color1);color:var(--jp-layout-color1);border:1px solid var(--jp-ui-font-color1);font-weight:700'
-      : 'background:transparent;color:var(--jp-ui-font-color2);border:1px solid var(--jp-border-color1)'
-  ].join(';');
+  const badgeNode = element('span', 'crane-llm-badge', verdict.badge);
+  badgeNode.classList.toggle('crane-llm-certain', verdict.certain);
+  badgeNode.title = verdict.note;
 
-  closeButton.type = 'button';
-  closeButton.textContent = t('verdict.close');
-  closeButton.className = 'jp-mod-styled jp-Button';
-  closeButton.style.cssText = 'font-size:11px;padding:2px 8px;min-height:24px;';
-  if (options.onClose) {
-    closeButton.onclick = options.onClose;
-  }
-
-  reasoningNode.textContent = verdict.reasoning;
-  reasoningNode.style.cssText = 'margin:0;white-space:pre-wrap;word-break:break-word;';
-
-  noteNode.textContent = sourceNoteText(verdict);
-  noteNode.style.cssText = 'margin-top:6px;font-size:11px;opacity:0.7;';
-
-  footerNode.style.cssText = 'margin-top:6px;font-size:12px;';
-  (options.footer ?? '').split('`').forEach((piece, index) => {
-    const node = document.createElement(index % 2 ? 'code' : 'span');
-    node.textContent = piece;
-    footerNode.appendChild(node);
-  });
-
-  heading.appendChild(titleNode);
-  heading.appendChild(badgeNode);
+  heading.append(titleNode, badgeNode);
   header.appendChild(heading);
   if (options.onClose) {
+    const closeButton = element('button', 'jp-mod-styled jp-Button crane-llm-close', t('verdict.close'));
+    closeButton.type = 'button';
+    closeButton.onclick = options.onClose;
     header.appendChild(closeButton);
   }
   container.appendChild(header);
   if (verdict.reasoning) {
-    container.appendChild(reasoningNode);
+    container.appendChild(element('div', 'crane-llm-reasoning', verdict.reasoning));
   }
-  container.appendChild(noteNode);
+  container.appendChild(element('div', 'crane-llm-note', verdict.note));
   if (options.footer) {
+    const footerNode = element('div', 'crane-llm-footer');
+    footerNode.append(
+      ...options.footer.split('`').map((piece, index) => element(index % 2 ? 'code' : 'span', '', piece))
+    );
     container.appendChild(footerNode);
   }
   container.appendChild(originsNode);
@@ -1186,18 +1010,12 @@ function renderOrigins(
     return;
   }
 
-  const heading = document.createElement('div');
-  heading.textContent = t('origins.heading');
-  heading.style.cssText = `margin-top:10px;font-size:12px;font-weight:700;color:${ORIGIN_COLOR};`;
-  entry.originsNode.appendChild(heading);
+  entry.originsNode.appendChild(element('div', 'crane-llm-origins-heading', t('origins.heading')));
 
   const targetLabel = cellLabel(panel, targetCell, null);
 
   for (const origin of origins) {
-    const summary = document.createElement('div');
-    summary.textContent = origin.summary;
-    summary.style.cssText = 'margin-top:4px;font-size:12px;';
-    entry.originsNode.appendChild(summary);
+    entry.originsNode.appendChild(element('div', 'crane-llm-origin-summary', origin.summary));
 
     for (const step of origin.steps) {
       const cell = panel ? findCell(panel, step) : null;
@@ -1206,35 +1024,23 @@ function renderOrigins(
         cell || !panel ? cellLabel(panel, cell, step.execution_count) : t('origins.cell_missing');
       const role = t(`origins.roles.${step.role}`);
 
-      const row = document.createElement('div');
-      row.style.cssText = [
-        'margin:3px 0 0 12px',
-        'padding:3px 8px',
-        `border-left:3px dashed ${ORIGIN_COLOR}`,
-        'font-size:12px',
-        cell ? 'cursor:pointer' : 'opacity:0.7'
-      ].join(';');
-
-      const where = document.createElement('span');
-      where.textContent = step.line
-        ? t('origins.step_line', { role, cell: label, line: step.line })
-        : t('origins.step', { role, cell: label });
-      where.style.cssText = cell ? `color:${ORIGIN_COLOR};text-decoration:underline;` : '';
-      row.appendChild(where);
-
+      const row = element('div', 'crane-llm-origin-step');
+      row.classList.toggle('crane-llm-linked', cell !== null);
+      row.appendChild(
+        element(
+          'span',
+          'crane-llm-origin-where',
+          step.line
+            ? t('origins.step_line', { role, cell: label, line: step.line })
+            : t('origins.step', { role, cell: label })
+        )
+      );
       if (step.line_text) {
-        const code = document.createElement('code');
-        code.textContent = step.line_text;
-        code.style.cssText = 'margin-left:6px;font-family:var(--jp-code-font-family);white-space:pre-wrap;';
-        row.appendChild(code);
+        row.appendChild(element('code', 'crane-llm-origin-code', step.line_text));
       }
-
       const notes = [step.note, edited ? t('origins.edited') : ''].filter(Boolean);
       if (notes.length) {
-        const note = document.createElement('span');
-        note.textContent = ` (${notes.join('; ')})`;
-        note.style.cssText = 'opacity:0.7;';
-        row.appendChild(note);
+        row.appendChild(element('span', 'crane-llm-origin-step-note', ` (${notes.join('; ')})`));
       }
 
       if (panel && cell) {
@@ -1252,23 +1058,21 @@ function renderOrigins(
 function applyEntryStyle(entry: ResponseEntry): void {
   const verdict = entry.verdict;
   const tone: PredictionTone = entry.stale ? 'stale' : verdict.tone;
-  const color = getToneColor(tone);
 
-  entry.container.style.borderLeftColor = color;
+  entry.container.dataset.tone = tone;
   entry.titleNode.textContent = t(entry.stale ? 'verdict.title_stale' : 'verdict.title', {
     label: verdict.label
   });
 
   // Also mark the cell itself, which is where the verdict is actually
-  // looked for. An inset shadow rather than a border, so nothing reflows.
+  // looked for.
   if (entry.cellNode) {
-    entry.cellNode.style.boxShadow = `inset 4px 0 0 0 ${color}`;
+    entry.cellNode.dataset.craneLlmTone = tone;
   }
 
   // Once stale, the origins describe a kernel state that has moved on.
   if (entry.stale) {
     clearOriginMarks(entry);
-    entry.originsNode.style.opacity = '0.5';
   }
 }
 
@@ -1372,7 +1176,7 @@ class GuardOutput extends Widget {
   /** Hide the verdict and take its marks off the notebook. */
   retire(): void {
     this.cleanUp();
-    this.node.style.display = 'none';
+    this.hide();
   }
 
   /**
@@ -1386,7 +1190,7 @@ class GuardOutput extends Widget {
   }
 
   private handleStatus(_sender: unknown, status: string): void {
-    if (status === 'restarting' || status === 'autorestarting' || status === 'dead') {
+    if (isKernelGone(status)) {
       this.markStale();
     }
   }
@@ -1440,34 +1244,8 @@ function installGuardRenderer(panel: NotebookPanel): void {
 
 function clearCellAccent(cellNode: HTMLElement | null | undefined): void {
   if (cellNode) {
-    cellNode.style.boxShadow = '';
+    delete cellNode.dataset.craneLlmTone;
   }
-}
-
-function sourceBadgeText(verdict: Verdict): string {
-  if (verdict.certain) {
-    return t('verdict.badge_check');
-  }
-  if (verdict.source === 'check') {
-    return t('verdict.badge_check_only');
-  }
-  return verdict.model
-    ? t('verdict.badge_model', { model: verdict.model })
-    : t('verdict.badge_model_no_name');
-}
-
-/** Mirrors ui.source_note in the backend. */
-function sourceNoteText(verdict: Verdict): string {
-  if (verdict.certain) {
-    return t('verdict.note_check');
-  }
-  if (verdict.source === 'check') {
-    return t('verdict.note_check_only');
-  }
-  if (verdict.checks_ran) {
-    return t('verdict.note_model_after_check');
-  }
-  return t('verdict.note_model_code_only');
 }
 
 /** The cell a step refers to: by notebook id, or by source for cells replayed from history. */
@@ -1518,25 +1296,17 @@ function markOriginCell(cell: any, variable: string, step: OriginStep, targetLab
   const cellNode: HTMLElement = cell.node;
   const count = ORIGIN_MARK_COUNTS.get(cellNode) ?? 0;
   ORIGIN_MARK_COUNTS.set(cellNode, count + 1);
-  cellNode.style.outline = `2px dashed ${ORIGIN_COLOR}`;
-  cellNode.style.outlineOffset = '-2px';
+  cellNode.classList.add('crane-llm-origin-cell');
 
-  const noteNode = document.createElement('div');
-  noteNode.className = 'crane-llm-origin-note';
   const action =
     step.role === 'defines' ? t('origins.cell_note_action_defines') : t(`origins.roles.${step.role}`);
-  noteNode.textContent = step.line
-    ? t('origins.cell_note_line', { action, variable, line: step.line, target: targetLabel })
-    : t('origins.cell_note', { action, variable, target: targetLabel });
-  noteNode.style.cssText = [
-    'margin:6px 0 4px 0',
-    'padding:4px 10px',
-    `border-left:4px dashed ${ORIGIN_COLOR}`,
-    'background:var(--jp-layout-color2)',
-    'border-radius:0 6px 6px 0',
-    'font-size:12px',
-    `color:${ORIGIN_COLOR}`
-  ].join(';');
+  const noteNode = element(
+    'div',
+    'crane-llm-origin-note',
+    step.line
+      ? t('origins.cell_note_line', { action, variable, line: step.line, target: targetLabel })
+      : t('origins.cell_note', { action, variable, target: targetLabel })
+  );
   cellNode.appendChild(noteNode);
   return { cellNode, noteNode };
 }
@@ -1547,30 +1317,10 @@ function clearOriginMarks(entry: ResponseEntry): void {
     const count = (ORIGIN_MARK_COUNTS.get(mark.cellNode) ?? 1) - 1;
     ORIGIN_MARK_COUNTS.set(mark.cellNode, count);
     if (count <= 0) {
-      mark.cellNode.style.outline = '';
-      mark.cellNode.style.outlineOffset = '';
+      mark.cellNode.classList.remove('crane-llm-origin-cell');
     }
   }
   entry.originMarks = [];
-}
-
-function getToneColor(tone: PredictionTone): string {
-  if (tone === 'crash') {
-    return '#dc2626';
-  }
-  if (tone === 'safe') {
-    return '#16a34a';
-  }
-  if (tone === 'stale') {
-    return '#6b7280';
-  }
-  if (tone === 'none') {
-    // Neither green nor red: the checker found nothing, which is not "safe".
-    return '#0369a1';
-  }
-  // 'unknown' must not reuse the brand colour, which is also the container's
-  // default border: an unreadable response would then look like no verdict.
-  return '#d97706';
 }
 
 /** Whether the cell's code differs from the code a verdict was given for. */
@@ -1779,12 +1529,12 @@ async function runAnalysis(
     const useLlm = settings.llm.get();
 
     app.shell.activateById(SIDEBAR_ID);
-    sidebar.resetSteps();
     sidebar.setPrompt('');
     sidebar.setResponse('');
 
     // Each step is shown in the sidebar and under the cell as the backend
-    // reports it, so a check that falls through to the model says so.
+    // reports it, so a check that falls through to the model says so. The
+    // step before the current one moves to the list of finished ones.
     const done: string[] = [];
     let current = '';
     const showStep = (text: string) => {
@@ -1792,7 +1542,7 @@ async function runAnalysis(
         done.push(current);
       }
       current = text;
-      sidebar.showStep(text);
+      sidebar.showSteps(done, text);
       responseManager.showProgress(activeCell, done, text);
     };
     showStep(STARTING);
@@ -1809,7 +1559,7 @@ async function runAnalysis(
         }
         try {
           const event = JSON.parse(line.slice(at + STAGE_MARKER.length)) as StageEvent;
-          showStep(stageMessage(event));
+          showStep(event.message);
           if (event.prompt) {
             sidebar.setPrompt(event.prompt);
           }
@@ -1852,7 +1602,7 @@ async function runAnalysis(
       return;
     }
 
-    sidebar.showStep('');
+    showStep('');
     sidebar.showVerdict(payload);
     responseManager.renderResponse(activeCell, payload.verdict, payload.origins ?? []);
   } finally {

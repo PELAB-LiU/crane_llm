@@ -2,7 +2,8 @@
 
 A verdict comes either from a built-in check, which is certain, or from the
 model, which is a prediction. Both surfaces -- the JupyterLab frontend and the
-``%%crane_llm`` output -- show which, so the verdict carries its source.
+``%%crane_llm`` output -- show which, so the verdict carries its source, and
+the words that say so, ready to show.
 """
 
 from __future__ import annotations
@@ -12,7 +13,7 @@ import re
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, Iterable, List, Optional
 
-from .checks import CheckFinding
+from .checker import CheckFinding
 from .texts import text
 
 
@@ -42,9 +43,33 @@ class Verdict:
 
         return self.source == SOURCE_CHECK and self.tone == "crash"
 
+    @property
+    def badge(self) -> str:
+        """Says who gave the verdict."""
+
+        if self.certain:
+            return text("verdict.badge_check")
+        if self.source == SOURCE_CHECK:
+            return text("verdict.badge_check_only")
+        if self.model:
+            return text("verdict.badge_model", model=self.model)
+        return text("verdict.badge_model_no_name")
+
+    @property
+    def note(self) -> str:
+        """Says how far the verdict can be trusted."""
+
+        if self.certain:
+            return text("verdict.note_check")
+        if self.source == SOURCE_CHECK:
+            return text("verdict.note_check_only")
+        if self.checks_ran:
+            return text("verdict.note_model_after_check")
+        return text("verdict.note_model_code_only")
+
     def to_json(self) -> Dict[str, Any]:
         data = asdict(self)
-        data["certain"] = self.certain
+        data.update(certain=self.certain, badge=self.badge, note=self.note)
         return data
 
 
@@ -77,7 +102,7 @@ def verdict_no_finding() -> Verdict:
 
 
 def verdict_from_response(response: str, model: str = "") -> Verdict:
-    """Read a model response. Mirrors ``readVerdict`` in the frontend.
+    """Read a model response.
 
     ``detection`` is the key the offline experiment prompts use.
     """

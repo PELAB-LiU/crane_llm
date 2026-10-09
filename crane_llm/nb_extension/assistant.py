@@ -4,11 +4,11 @@ from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional
 
 from . import settings as settings_module
-from .checks import CheckFinding, run_checks
+from .checker import CheckFinding, run_checks
 from .llm_client import default_client
 from .prompt_builder import build_crane_prompt
 from .provenance import Origin, locate_origins
-from .runinfo import extract_dependencies
+from ..runinfo_parser.runtime_summary import extract_dependencies
 from .session_state import NotebookSessionState
 from .texts import text
 from .verdict import (
@@ -30,6 +30,18 @@ STAGE_WAITING = "waiting"
 
 class PromptBuildingError(RuntimeError):
     """The prompt could not be assembled, so the model was never called."""
+
+
+def describe_error(exc: BaseException) -> str:
+    """A failed check, in words for the user.
+
+    A prompt-building error is already worded that way; anything else is
+    named by its type, since the message alone may not say what went wrong.
+    """
+
+    if isinstance(exc, PromptBuildingError):
+        return str(exc)
+    return f"{type(exc).__name__}: {exc}"
 
 
 @dataclass

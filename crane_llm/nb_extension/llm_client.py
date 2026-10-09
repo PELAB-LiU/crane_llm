@@ -5,6 +5,20 @@ from typing import Any, Dict, List, Optional
 
 from ..llms.retry import retry_on_rate_limit
 from . import settings as settings_module
+from .texts import text
+
+
+def _error(message: str, output: Optional[str] = "") -> RuntimeError:
+    """A failed call, with the partial output if there was any.
+
+    ``output=None`` says there was none at all, which is worth saying.
+    """
+
+    if output:
+        message += " " + text("errors.model_partial_output", output=output)
+    elif output is None:
+        message += " " + text("errors.model_no_output")
+    return RuntimeError(message)
 
 
 def _supports_reasoning(model: str) -> bool:
@@ -50,7 +64,7 @@ class _BaseLLMClient:
                 from openai import OpenAI
             except Exception as exc:
                 raise RuntimeError(
-                    f"OpenAI import failed: {type(exc).__name__}: {exc}"
+                    text("errors.openai_import", error=f"{type(exc).__name__}: {exc}")
                 ) from exc
 
             if not self.api_key:
@@ -72,13 +86,8 @@ class _BaseLLMClient:
             self._client = OpenAI(**kwargs)
         return self._client
 
-    def _truncation_error(self, text: str) -> RuntimeError:
-        return RuntimeError(
-            "The model hit the output token limit "
-            f"(max_output_tokens={self.max_output_tokens}) before finishing. "
-            "Raise `max_output_tokens` in crane_llm/llms/config_llms.py and try again."
-            + (f" Partial output: {text}" if text else "")
-        )
+    def _truncation_error(self, output: str) -> RuntimeError:
+        return _error(text("errors.model_truncated", limit=self.max_output_tokens), output)
 
     def run(self, prompt: str) -> str:
         return self._call(self._get_client(), prompt)
@@ -109,23 +118,24 @@ class OpenAILLMClient(_BaseLLMClient):
         return self._read_output(response)
 
     def _read_output(self, response) -> str:
-        text = (getattr(response, "output_text", None) or "").strip()
+        output = (getattr(response, "output_text", None) or "").strip()
 
         status = getattr(response, "status", None)
         if status is not None and status != "completed":
             reason = getattr(getattr(response, "incomplete_details", None), "reason", None)
             if reason == "max_output_tokens":
-                raise self._truncation_error(text)
-            raise RuntimeError(
-                f"The model returned status {status!r}"
-                + (f" (reason: {reason})" if reason else "")
-                + (f". Partial output: {text}" if text else " with no output.")
+                raise self._truncation_error(output)
+            message = (
+                text("errors.model_status_reason", status=status, reason=reason)
+                if reason
+                else text("errors.model_status", status=status)
             )
+            raise _error(message, output or None)
 
-        if not text:
-            raise RuntimeError("The model returned an empty response.")
+        if not output:
+            raise RuntimeError(text("errors.model_empty"))
 
-        return text
+        return output
 
 
 class ChatCompletionsLLMClient(_BaseLLMClient):
@@ -157,25 +167,25 @@ class ChatCompletionsLLMClient(_BaseLLMClient):
     def _read_output(self, response) -> str:
         choices = getattr(response, "choices", None) or []
         if not choices:
-            raise RuntimeError("The model returned no choices.")
+            raise RuntimeError(text("errors.model_no_choices"))
 
         choice = choices[0]
         message = getattr(choice, "message", None)
-        text = (getattr(message, "content", None) or "").strip()
+        output = (getattr(message, "content", None) or "").strip()
 
         # Reasoning models served this way put the answer in `content` and the
         # chain of thought in a separate field, but some gateways return only
         # the latter when the budget runs out mid-thought.
-        if not text:
-            text = (getattr(message, "reasoning_content", None) or "").strip()
+        if not output:
+            output = (getattr(message, "reasoning_content", None) or "").strip()
 
         if getattr(choice, "finish_reason", None) == "length":
-            raise self._truncation_error(text)
+            raise self._truncation_error(output)
 
-        if not text:
-            raise RuntimeError("The model returned an empty response.")
+        if not output:
+            raise RuntimeError(text("errors.model_empty"))
 
-        return text
+        return output
 
 
 def default_client(

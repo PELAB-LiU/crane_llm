@@ -38,6 +38,8 @@ import stat
 from pathlib import Path
 from typing import Any, Dict, NamedTuple, Optional
 
+from .texts import text
+
 
 CONFIG_ENV_VAR = "CRANE_LLM_CONFIG"
 DEFAULT_CONFIG_DIR = Path.home() / ".crane_llm"
@@ -99,21 +101,19 @@ def read_config() -> Dict[str, Any]:
 
     path = config_path()
     try:
-        text = path.read_text(encoding="utf-8")
+        content = path.read_text(encoding="utf-8")
     except FileNotFoundError:
         return {}
     except OSError:
         return {}
 
     try:
-        data = json.loads(text)
+        data = json.loads(content)
     except ValueError as exc:
-        raise RuntimeError(
-            f"{path} is not valid JSON ({exc}). Fix or delete it, then retry."
-        ) from exc
+        raise RuntimeError(text("errors.config_not_json", path=path, error=exc)) from exc
 
     if not isinstance(data, dict):
-        raise RuntimeError(f"{path} must contain a JSON object, not {type(data).__name__}.")
+        raise RuntimeError(text("errors.config_not_object", path=path, kind=type(data).__name__))
     return data
 
 
@@ -381,10 +381,7 @@ def resolve(
         resolved_style = "chat" if resolved_base_url else "responses"
     resolved_style = resolved_style.lower()
     if resolved_style not in ("responses", "chat"):
-        raise RuntimeError(
-            f"Unknown API style {resolved_style!r}. Use 'responses' (OpenAI) or "
-            "'chat' (any OpenAI-compatible endpoint)."
-        )
+        raise RuntimeError(text("errors.unknown_api_style", style=resolved_style))
 
     return Settings(
         api_key=resolved_api_key,
@@ -404,48 +401,7 @@ def missing_key_message() -> str:
 
     platform = hosted_platform()
     if platform == "kaggle":
-        return (
-            "No API key found. On Kaggle, store it as a secret:\n"
-            "\n"
-            "  1. In the notebook editor, open Add-ons > Secrets.\n"
-            "  2. Add a secret with the label CRANE_LLM_API_KEY and your key as the value.\n"
-            "  3. Tick the checkbox next to it, so this notebook may read it.\n"
-            "\n"
-            "Then run the %%crane_llm cell again; no restart is needed. Keep the key\n"
-            "out of the notebook itself, which others can read once it is shared."
-        )
+        return text("errors.missing_key_kaggle")
     if platform == "colab":
-        return (
-            "No API key found. On Colab, store it as a secret:\n"
-            "\n"
-            "  1. Click the key icon in the left sidebar (Secrets).\n"
-            "  2. Add a secret named CRANE_LLM_API_KEY with your key as the value.\n"
-            "  3. Switch on 'Notebook access' for it.\n"
-            "\n"
-            "Then run the %%crane_llm cell again; no restart is needed."
-        )
-
-    return (
-        "No API key found. Set one up in any of these ways, then retry.\n"
-        "\n"
-        "  1. From a notebook cell, saved to {path} for future sessions:\n"
-        "         import crane_llm\n"
-        '         crane_llm.set_api_key("sk-...")\n'
-        "\n"
-        "  2. As an environment variable before starting Jupyter:\n"
-        "         CRANE_LLM_API_KEY=sk-...\n"
-        "\n"
-        "  3. In a .env file in the directory you started Jupyter from:\n"
-        "         CRANE_LLM_API_KEY=sk-...\n"
-        "\n"
-        "Any OpenAI-compatible provider works. For one that is not OpenAI, add a\n"
-        "base_url and a model, for example OpenRouter (Claude, Gemini and others\n"
-        "through a single key):\n"
-        '         crane_llm.set_api_key("sk-or-...",\n'
-        '                               base_url="https://openrouter.ai/api/v1",\n'
-        '                               model="anthropic/claude-sonnet-4.5")\n'
-        "\n"
-        "A local server needs no key at all, only a base_url:\n"
-        '         crane_llm.set_api_key(base_url="http://localhost:11434/v1",\n'
-        '                               model="qwen2.5-coder:32b")'
-    ).format(path=config_path())
+        return text("errors.missing_key_colab")
+    return text("errors.missing_key", path=config_path())

@@ -29,8 +29,8 @@ from typing import Any, Optional
 
 from IPython.core.error import InputRejected
 
-from . import checks as checks_module
 from .cell_filter import is_internal_helper_cell
+from .checker import run_checks
 from .texts import text
 
 
@@ -109,7 +109,7 @@ class CellGuard(ast.NodeTransformer):
 
     def _stop_reason(self, raw_cell: str, cell_id: Optional[str]) -> Optional[CrashPrevented]:
         namespace = getattr(self.shell, "user_ns", None) or {}
-        finding = checks_module.run_checks(raw_cell, namespace, shell=self.shell)
+        finding = run_checks(raw_cell, namespace, shell=self.shell)
         if finding is None:
             return None
 

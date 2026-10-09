@@ -91,12 +91,15 @@ jobs:
           cat /tmp/list.txt
           python "$GITHUB_WORKSPACE/.github/scripts/check_labextension_listed.py" /tmp/list.txt
 
-      - name: Run the backend checks
+      - name: Run the backend tests
+        # Against the installed wheel: run from /tmp, and with an import mode
+        # that never puts the checkout on sys.path.
         run: |
+          /tmp/check/bin/python -m pip install pytest
           cd /tmp
-          /tmp/check/bin/python -m crane_llm.nb_extension.smoke_test
+          /tmp/check/bin/python -m pytest -p no:cacheprovider --import-mode=importlib "$GITHUB_WORKSPACE/tests"
 
-      - name: Run the backend checks without JupyterLab
+      - name: Run the backend tests without JupyterLab
         # What a Kaggle or Colab kernel gets from a plain `pip install crane-llm`.
         # The magic has to work there, and JupyterLab must not be pulled in.
         run: |
@@ -107,7 +110,8 @@ jobs:
           if /tmp/bare/bin/python -c "import jupyterlab" 2>/dev/null; then
             echo "a plain install pulled in jupyterlab"; exit 1
           fi
-          /tmp/bare/bin/python -m crane_llm.nb_extension.smoke_test
+          /tmp/bare/bin/python -m pip install pytest
+          /tmp/bare/bin/python -m pytest -p no:cacheprovider --import-mode=importlib "$GITHUB_WORKSPACE/tests"
 
       - uses: actions/upload-artifact@v4
         with:

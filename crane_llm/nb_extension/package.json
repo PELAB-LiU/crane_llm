@@ -4,6 +4,7 @@
   "description": "CRANE-LLM native JupyterLab/Notebook 7 extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "style": "style/index.css",
   "scripts": {
     "build": "jlpm build:lib && jlpm build:labextension:dev",
     "build:prod": "jlpm clean:all && jlpm build:lib:prod && jlpm build:labextension",
@@ -19,6 +20,7 @@
   },
   "files": [
     "lib/**/*",
+    "style/**/*",
     "package.json",
     "scripts/**/*"
   ],

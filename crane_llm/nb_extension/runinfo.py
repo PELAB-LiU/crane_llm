@@ -1,24 +1,8 @@
 from __future__ import annotations
 
-from pprint import pformat
 from typing import Any, Dict
 
-
-from ..runinfo_parser.runtime_summary import (
-    collect_runtime_info,
-    extract_dependencies,
-    get_summarize_rules,
-    summarize_variable,
-)
-
-__all__ = [
-    "collect_live_runinfo",
-    "collect_runtime_info",
-    "extract_dependencies",
-    "format_runinfo_for_prompt",
-    "get_summarize_rules",
-    "summarize_variable",
-]
+from ..runinfo_parser.runtime_summary import collect_runtime_info, extract_dependencies
 
 
 def collect_live_runinfo(shell: Any = None, target_code: str = "") -> Dict[str, Any]:
@@ -44,7 +28,3 @@ def collect_live_runinfo(shell: Any = None, target_code: str = "") -> Dict[str, 
 
     dependencies, attributes = extract_dependencies(target_code, shell=shell)
     return collect_runtime_info(user_ns, dependencies, attributes)
-
-
-def format_runinfo_for_prompt(runinfo: Dict[str, Any]) -> str:
-    return pformat(runinfo)

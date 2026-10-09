@@ -1,6 +1,6 @@
 """What the built-in checker's rules are written with.
 
-A rule (see ``check_rules.py``) receives one *site*: an operation the target
+A rule (see ``rules/``) receives one *site*: an operation the target
 cell is about to perform, with the real values it will be performed on. The
 kinds of site are:
 
@@ -31,9 +31,14 @@ here would cost seconds for nothing.
 from __future__ import annotations
 
 import ast
+import contextlib
+import contextvars
 import sys
+import types
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple
+
+from ..texts import text
 
 MISSING = object()
 
@@ -328,8 +333,6 @@ def is_one_of(value: Any, *candidates: Any) -> bool:
 
 
 def bound_receiver(func: Any) -> Any:
-    import types
-
     receiver = getattr(func, "__self__", None)
     if isinstance(func, (types.MethodType, types.BuiltinMethodType)) and not isinstance(
         receiver, types.ModuleType
@@ -416,6 +419,60 @@ def sample_count(value: Any) -> Optional[int]:
     return None
 
 
+_SCALAR_OPS = {
+    "+": lambda a, b: a + b,
+    "-": lambda a, b: a - b,
+    "*": lambda a, b: a * b,
+    "/": lambda a, b: a / b,
+    "//": lambda a, b: a // b,
+    "%": lambda a, b: a % b,
+}
+
+
+def scalar_arithmetic(op: str, left: Any, right: Any) -> Any:
+    """``left <op> right`` on two builtin scalars, computed for real.
+
+    MISSING when it is not computed: for other values or operators, and when
+    the result could be huge, such as a long string repeated. Otherwise the
+    result, or whatever Python raises, such as ``TypeError`` for ``"a" + 1``.
+    """
+
+    if op not in _SCALAR_OPS or type(left) not in SCALARS or type(right) not in SCALARS:
+        return MISSING
+    for value in (left, right):
+        if type(value) in (str, bytes) and len(value) > 10_000:
+            return MISSING
+        if type(value) is int and abs(value) > 10**12:
+            return MISSING
+    if op == "*" and (type(left) in (str, bytes) or type(right) in (str, bytes)):
+        return MISSING
+    return _SCALAR_OPS[op](left, right)
+
+
+def indexer_target(indexer: Any, kind: Optional[str] = None) -> Any:
+    """The DataFrame or Series behind ``df.loc`` or ``df.iloc``, else None.
+
+    ``kind`` is ``"_LocIndexer"`` or ``"_iLocIndexer"`` to accept only one of
+    them. Subscripting either changes nothing.
+    """
+
+    names = (kind,) if kind else ("_LocIndexer", "_iLocIndexer")
+    if type(indexer).__module__ != "pandas.core.indexing" or type(indexer).__name__ not in names:
+        return None
+    target = getattr(indexer, "obj", None)
+    return target if is_frame(target) or is_series(target) else None
+
+
+def none_detail(*pairs: Tuple[Any, Optional[str]]) -> str:
+    """The sentence explaining that a variable is None, for the first
+    ``(value, root)`` pair whose value is None and whose root is known."""
+
+    for value, root in pairs:
+        if value is None and root:
+            return text("checker.is_none", name=root)
+    return ""
+
+
 def special_method(kind: type, name: str) -> Any:
     """``name`` as Python looks up special methods: on the type and its bases,
     never on the instance and never through ``__getattr__``. MISSING if absent."""
@@ -432,14 +489,73 @@ def scan_budget() -> int:
     Rules that must look at every value of a column or array check their data
     against this first, and skip the check when it is larger: a skipped check
     costs a missed crash, a guess could report a false one.
+
+    The setting is read once per check (see ``read_scan_budget``), not on
+    every call: reading it means reading the configuration file.
     """
 
-    from .settings import scan_limit
+    budget = _SCAN_BUDGET.get()
+    if budget is None:
+        from ..settings import scan_limit
 
-    return scan_limit()
+        return scan_limit()
+    return budget
+
+
+@contextlib.contextmanager
+def read_scan_budget() -> Iterator[None]:
+    """Read the scan limit once, for every rule run inside this block."""
+
+    from ..settings import scan_limit
+
+    token = _SCAN_BUDGET.set(scan_limit())
+    try:
+        yield
+    finally:
+        _SCAN_BUDGET.reset(token)
+
+
+_SCAN_BUDGET: contextvars.ContextVar[Optional[int]] = contextvars.ContextVar("crane_llm_scan_budget", default=None)
 
 
 def shape_text(shape: Tuple[int, ...]) -> str:
     """A shape as NumPy prints it in messages: ``(3,)``, ``(5,3)``."""
 
     return "(" + ",".join(str(n) for n in shape) + ("," if len(shape) == 1 else "") + ")"
+
+
+# --- shared by several rule modules ------------------------------------------
+
+
+def is_numpy_integer(dtype: Any) -> bool:
+    np = numpy()
+    if np is None or dtype is None:
+        return False
+    if dtype is int:
+        return True
+    if not (isinstance(dtype, (str, np.dtype)) or (isinstance(dtype, type) and issubclass(dtype, np.integer))):
+        return False
+    try:
+        # pandas' nullable "Int64" is not a NumPy dtype and accepts missing values.
+        return np.dtype(dtype).kind in "iu"
+    except TypeError:
+        return False
+
+
+def signature_target(func: Any) -> Any:
+    """The function whose signature Python checks a call against, or None."""
+
+    plain = func.__func__ if isinstance(func, types.MethodType) else func
+    if not isinstance(plain, types.FunctionType) or "__signature__" in vars(plain):
+        return None
+    wrapped = getattr(plain, "__wrapped__", None)
+    if wrapped is None:
+        return plain
+    code = getattr(plain, "__code__", None)
+    if (
+        isinstance(wrapped, types.FunctionType)
+        and code is not None
+        and code.co_filename.replace("\\", "/").endswith("sklearn/utils/_param_validation.py")
+    ):
+        return wrapped
+    return None

@@ -60,7 +60,7 @@ From `.github/workflows/release.yml`, on any tag starting with `v`:
 2. builds the frontend with `jlpm build:prod` (minified)
 3. builds the wheel and sdist
 4. checks the tag matches both version numbers
-5. installs the wheel into a clean virtual environment and confirms JupyterLab reports `crane-llm-jlab ... enabled ok`, then runs the backend checks
+5. installs the wheel into a clean virtual environment and confirms JupyterLab reports `crane-llm-jlab ... enabled ok`, then runs the backend tests against it
 6. creates a GitHub Release with generated notes and attaches the wheel
 7. uploads to PyPI
 
@@ -73,7 +73,7 @@ If any step fails, nothing is published. Step 5 is the one that matters most: it
 Worth doing, since a bad release cannot be taken back cleanly:
 
 ```bash
-python -m crane_llm.nb_extension.smoke_test    # backend checks, no LLM call
+python -m pytest    # backend tests, no LLM call
 ```
 
 Push to a branch first and let the build workflow run. It performs everything the release does except publishing, so a green build is a strong signal the release will work.

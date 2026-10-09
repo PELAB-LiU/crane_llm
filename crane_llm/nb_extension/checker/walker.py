@@ -1,9 +1,9 @@
-"""The built-in checker: crashes it can report as certain, without the LLM.
+"""The checker's walk through the target cell.
 
 Before the model is asked, the target cell is walked statement by statement,
 in the order Python would evaluate it, against the live kernel namespace.
-Every operation the walk reaches is offered to the rules in
-``check_rules.py``, with the real values it will be performed on, and a crash
+Every operation the walk reaches is offered to the rules in ``rules/``, with
+the real values it will be performed on, and a crash
 is reported when a rule finds the operation will certainly raise. The walk
 itself catches the errors that come from Python's own rules: undefined names,
 missing attributes, unpacking the wrong number of values, syntax errors.
@@ -13,9 +13,8 @@ run code whose effect is unknown -- a call to a user function, a loop, a
 ``try`` block, an operation on a value the walk did not compute -- ends it,
 and the cell goes to the model instead. So every value a rule looks at is
 exactly the value the cell would see when it runs. The walk continues only
-past operations that change nothing (listed at the end of
-``check_rules.py``); if one of them raised instead, the cell would still
-crash, only earlier.
+past operations that change nothing (listed in ``pure.py``); if one of them
+raised instead, the cell would still crash, only earlier.
 
 The checker therefore never says a cell is safe. It either reports a certain
 crash or says nothing.
@@ -40,8 +39,9 @@ import types
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
-from . import check_rules
-from .check_helpers import (
+from . import pure
+from . import rules  # noqa: F401  registers the rules
+from .sites import (
     MISSING,
     OPAQUE,
     RULES,
@@ -62,6 +62,7 @@ from .check_helpers import (
     UnaryOp,
     Unpack,
     bound_receiver,
+    indexer_target,
     is_data,
     is_frame,
     is_hashable_key,
@@ -72,10 +73,14 @@ from .check_helpers import (
     is_sklearn_estimator,
     is_sklearn_estimator_class,
     known,
+    none_detail,
     numpy,
+    read_scan_budget,
+    scalar_arithmetic,
     scan_budget,
+    special_method,
 )
-from .texts import text
+from ..texts import text
 
 
 @dataclass
@@ -132,7 +137,8 @@ def run_checks(source: str, namespace: Dict[str, Any], shell: Any = None) -> Opt
     if tree is None:
         return None
 
-    return _walk(tree, code, namespace)
+    with read_scan_budget():
+        return _walk(tree, code, namespace)
 
 
 # --- walking past code whose effect is unknown -------------------------------
@@ -833,7 +839,7 @@ class _Walker:
     def eval_BinOp(self, node: ast.BinOp):
         left, left_root = self.eval(node.left)
         right, right_root = self.eval(node.right)
-        op = check_rules.OPERATORS.get(type(node.op))
+        op = pure.OPERATORS.get(type(node.op))
         if op is None:
             raise _Stop
         if not isinstance(left, Opaque) and not isinstance(right, Opaque):
@@ -841,35 +847,21 @@ class _Walker:
                                    left_root=left_root, right_root=right_root))
 
         if type(left) in SCALARS and type(right) in SCALARS:
-            return self.builtin_value(op, left, right), None
+            try:
+                value = scalar_arithmetic(op, left, right)
+            except Exception:
+                value = MISSING
+            return (TRUSTED if value is MISSING else value), None
         # NumPy and pandas arithmetic changes nothing. If it raises, the cell
         # crashes there, which is still a crash.
         if is_data(left) and is_data(right):
             return TRUSTED, None
         raise _Stop
 
-    @staticmethod
-    def builtin_value(op: str, left, right) -> Any:
-        """The result of arithmetic on builtin scalars, when it is cheap to know."""
-
-        compute = {"+": lambda a, b: a + b, "-": lambda a, b: a - b, "*": lambda a, b: a * b,
-                   "/": lambda a, b: a / b, "//": lambda a, b: a // b, "%": lambda a, b: a % b}.get(op)
-        for value in (left, right):
-            if type(value) in (str, bytes) and len(value) > 10_000:
-                return TRUSTED
-            if type(value) is int and abs(value) > 10**12:
-                return TRUSTED
-        if compute is None or (op == "*" and (type(left) in (str, bytes) or type(right) in (str, bytes))):
-            return TRUSTED
-        try:
-            return compute(left, right)
-        except Exception:
-            return TRUSTED
-
     def eval_Compare(self, node: ast.Compare):
         left, left_root = self.eval(node.left)
         right, right_root = self.eval(node.comparators[0])
-        op = check_rules.COMPARISONS.get(type(node.ops[0]))
+        op = pure.COMPARISONS.get(type(node.ops[0]))
         if op is not None and not isinstance(left, Opaque) and not isinstance(right, Opaque):
             self.apply_rules(Compare(node, op=op, left=left, right=right,
                                      left_root=left_root, right_root=right_root))
@@ -988,13 +980,13 @@ class _Walker:
         if isinstance(obj, type):
             # Class attribute access goes through the metaclass.
             meta = type(obj)
-            if meta.__getattribute__ is not type.__getattribute__ or _static_lookup(meta, "__getattr__") is not MISSING:
+            if meta.__getattribute__ is not type.__getattribute__ or special_method(meta, "__getattr__") is not MISSING:
                 raise _Stop
             has_getattr = False
         else:
             if kind.__getattribute__ is not object.__getattribute__ and kind not in _GENERIC_BUILTINS:
                 raise _Stop
-            has_getattr = _static_lookup(kind, "__getattr__") is not MISSING
+            has_getattr = special_method(kind, "__getattr__") is not MISSING
 
         try:
             raw = inspect.getattr_static(obj, name, MISSING)
@@ -1029,7 +1021,7 @@ class _Walker:
             if name in ("str", "dt", "cat") and len(obj) > scan_budget():
                 # Building an accessor reads every value to check the dtype.
                 return TRUSTED
-            if name in check_rules.PANDAS_CHEAP_ATTRIBUTES or isinstance(raw, types.FunctionType):
+            if name in pure.PANDAS_CHEAP_ATTRIBUTES or isinstance(raw, types.FunctionType):
                 return self.safe_getattr(node, obj, root, name)
             return TRUSTED
 
@@ -1066,8 +1058,7 @@ class _Walker:
             message = f"type object '{obj.__name__}' has no attribute '{name}'"
         else:
             message = f"'{type(obj).__name__}' object has no attribute '{name}'"
-        detail = text("checker.is_none", name=root) if obj is None and root else ""
-        self.crash(node, "missing-attribute", "AttributeError", message, [root], detail)
+        self.crash(node, "missing-attribute", "AttributeError", message, [root], none_detail((obj, root)))
 
     def module_attribute(self, node, module, root, name) -> Any:
         module_dict = vars(module)
@@ -1089,7 +1080,7 @@ class _Walker:
         # A module-level __getattr__ can import submodules lazily. Only call
         # it for libraries whose hook is a plain lookup, and never for a name
         # that is a submodule.
-        if module_name.split(".")[0] not in check_rules.TRUSTED_MODULE_GETATTR:
+        if module_name.split(".")[0] not in pure.TRUSTED_MODULE_GETATTR:
             raise _Stop
         if hasattr(module, "__path__"):
             try:
@@ -1129,7 +1120,7 @@ class _Walker:
             if is_label(key) and key in obj.columns:
                 return obj[key]
             return TRUSTED
-        if _is_pandas_indexer(obj):
+        if indexer_target(obj) is not None:
             if is_data(key):
                 return TRUSTED
             raise _Stop
@@ -1198,13 +1189,13 @@ class _Walker:
 
         receiver = bound_receiver(func)
         if is_frame(receiver) or is_series(receiver):
-            if site.method not in check_rules.PANDAS_PURE_METHODS or not site.is_genuine_method():
+            if site.method not in pure.PANDAS_PURE_METHODS or not site.is_genuine_method():
                 raise _Stop
             if kwargs.get("inplace", False) is not False or not plain:
                 raise _Stop
             return TRUSTED
         if is_ndarray(receiver):
-            if site.method not in check_rules.NUMPY_PURE_METHODS or not plain:
+            if site.method not in pure.NUMPY_PURE_METHODS or not plain:
                 raise _Stop
             return TRUSTED
 
@@ -1212,12 +1203,12 @@ class _Walker:
         name = getattr(func, "__name__", None)
         if np is not None and isinstance(name, str) and getattr(np, name, None) is func:
             exact = all(known(a) for a in args) and all(known(v) for v in kwargs.values())
-            if name in check_rules.NUMPY_BUILT_FOR_REAL and plain and exact and _small_array(func, np, args):
+            if name in pure.NUMPY_BUILT_FOR_REAL and plain and exact and _small_array(func, np, args):
                 try:
                     return func(*args, **kwargs)
                 except Exception:
                     raise _Stop
-            if name in check_rules.NUMPY_PURE_FUNCTIONS and plain:
+            if name in pure.NUMPY_PURE_FUNCTIONS and plain:
                 return TRUSTED
             raise _Stop
 
@@ -1318,22 +1309,6 @@ def _small_array(func, np, args) -> bool:
     for n in shape:
         size *= n
     return size <= _MAX_BUILT_ARRAY
-
-
-def _static_lookup(kind: type, name: str) -> Any:
-    for klass in kind.__mro__:
-        if name in vars(klass):
-            return vars(klass)[name]
-    return MISSING
-
-
-def _is_pandas_indexer(value: Any) -> bool:
-    """``df.loc`` or ``df.iloc``, which subscripting changes nothing through."""
-
-    return type(value).__module__ == "pandas.core.indexing" and type(value).__name__ in (
-        "_LocIndexer",
-        "_iLocIndexer",
-    )
 
 
 def _constant_spec(spec: Optional[ast.AST]) -> Optional[str]:

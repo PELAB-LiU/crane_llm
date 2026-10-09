@@ -15,9 +15,6 @@ from IPython import get_ipython
 
 from . import assistant as assistant_module
 from . import cell_filter as cell_filter_module
-from . import check_helpers as check_helpers_module
-from . import check_rules as check_rules_module
-from . import checks as checks_module
 from . import extension as extension_module
 from . import guard as guard_module
 from . import ipython_hooks as ipython_hooks_module
@@ -46,11 +43,20 @@ _RELOAD_ORDER = (
     "crane_llm.runinfo_parser.summary_rules",
     "crane_llm.runinfo_parser.runtime_summary",
     lambda: cell_filter_module,
-    # The rule registry lives in check_helpers; reloading it empties the
-    # registry, and reloading check_rules fills it again.
-    lambda: check_helpers_module,
-    lambda: check_rules_module,
-    lambda: checks_module,
+    # The rule registry lives in checker.sites; reloading it empties the
+    # registry, and reloading each rule module fills it again, in order.
+    "crane_llm.nb_extension.checker.sites",
+    "crane_llm.nb_extension.checker.pure",
+    "crane_llm.nb_extension.checker.rules.shapes",
+    "crane_llm.nb_extension.checker.rules.python",
+    "crane_llm.nb_extension.checker.rules.pandas",
+    "crane_llm.nb_extension.checker.rules.numpy",
+    "crane_llm.nb_extension.checker.rules.sklearn",
+    "crane_llm.nb_extension.checker.rules.matplotlib",
+    "crane_llm.nb_extension.checker.rules.torch",
+    "crane_llm.nb_extension.checker.rules",
+    "crane_llm.nb_extension.checker.walker",
+    "crane_llm.nb_extension.checker",
     lambda: verdict_module,
     lambda: provenance_module,
     lambda: session_state_module,
@@ -117,11 +123,17 @@ def reload_crane_llm() -> "extension_module.CraneNotebookExtension":
     return extension
 
 
+def _require_shell():
+    shell = get_ipython()
+    if shell is None:
+        raise RuntimeError(texts_module.text("errors.no_ipython"))
+    return shell
+
+
 def load_crane_llm():
     """Register the notebook helper in the current IPython session."""
 
-    if get_ipython() is None:
-        raise RuntimeError("CRANE-LLM notebook helpers require an active IPython session.")
+    _require_shell()
     return get_extension()
 
 
@@ -133,9 +145,7 @@ def set_guard(enabled: bool) -> None:
     re-installs the guard so that it runs the reloaded code.
     """
 
-    shell = get_ipython()
-    if shell is None:
-        raise RuntimeError("CRANE-LLM notebook helpers require an active IPython session.")
+    shell = _require_shell()
     # Origins are traced from the cells recorded since the backend loaded.
     get_extension()
     if enabled:
@@ -149,7 +159,7 @@ def run_crane_llm(
     model: Optional[str] = None,
     cell_id: str = "active-cell",
     include_runinfo: bool = True,
-) -> "extension_module.NotebookExtensionResult":
+) -> "assistant_module.AssistantResult":
     """Build the prompt and run the LLM in one call.
 
     ``include_runinfo=False`` builds the prompt from the executed cells and the
@@ -245,8 +255,8 @@ def run_crane_llm_payload(
         if stage == assistant_module.STAGE_WAITING:
             payload["prompt"] = prompt
         # Printed as it happens, so the frontend can show each step while the
-        # request is still running.
-        event = {"stage": stage, "model": model_name, "prompt": prompt}
+        # request is still running, in the same words as the magic's output.
+        event = {"stage": stage, "message": ui_module.stage_message(stage, model_name), "prompt": prompt}
         print(STAGE_MARKER + json.dumps(event, ensure_ascii=False), flush=True)
 
     try:
@@ -260,10 +270,8 @@ def run_crane_llm_payload(
             use_llm=use_llm,
             model=model,
         )
-    except assistant_module.PromptBuildingError as exc:
-        payload["error"] = str(exc)
     except Exception as exc:
-        payload["error"] = f"{type(exc).__name__}: {exc}"
+        payload["error"] = assistant_module.describe_error(exc)
     else:
         payload.update(
             ok=True,
@@ -274,12 +282,3 @@ def run_crane_llm_payload(
         )
 
     return PAYLOAD_BEGIN + json.dumps(payload, ensure_ascii=False, default=str) + PAYLOAD_END
-
-
-def run_prompt(prompt: str, model: Optional[str] = None, include_runinfo: bool = True) -> str:
-    """Run a single prompt through the LLM without rebuilding notebook state."""
-
-    client = llm_client_module.default_client(
-        model=model, include_runinfo=include_runinfo
-    )
-    return client.run(prompt)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 from .provenance import ProvenanceLog
 
@@ -12,7 +12,6 @@ class CellRecord:
     source: str
     session_sequence: int
     execution_count: Optional[int] = None
-    cell_type: str = "code"
 
 
 @dataclass
@@ -33,16 +32,15 @@ class NotebookSessionState:
 
     executed_cells: List[CellRecord] = field(default_factory=list)
     target_cell: Optional[CellRecord] = None
-    session_metadata: Dict[str, Any] = field(default_factory=dict)
-    current_session_number: Optional[int] = None
     next_session_sequence: int = 1
     provenance: ProvenanceLog = field(default_factory=ProvenanceLog)
 
-    def reset_for_session(self, session_number: Optional[int] = None) -> None:
+    def reset(self) -> None:
+        """Forget everything, for a new kernel session."""
+
         self.executed_cells.clear()
         self.provenance.reset()
         self.target_cell = None
-        self.current_session_number = session_number
         self.next_session_sequence = 1
 
     def _allocate_sequence(self, session_sequence: Optional[int]) -> int:
@@ -57,7 +55,6 @@ class NotebookSessionState:
         source: str,
         session_sequence: Optional[int] = None,
         execution_count: Optional[int] = None,
-        cell_type: str = "code",
     ) -> None:
         """Record (or re-record) a successful execution of ``cell_id``."""
 
@@ -68,7 +65,6 @@ class NotebookSessionState:
             source=source,
             session_sequence=session_sequence,
             execution_count=execution_count,
-            cell_type=cell_type,
         )
 
         for index, existing in enumerate(self.executed_cells):
@@ -87,19 +83,11 @@ class NotebookSessionState:
                 return True
         return False
 
-    def set_target_cell(
-        self,
-        cell_id: str,
-        source: str,
-        execution_count: Optional[int] = None,
-        cell_type: str = "code",
-    ) -> None:
+    def set_target_cell(self, cell_id: str, source: str) -> None:
         self.target_cell = CellRecord(
             cell_id=cell_id,
             source=source,
             session_sequence=self.next_session_sequence,
-            execution_count=execution_count,
-            cell_type=cell_type,
         )
 
     def ordered_executed_cells(self) -> List[CellRecord]:

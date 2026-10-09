@@ -47,6 +47,9 @@ dependencies = [
 lab = ["jupyterlab>=4.0.0,<5"]
 # Needed to rebuild the frontend bundle, not to run it.
 build = ["jupyter-builder>=1.0.0,<2"]
+# Runs tests/. pandas, NumPy and scikit-learn are optional there: the cases
+# that need them are skipped without them.
+test = ["pytest>=7"]
 # Batch experiment pipeline (crane_llm/llms/llm_executor.py).
 experiments = [
     "google-genai",
@@ -81,6 +84,9 @@ include = ["crane_llm", "crane_llm.*"]
 # entries. The frontend bundle reaches the install through data_files in
 # setup.py, not as a Python package.
 namespaces = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [tool.setuptools.package-data]
 "crane_llm.nb_extension" = ["package.json", "tsconfig.json", "install.json", "src/*.ts", "src/*.json"]

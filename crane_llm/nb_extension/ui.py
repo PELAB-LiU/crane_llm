@@ -21,10 +21,12 @@ from typing import List, Optional
 from .assistant import STAGE_BUILDING, STAGE_CHECKING, STAGE_NO_FINDING, STAGE_WAITING
 from .provenance import Origin
 from .texts import text
-from .verdict import SOURCE_CHECK, Verdict
+from .verdict import Verdict
 
 
-# The same colours as the JupyterLab frontend (getToneColor in src/index.ts).
+# The same colours as the JupyterLab frontend (style/index.css). The magic's
+# output is plain HTML in frontends that load no stylesheet of ours, so they
+# are written out here.
 _TONE_COLORS = {
     "crash": "#dc2626",
     "safe": "#16a34a",
@@ -35,30 +37,6 @@ _TONE_COLORS = {
 }
 
 
-def source_badge(verdict: Verdict) -> str:
-    """Says who gave the verdict. Mirrors ``sourceBadgeText`` in the frontend."""
-
-    if verdict.certain:
-        return text("verdict.badge_check")
-    if verdict.source == SOURCE_CHECK:
-        return text("verdict.badge_check_only")
-    if verdict.model:
-        return text("verdict.badge_model", model=verdict.model)
-    return text("verdict.badge_model_no_name")
-
-
-def source_note(verdict: Verdict) -> str:
-    """Mirrors ``sourceNoteText`` in the frontend."""
-
-    if verdict.certain:
-        return text("verdict.note_check")
-    if verdict.source == SOURCE_CHECK:
-        return text("verdict.note_check_only")
-    if verdict.checks_ran:
-        return text("verdict.note_model_after_check")
-    return text("verdict.note_model_code_only")
-
-
 _STAGE_KEYS = {
     STAGE_CHECKING: "progress.checking",
     STAGE_NO_FINDING: "progress.no_finding",
@@ -67,7 +45,7 @@ _STAGE_KEYS = {
 
 
 def stage_message(stage: str, model: str) -> str:
-    """One progress step. Mirrors ``stageMessage`` in the frontend."""
+    """One progress step, as shown here and sent to the frontend."""
 
     if stage == STAGE_WAITING:
         return text("progress.waiting", model=model) if model else text("progress.waiting_no_name")
@@ -223,7 +201,7 @@ class VerdictView:
         if self._verdict is not None:
             parts.append(
                 '<div style="opacity:0.75;font-size:0.85em;margin-top:4px;">'
-                f"{html.escape(source_note(self._verdict))}</div>"
+                f"{html.escape(self._verdict.note)}</div>"
             )
 
         if self._footer:
@@ -265,7 +243,7 @@ class VerdictView:
             style = "background:transparent;color:inherit;border:1px solid currentColor;opacity:0.8;"
         return (
             f'<span style="{style}border-radius:999px;padding:1px 8px;font-size:0.8em;">'
-            f"{html.escape(source_badge(verdict))}</span>"
+            f"{html.escape(verdict.badge)}</span>"
         )
 
     def _render_origins(self) -> str:

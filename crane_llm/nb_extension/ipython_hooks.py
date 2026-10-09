@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-from dataclasses import dataclass
 from typing import Optional
 
 from IPython import get_ipython
@@ -40,12 +39,6 @@ def _execution_succeeded(result) -> bool:
     )
 
 
-@dataclass
-class HookRegistration:
-    enabled: bool
-    message: str = ""
-
-
 class IPythonSessionTracker:
     """Track successfully executed notebook cells from a live IPython kernel."""
 
@@ -63,14 +56,13 @@ class IPythonSessionTracker:
         history_manager = getattr(shell, "history_manager", None)
         session_number = getattr(history_manager, "session_number", None)
 
+        # Without a session number there is no way to tell a new session, and
+        # resetting on every cell would record nothing at all.
         if session_number is None:
-            if self._kernel_session_number is None:
-                self.session_state.reset_for_session(None)
-                self._kernel_session_number = None
             return
 
         if self._kernel_session_number != session_number:
-            self.session_state.reset_for_session(session_number)
+            self.session_state.reset()
             self._kernel_session_number = session_number
             self._seed_current_session_history(shell)
 
@@ -112,7 +104,6 @@ class IPythonSessionTracker:
                 source=raw_cell,
                 session_sequence=line_number,
                 execution_count=line_number,
-                cell_type="code",
             )
             # What these cells did to the namespace was not observed, so it is
             # read from their code instead.
@@ -122,16 +113,18 @@ class IPythonSessionTracker:
 
     # --- hook registration ---------------------------------------------
 
-    def register(self) -> HookRegistration:
+    def register(self) -> None:
+        """Start recording cells, if there is an IPython shell to record."""
+
         shell = get_ipython()
         if shell is None:
-            return HookRegistration(enabled=False, message="No active IPython shell")
+            return
 
         self._shell = shell
         self._sync_with_current_session(shell)
 
         if self._registered:
-            return HookRegistration(enabled=True, message="Hooks already registered")
+            return
 
         def _pre_run_cell(info):
             self._sync_with_current_session(shell)
@@ -147,7 +140,6 @@ class IPythonSessionTracker:
         shell.events.register("pre_run_cell", _pre_run_cell)
         shell.events.register("post_run_cell", _post_run_cell)
         self._registered = True
-        return HookRegistration(enabled=True, message="Hooks registered")
 
     def dispose(self) -> None:
         """Detach the post_run_cell hook.
@@ -237,13 +229,4 @@ class IPythonSessionTracker:
             source=raw_cell,
             session_sequence=self.session_state.next_session_sequence,
             execution_count=getattr(result, "execution_count", None),
-            cell_type="code",
-        )
-
-    def set_target_cell(self, cell_id: str, source: str, execution_count: Optional[int] = None) -> None:
-        self.session_state.set_target_cell(
-            cell_id=cell_id,
-            source=source,
-            execution_count=execution_count,
-            cell_type="code",
         )
