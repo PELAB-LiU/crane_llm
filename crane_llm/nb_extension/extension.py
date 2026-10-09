@@ -7,6 +7,7 @@ from IPython import get_ipython
 
 from .assistant import CraneNotebookAssistant, PromptBuildingError
 from .cell_filter import is_internal_helper_cell
+from .guard import CrashPrevented
 from .ipython_hooks import IPythonSessionTracker
 from .provenance import Origin
 from .session_state import NotebookSessionState
@@ -30,17 +31,13 @@ class CraneNotebookExtension:
     magic's cell output, and the single-shot LLM call.
     """
 
-    def __init__(self, model: Optional[str] = None):
+    def __init__(self):
         self.session_state = NotebookSessionState()
         self.tracker = IPythonSessionTracker(self.session_state)
-        self.assistant = CraneNotebookAssistant(model=model, session_state=self.session_state)
+        self.assistant = CraneNotebookAssistant(session_state=self.session_state)
         # Verdicts shown by the magic that are not stale yet.
         self._live_views: List = []
         self._stale_shell = None
-
-    @property
-    def model(self) -> str:
-        return self.assistant.model
 
     def start_tracking(self):
         registration = self.tracker.register()
@@ -73,11 +70,14 @@ class CraneNotebookExtension:
         The extension's own cells do not count: a ``%%crane_llm`` cell analyses
         its body without running it, so checking a second cell must not retire
         the first check. That includes the check that has just been shown,
-        whose own cell is the one this hook fires for first.
+        whose own cell is the one this hook fires for first. Neither does a
+        cell the guard stopped, since none of it ran.
         """
 
         raw_cell = getattr(getattr(result, "info", None), "raw_cell", None)
         if not isinstance(raw_cell, str) or is_internal_helper_cell(raw_cell):
+            return
+        if isinstance(getattr(result, "error_before_exec", None), CrashPrevented):
             return
 
         views, self._live_views = self._live_views, []
@@ -99,6 +99,7 @@ class CraneNotebookExtension:
         include_runinfo: bool = True,
         notebook_cells: Optional[List[Dict[str, str]]] = None,
         use_llm: bool = True,
+        model: Optional[str] = None,
     ) -> NotebookExtensionResult:
         self.set_target_cell(cell_id=cell_id, source=source, execution_count=execution_count)
         return self.run(
@@ -107,6 +108,7 @@ class CraneNotebookExtension:
             include_runinfo=include_runinfo,
             notebook_cells=notebook_cells,
             use_llm=use_llm,
+            model=model,
         )
 
     def run(
@@ -116,10 +118,12 @@ class CraneNotebookExtension:
         include_runinfo: bool = True,
         notebook_cells: Optional[List[Dict[str, str]]] = None,
         use_llm: bool = True,
+        model: Optional[str] = None,
     ) -> NotebookExtensionResult:
         """Judge the target cell: built-in checks first, then the model.
 
-        With ``render`` the progress and the verdict are shown as this cell's
+        ``model`` overrides the configured model for this call only. With
+        ``render`` the progress and the verdict are shown as this cell's
         output. Failures are shown there too and then re-raised, so a caller
         can still tell that no prediction was made.
         """
@@ -131,12 +135,12 @@ class CraneNotebookExtension:
             view = VerdictView()
             view.show(text("progress.starting"))
 
-        def progress(stage: str, prompt: str) -> None:
+        def progress(stage: str, prompt: str, model_name: str) -> None:
             if view is None:
                 return
             if prompt:
                 view.set_prompt(prompt)
-            view.progress(stage, self.model)
+            view.progress(stage, model_name)
 
         try:
             result = self.assistant.run(
@@ -145,6 +149,7 @@ class CraneNotebookExtension:
                 notebook_cells=notebook_cells,
                 progress=progress,
                 use_llm=use_llm,
+                model=model,
             )
         except PromptBuildingError as exc:
             if view is not None:

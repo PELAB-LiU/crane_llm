@@ -5,7 +5,7 @@ from typing import Callable, Dict, List, Optional
 
 from . import settings as settings_module
 from .checks import CheckFinding, run_checks
-from .llm_client import default_client, _resolve_model_name
+from .llm_client import default_client
 from .prompt_builder import build_crane_prompt
 from .provenance import Origin, locate_origins
 from .runinfo import extract_dependencies
@@ -48,18 +48,11 @@ class CraneNotebookAssistant:
     the model otherwise. Nothing is persisted to disk.
     """
 
-    def __init__(self, model: Optional[str] = None, session_state: Optional[NotebookSessionState] = None):
-        # Kept as given, not resolved, so that a model, key or endpoint set
-        # after this object exists still takes effect on the next call.
-        self._requested_model = model
+    def __init__(self, session_state: Optional[NotebookSessionState] = None):
         self.session_state = session_state or NotebookSessionState()
         # One client per mode; they differ only in their system prompt. Each is
         # stored with the settings it was built from.
         self._clients: dict = {}
-
-    @property
-    def model(self) -> str:
-        return _resolve_model_name(self._requested_model)
 
     def check(self, shell=None) -> Optional[CheckFinding]:
         """A certain crash in the target cell, found without the model."""
@@ -74,25 +67,28 @@ class CraneNotebookAssistant:
             self.session_state, include_runinfo=include_runinfo, shell=shell
         )
 
-    def call_llm(self, prompt: str, include_runinfo: bool = True) -> str:
-        # Resolved on every call. A client built before the user set their key
-        # holds no key, and reusing it would keep reporting "No API key found"
-        # until the kernel restarted.
-        resolved = settings_module.resolve(model=self._requested_model)
+    def call_llm(
+        self,
+        prompt: str,
+        include_runinfo: bool = True,
+        model: Optional[str] = None,
+        resolved: Optional[settings_module.Settings] = None,
+    ) -> str:
+        # Resolved on every call, unless the caller just did. A client built
+        # before the user set their key holds no key, and reusing it would keep
+        # reporting "No API key found" until the kernel restarted.
+        if resolved is None:
+            resolved = settings_module.resolve(model=model)
 
         cached = self._clients.get(include_runinfo)
         if cached is None or cached[0] != resolved:
-            client = default_client(
-                model=self._requested_model,
-                include_runinfo=include_runinfo,
-                resolved=resolved,
-            )
+            client = default_client(include_runinfo=include_runinfo, resolved=resolved)
             cached = (resolved, client)
             self._clients[include_runinfo] = cached
         return cached[1].run(prompt)
 
-    def read_response(self, response: str, shell=None) -> Verdict:
-        verdict = verdict_from_response(response, model=self.model)
+    def read_response(self, response: str, shell=None, model: str = "") -> Verdict:
+        verdict = verdict_from_response(response, model=model)
         if verdict.tone == "crash" and not verdict.variables:
             # The model named no variables. Fall back to the ones the target
             # cell uses that its reasoning mentions.
@@ -125,25 +121,31 @@ class CraneNotebookAssistant:
         shell=None,
         include_runinfo: bool = True,
         notebook_cells: Optional[List[Dict[str, str]]] = None,
-        progress: Optional[Callable[[str, str], None]] = None,
+        progress: Optional[Callable[[str, str, str], None]] = None,
         use_llm: bool = True,
+        model: Optional[str] = None,
     ) -> AssistantResult:
         """Judge the target cell.
 
-        ``progress(stage, prompt)`` is called as the work advances: with
-        ``STAGE_CHECKING`` before the built-in checks, ``STAGE_NO_FINDING`` when
-        they found nothing and the LLM is to be asked, ``STAGE_BUILDING``
-        before the prompt is built, and ``STAGE_WAITING``, with the prompt,
-        once the model is about to be called. A failure to build the prompt is
-        raised as ``PromptBuildingError``; a failed model call raises whatever
-        the client raised.
+        ``progress(stage, prompt, model)`` is called as the work advances:
+        with ``STAGE_CHECKING`` before the built-in checks, ``STAGE_NO_FINDING``
+        when they found nothing and the LLM is to be asked, ``STAGE_BUILDING``
+        before the prompt is built, and ``STAGE_WAITING``, with the prompt and
+        the model's name, once the model is about to be called. ``prompt`` and
+        ``model`` are empty for the other stages. A failure to build the prompt
+        is raised as ``PromptBuildingError``; a failed model call raises
+        whatever the client raised.
+
+        ``model`` overrides the configured model for this call only.
 
         With ``use_llm`` off only the built-in checker runs, and nothing is
-        sent anywhere. When it finds nothing the verdict says so, which is not
-        a claim that the cell is safe.
+        sent anywhere. The LLM settings are then not read at all, so a missing
+        key or a broken configuration file cannot get in the way.
+        When it finds nothing the verdict says so, which is not a claim that
+        the cell is safe.
         """
 
-        report = progress or (lambda stage, prompt: None)
+        report = progress or (lambda stage, prompt, model: None)
 
         # The checks read the live kernel state, which is runtime information.
         # With it switched off the model must see the code alone, as in the
@@ -151,10 +153,10 @@ class CraneNotebookAssistant:
         # comparison does not arise, and the checker is all there is.
         finding = None
         if include_runinfo or not use_llm:
-            report(STAGE_CHECKING, "")
+            report(STAGE_CHECKING, "", "")
             finding = self.check(shell)
             if finding is None and use_llm:
-                report(STAGE_NO_FINDING, "")
+                report(STAGE_NO_FINDING, "", "")
 
         if finding is not None:
             prompt, response = "", ""
@@ -163,16 +165,17 @@ class CraneNotebookAssistant:
             prompt, response = "", ""
             verdict = verdict_no_finding()
         else:
-            report(STAGE_BUILDING, "")
+            report(STAGE_BUILDING, "", "")
             try:
                 prompt = self.build_prompt(shell=shell, include_runinfo=include_runinfo)
             except Exception as exc:
                 raise PromptBuildingError(
                     text("errors.prompt_failed", error=f"{type(exc).__name__}: {exc}")
                 ) from exc
-            report(STAGE_WAITING, prompt)
-            response = self.call_llm(prompt, include_runinfo=include_runinfo)
-            verdict = self.read_response(response, shell=shell)
+            resolved = settings_module.resolve(model=model)
+            report(STAGE_WAITING, prompt, resolved.model)
+            response = self.call_llm(prompt, include_runinfo=include_runinfo, resolved=resolved)
+            verdict = self.read_response(response, shell=shell, model=resolved.model)
             verdict.checks_ran = include_runinfo
         return AssistantResult(
             prompt=prompt,

@@ -249,11 +249,15 @@ def number_conversion(site: Call) -> None:
             site.crash(type(exc).__name__, str(exc), [site.arg_roots[0]])
 
 
-@rule(Call, "conversion")
+@rule(Call, "range-step")
 def range_with_zero_step(site: Call) -> None:
-    if site.func is builtins.range and len(site.args) == 3 and not site.kwargs and site.args[2] == 0:
-        if all(type(a) is int for a in site.args):
-            site.crash("ValueError", "range() arg 3 must not be zero", site.arg_roots)
+    """``range(0, 10, 0)``."""
+
+    if site.func is not builtins.range or len(site.args) != 3 or site.kwargs:
+        return
+    # Types first: ``==`` on an arbitrary object would run its own code.
+    if all(type(a) is int for a in site.args) and site.args[2] == 0:
+        site.crash("ValueError", "range() arg 3 must not be zero", site.arg_roots)
 
 
 # --- pandas ------------------------------------------------------------------
@@ -532,14 +536,18 @@ def estimator_not_fitted(site: Call) -> None:
 @rule(Call, "feature-count")
 def estimator_feature_count(site: Call) -> None:
     """``model.predict(X)`` where ``X`` has a different number of columns than
-    the data ``model`` was fitted on."""
+    the data ``model`` was fitted on.
+
+    Not for composite estimators: a ColumnTransformer picks its columns from
+    a DataFrame by name, and ignores any others.
+    """
 
     estimator = site.receiver
-    if site.method not in _FEATURE_CHECKED_METHODS or not is_sklearn_estimator(estimator) or not site.args:
+    if site.method not in _FEATURE_CHECKED_METHODS or not _validates_plain_input(estimator) or not site.args:
         return
     expected = vars(estimator).get("n_features_in_")
     data, data_root = site.args[0], site.arg_roots[0]
-    if type(expected) is not int or not _accepts_2d_arrays(estimator):
+    if type(expected) is not int:
         return
     if is_ndarray(data) and data.ndim == 2:
         columns = data.shape[1]
@@ -1042,13 +1050,17 @@ def _indexer_target(indexer: Any, kind: str):
 def estimator_feature_names(site: Call) -> None:
     """``model.predict(new_df)`` where ``new_df``'s columns are not the ones
     the estimator was fitted on, in the same order. An error from
-    scikit-learn 1.2 on; before that only a warning."""
+    scikit-learn 1.2 on; before that only a warning.
+
+    Not for composite estimators: a ColumnTransformer picks its columns from
+    a DataFrame by name, in any order.
+    """
 
     estimator, data = site.receiver, site.arg(0, "X")
-    if site.method not in _FEATURE_CHECKED_METHODS or not is_sklearn_estimator(estimator) or not is_frame(data):
+    if site.method not in _FEATURE_CHECKED_METHODS or not _validates_plain_input(estimator) or not is_frame(data):
         return
     fitted = vars(estimator).get("feature_names_in_")
-    if fitted is None or not _sklearn_at_least(1, 2) or not _accepts_2d_arrays(estimator):
+    if fitted is None or not _sklearn_at_least(1, 2):
         return
     columns = list(data.columns)
     if not all(type(c) is str for c in columns):

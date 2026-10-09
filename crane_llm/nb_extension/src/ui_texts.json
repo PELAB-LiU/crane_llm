@@ -31,7 +31,9 @@
     "error": "CRANE-LLM did not run this cell. {reasoning}",
     "magic_on": "CRANE-LLM checks every cell before it runs, until the kernel restarts. A cell the built-in checker finds will crash is not run.",
     "magic_off": "CRANE-LLM does not check cells before they run.",
-    "magic_usage": "Usage: %crane_llm guard on | %crane_llm guard off. To check a single cell, put %%crane_llm on its first line instead."
+    "magic_usage": "Usage: %crane_llm guard on | %crane_llm guard off. To check a single cell, put %%crane_llm on its first line instead.",
+    "unavailable_title": "Cells in this notebook are not being checked",
+    "unavailable": "\"Check cells before they run\" is on, but CRANE-LLM could not start in this notebook's kernel, so its cells run unchecked.\n\n{error}\n\nInstall crane-llm in the environment of this kernel (for example, run %pip install crane-llm in a cell) and restart the kernel."
   },
 
   "runinfo": {

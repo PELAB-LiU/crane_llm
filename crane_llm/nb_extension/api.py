@@ -61,8 +61,8 @@ _RELOAD_ORDER = (
     lambda: ipython_hooks_module,
     lambda: assistant_module,
     lambda: ui_module,
-    lambda: extension_module,
     lambda: guard_module,
+    lambda: extension_module,
 )
 
 
@@ -74,21 +74,18 @@ def _reload_backend_modules() -> None:
         importlib.reload(module)
 
 
-def get_extension(model: Optional[str] = None) -> "extension_module.CraneNotebookExtension":
+def get_extension() -> "extension_module.CraneNotebookExtension":
     """Return the session-wide extension instance, creating it if needed.
 
-    A different ``model`` rebuilds the instance rather than being ignored.
+    It holds the record of every cell run since it was created, so it lives
+    as long as the kernel. The model is chosen per check, not here.
     """
 
     global _INSTANCE
 
-    if _INSTANCE is not None:
-        if model is None or llm_client_module._resolve_model_name(model) == _INSTANCE.model:
-            return _INSTANCE
-        _dispose_instance()
-
-    _INSTANCE = extension_module.CraneNotebookExtension(model=model)
-    _INSTANCE.start_tracking()
+    if _INSTANCE is None:
+        _INSTANCE = extension_module.CraneNotebookExtension()
+        _INSTANCE.start_tracking()
     return _INSTANCE
 
 
@@ -103,7 +100,7 @@ def _dispose_instance() -> None:
     _INSTANCE = None
 
 
-def reload_crane_llm(model: Optional[str] = None) -> "extension_module.CraneNotebookExtension":
+def reload_crane_llm() -> "extension_module.CraneNotebookExtension":
     """Reload the notebook backend modules and rebuild the singleton.
 
     Use this after editing Python backend files in a live kernel session. The
@@ -114,18 +111,18 @@ def reload_crane_llm(model: Optional[str] = None) -> "extension_module.CraneNote
     _dispose_instance()
     guarded = guard_module.is_enabled(get_ipython())
     _reload_backend_modules()
-    extension = get_extension(model=model)
+    extension = get_extension()
     if guarded:
         guard_module.enable(get_ipython())
     return extension
 
 
-def load_crane_llm(model: Optional[str] = None):
+def load_crane_llm():
     """Register the notebook helper in the current IPython session."""
 
     if get_ipython() is None:
         raise RuntimeError("CRANE-LLM notebook helpers require an active IPython session.")
-    return get_extension(model=model)
+    return get_extension()
 
 
 def set_guard(enabled: bool) -> None:
@@ -159,13 +156,13 @@ def run_crane_llm(
     target cell alone, with no runtime information section.
     """
 
-    extension = get_extension(model=model)
-    return extension.run_target_cell(
+    return get_extension().run_target_cell(
         source=source,
         shell=get_ipython(),
         cell_id=cell_id,
         render=False,
         include_runinfo=include_runinfo,
+        model=model,
     )
 
 
@@ -178,7 +175,6 @@ def get_live_runinfo_json(target_code: str = "") -> str:
 
 def get_prompt(
     source: str = "",
-    model: Optional[str] = None,
     cell_id: str = "active-cell",
     include_runinfo: bool = True,
 ) -> str:
@@ -189,7 +185,7 @@ def get_prompt(
     been run before.
     """
 
-    extension = get_extension(model=model)
+    extension = get_extension()
     extension.set_target_cell(cell_id=cell_id, source=source)
     return extension.assistant.build_prompt(
         shell=get_ipython(), include_runinfo=include_runinfo
@@ -245,16 +241,16 @@ def run_crane_llm_payload(
     except ValueError:
         notebook_cells = None
 
-    def progress(stage: str, prompt: str) -> None:
+    def progress(stage: str, prompt: str, model_name: str) -> None:
         if stage == assistant_module.STAGE_WAITING:
             payload["prompt"] = prompt
         # Printed as it happens, so the frontend can show each step while the
         # request is still running.
-        event = {"stage": stage, "model": extension.model, "prompt": prompt}
+        event = {"stage": stage, "model": model_name, "prompt": prompt}
         print(STAGE_MARKER + json.dumps(event, ensure_ascii=False), flush=True)
 
     try:
-        extension = get_extension(model=model)
+        extension = get_extension()
         extension.set_target_cell(cell_id=cell_id, source=source)
         result = extension.assistant.run(
             shell=get_ipython(),
@@ -262,6 +258,7 @@ def run_crane_llm_payload(
             notebook_cells=notebook_cells,
             progress=progress,
             use_llm=use_llm,
+            model=model,
         )
     except assistant_module.PromptBuildingError as exc:
         payload["error"] = str(exc)

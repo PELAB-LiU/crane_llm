@@ -178,16 +178,6 @@ class ChatCompletionsLLMClient(_BaseLLMClient):
         return text
 
 
-def _resolve_model_name(model: Optional[str] = None) -> str:
-    """The model that would be used for ``model``.
-
-    ``api.py`` calls this to decide whether a request needs a rebuilt client,
-    so it has to apply the same resolution order as ``default_client``.
-    """
-
-    return settings_module.resolve(model=model).model
-
-
 def default_client(
     model: Optional[str] = None,
     include_runinfo: bool = True,

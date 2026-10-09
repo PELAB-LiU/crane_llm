@@ -22,7 +22,7 @@ class CraneLLMMagics(Magics):
         The cell is analysed, not executed. Arguments are optional:
         ``--no-runinfo`` builds the prompt from the executed cells alone,
         ``--no-llm`` runs only the built-in checker and sends nothing, and
-        anything else is taken as a model name, for example
+        anything else is taken as a model name for this check, for example
         ``%%crane_llm gpt-5-mini``.
 
         As a line magic, ``%crane_llm guard on`` checks every cell with the
@@ -40,14 +40,14 @@ class CraneLLMMagics(Magics):
         remaining = [a for a in arguments if a not in ("--no-runinfo", "--no-llm")]
         model = remaining[0] if remaining else None
 
-        extension = get_extension(model=model)
         try:
-            extension.run_target_cell(
+            get_extension().run_target_cell(
                 source=cell,
                 shell=get_ipython(),
                 render=True,
                 include_runinfo=include_runinfo,
                 use_llm=use_llm,
+                model=model,
             )
         except Exception:
             # Already shown in the cell output, in words meant for the user.
@@ -70,12 +70,13 @@ class CraneLLMMagics(Magics):
 def crane_llm(cell_source: str, model: str = None, include_runinfo: bool = True, use_llm: bool = True):
     """Convenience wrapper for direct Python invocation. Returns the verdict."""
 
-    result = get_extension(model=model).run_target_cell(
+    result = get_extension().run_target_cell(
         source=cell_source,
         shell=get_ipython(),
         render=True,
         include_runinfo=include_runinfo,
         use_llm=use_llm,
+        model=model,
     )
     return result.verdict
 

@@ -871,22 +871,27 @@ class _Walker:
         right, right_root = self.eval(node.comparators[0])
         op = check_rules.COMPARISONS.get(type(node.ops[0]))
         if op is not None and not isinstance(left, Opaque) and not isinstance(right, Opaque):
-            # Only the first comparison of a chain is certain to run.
             self.apply_rules(Compare(node, op=op, left=left, right=right,
                                      left_root=left_root, right_root=right_root))
-        values = [left, right] + [self.eval(c)[0] for c in node.comparators[1:]]
-        if all(type(v) in SCALARS for v in values) and all(
-            isinstance(op, (ast.Eq, ast.NotEq, ast.Is, ast.IsNot)) for op in node.ops
+        if len(node.comparators) > 1:
+            # Only the first comparison of a chain is certain to run: in
+            # ``5 < limit < cfg["max"]`` the rest is skipped once it is false,
+            # so ``cfg["max"]`` may never be looked up.
+            raise _Stop
+        if type(left) in SCALARS and type(right) in SCALARS and isinstance(
+            node.ops[0], (ast.Eq, ast.NotEq, ast.Is, ast.IsNot)
         ):
             return TRUSTED, None
-        if all(is_data(v) for v in values):
+        if is_data(left) and is_data(right):
             return TRUSTED, None
         raise _Stop
 
     def eval_BoolOp(self, node: ast.BoolOp):
         # Which operands run depends on truthiness, known only for builtins.
-        result = None
-        for operand in node.values:
+        # The last operand is returned as it is, never tested for truth:
+        # ``override or df`` hands back ``df`` without asking ``bool(df)``.
+        *tested, last = node.values
+        for operand in tested:
             result, result_root = self.eval(operand)
             if not isinstance(result, Opaque):
                 self.apply_rules(Truth(operand, value=result, root=result_root))
@@ -897,7 +902,7 @@ class _Walker:
                 return result, None
             if isinstance(node.op, ast.Or) and truthy:
                 return result, None
-        return result, None
+        return self.eval(last)
 
     def eval_IfExp(self, node: ast.IfExp):
         test, test_root = self.eval(node.test)

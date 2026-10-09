@@ -263,10 +263,27 @@ def check_history_seeded_cell_merges_with_real_execution():
 
 def check_internal_helper_cells_are_filtered():
     assert is_internal_helper_cell("")
-    assert is_internal_helper_cell("from crane_llm.nb_extension.api import run_crane_llm_payload\nprint(1)")
-    assert is_internal_helper_cell("from crane_llm.nb_extension.api import load_crane_llm\nload_crane_llm()")
+    # What the JupyterLab frontend runs.
+    assert is_internal_helper_cell(
+        "from crane_llm.nb_extension.api import run_crane_llm_payload\n"
+        "print(run_crane_llm_payload(source='x', cell_id='c', include_runinfo=True))"
+    )
+    assert is_internal_helper_cell(
+        "from crane_llm.nb_extension.api import load_crane_llm, set_guard\nload_crane_llm();\nset_guard(True);"
+    )
+    assert is_internal_helper_cell('import crane_llm\ncrane_llm.set_api_key(\n    "sk-test",\n)')
     # Ordinary user code that merely mentions the extension is notebook content.
     assert not is_internal_helper_cell("# from crane_llm.nb_extension.api import get_prompt\nmodel.fit(x)")
+    # A cell that drives the extension and also does work of its own is the
+    # user's code: it must reach the prompt and the provenance record.
+    for source in (
+        "%load_ext crane_llm\nimport pandas as pd\ndf = pd.read_csv('train.csv')",
+        "import crane_llm\nX = load()",
+        "from crane_llm.nb_extension.api import run_crane_llm_payload\nprint(1)",
+        "%load_ext crane_llm\n%matplotlib inline",
+        "%load_ext crane_llm\n!pip install lightgbm",
+    ):
+        assert not is_internal_helper_cell(source), source
 
 
 def check_extension_driving_cells_are_filtered():
@@ -283,6 +300,7 @@ def check_extension_driving_cells_are_filtered():
         "%reload_ext crane_llm",
         "%crane_llm guard on",
         'crane_llm.set_api_key("sk-test")',
+        "%load_ext crane_llm\n%crane_llm guard on",
     ):
         assert is_internal_helper_cell(source), source
 
@@ -303,8 +321,8 @@ def check_api_keys_never_reach_the_prompt():
     )
     state.record_executed_cell(
         "c2",
-        # Not the cell's first statement, so the cell is kept and only the
-        # call, which continues over several lines, is removed.
+        # The cell does other work too, so it is kept and only the call,
+        # which continues over several lines, is removed.
         "x = 1\ncrane_llm.set_api_key(\n    'my-custom-key',\n    base_url='https://example.com/v1',\n)\ny = 2",
     )
     state.set_target_cell("c3", "print(x)")
@@ -536,6 +554,7 @@ def check_builtin_checks_are_certain():
         ("lst[3]", "index-range"),
         ("1 / n", "division-by-zero"),
         ("int('3.5')", "conversion"),
+        ("range(0, 10, n)", "range-step"),
         ("a, b = lst", "unpack-count"),
         ("import os\nos.nope", "missing-attribute"),
         ("print(len(lst))\nd['b']", "missing-key"),
@@ -545,6 +564,8 @@ def check_builtin_checks_are_certain():
         ("[v for v in nothing]", "not-iterable"),
         ("v = 1 in 5", "unsupported-comparison"),
         ("1 < 'a'", "unsupported-comparison"),
+        # The first comparison of a chain always runs.
+        ("1 < 'a' < 3", "unsupported-comparison"),
         ("d[[1]]", "unhashable-key"),
         ("{[1]: 2}", "unhashable-key"),
         ("t = (1, 2)\nt[0] = 5", "immutable-assignment"),
@@ -604,6 +625,8 @@ def check_builtin_checks_are_certain():
             ("X.reshape(4, 4)", "reshape-size"),
             ("X[5]", "index-range"),
             ("if df:\n    pass", "ambiguous-truth"),
+            # ``nothing or df`` is df, which the ``if`` then tests.
+            ("if nothing or df:\n    pass", "ambiguous-truth"),
             ("df.shape()", "not-callable"),
             ("pd.Series(['n/a', '1']).astype(int)", None),
             ("df.iloc[10]", "index-range"),
@@ -625,6 +648,29 @@ def check_builtin_checks_are_certain():
             return ns
 
         cases += [("text_ids.astype(int)", "astype-int")]
+
+    try:
+        import pandas as pd
+        from sklearn.linear_model import LinearRegression
+    except ImportError:
+        pass
+    else:
+        # A plain estimator does check the columns, unlike a ColumnTransformer
+        # (see check_builtin_checks_pass_working_code).
+        def namespace(base=namespace):
+            ns = base()
+            train = pd.DataFrame({"a": [1.0, 2.0, 3.0], "b": [4.0, 5.0, 6.0]})
+            ns.update(
+                lr=LinearRegression().fit(train, [1.0, 2.0, 3.0]),
+                swapped=train[["b", "a"]],
+                one_column=train[["a"]],
+            )
+            return ns
+
+        cases += [
+            ("lr.predict(swapped)", "feature-names"),
+            ("lr.predict(one_column)", "feature-count"),
+        ]
 
     try:
         import torch
@@ -700,6 +746,65 @@ def check_builtin_checks_stop_at_unknown_code():
         assert run_checks(code, namespace()) is None, code
 
 
+def check_builtin_checks_pass_working_code():
+    """Cells that run fine must not be reported to crash.
+
+    With the guard on, such a report stops a working cell from running. Each
+    case is run for real first, to confirm it works.
+    """
+
+    from crane_llm.nb_extension.checks import run_checks
+
+    def namespace():
+        return {"override": None, "limit": 3, "cfg": {}}
+
+    cases = [
+        # The last operand of ``or``/``and`` is returned, never tested.
+        "value = override or 5",
+        # A chain stops at its first false comparison.
+        "ok = 0 < -1 < undefined_name",
+        "ok = 5 < limit < cfg['max']",
+    ]
+    try:
+        import numpy as np
+        import pandas as pd
+    except ImportError:
+        pass
+    else:
+        def namespace(base=namespace):
+            ns = base()
+            ns.update(df=pd.DataFrame({"a": [1, 2, 3]}), arr=np.arange(5), flag=True)
+            return ns
+
+        cases += ["data = override or df", "y = flag and arr"]
+
+    try:
+        import pandas as pd
+        from sklearn.compose import ColumnTransformer
+        from sklearn.preprocessing import StandardScaler
+    except ImportError:
+        pass
+    else:
+        def namespace(base=namespace):
+            ns = base()
+            train = pd.DataFrame({"a": [1.0, 2.0, 3.0], "b": [4.0, 5.0, 6.0]})
+            ns.update(
+                ct=ColumnTransformer([("s", StandardScaler(), ["a", "b"])]).fit(train),
+                extra=train.assign(other=[0.0, 0.0, 0.0]),
+                reordered=train[["b", "a"]],
+            )
+            return ns
+
+        # A ColumnTransformer picks its columns by name, in any order.
+        cases += ["out = ct.transform(extra)", "out = ct.transform(reordered)"]
+
+    for code in cases:
+        raised = _run_target(code, namespace())
+        assert raised is None, f"{code!r} is meant to run, but raised {raised!r}"
+        finding = run_checks(code, namespace())
+        assert finding is None, (code, finding)
+
+
 def check_scan_limit_skips_data_reading_checks():
     """Above the scan limit a check that reads every value is skipped, not guessed."""
 
@@ -741,7 +846,7 @@ def check_check_answers_without_calling_the_model():
 
     extension = CraneNotebookExtension()
 
-    def no_model(prompt, include_runinfo=True):
+    def no_model(prompt, **_):
         raise AssertionError("the model must not be called when a check answers")
 
     extension.assistant.call_llm = no_model
@@ -755,7 +860,7 @@ def check_check_answers_without_calling_the_model():
 
     # With runtime information switched off, the checks, which read the live
     # kernel state, must not run either.
-    extension.assistant.call_llm = lambda prompt, include_runinfo=True: '{"prediction": false}'
+    extension.assistant.call_llm = lambda prompt, **_: '{"prediction": false}'
     result = extension.assistant.run(shell=FakeShell({"df": None}), include_runinfo=False)
     assert result.verdict.source == "model"
 
@@ -764,7 +869,7 @@ def check_progress_says_the_checker_found_nothing():
     """When the checker finds nothing, the steps say so before the model is asked."""
 
     extension = CraneNotebookExtension()
-    extension.assistant.call_llm = lambda prompt, include_runinfo=True: '{"prediction": false}'
+    extension.assistant.call_llm = lambda prompt, **_: '{"prediction": false}'
 
     def stages(source, namespace, include_runinfo=True):
         seen = []
@@ -772,7 +877,7 @@ def check_progress_says_the_checker_found_nothing():
         result = extension.assistant.run(
             shell=FakeShell(namespace),
             include_runinfo=include_runinfo,
-            progress=lambda stage, prompt: seen.append(stage),
+            progress=lambda stage, prompt, model: seen.append(stage),
         )
         return seen, result.verdict
 
@@ -794,7 +899,7 @@ def check_llm_switched_off_runs_only_the_checker():
 
     extension = CraneNotebookExtension()
 
-    def no_model(prompt, include_runinfo=True):
+    def no_model(prompt, **_):
         raise AssertionError("the model must not be called with the LLM switched off")
 
     extension.assistant.call_llm = no_model
@@ -806,7 +911,7 @@ def check_llm_switched_off_runs_only_the_checker():
             shell=FakeShell(namespace),
             include_runinfo=include_runinfo,
             use_llm=False,
-            progress=lambda stage, prompt: seen.append(stage),
+            progress=lambda stage, prompt, model: seen.append(stage),
         )
         return seen, result
 
@@ -823,11 +928,48 @@ def check_llm_switched_off_runs_only_the_checker():
     seen, result = judge("df.head()", {"df": None}, include_runinfo=False)
     assert result.verdict.certain
 
+    # Nothing about the LLM is read: a broken configuration file, which would
+    # stop an LLM call, must not stop the checker.
+    with _IsolatedSettings() as settings:
+        settings.config_path().write_text("{not json", encoding="utf-8")
+        seen, result = judge("df.head()", {"df": None})
+        assert result.verdict.certain
+        seen, result = judge("x = 1", {})
+        assert result.verdict.tone == "none"
+
     from crane_llm.nb_extension.ui import source_badge, source_note
     from crane_llm.nb_extension.texts import text
 
     assert source_badge(verdict) == text("verdict.badge_check_only")
     assert source_note(verdict) == text("verdict.note_check_only")
+
+
+def check_model_is_chosen_per_check():
+    """A model named for one check applies to that check only.
+
+    It used to be stored on the session-wide extension, so naming a different
+    one rebuilt the extension and lost the record of every cell run so far.
+    """
+
+    with _IsolatedSettings() as settings:
+        settings.write_config(model="configured-model")
+        extension = CraneNotebookExtension()
+        extension.assistant.call_llm = lambda prompt, **_: '{"prediction": false}'
+        waiting = []
+
+        def judge(model):
+            waiting.clear()
+            extension.set_target_cell("t", "x = 1")
+            result = extension.assistant.run(
+                shell=FakeShell({}),
+                include_runinfo=False,
+                model=model,
+                progress=lambda stage, prompt, name: waiting.append(name) if stage == "waiting" else None,
+            )
+            return result.verdict.model
+
+        assert judge("gpt-5-mini") == "gpt-5-mini" and waiting == ["gpt-5-mini"]
+        assert judge(None) == "configured-model" and waiting == ["configured-model"]
 
 
 def check_every_text_key_exists():
@@ -963,7 +1105,7 @@ def check_origins_are_traced_from_a_live_kernel():
         shell.run_cell("table = table.clear()", store_history=True, cell_id="c2")
 
         extension = api.get_extension()
-        extension.assistant.call_llm = lambda prompt, include_runinfo=True: (_ for _ in ()).throw(
+        extension.assistant.call_llm = lambda prompt, **_: (_ for _ in ()).throw(
             AssertionError("a check should answer")
         )
         extension.set_target_cell("t", "table['a']")
@@ -1054,7 +1196,7 @@ def check_magic_output_goes_stale_when_a_cell_runs():
 
     extension = CraneNotebookExtension()
     extension.assistant.call_llm = (
-        lambda prompt, include_runinfo=True: '{"reasoning": "fine", "prediction": false}'
+        lambda prompt, **_: '{"reasoning": "fine", "prediction": false}'
     )
 
     handles = []
@@ -1079,6 +1221,15 @@ def check_magic_output_goes_stale_when_a_cell_runs():
     extension._mark_views_stale(FakeResult("%%crane_llm\nother()"))
     assert "(stale)" not in handle.html, "another check must not retire this one"
 
+    # A cell the guard stopped never ran, so it changed nothing.
+    from crane_llm.nb_extension.guard import CrashPrevented
+
+    stopped = FakeResult("a = 2", success=False)
+    stopped.error_in_exec = None
+    stopped.error_before_exec = CrashPrevented("it would crash")
+    extension._mark_views_stale(stopped)
+    assert "(stale)" not in handle.html, "a cell the guard stopped must not retire this one"
+
     extension._mark_views_stale(FakeResult("a = 2"))
     assert "(stale)" in handle.html
     assert not extension._live_views
@@ -1093,7 +1244,7 @@ def check_magic_shows_errors_instead_of_raising():
         def update(self, obj):
             FakeHandle.html = obj.data
 
-    def fail(prompt, include_runinfo=True):
+    def fail(prompt, **_):
         raise RuntimeError("No API key found. Add-ons > Secrets")
 
     extension = CraneNotebookExtension()
@@ -1198,10 +1349,12 @@ CHECKS = (
     check_model_responses_are_read,
     check_builtin_checks_are_certain,
     check_builtin_checks_stop_at_unknown_code,
+    check_builtin_checks_pass_working_code,
     check_scan_limit_skips_data_reading_checks,
     check_check_answers_without_calling_the_model,
     check_progress_says_the_checker_found_nothing,
     check_llm_switched_off_runs_only_the_checker,
+    check_model_is_chosen_per_check,
     check_every_text_key_exists,
     check_cell_writes_are_recorded,
     check_origins_lead_to_the_responsible_cells,

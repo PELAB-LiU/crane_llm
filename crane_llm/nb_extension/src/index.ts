@@ -618,6 +618,22 @@ function installSwitchPopover(anchor: HTMLElement, settings: CraneSettings): () 
   };
 }
 
+/** What NotebookActions.executed reports about a finished cell. */
+interface ExecutedArgs {
+  notebook: any;
+  cell: any;
+  success?: boolean;
+  error?: { errorName?: string } | null;
+}
+
+/**
+ * Whether the guard stopped the cell, so none of it ran and the kernel state
+ * is what it was. Must match the name of guard.CrashPrevented.
+ */
+function stoppedByGuard(args: ExecutedArgs): boolean {
+  return args.success === false && args.error?.errorName === 'CrashPrevented';
+}
+
 function getResponseManager(panel: NotebookPanel, settings: CraneSettings): CraneResponseManager {
   let manager = RESPONSE_MANAGERS.get(panel);
   if (!manager) {
@@ -632,12 +648,15 @@ class CraneResponseManager {
   /** Progress boxes of checks still under way, by cell model. */
   private progressBoxes = new Map<any, HTMLDivElement>();
   private trackedCellModels = new WeakSet<any>();
-  private executionCounts = new Map<any, number | null | undefined>();
   private connectedCells: any = null;
   /** Cells scheduled by the user that have not reported completion yet. */
   private pendingExecutions = 0;
   /** The kernel the backend has been loaded into, so it is loaded once per kernel. */
   private backendKernelId: string | null = null;
+  /** A kernel the backend failed to load into, so the load is not retried on every idle. */
+  private failedKernelId: string | null = null;
+  /** The kernel the user was last told cannot run the guard, so they are told once. */
+  private warnedKernelId: string | null = null;
   private loadingBackend = false;
   /** The guard switch as last sent to the kernel, null when not sent to this kernel yet. */
   private sentGuard: boolean | null = null;
@@ -649,7 +668,7 @@ class CraneResponseManager {
   ) {
     this.attachSessionSignals();
     void this.panel.sessionContext.ready.then(() => this.ensureBackendLoaded());
-    this.unsubscribeGuard = guard.subscribe(() => this.sendGuard());
+    this.unsubscribeGuard = guard.subscribe(() => this.handleGuardChanged());
 
     // The document model is loaded asynchronously, so at the moment this
     // manager is created (when the panel is added to the tracker) the model is
@@ -693,15 +712,19 @@ class CraneResponseManager {
     this.removeEntry(args.cell?.model);
   }
 
-  /** Any completed execution changes the state the other predictions rested on. */
-  private handleExecuted(_sender: unknown, args: { notebook: any; cell: any }): void {
+  /**
+   * Any completed execution changes the state the other predictions rested
+   * on, except one the guard stopped before any of it ran.
+   */
+  private handleExecuted(_sender: unknown, args: ExecutedArgs): void {
     if (args?.notebook !== this.panel.content) {
       return;
     }
     this.pendingExecutions = Math.max(0, this.pendingExecutions - 1);
     this.removeEntry(args.cell?.model);
-    this.markAllStale();
-    this.refreshExecutionSnapshot();
+    if (!stoppedByGuard(args)) {
+      this.markAllStale();
+    }
   }
 
   /**
@@ -752,7 +775,6 @@ class CraneResponseManager {
 
     const entry = this.createEntry(cell, verdict, origins);
     this.responseEntries.set(cell.model, entry);
-    this.refreshExecutionSnapshot();
   }
 
   /** Clear the cell's verdicts, the guard's included, before it is checked again. */
@@ -774,8 +796,6 @@ class CraneResponseManager {
       cells.changed.connect(this.handleNotebookCellsChanged, this);
       this.connectedCells = cells;
     }
-
-    this.refreshExecutionSnapshot();
   }
 
   private attachSessionSignals(): void {
@@ -810,12 +830,9 @@ class CraneResponseManager {
 
     this.trackedCellModels.add(cell);
 
-    // Execution counts change via stateChanged; source edits arrive on
-    // contentChanged. Handling them separately keeps typing from triggering a
-    // full notebook sweep on every keystroke.
-    if (cell.stateChanged && typeof cell.stateChanged.connect === 'function') {
-      cell.stateChanged.connect(this.handleCellStateChanged, this);
-    }
+    // Source edits arrive on contentChanged. Executions are followed through
+    // NotebookActions, which also says whether the guard stopped the cell;
+    // a changed execution count alone cannot tell.
     if (cell.contentChanged && typeof cell.contentChanged.connect === 'function') {
       cell.contentChanged.connect(this.handleCellContentChanged, this);
     }
@@ -824,7 +841,6 @@ class CraneResponseManager {
   private handleNotebookCellsChanged(): void {
     this.attachCellSignalsFromNotebook();
     this.reconcileDeletedCells();
-    this.refreshExecutionSnapshot();
   }
 
   /** Drop entries whose cell is no longer part of the notebook. */
@@ -846,13 +862,6 @@ class CraneResponseManager {
         this.removeEntry(cellModel);
       }
     }
-  }
-
-  private handleCellStateChanged(_sender: any, args: any): void {
-    if (args && args.name && args.name !== 'executionCount') {
-      return;
-    }
-    this.syncExecutionCounts();
   }
 
   /**
@@ -878,8 +887,11 @@ class CraneResponseManager {
       this.pendingExecutions = 0;
       this.clearAll();
       // A restarted kernel keeps its id but has lost the backend, and the
-      // guard with it.
+      // guard with it. A load that failed is tried again, since crane_llm
+      // may have been installed before the restart.
       this.backendKernelId = null;
+      this.failedKernelId = null;
+      this.warnedKernelId = null;
       this.sentGuard = null;
     } else if (status === 'idle') {
       this.ensureBackendLoaded();
@@ -893,8 +905,10 @@ class CraneResponseManager {
    * The backend records what every cell does to the namespace, which is how a
    * crash is traced back to the cell it comes from, but only for cells run
    * after it is loaded. Cells run before that are known only from their code.
-   * A kernel without crane_llm installed fails the import; that is not
-   * retried and not reported, since the user has not asked for anything yet.
+   * A kernel without crane_llm installed fails the import. That is not
+   * retried until the kernel restarts or the guard is switched on, and it is
+   * reported only when the guard is on: the user has asked for nothing else
+   * yet, but with the guard on they believe their cells are being checked.
    *
    * The guard lives in the kernel and is lost when it restarts, so the
    * switch's value goes along with every load.
@@ -905,7 +919,8 @@ class CraneResponseManager {
       !kernel ||
       kernel.status !== 'idle' ||
       this.loadingBackend ||
-      this.backendKernelId === kernel.id
+      this.backendKernelId === kernel.id ||
+      this.failedKernelId === kernel.id
     ) {
       return;
     }
@@ -920,15 +935,34 @@ class CraneResponseManager {
         `load_crane_llm();\nset_guard(${guard ? 'True' : 'False'});`
     )
       .then(() => {
+        this.backendKernelId = kernelId;
         this.sentGuard = guard;
       })
-      .catch(() => undefined)
+      .catch(error => {
+        this.failedKernelId = kernelId;
+        this.warnGuardUnavailable(error);
+      })
       .finally(() => {
-        this.backendKernelId = kernelId;
         this.loadingBackend = false;
         // The switch may have changed while the load was under way.
         this.sendGuard();
       });
+  }
+
+  /**
+   * Switching the guard on asks for it to work, so a kernel the backend
+   * failed to load into gets another try, in case crane_llm has been
+   * installed since. Otherwise the kernel is just told the new value.
+   */
+  private handleGuardChanged(): void {
+    const kernel = this.panel.sessionContext.session?.kernel;
+    if (kernel && this.guard.get() && this.failedKernelId === kernel.id) {
+      this.failedKernelId = null;
+      this.warnedKernelId = null;
+      this.ensureBackendLoaded();
+      return;
+    }
+    this.sendGuard();
   }
 
   /** Tell the kernel the guard switch's value, once the backend is loaded there. */
@@ -942,70 +976,29 @@ class CraneResponseManager {
     requestKernelText(
       this.panel,
       `from crane_llm.nb_extension.api import set_guard\nset_guard(${guard ? 'True' : 'False'});`
-    ).catch(() => {
+    ).catch(error => {
       this.sentGuard = null;
+      this.warnGuardUnavailable(error);
     });
+  }
+
+  /** Say, once per kernel, that the guard is on but cannot work in this kernel. */
+  private warnGuardUnavailable(error: unknown): void {
+    const kernelId = this.panel.sessionContext.session?.kernel?.id ?? null;
+    if (!this.guard.get() || kernelId === null || this.warnedKernelId === kernelId) {
+      return;
+    }
+    this.warnedKernelId = kernelId;
+    void showErrorMessage(
+      t('guard.unavailable_title'),
+      t('guard.unavailable', { error: error instanceof Error ? error.message : String(error) })
+    );
   }
 
   private handleKernelChanged(): void {
     const sessionContext = this.panel.sessionContext as any;
     if (!sessionContext?.session?.kernel) {
       this.clearAll();
-    }
-  }
-
-  private syncExecutionCounts(): void {
-    const cells = this.panel.content.model?.cells;
-    if (!cells) {
-      return;
-    }
-
-    const executedCellModels: any[] = [];
-    for (let index = 0; index < cells.length; index += 1) {
-      const cell = cells.get(index) as any;
-      this.attachCellSignals(cell);
-
-      if (cell.type !== 'code') {
-        continue;
-      }
-
-      if (this.executionCounts.get(cell) !== cell.executionCount) {
-        executedCellModels.push(cell);
-      }
-    }
-
-    if (executedCellModels.length === 0) {
-      this.refreshExecutionSnapshot();
-      return;
-    }
-
-    // Re-running the analysed cell retires its prediction outright. Running any
-    // other cell changes the kernel state the prediction rested on, so the
-    // remaining predictions are only marked stale.
-    let removedTrackedEntry = false;
-    for (const cellModel of executedCellModels) {
-      removedTrackedEntry = this.removeEntry(cellModel) || removedTrackedEntry;
-    }
-
-    if (removedTrackedEntry || this.responseEntries.size > 0) {
-      this.markAllStale();
-    }
-
-    this.refreshExecutionSnapshot();
-  }
-
-  private refreshExecutionSnapshot(): void {
-    const cells = this.panel.content.model?.cells;
-    if (!cells) {
-      return;
-    }
-
-    this.executionCounts.clear();
-    for (let index = 0; index < cells.length; index += 1) {
-      const cell = cells.get(index) as any;
-      if (cell.type === 'code') {
-        this.executionCounts.set(cell, cell.executionCount);
-      }
     }
   }
 
@@ -1034,8 +1027,6 @@ class CraneResponseManager {
     this.progressBoxes.clear();
 
     this.responseEntries.clear();
-    this.executionCounts.clear();
-    this.refreshExecutionSnapshot();
   }
 
   private markAllStale(): void {
@@ -1384,9 +1375,12 @@ class GuardOutput extends Widget {
     this.node.style.display = 'none';
   }
 
-  /** Like the button's verdicts, this one goes stale when another cell runs. */
-  private handleExecuted(_sender: unknown, args: { notebook: any; cell: any }): void {
-    if (args?.notebook === this.panel.content && args.cell !== this.cell) {
+  /**
+   * Like the button's verdicts, this one goes stale when another cell runs,
+   * but not when the guard stopped that cell too.
+   */
+  private handleExecuted(_sender: unknown, args: ExecutedArgs): void {
+    if (args?.notebook === this.panel.content && args.cell !== this.cell && !stoppedByGuard(args)) {
       this.markStale();
     }
   }
@@ -1643,9 +1637,12 @@ function requestKernelText(
     let stdout = '';
     let stderr = '';
 
+    // stop_on_error must stay off. With it on, a failure here (crane_llm not
+    // installed in this kernel, say) makes the kernel abort every request
+    // queued behind this one, which includes cells the user has just run.
     const future = kernel.requestExecute({
       code,
-      stop_on_error: true,
+      stop_on_error: false,
       store_history: false,
       silent: false
     });

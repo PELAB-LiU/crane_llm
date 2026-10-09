@@ -17,21 +17,16 @@ apart:
 
 from __future__ import annotations
 
+import ast
+import builtins
 import re
 
 
-# Matched against the *first* statement of a cell rather than anywhere in it, so
-# that ordinary user code merely mentioning the extension is still treated as
-# notebook content.
-_INTERNAL_CELL_RE = re.compile(
-    r"^\s*(?:"
-    r"from\s+crane_llm(?:\.\w+)*\s+import\b"
-    r"|import\s+crane_llm\b"
-    r"|crane_llm\.\w+"
-    r"|%%?crane_llm\b"
-    r"|%(?:load|reload|unload)_ext\s+crane_llm\b"
-    r")",
-)
+# A ``%%crane_llm`` cell is analysed, not run, whatever its body holds.
+_CELL_MAGIC_RE = re.compile(r"^\s*%%crane_llm\b")
+
+# Line magics that only drive the extension.
+_DRIVER_MAGIC_RE = re.compile(r"^\s*%(?:crane_llm\b|(?:load|reload|unload)_ext\s+crane_llm\s*$)")
 
 _SET_API_KEY_CALL_RE = re.compile(r"\bset_api_key\s*\(")
 
@@ -45,18 +40,69 @@ REDACTED = "[REDACTED]"
 
 
 def is_internal_helper_cell(source: str) -> bool:
-    """True for empty cells and for cells that only drive the extension."""
+    """True for empty cells and for cells that only drive the extension.
+
+    Every statement of the cell must drive the extension: a ``%%crane_llm``
+    cell, ``%load_ext crane_llm``, ``%crane_llm guard on``, an import from
+    ``crane_llm``, or a call made only with what was imported from it, such as
+    ``crane_llm.set_api_key(...)``. A cell that also does anything else, such
+    as ``%load_ext crane_llm`` followed by loading the data, is the user's
+    code: it changes the kernel state like any other cell.
+    """
 
     if not source or not source.strip():
         return True
 
-    for line in source.splitlines():
-        stripped = line.strip()
-        if not stripped or stripped.startswith("#"):
-            continue
-        return bool(_INTERNAL_CELL_RE.match(line))
+    code_lines = [line for line in source.splitlines() if line.strip() and not line.strip().startswith("#")]
+    if not code_lines:
+        return True
+    if _CELL_MAGIC_RE.match(code_lines[0]):
+        return True
 
-    return True
+    python_lines = []
+    for line in source.splitlines():
+        if _DRIVER_MAGIC_RE.match(line):
+            python_lines.append("")
+        elif line.lstrip().startswith(("%", "!")):
+            # Another magic or a shell command: something the user runs.
+            return False
+        else:
+            python_lines.append(line)
+
+    try:
+        tree = ast.parse("\n".join(python_lines))
+    except SyntaxError:
+        return False
+
+    # Names bound by this cell's imports from crane_llm.
+    driver_names = {"crane_llm"}
+    return all(_drives_extension(statement, driver_names) for statement in tree.body)
+
+
+def _is_crane_module(name: str) -> bool:
+    return name == "crane_llm" or name.startswith("crane_llm.")
+
+
+def _drives_extension(statement: ast.stmt, driver_names: set) -> bool:
+    """Whether a statement only imports from crane_llm or calls what it imported."""
+
+    if isinstance(statement, ast.Import):
+        if not all(_is_crane_module(alias.name) for alias in statement.names):
+            return False
+        driver_names.update((alias.asname or alias.name).split(".")[0] for alias in statement.names)
+        return True
+    if isinstance(statement, ast.ImportFrom):
+        if statement.level or not _is_crane_module(statement.module or ""):
+            return False
+        driver_names.update(alias.asname or alias.name for alias in statement.names)
+        return True
+    if isinstance(statement, ast.Expr):
+        # ``print(run_crane_llm_payload(...))``, ``crane_llm.set_api_key(...)``.
+        used = {node.id for node in ast.walk(statement) if isinstance(node, ast.Name)}
+        return bool(used & driver_names) and all(
+            name in driver_names or name in vars(builtins) for name in used
+        )
+    return False
 
 
 def redact_secrets(text: str) -> str:
