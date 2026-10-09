@@ -1,4 +1,4 @@
-# CRANE-LLM: Runtime-Augmented LLMs for Crash Prediction and Diagnosis in ML Notebooks
+# CRANE-LLM
 
 **Predict whether an ML notebook cell will crash — before you run it.**
 
