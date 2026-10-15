@@ -707,6 +707,16 @@ class CraneResponseManager {
     if (cell.contentChanged && typeof cell.contentChanged.connect === 'function') {
       cell.contentChanged.connect(this.handleCellContentChanged, this);
     }
+    // The verdict box sits in the cell's node, not among its outputs, so
+    // clearing the outputs has to take it away explicitly.
+    const outputs = cell.outputs;
+    if (outputs?.changed && typeof outputs.changed.connect === 'function') {
+      outputs.changed.connect((_sender: unknown, args: { type: string }) => {
+        if ((args.type === 'clear' || args.type === 'remove') && outputs.length === 0) {
+          this.removeEntry(cell);
+        }
+      }, this);
+    }
   }
 
   private handleNotebookCellsChanged(): void {
