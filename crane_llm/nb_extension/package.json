@@ -1,6 +1,6 @@
 {
   "name": "crane-llm-jlab",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "CRANE-LLM native JupyterLab/Notebook 7 extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
