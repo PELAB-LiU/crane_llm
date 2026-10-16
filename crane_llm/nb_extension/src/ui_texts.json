@@ -62,6 +62,8 @@
     "status_check_only_done": "done: built-in checker only, LLM off",
     "no_prompt_llm_off": "No prompt was sent. The LLM is switched off, so only the built-in checker ran.",
     "no_prompt_check": "The built-in checker found a crash, so the LLM was not called.",
+    "status_guard_done": "done: cell not run, built-in check before running",
+    "no_prompt_guard": "The cell was checked just before it ran. The built-in checker found a crash, so the cell was not run and the LLM was not called.",
     "status_busy": "not run: the notebook is busy",
     "status_error": "error"
   },

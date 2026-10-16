@@ -389,6 +389,17 @@ class CraneSidebar extends Widget {
     this.setPrompt(payload.prompt ?? '');
     this.setResponse(payload.response);
   }
+
+  /**
+   * Show a cell the guard stopped. Otherwise the sidebar would go on showing
+   * the previous check's prompt and response next to the new verdict.
+   */
+  showGuardVerdict(verdict: Verdict): void {
+    this.stepsNode.replaceChildren();
+    this.setStatus(t('sidebar.status_guard_done'));
+    this.setPrompt(t('sidebar.no_prompt_guard'));
+    this.setResponse(verdict.reasoning);
+  }
 }
 
 /**
@@ -1129,7 +1140,10 @@ class GuardOutput extends Widget {
   private entry: ResponseEntry | null = null;
   private cell: any = null;
 
-  constructor(private panel: NotebookPanel) {
+  constructor(
+    private panel: NotebookPanel,
+    private sidebar: CraneSidebar
+  ) {
     super();
     this.addClass('crane-llm-guard-output');
   }
@@ -1164,6 +1178,7 @@ class GuardOutput extends Widget {
     applyEntryStyle(entry);
     this.entry = entry;
     if (live) {
+      this.sidebar.showGuardVerdict(this.payload.verdict);
       NotebookActions.executed.connect(this.handleExecuted, this);
       this.panel.sessionContext.statusChanged.connect(this.handleStatus, this);
       this.cell.model.contentChanged.connect(this.handleEdited, this);
@@ -1240,13 +1255,13 @@ class GuardOutput extends Widget {
 }
 
 /** Draw guard outputs in this notebook with GuardOutput instead of their HTML. */
-function installGuardRenderer(panel: NotebookPanel): void {
+function installGuardRenderer(panel: NotebookPanel, sidebar: CraneSidebar): void {
   panel.content.rendermime.addFactory(
     {
       safe: true,
       mimeTypes: [GUARD_MIME],
       defaultRank: 0,
-      createRenderer: () => new GuardOutput(panel)
+      createRenderer: () => new GuardOutput(panel, sidebar)
     },
     0
   );
@@ -1639,7 +1654,7 @@ function installToolbarButton(
 
   INSTALLED_PANELS.add(panel);
   getResponseManager(panel, settings);
-  installGuardRenderer(panel);
+  installGuardRenderer(panel, sidebar);
 
   const button = new ToolbarButton({
     label: t('toolbar.label'),
