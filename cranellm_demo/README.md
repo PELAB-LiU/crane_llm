@@ -12,7 +12,7 @@ The notebook is based on a real Kaggle notebook on the [Seoul Bike Trip](https:/
 
 ## The scenes
 
-Run the notebook from the top. The purple boxes in the notebook mark the scenes, and each fix is commented in its cell after `# Fix`.
+Run the notebook from the top. The purple boxes in the notebook mark the scenes, and each box also says how to fix the crash, in small grey text.
 
 | Scene | What CRANE-LLM shows |
 |---|---|
