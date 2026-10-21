@@ -4,11 +4,17 @@ A short regression notebook with six cells to check, five of which crash, to see
 
 The notebook is based on a real Kaggle notebook on the [Seoul Bike Trip](https://www.kaggle.com/datasets/tagg27/seoul-bike-trip) dataset (CC BY 4.0), and scene 2 is the crash that notebook actually hit. The data in `data/` is a synthetic copy of the original.
 
+To see it before running it yourself, watch the walkthrough:
+
+https://github.com/user-attachments/assets/7dfc82b4-2444-4448-bc6b-2af57091c988
+
 ## Before you start
 
 - JupyterLab with CRANE-LLM installed (`pip install "crane-llm[lab]"`), plus `pandas`, `scikit-learn`, `matplotlib` and `seaborn`.
 - An API key set once with `crane_llm.set_api_key(...)`. Scenes 1, 5 and 6 need none; scenes 2 to 4 use the model.
 - Start from a fresh kernel, with *Check cells before they run* switched **off**.
+
+To try it on Kaggle, use this [same demo](https://www.kaggle.com/code/yarinawang/crane-llm-demo). It uses the `%%crane_llm` cell magic instead of the toolbar button; click **Copy & Edit** to run it in your own Kaggle account.
 
 ## The scenes
 

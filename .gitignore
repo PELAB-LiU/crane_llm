@@ -46,3 +46,6 @@ crane_llm/nb_extension/labextension/
 # Locally generated dataset artifacts
 target_nbs_thestackdedup/cluster_sampled_labeled_final_filtered.xlsx
 target_nbs_thestackdedup/stack_jupyter_meta.pkl
+
+# Videos: host them elsewhere (YouTube, GitHub uploads) instead of committing them
+*.mp4

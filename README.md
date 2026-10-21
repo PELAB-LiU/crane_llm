@@ -6,6 +6,12 @@ CRANE-LLM is a JupyterLab extension. Select a cell, click a button, and it tells
 
 On Kaggle, Colab and anywhere else a notebook runs Python, the same checks are available as the `%%crane_llm` cell magic.
 
+## Demo video
+
+A five-minute walkthrough of the [demo notebook](./cranellm_demo/):
+
+https://github.com/user-attachments/assets/7dfc82b4-2444-4448-bc6b-2af57091c988
+
 ## Quick start
 
 ```bash
@@ -22,7 +28,7 @@ crane_llm.set_api_key("sk-...")
 
 Then run a few cells, select the cell you want to check, and click **CRANE-LLM** in the toolbar.
 
-To see every part of CRANE-LLM at work on a ready-made notebook, open the [demo](./cranellm_demo/): a short regression notebook with six cells to check, five of which crash.
+To see every part of CRANE-LLM at work on a ready-made notebook, open the [demo](./cranellm_demo/). It is also [on Kaggle](https://www.kaggle.com/code/yarinawang/crane-llm-demo), using the cell magic.
 
 The [user guide](./README_PYPI.md) or the [PyPI project page](https://pypi.org/project/crane-llm/) covers the rest: Kaggle and Colab, providers other than OpenAI and local models, the options, checking every cell before it runs, the full list of built-in checks, and what is sent to the model.
 
@@ -30,7 +36,7 @@ The [user guide](./README_PYPI.md) or the [PyPI project page](https://pypi.org/p
 
 | If you want to | Read |
 |---|---|
-| try CRANE-LLM on an example notebook | [the demo](./cranellm_demo/) |
+| try CRANE-LLM on an example notebook | [the demo](./cranellm_demo/), or [the same demo on Kaggle](https://www.kaggle.com/code/yarinawang/crane-llm-demo) |
 | install and use CRANE-LLM | [the user guide](./README_PYPI.md), which is also the [PyPI project page](https://pypi.org/project/crane-llm/) |
 | see which crashes are detected for certain | [Built-in checks](./README_PYPI.md#built-in-checks) in the user guide |
 | see what is sent to the model | [Runtime information](./README_PYPI.md#runtime-information) in the user guide |
