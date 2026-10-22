@@ -93,7 +93,13 @@ class _IsolatedSettings:
     the developer's real ``~/.crane_llm/config.json``. Stray environment
     variables are cleared for the same reason: a check that passes only on a
     machine with ``OPENAI_API_KEY`` set is not a check.
+
+    ``api_key`` puts a key in the throwaway file, for checks that replace the
+    model call: without one the model is never asked.
     """
+
+    def __init__(self, api_key=None):
+        self._api_key = api_key
 
     _CLEARED = (
         "CRANE_LLM_API_KEY",
@@ -116,6 +122,8 @@ class _IsolatedSettings:
 
         self._dir = tempfile.mkdtemp()
         os.environ["CRANE_LLM_CONFIG"] = os.path.join(self._dir, "config.json")
+        if self._api_key:
+            settings.write_config(api_key=self._api_key)
         return settings
 
     def __exit__(self, *exc_info):
@@ -129,6 +137,23 @@ class _IsolatedSettings:
                 os.environ[name] = value
         shutil.rmtree(self._dir, ignore_errors=True)
         return False
+
+
+def _with_api_key(test):
+    """Run ``test`` with a throwaway key configured and nothing else.
+
+    For checks that replace the model call: without a key the model is never
+    asked, so the replacement would not be reached.
+    """
+
+    import functools
+
+    @functools.wraps(test)
+    def run():
+        with _IsolatedSettings(api_key="sk-test"):
+            return test()
+
+    return run
 
 
 def test_missing_api_key_is_explained():
@@ -904,6 +929,7 @@ def test_scan_limit_skips_data_reading_checks():
         assert settings.scan_limit() == settings.DEFAULT_SCAN_LIMIT
 
 
+@_with_api_key
 def test_check_answers_without_calling_the_model():
     """A certain crash is reported as a check, and the model is not called."""
 
@@ -928,6 +954,7 @@ def test_check_answers_without_calling_the_model():
     assert result.verdict.source == "model"
 
 
+@_with_api_key
 def test_progress_says_the_checker_found_nothing():
     """When the checker finds nothing, the steps say so before the model is asked."""
 
@@ -1248,6 +1275,7 @@ def test_guard_stops_a_cell_that_would_crash():
         api._dispose_instance()
 
 
+@_with_api_key
 def test_magic_output_goes_stale_when_a_cell_runs():
     """The magic's verdict greys out after a user cell, not after another check."""
 
@@ -1301,6 +1329,7 @@ def test_magic_output_goes_stale_when_a_cell_runs():
     assert not extension._live_views
 
 
+@_with_api_key
 def test_magic_shows_errors_instead_of_raising():
     from crane_llm.nb_extension import ui
 
