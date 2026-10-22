@@ -149,6 +149,67 @@ def test_missing_api_key_is_explained():
     assert "CRANE_LLM_API_KEY" in message
 
 
+def test_missing_api_key_stops_before_the_prompt():
+    """Without a key the model cannot be asked, so no prompt is built for it.
+
+    The payload carries the setup instructions as its error, which the toolbar
+    button shows under the cell.
+    """
+
+    from crane_llm.nb_extension import api
+    from crane_llm.nb_extension.extension import CraneNotebookExtension
+
+    with _IsolatedSettings():
+        extension = CraneNotebookExtension()
+        extension.set_target_cell("t", "x = 1")
+        stages = []
+        try:
+            extension.assistant.run(
+                shell=FakeShell({}),
+                progress=lambda stage, prompt, name: stages.append(stage),
+            )
+        except RuntimeError as exc:
+            message = api.assistant_module.describe_error(exc)
+        else:
+            raise AssertionError("expected an error when no key is configured")
+
+    assert message.startswith("No API key found, so the LLM was not asked.")
+    assert "Use the LLM" in message
+    assert "building" not in stages and "waiting" not in stages
+
+
+def test_rejected_api_key_is_explained():
+    """A key the provider refuses gets the provider's reason in plain words."""
+
+    from crane_llm.nb_extension import api
+    from crane_llm.nb_extension.extension import CraneNotebookExtension
+
+    class AuthenticationError(Exception):
+        # The shape of the OpenAI SDK's error for an HTTP 401.
+        status_code = 401
+        body = {"message": "Incorrect API key provided: sk-bad****.", "code": "invalid_api_key"}
+
+    def refuse(prompt, **_):
+        raise AuthenticationError("Error code: 401 - {...}")
+
+    with _IsolatedSettings() as settings:
+        settings.write_config(api_key="sk-bad", base_url="https://openrouter.ai/api/v1", model="m")
+        extension = CraneNotebookExtension()
+        extension.assistant.call_llm = refuse
+        extension.set_target_cell("t", "x = 1")
+        try:
+            extension.assistant.run(shell=FakeShell({}), include_runinfo=False)
+        except Exception as exc:
+            message = api.assistant_module.describe_error(exc)
+        else:
+            raise AssertionError("expected the refused key to be reported")
+
+    assert message.startswith(
+        "The API key was rejected by https://openrouter.ai/api/v1: Incorrect API key provided"
+    )
+    assert "Use the LLM" in message
+
+
 def test_api_key_roundtrips_through_the_config_file():
     """``set_api_key`` is the documented setup path, so it has to be read back."""
 
@@ -954,7 +1015,7 @@ def test_model_is_chosen_per_check():
     """
 
     with _IsolatedSettings() as settings:
-        settings.write_config(model="configured-model")
+        settings.write_config(model="configured-model", api_key="sk-test")
         extension = CraneNotebookExtension()
         extension.assistant.call_llm = lambda prompt, **_: '{"prediction": false}'
         waiting = []

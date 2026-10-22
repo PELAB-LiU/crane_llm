@@ -32,14 +32,47 @@ class PromptBuildingError(RuntimeError):
     """The prompt could not be assembled, so the model was never called."""
 
 
+class MissingApiKeyError(RuntimeError):
+    """No API key is set, so the model was never called."""
+
+
+class ApiKeyRejectedError(RuntimeError):
+    """The provider refused the API key."""
+
+
+def key_rejected(
+    exc: BaseException, resolved: settings_module.Settings
+) -> Optional[ApiKeyRejectedError]:
+    """``exc`` reworded for the user when it is the provider refusing the key.
+
+    The OpenAI SDK raises the same 401 for every compatible provider. Its own
+    message is a status code followed by the response body, so the provider's
+    reason is taken from the body when it has one.
+    """
+
+    if getattr(exc, "status_code", None) != 401:
+        return None
+    body = getattr(exc, "body", None)
+    if isinstance(body, dict) and isinstance(body.get("error"), dict):
+        body = body["error"]
+    reason = body.get("message") if isinstance(body, dict) else None
+    return ApiKeyRejectedError(
+        text(
+            "errors.key_rejected",
+            endpoint=resolved.base_url or "OpenAI",
+            reason=reason or getattr(exc, "message", None) or str(exc),
+        )
+    )
+
+
 def describe_error(exc: BaseException) -> str:
     """A failed check, in words for the user.
 
-    A prompt-building error is already worded that way; anything else is
+    The errors defined here are already worded that way; anything else is
     named by its type, since the message alone may not say what went wrong.
     """
 
-    if isinstance(exc, PromptBuildingError):
+    if isinstance(exc, (PromptBuildingError, MissingApiKeyError, ApiKeyRejectedError)):
         return str(exc)
     return f"{type(exc).__name__}: {exc}"
 
@@ -177,6 +210,11 @@ class CraneNotebookAssistant:
             prompt, response = "", ""
             verdict = verdict_no_finding()
         else:
+            # Without a key the model cannot be asked, so say so before building
+            # a prompt that would never be sent.
+            resolved = settings_module.resolve(model=model)
+            if not resolved.api_key:
+                raise MissingApiKeyError(settings_module.missing_key_message())
             report(STAGE_BUILDING, "", "")
             try:
                 prompt = self.build_prompt(shell=shell, include_runinfo=include_runinfo)
@@ -184,9 +222,14 @@ class CraneNotebookAssistant:
                 raise PromptBuildingError(
                     text("errors.prompt_failed", error=f"{type(exc).__name__}: {exc}")
                 ) from exc
-            resolved = settings_module.resolve(model=model)
             report(STAGE_WAITING, prompt, resolved.model)
-            response = self.call_llm(prompt, include_runinfo=include_runinfo, resolved=resolved)
+            try:
+                response = self.call_llm(prompt, include_runinfo=include_runinfo, resolved=resolved)
+            except Exception as exc:
+                rejected = key_rejected(exc, resolved)
+                if rejected is None:
+                    raise
+                raise rejected from exc
             verdict = self.read_response(response, shell=shell, model=resolved.model)
             verdict.checks_ran = include_runinfo
         return AssistantResult(

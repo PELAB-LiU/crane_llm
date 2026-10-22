@@ -659,6 +659,29 @@ class CraneResponseManager {
     this.responseEntries.set(cell.model, entry);
   }
 
+  /**
+   * Show under the cell why no verdict could be given, such as a missing API
+   * key, in the same box and amber tone the magic uses. Otherwise the cell
+   * would show nothing at all, and the reason only in the sidebar.
+   */
+  renderError(cell: any, message: string): void {
+    this.renderResponse(
+      cell,
+      {
+        tone: 'unknown',
+        label: t('verdict.label_error'),
+        reasoning: message,
+        source: 'model',
+        certain: false,
+        model: '',
+        variables: [],
+        badge: '',
+        note: ''
+      },
+      []
+    );
+  }
+
   /** Clear the cell's verdicts, the guard's included, before it is checked again. */
   clearResponseForCell(cell: any): void {
     this.removeEntry(cell?.model);
@@ -976,7 +999,10 @@ function buildEntry(
   badgeNode.classList.toggle('crane-llm-certain', verdict.certain);
   badgeNode.title = verdict.note;
 
-  heading.append(titleNode, badgeNode);
+  heading.append(titleNode);
+  if (verdict.badge) {
+    heading.appendChild(badgeNode);
+  }
   header.appendChild(heading);
   if (options.onClose) {
     const closeButton = element('button', 'jp-mod-styled jp-Button crane-llm-close', t('verdict.close'));
@@ -988,7 +1014,9 @@ function buildEntry(
   if (verdict.reasoning) {
     container.appendChild(element('div', 'crane-llm-reasoning', verdict.reasoning));
   }
-  container.appendChild(element('div', 'crane-llm-note', verdict.note));
+  if (verdict.note) {
+    container.appendChild(element('div', 'crane-llm-note', verdict.note));
+  }
   if (options.footer) {
     const footerNode = element('div', 'crane-llm-footer');
     footerNode.append(
@@ -1622,14 +1650,23 @@ async function runAnalysis(
     sidebar.setPrompt(payload.prompt ?? '');
 
     if (!payload.ok || !payload.verdict) {
+      const message = payload.error || t('errors.unknown_error');
       sidebar.setStatus(t('sidebar.status_error'));
-      sidebar.setResponse(payload.error || t('errors.unknown_error'));
+      sidebar.setResponse(message);
+      responseManager.renderError(activeCell, message);
       return;
     }
 
     showStep('');
     sidebar.showVerdict(payload);
     responseManager.renderResponse(activeCell, payload.verdict, payload.origins ?? []);
+  } catch (error) {
+    // The caller reports it in the sidebar; the cell gets it too.
+    getResponseManager(panel, settings).renderError(
+      activeCell,
+      error instanceof Error ? error.message : String(error)
+    );
+    throw error;
   } finally {
     // On failure the error is in the sidebar; the progress box must not stay.
     getResponseManager(panel, settings).clearProgress(activeCell);
