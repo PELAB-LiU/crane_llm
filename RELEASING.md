@@ -100,6 +100,62 @@ This is useful before the PyPI name is sorted out, and for pinning a specific bu
 
 ---
 
+## Publishing the demo image
+
+The demo has a Docker image, `ghcr.io/yarinamomo/crane-llm-demo`, with JupyterLab, CRANE-LLM and the demo notebook at fixed versions; [cranellm_demo/README.md](./cranellm_demo/README.md) tells people how to run it. It is built from `cranellm_demo/Dockerfile` and pushed by hand, after the PyPI release, because it installs CRANE-LLM from PyPI.
+
+### One-time setup
+
+Docker Desktop must be running. Log Docker in to the GitHub Container Registry with the GitHub CLI, which needs the `write:packages` scope once:
+
+```bash
+gh auth refresh -s write:packages
+gh auth token | docker login ghcr.io -u yarinamomo --password-stdin
+```
+
+Create a builder that can build for both Intel/AMD and ARM machines, such as Apple Silicon Macs:
+
+```bash
+docker buildx create --name multiarch --use
+```
+
+### For each release
+
+1. In `cranellm_demo/Dockerfile`, set `ARG CRANE_LLM_VERSION` to the version just released on PyPI. In `cranellm_demo/README.md`, set the same version in the `docker run` command. Commit both.
+2. Build for both platforms and push, from the repository root:
+
+   ```bash
+   docker buildx build --builder multiarch --platform linux/amd64,linux/arm64 \
+     -t ghcr.io/yarinamomo/crane-llm-demo:1.0.0 \
+     -t ghcr.io/yarinamomo/crane-llm-demo:latest \
+     --push cranellm_demo
+   ```
+
+3. The first time only, make the image public: on GitHub, open your profile, **Packages → crane-llm-demo → Package settings → Change visibility → Public**. A new package is private, and nobody else can pull it until this is done.
+4. Check it as someone else would, logged out:
+
+   ```bash
+   docker logout ghcr.io
+   docker run --rm -p 127.0.0.1:8888:8888 ghcr.io/yarinamomo/crane-llm-demo:1.0.0
+   ```
+
+   Open <http://localhost:8888>; the demo notebook should open with the **CRANE-LLM** button in the toolbar. Log back in afterwards for the next push.
+
+Never push a different image under a version tag that already exists, such as `1.0.0`: anyone who cites it expects the same image. `latest` is the one tag that moves.
+
+### Archiving the image
+
+For a permanent copy, for example on Zenodo next to a paper, save the image to a file:
+
+```bash
+docker pull --platform linux/amd64 ghcr.io/yarinamomo/crane-llm-demo:1.0.0
+docker save ghcr.io/yarinamomo/crane-llm-demo:1.0.0 | gzip > crane-llm-demo-1.0.0-amd64.tar.gz
+```
+
+Whoever downloads it loads it with `docker load -i crane-llm-demo-1.0.0-amd64.tar.gz` and runs it with the same `docker run` command, without needing the registry.
+
+---
+
 ## Building a wheel by hand
 
 You should not need this, but for local inspection:

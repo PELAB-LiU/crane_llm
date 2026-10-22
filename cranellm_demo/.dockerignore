@@ -1,0 +1,6 @@
+# Only the notebook, its README and its data go into the image. Leaving the
+# rest out also keeps the videos from being sent to the build.
+*
+!cranellm_demo.ipynb
+!README.md
+!data/data_test.csv
