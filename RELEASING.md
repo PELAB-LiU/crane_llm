@@ -23,14 +23,14 @@ A tag push does not run `build.yml`, because a tag is not a branch. `release.yml
 Every release is four commands:
 
 ```bash
-# 1. bump both version numbers to the new version, e.g. 0.2.0 (see below)
+# 1. bump both version numbers to the new version, e.g. 1.0.1 (see below)
 # 2. commit the bump
-git commit -am "release 0.2.0"
+git commit -am "release 1.0.1"
 git push
 
 # 3. tag it and push the tag -- this is what triggers publishing
-git tag v0.2.0
-git push origin v0.2.0
+git tag v1.0.1
+git push origin v1.0.1
 ```
 
 Then watch the run under the repository's **Actions** tab. When it finishes, the new version is on PyPI and attached to a GitHub Release.
@@ -82,7 +82,7 @@ Push to a branch first and let the build workflow run. It performs everything th
 
 ## If a release goes wrong
 
-- **The workflow failed before publishing.** Nothing was released. Fix the problem, delete the tag (`git tag -d v0.2.0 && git push --delete origin v0.2.0`) and tag again.
+- **The workflow failed before publishing.** Nothing was released. Fix the problem, delete the tag (`git tag -d v1.0.1 && git push --delete origin v1.0.1`) and tag again.
 - **It published something broken.** Do not try to reuse the version. Fix, bump to the next patch version, and release again. You can additionally *yank* the bad version on PyPI, which hides it from new installs without breaking anyone who already has it pinned.
 - **The tag and versions disagree.** The workflow tells you which file to edit. Delete the tag, fix, commit, and tag again.
 
@@ -93,7 +93,7 @@ Push to a branch first and let the build workflow run. It performs everything th
 Each release also attaches the wheel to a GitHub Release, so people can install an exact version without PyPI at all:
 
 ```bash
-pip install https://github.com/yarinamomo/crane_llm/releases/download/v0.2.0/crane_llm-0.2.0-py3-none-any.whl
+pip install https://github.com/yarinamomo/crane_llm/releases/download/v1.0.1/crane_llm-1.0.1-py3-none-any.whl
 ```
 
 This is useful before the PyPI name is sorted out, and for pinning a specific build.
@@ -126,7 +126,7 @@ docker buildx create --name multiarch --use
 
    ```bash
    docker buildx build --builder multiarch --platform linux/amd64,linux/arm64 \
-     -t ghcr.io/yarinamomo/crane-llm-demo:1.0.0 \
+     -t ghcr.io/yarinamomo/crane-llm-demo:1.0.1 \
      -t ghcr.io/yarinamomo/crane-llm-demo:latest \
      --push cranellm_demo
    ```
@@ -136,7 +136,7 @@ docker buildx create --name multiarch --use
 
    ```bash
    docker logout ghcr.io
-   docker run --rm -p 127.0.0.1:8888:8888 ghcr.io/yarinamomo/crane-llm-demo:1.0.0
+   docker run --rm -p 127.0.0.1:8888:8888 ghcr.io/yarinamomo/crane-llm-demo:1.0.1
    ```
 
    Open <http://localhost:8888>; the demo notebook should open with the **CRANE-LLM** button in the toolbar. Log back in afterwards for the next push.

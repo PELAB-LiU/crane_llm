@@ -34,7 +34,7 @@ Scenes 1, 5 and 6 of the demo use only the built-in checks and work without an A
 The image contains JupyterLab, CRANE-LLM and the demo notebook, at fixed versions, for Linux, macOS and Windows on Intel/AMD and ARM. With [Docker](https://docs.docker.com/get-docker/) installed and running:
 
 ```bash
-docker run --rm -p 127.0.0.1:8888:8888 -e CRANE_LLM_API_KEY=sk-... ghcr.io/yarinamomo/crane-llm-demo:1.0.0
+docker run --rm -p 127.0.0.1:8888:8888 -e CRANE_LLM_API_KEY=sk-... ghcr.io/yarinamomo/crane-llm-demo:1.0.1
 ```
 
 Open <http://localhost:8888>, which opens the demo notebook. Leave out `-e CRANE_LLM_API_KEY=...` to try the built-in checks only. The first run downloads about 250 MB; stop it with Ctrl+C.
