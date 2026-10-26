@@ -364,7 +364,9 @@ def estimator_rejects_text(site: Call) -> None:
     if is_frame(data):
         if not plain_axis(data.columns):
             return
-        text_columns = [i for i in range(data.shape[1]) if _is_text_dtype(data.dtypes.iloc[i])]
+        # data.dtypes builds a new Series on every access: read it once.
+        dtypes = list(data.dtypes)
+        text_columns = [i for i, dtype in enumerate(dtypes) if _is_text_dtype(dtype)]
         if not text_columns or sum(len(data) for _ in text_columns) > scan_budget():
             return
         candidates = (
@@ -390,7 +392,7 @@ def estimator_rejects_text(site: Call) -> None:
             sample = np.array([[value]], dtype=data.dtype)
         else:
             sample = pandas().DataFrame(
-                {data.columns[column]: pandas().Series([value], dtype=data.dtypes.iloc[column])}
+                {data.columns[column]: pandas().Series([value], dtype=dtypes[column])}
             )
         try:
             check_array(sample)

@@ -678,6 +678,9 @@ def test_builtin_checks_are_certain():
         ("d.update(b=2)\nnothing.head()", "missing-attribute"),
         ("d.update(b=2)\n1 / n", "division-by-zero"),
         ("d.update(b=2)\ns + 1", "operand-types"),
+        # A call the walk cannot follow still evaluates its arguments first.
+        ("d.update(b=2)\nd.update(undefined_later)", "undefined-name"),
+        ("d.update(b=2)\nd.update(1, other=undefined_later)", "undefined-name"),
     ]
     try:
         import numpy as np
@@ -788,6 +791,10 @@ def test_builtin_checks_are_certain():
         assert raised is not None, f"{code!r} was reported to crash but ran"
         assert type(raised).__name__ == finding.exception, (code, raised, finding.exception)
 
+    # The crash is the first one, not a later one the walk can follow.
+    finding = run_checks("d.update(b=2)\nd.update(undefined_x)\nundefined_y", namespace())
+    assert (finding.snippet, finding.line) == ("undefined_x", 2), finding
+
 
 def test_builtin_checks_stop_at_unknown_code():
     """Past code whose effect is unknown, nothing is claimed.
@@ -824,6 +831,9 @@ def test_builtin_checks_stop_at_unknown_code():
         "if lst:\n    d['b']",
         "helper()\nd['b']",
         "d.update(b=2)\nd['b']",
+        # The function, or an earlier argument, runs code before the name.
+        "define_later().attr(later)",
+        "d.update(b=2)\nd.update(d['a'], later)",
         "lst.append(4)\nlst[3]",
         "del d\nd['b']",
         "def f():\n    return d['b']",
