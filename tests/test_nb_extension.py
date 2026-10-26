@@ -834,17 +834,29 @@ def test_builtin_checks_stop_at_unknown_code():
         assert run_checks(code, namespace()) is None, code
 
 
-def test_builtin_checks_pass_working_code():
+def test_builtin_checks_pass_working_code(monkeypatch):
     """Cells that run fine must not be reported to crash.
 
     With the guard on, such a report stops a working cell from running. Each
     case is run for real first, to confirm it works.
     """
 
+    import types
+
     from crane_llm.nb_extension.checker import run_checks
 
     def namespace():
         return {"override": None, "limit": 3, "cfg": {}}
+
+    # A package that puts a module subclass in place of itself, which imports
+    # its names on first use, as transformers does.
+    class LazyModule(types.ModuleType):
+        def __getattr__(self, name):
+            if name == "LazyModel":
+                return object
+            raise AttributeError(name)
+
+    monkeypatch.setitem(sys.modules, "crane_lazy_pkg", LazyModule("crane_lazy_pkg"))
 
     cases = [
         # The last operand of ``or``/``and`` is returned, never tested.
@@ -852,6 +864,7 @@ def test_builtin_checks_pass_working_code():
         # A chain stops at its first false comparison.
         "ok = 0 < -1 < undefined_name",
         "ok = 5 < limit < cfg['max']",
+        "from crane_lazy_pkg import LazyModel",
     ]
     try:
         import numpy as np
