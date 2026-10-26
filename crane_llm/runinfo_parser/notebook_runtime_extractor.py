@@ -2,7 +2,7 @@ import copy
 import os
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from rich.console import Console
 
@@ -103,25 +103,31 @@ class NotebookRuntimeExtractor:
     def execute_code_cells(self) -> None:
         """Execute all code cells in the execute list"""
         executor = IPythonExecutor()
-        # Sort executed cells by execution count
-        executed = sorted(self.processed_nb["executed"], key=lambda cell: cell["execution_count"])
-        for executed_item in executed:
-            cell_code_exec = executed_item["code"]
-            # console.print(executed_item["code_cell_id"], executed_item["execution_count"],type(executed_item["execution_count"]))
-            tracker = RuninfoTracker()
-            try:
-                for name, lineno in tracker.get_definitions(cell_code_exec):
-                    self.name_origin_map[name] = {"cellno": executed_item["code_cell_id"], "lineno": lineno}
-            except Exception as e:
-                console.print(f"[Warning] Runinfo tracking failed in cell {executed_item['code_cell_id']}: {e}")
-            try:
-                # exec(cell_code_exec, self.namespace)
-                executor.run_cell(cell_code_exec)
-                self.namespace = executor.namespace
-                for name, src in utils.get_function_sources(cell_code_exec).items():
-                    self.namespace[f'__source__{name}'] = src
-            except Exception as e:
-                console.print(f"Execution error in {self.id_name} cell {executed_item['code_cell_id']}: {e}. code: {cell_code_exec}")
+        for executed_item in self.executed_cells_in_order():
+            self.execute_code_cell(executor, executed_item)
+
+    def executed_cells_in_order(self) -> List[Dict[str, Any]]:
+        """The cells run before the target, sorted by execution count."""
+        return sorted(self.processed_nb["executed"], key=lambda cell: cell["execution_count"])
+
+    def execute_code_cell(self, executor: IPythonExecutor, executed_item: Dict[str, Any]) -> Optional[Exception]:
+        """Execute one cell of the execute list, returning the exception it raised, if any."""
+        cell_code_exec = executed_item["code"]
+        tracker = RuninfoTracker()
+        try:
+            for name, lineno in tracker.get_definitions(cell_code_exec):
+                self.name_origin_map[name] = {"cellno": executed_item["code_cell_id"], "lineno": lineno}
+        except Exception as e:
+            console.print(f"[Warning] Runinfo tracking failed in cell {executed_item['code_cell_id']}: {e}")
+        try:
+            executor.run_cell(cell_code_exec)
+            self.namespace = executor.namespace
+            for name, src in utils.get_function_sources(cell_code_exec).items():
+                self.namespace[f'__source__{name}'] = src
+        except Exception as e:
+            console.print(f"Execution error in {self.id_name} cell {executed_item['code_cell_id']}: {e}. code: {cell_code_exec}")
+            return e
+        return None
 
     def extract_target_cell_dependencies(self) -> List[str]:
         """

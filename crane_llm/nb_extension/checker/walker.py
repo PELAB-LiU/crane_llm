@@ -1144,7 +1144,11 @@ class _Walker:
     # --- calls ----------------------------------------------------------
 
     def eval_Call(self, node: ast.Call):
-        func, func_root = self.eval(node.func)
+        try:
+            func, func_root = self.eval(node.func)
+        except _Stop:
+            self.argument_names_defined(node)
+            raise
         args, arg_roots = [], []
         for argument in node.args:
             if isinstance(argument, ast.Starred):
@@ -1165,6 +1169,30 @@ class _Walker:
                     arg_roots=arg_roots, kwarg_roots=kwarg_roots)
         self.apply_rules(site)
         return self.call_value(site), None
+
+    def argument_names_defined(self, node: ast.Call) -> None:
+        """``model.fit(X, y)`` where the walk cannot follow ``model.fit``: the
+        arguments are still evaluated before the call runs, so a missing
+        ``X`` is a certain NameError. Only when the function is a chain of
+        names and attributes, whose lookup cannot create a variable, and only
+        the leading arguments that are names or constants, since any other
+        argument may raise first.
+        """
+
+        func = node.func
+        while isinstance(func, ast.Attribute):
+            func = func.value
+        if not isinstance(func, ast.Name):
+            return
+        for argument in [*node.args, *node.keywords]:
+            if isinstance(argument, ast.keyword):
+                if argument.arg is None:
+                    return
+                argument = argument.value
+            if isinstance(argument, ast.Name):
+                self.eval_Name(argument)
+            elif not isinstance(argument, ast.Constant):
+                return
 
     def unpacked_argument(self, node, kind: str) -> None:
         """``f(*x)`` or ``f(**x)``: check ``x`` can be unpacked, then stop, since

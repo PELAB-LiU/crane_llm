@@ -20,10 +20,12 @@ def extract_bug_location_from_cell(cell: dict) -> Optional[Tuple[Optional[int], 
         if output.output_type == 'error':
             traceback_lines = output.get('traceback', [])
             traceback_lines = parse_traceback("\n".join(traceback_lines))
-            pattern = r'<ipython-input-(\d+)-[\da-f]+> in <cell line: (\d+)>()'
+            # Older IPython names the cell "<ipython-input-N-hash> in <cell line: L>",
+            # IPython 8 and later "Cell In[N], line L".
+            pattern = r'<ipython-input-\d+-[\da-f]+> in <cell line: (\d+)>|Cell In\[\d+\], line (\d+)'
             match = re.search(pattern, traceback_lines)
             if match:
-                line_number = int(match.group(2))
+                line_number = int(match.group(1) or match.group(2))
                 source_lines = cell.get("source", [])
                 if isinstance(source_lines, str):
                     source_lines = source_lines.splitlines()
@@ -45,6 +47,20 @@ def find_buggy_cell_index_and_line(nb_cells: List[dict]) -> Tuple[Optional[int],
                 return code_cell_index, line
         code_cell_index += 1
     return None, None
+
+def describe_crash(nb_path: str) -> Optional[Dict[str, object]]:
+    """The crash recorded in a reproduced notebook: the code cell, the line in it, and the exception name."""
+    with open(nb_path, 'r', encoding='utf-8') as f:
+        nb = read(f, as_version=NO_CONVERT)
+    buggy_index, location = find_buggy_cell_index_and_line(nb.cells)
+    if buggy_index is None:
+        return None
+    code_cells = [cell for cell in nb.cells if cell.get("cell_type") == "code"]
+    exception = next(
+        (output.get('ename') for output in code_cells[buggy_index].get('outputs', []) if output.output_type == 'error'),
+        None,
+    )
+    return {"code_cell_id": buggy_index, "line": location[0], "exception": exception}
 
 # [for detecting if a target cell crash]
 # process reproduced crashing notebooks to: a list of successfully executed code cells, crashing code cell (target)

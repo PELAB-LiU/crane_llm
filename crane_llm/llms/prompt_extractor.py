@@ -5,14 +5,18 @@ from ..runinfo_parser import notebook_runtime_extractor
 from ..runinfo_parser.summary_rules import filter_all_category_combinations
 import pprint
 
-def runtime_count_prior_cells(lib_name = "tensorflow", case_names = None):
-    # pattern for libname_id
+def list_case_names(lib_name, path_nbs = None):
+    """The case folders of a library in the benchmark, named libname_id."""
+    path_lib = (path_nbs or config.path_nbs).joinpath(lib_name)
     pattern = re.compile(r'^[A-Za-z]+_\d+$')
-    if case_names is None:
-        case_names = [
-            name for name in os.listdir(config.path_nbs.joinpath(lib_name))
-            if os.path.isdir(config.path_nbs.joinpath(lib_name).joinpath(name)) and pattern.match(name)
+    return [
+        name for name in os.listdir(path_lib)
+        if os.path.isdir(path_lib.joinpath(name)) and pattern.match(name)
     ]
+
+def runtime_count_prior_cells(lib_name = "tensorflow", case_names = None):
+    if case_names is None:
+        case_names = list_case_names(lib_name)
     res_count = {}
     for case_name in case_names:
         for version_name in ["reproduced"]:
@@ -24,13 +28,8 @@ def runtime_count_prior_cells(lib_name = "tensorflow", case_names = None):
     return res_count
 
 def generate_prompt(lib_name = "tensorflow", case_names = None, version_names = None, force_regenerate = False, generate_all_combinations = False):
-    # pattern for libname_id
-    pattern = re.compile(r'^[A-Za-z]+_\d+$')
     if case_names is None:
-        case_names = [
-            name for name in os.listdir(config.path_nbs.joinpath(lib_name))
-            if os.path.isdir(config.path_nbs.joinpath(lib_name).joinpath(name)) and pattern.match(name)
-    ]
+        case_names = list_case_names(lib_name)
     if version_names is None:
         version_names = ["reproduced", "fixed"]
     mode_desc = "all combinations" if generate_all_combinations else "config-based"

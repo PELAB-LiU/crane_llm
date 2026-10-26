@@ -44,6 +44,18 @@ MIME_TYPE = "application/vnd.crane-llm.guard+json"
 _RUN_ANYWAY_RE = re.compile(r"^[ \t]*#[ \t]*crane:[ \t]*run[ \t]*$", re.IGNORECASE | re.MULTILINE)
 
 
+def checks_cell(raw_cell: str) -> bool:
+    """Whether the guard checks this cell before it runs.
+
+    It leaves out CRANE-LLM's own helper cells, cell magics, whose body is not
+    Python, and cells the user marked to run anyway.
+    """
+
+    if is_internal_helper_cell(raw_cell) or raw_cell.lstrip().startswith("%%"):
+        return False
+    return not _RUN_ANYWAY_RE.search(raw_cell)
+
+
 class CrashPrevented(InputRejected):
     """Raised instead of running a cell the built-in checker found will crash."""
 
@@ -79,9 +91,7 @@ class CellGuard(ast.NodeTransformer):
         # not from the user running a cell.
         if not isinstance(raw_cell, str) or not getattr(info, "store_history", True):
             return
-        if is_internal_helper_cell(raw_cell) or raw_cell.lstrip().startswith("%%"):
-            return
-        if _RUN_ANYWAY_RE.search(raw_cell):
+        if not checks_cell(raw_cell):
             return
         self._next = (raw_cell, getattr(info, "cell_id", None))
 
