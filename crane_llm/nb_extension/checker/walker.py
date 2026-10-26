@@ -692,8 +692,10 @@ class _Walker:
         """Report ``from module import name`` when ``name`` is neither in the
         module nor one of its submodules."""
 
-        if "__getattr__" in vars(module):
-            # PEP 562: the module computes some names on request.
+        if type(module) is not types.ModuleType or "__getattr__" in vars(module):
+            # The module computes some names on request: with a __getattr__ of
+            # its own (PEP 562), or as a module subclass, such as the lazy
+            # module transformers puts in place of itself.
             return
         module_name = getattr(module, "__name__", "?")
         if hasattr(module, "__path__"):
