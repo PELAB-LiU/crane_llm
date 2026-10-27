@@ -80,7 +80,7 @@ The [user guide](./README_PYPI.md) covers the rest: Kaggle and Colab, other prov
 
 ## SCAM26 Paper
 
-CRANE-LLM is the tool from our SCAM 2026 paper *[CRANE-LLM: Runtime-Augmented LLMs for Crash Prediction and Diagnosis in ML Notebooks](https://arxiv.org/abs/2602.18537)*. The artefacts exactly as published are on the frozen [`paper_scam26`](../../tree/paper_scam26) branch; development continues on this one, and [PAPER.md](./PAPER.md) describes the experiment pipeline it still contains.
+CRANE-LLM is the tool from our SCAM 2026 paper *[CRANE-LLM: Runtime-Augmented LLMs for Crash Prediction and Diagnosis in ML Notebooks](https://arxiv.org/abs/2602.18537)*. The artefacts exactly as published are on the frozen [`paper_scam26`](../../tree/paper_scam26) branch.
 
 ## License
 
