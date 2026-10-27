@@ -65,15 +65,20 @@ The [user guide](./README_PYPI.md) covers the rest: Kaggle and Colab, other prov
 
 | If you want to | Read |
 |---|---|
-| install and use CRANE-LLM | [the user guide](./README_PYPI.md), which is also the [PyPI project page](https://pypi.org/project/crane-llm/) |
+| install and use CRANE-LLM | [The user guide](./README_PYPI.md), also the [PyPI project page](https://pypi.org/project/crane-llm/) |
 | see which crashes are detected for certain | [Built-in checks](./README_PYPI.md#built-in-checks) in the user guide |
 | see what is sent to the model | [Runtime information](./README_PYPI.md#runtime-information) in the user guide |
-| run the demo step by step | [the demo README](./cranellm_demo/README.md) |
-| change or build the extension | [the developer guide](./crane_llm/nb_extension/README.md) |
-| reproduce the paper's experiments | [PAPER.md](./PAPER.md) |
+| run the demo step by step | [The demo README](./cranellm_demo/README.md) |
+| change or build the extension | [The developer guide](./crane_llm/nb_extension/README.md) |
 | publish a release or the demo image | [RELEASING.md](./RELEASING.md) |
 
-## Paper
+|If you want to find artefacts about papers|Read|
+|---|---|
+| reproduce the SCAM26 paper's experiments | [PAPER.md](./PAPER.md) |
+| reproduce the evaluation of the tool paper (e.g., the built-in checker) | [TOOL_PAPER.md](./TOOL_PAPER.md) |
+
+
+## SCAM26 Paper
 
 CRANE-LLM is the tool from our SCAM 2026 paper *[CRANE-LLM: Runtime-Augmented LLMs for Crash Prediction and Diagnosis in ML Notebooks](https://arxiv.org/abs/2602.18537)*. The artefacts exactly as published are on the frozen [`paper_scam26`](../../tree/paper_scam26) branch; development continues on this one, and [PAPER.md](./PAPER.md) describes the experiment pipeline it still contains.
 

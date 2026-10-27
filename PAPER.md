@@ -1,6 +1,6 @@
 # Paper artefacts and reproducibility
 
-Artefacts for our paper "[CRANE-LLM: Runtime-Augmented LLMs for Crash Prediction and Diagnosis in ML Notebooks](https://arxiv.org/abs/2602.18537)".
+Artefacts for our SCAM26 paper "[CRANE-LLM: Runtime-Augmented LLMs for Crash Prediction and Diagnosis in ML Notebooks](https://arxiv.org/abs/2602.18537)".
 
 If you are here to *use* the notebook extension rather than reproduce the paper, see the [main README](./README.md) instead.
 
@@ -14,21 +14,20 @@ Gemini (Gemini-2.5-Flash), Qwen (Qwen-2.5-Coder-32B-Instruct), GPT-5.
 
 ## Repository structure
 
-All importable Python code lives under the single package
-[`crane_llm/`](./crane_llm), which is also what the installable wheel contains.
-The scripts at the repository root drive the experiments and are run from a
-checkout rather than installed. Generated experiment inputs and outputs stay in
-[`llms/`](./llms) at the root, beside the code that produces them.
+All importable Python code lives under the single package [`crane_llm/`](./crane_llm), which is also what the installable wheel contains.
+The scripts at the repository root drive the experiments and are run from a checkout rather than installed. Generated experiment inputs and outputs stay in [`llms/`](./llms) at the root, beside the code that produces them.
 
 - [`crane_llm/`](./crane_llm): the installable package
-    - [`nb_extension/`](./crane_llm/nb_extension): the JupyterLab extension, documented in [its own README](./crane_llm/nb_extension/README.md)
     - [`runinfo_parser/`](./crane_llm/runinfo_parser): scripts and configuration for *runtime information extraction*
-    - [`config_llms.py`](./crane_llm/llms/config_llms.py): configuration for experiments, including prompts, LLM configs, and related input and output paths
-    - [`prompt_extractor.py`](./crane_llm/llms/prompt_extractor.py): script for constructing prompts (i.e., `llms_inputs/`)
-    - [`llm_executor.py`](./crane_llm/llms/llm_executor.py): script for querying LLMs to generate outputs in `llms_outputs/`
+    - [`llms/`](./crane_llm/llms): building prompts and querying the LLMs
+        - [`config_llms.py`](./crane_llm/llms/config_llms.py): configuration for experiments, including prompts, LLM configs, and related input and output paths
+        - [`prompt_extractor.py`](./crane_llm/llms/prompt_extractor.py): script for constructing prompts (i.e., `llms_inputs/`)
+        - [`llm_executor.py`](./crane_llm/llms/llm_executor.py): script for querying LLMs to generate outputs in `llms_outputs/`
+        - [`result_check.py`](./crane_llm/llms/result_check.py): parsing and checking the LLM outputs
 - [`crane-llm.py`](./crane-llm.py): script to run CRANE-LLM given a target notebook
 - [`main_LLM.py`](./main_LLM.py): script to run the experiment pipeline, including batch run all notebooks in the dataset for a specific task and experimental setting
 - [`main.py`](./main.py): script to run result compilation and analysis
+- [`utils/`](./utils): analysis scripts: [`statistical_test.py`](./utils/statistical_test.py), [`token_analysis.py`](./utils/token_analysis.py) and [`manual_analysis_sampler.py`](./utils/manual_analysis_sampler.py)
 - [`llms`](./llms): LLM experiment inputs and outputs
     - [`llms_inputs/`](./llms/llms_inputs): generated inputs (executed code cells only, executed code cells with runtime information) to the LLMs
     - [`llms_outputs/`](./llms/llms_outputs): generated outputs by the LLMs
