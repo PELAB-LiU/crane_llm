@@ -86,16 +86,7 @@ Important output rules:
         self.param_temperature = 0.01
         self.param_temperature_result_parsing = 0.01
 
-        self.path_nbs = Path("target_nbs")
-        self.path_ground_truth = Path("llms/llms_outputs/ground_truth_crash_prediction.xlsx")
-
-        # config define --------
-        self.path_input_executed_code = Path("llms/llms_inputs/executed_code")
-        self.path_input_executed_code_runinfo = Path("llms/llms_inputs/executed_code_runinfo_full")
-        self.path_input_executed_code_runinfo_r_v = Path("llms/llms_inputs/executed_code_runinfo_r_v")
-        self.path_input_executed_code_runinfo_s_r = Path("llms/llms_inputs/executed_code_runinfo_s_r")
-        self.path_input_executed_code_runinfo_s_v = Path("llms/llms_inputs/executed_code_runinfo_s_v")
-        self.path_input_executed_code_runinfo_doc = Path("llms/llms_inputs/executed_code_runinfo_full_doc")
+        self.use_dataset(Path("target_nbs"))
 
         # cot
         # not enforce json output because API supports JSON format outputs
@@ -248,8 +239,6 @@ Evaluation Rules:
 Final Answer: Output ONLY one of [Correct], [Partially correct], [Reasoning Wrong], [Wrong].
 """
 
-        self.path_input_parsed_res_llm = Path("llms/llms_outputs/results_raw")
-        self.path_res_parsed_res_llm = Path("llms/llms_outputs/results_parsed")
         self.path_input_parsed_res_sa = Path("sas/sas_outputs/results_raw/")
         self.path_res_parsed_res_sa = Path("sas/sas_outputs/results_parsed/")
 
@@ -274,9 +263,27 @@ Final Answer: Output ONLY one of [Correct], [Partially correct], [Reasoning Wron
         }
 
 
+    def use_dataset(self, path_nbs):
+        """Read the notebooks from path_nbs, laid out as target_nbs/ (JunoBench). The LLM inputs
+        and outputs of JunoBench go to llms/, those of any other dataset to llms/<its name>/."""
+        self.path_nbs = Path(path_nbs)
+        path_llms = Path("llms") if self.path_nbs.resolve() == Path("target_nbs").resolve() else Path("llms", self.path_nbs.name)
+        self.path_llms = path_llms
+        self.path_ground_truth = path_llms.joinpath("llms_outputs/ground_truth_crash_prediction.xlsx")
+
+        self.path_input_executed_code = path_llms.joinpath("llms_inputs/executed_code")
+        self.path_input_executed_code_runinfo = path_llms.joinpath("llms_inputs/executed_code_runinfo_full")
+        self.path_input_executed_code_runinfo_r_v = path_llms.joinpath("llms_inputs/executed_code_runinfo_r_v")
+        self.path_input_executed_code_runinfo_s_r = path_llms.joinpath("llms_inputs/executed_code_runinfo_s_r")
+        self.path_input_executed_code_runinfo_s_v = path_llms.joinpath("llms_inputs/executed_code_runinfo_s_v")
+        self.path_input_executed_code_runinfo_doc = path_llms.joinpath("llms_inputs/executed_code_runinfo_full_doc")
+
+        self.path_input_parsed_res_llm = path_llms.joinpath("llms_outputs/results_raw")
+        self.path_res_parsed_res_llm = path_llms.joinpath("llms_outputs/results_parsed")
+
     @property
     def path_res_crash_detection(self):
-        output_path = "llms/llms_outputs/crash_detection"+self._llm_model_abbr[self.current_llm_model]+self._task_abbr[self.current_task]
+        output_path = str(self.path_llms.joinpath("llms_outputs/crash_detection"))+self._llm_model_abbr[self.current_llm_model]+self._task_abbr[self.current_task]
         if "runinfo" in self.current_task:
             if self.current_doc:
                 return Path(output_path+"_full_doc")

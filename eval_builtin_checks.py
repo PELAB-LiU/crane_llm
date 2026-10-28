@@ -12,9 +12,10 @@ is checked but not run: the benchmark already says whether it crashes.
 - All earlier cells: every one of them ran without error in the original
   notebook, so a flag on a cell that then runs fine is a cell the guard would
   have stopped for nothing. Also the time each check adds to a cell.
-- Checker plus LLM: the LLM answers the paper recorded, with the checker
-  answering first wherever it finds a crash, as the extension does. No LLM is
-  called.
+- Checker plus LLM: recorded LLM answers, with the checker answering first
+  wherever it finds a crash, as the extension does. For JunoBench, the answers
+  the paper recorded; for another dataset, those main_LLM.py recorded on it,
+  if any. No LLM is called.
 
 Each notebook runs in a process of its own, so that no variable, import or
 working directory carries over from the previous one. Finished notebooks are
@@ -23,7 +24,7 @@ skipped when the script is run again, so an interrupted run can be resumed;
 
     python eval_builtin_checks.py                           # JunoBench, all libraries
     python eval_builtin_checks.py --libs pandas --cases pandas_1
-    python eval_builtin_checks.py --nb-root new_nbs         # another dataset in the same layout
+    python eval_builtin_checks.py --nb-root target_nbs_notebookerrorsdataset  # another dataset
     python eval_builtin_checks.py --libs sklearn --cases sklearn_3 --rerun
     python eval_builtin_checks.py --summarize-only
 """
@@ -98,17 +99,19 @@ def worker(path_nb, path_out):
 
 
 def list_notebooks(nb_root, libs, cases):
-    from crane_llm.llms.prompt_extractor import list_case_names
+    """Each notebook to replay, with the reproduced notebook of its case, which holds the crash."""
+    from crane_llm.llms.prompt_extractor import case_notebook, list_case_names, list_lib_names
 
-    libs = libs or sorted(name for name in os.listdir(nb_root) if nb_root.joinpath(name).is_dir())
-    for lib in libs:
+    for lib in libs or list_lib_names(nb_root):
         for case in sorted(list_case_names(lib, nb_root)):
             if cases and case not in cases:
                 continue
+            path_case = nb_root.joinpath(lib, case)
+            path_reproduced = case_notebook(path_case, "reproduced")
             for version in VERSIONS:
-                path_nb = nb_root.joinpath(lib, case, f"{case}_{version}.ipynb")
-                if path_nb.exists():
-                    yield lib, case, version, path_nb
+                path_nb = case_notebook(path_case, version)
+                if path_nb is not None:
+                    yield lib, case, version, path_nb, path_reproduced
 
 
 def read_jsonl(path):
@@ -130,7 +133,7 @@ def run_benchmark(nb_root, libs, cases, out, timeout, rerun=False):
     path_cells, path_status = out.joinpath("cells.jsonl"), out.joinpath("notebooks.jsonl")
     out.joinpath("logs").mkdir(parents=True, exist_ok=True)
     done = set() if rerun else {r["instance"] for r in read_jsonl(path_status) if r["status"] == "ok"}
-    for lib, case, version, path_nb in list_notebooks(nb_root, libs, cases):
+    for lib, case, version, path_nb, path_reproduced in list_notebooks(nb_root, libs, cases):
         instance = f"{case}_{version}"
         if instance in done:
             continue
@@ -149,7 +152,7 @@ def run_benchmark(nb_root, libs, cases, out, timeout, rerun=False):
             status = "timeout"
         seconds = time.perf_counter() - start
         if status == "ok":
-            crash = describe_crash(str(path_nb.parent.joinpath(f"{case}_reproduced.ipynb"))) or {}
+            crash = describe_crash(str(path_reproduced)) or {}
             with open(path_records, encoding="utf-8") as f:
                 records = json.load(f)
             for record in records:
@@ -208,8 +211,11 @@ def summarize_targets(targets, lines):
         # An earlier cell that fails here leaves a state the original notebook never had.
         f"Targets whose earlier cells all ran in this replay: {ratio(int((targets['prior_errors'] == 0).sum()), len(targets))}",
         f"Crashes found (reproduced targets flagged): {ratio(tp, len(crashing))}",
-        f"False positives (fixed targets flagged): {ratio(fp, len(fixed))}",
-        f"Precision: {ratio(tp, tp + fp)}",
+    ]
+    # Without fixed notebooks there are no targets that should not be flagged.
+    if len(fixed):
+        lines += [f"False positives (fixed targets flagged): {ratio(fp, len(fixed))}", f"Precision: {ratio(tp, tp + fp)}"]
+    lines += [
         f"Right exception, of crashes found: {ratio(int((found['finding_exception'] == found['crash_exception']).sum()), tp)}",
         f"Right line, of crashes found with a known line: "
         f"{ratio(int((found['finding_line'] == found['crash_line']).sum()), int(found['crash_line'].notna().sum()))}",
@@ -254,7 +260,21 @@ def summarize_prior_cells(prior, lines):
                   false_flags[["instance", "code_cell_id", "finding_rule", "finding_exception", "finding_message"]].to_string(index=False), ""]
 
 
-def llm_predictions():
+def summarize_all_cells(targets, prior, lines):
+    """Precision over every cell the checker looked at. A flag is right on a crashing
+    target, and wrong on a fixed target or on an earlier cell that ran fine; earlier
+    cells that raised in this replay count as neither."""
+    tp = int((targets["crashes"] & targets["flagged"]).sum())
+    fp = int((~targets["crashes"] & targets["flagged"]).sum())
+    fp += int((prior["checked"] & prior["flagged"] & prior["run_error"].isna()).sum())
+    lines += ["== All checked cells ==", f"Precision: {ratio(tp, tp + fp)}", ""]
+
+
+def is_junobench(nb_root):
+    return nb_root.resolve() == Path("target_nbs").resolve()
+
+
+def paper_llm_predictions():
     """Whether each model predicted a crash in each target, from the labels the paper's results are computed on."""
     labels = pd.read_excel(PATH_LLM_LABELS, sheet_name="Final_evaluation")
     # The sheet ends with rows of totals below the instances.
@@ -270,9 +290,45 @@ def llm_predictions():
     return predictions
 
 
-def summarize_with_llm(targets, lines):
-    predictions = llm_predictions()
-    lines += ["== Checker first, then the LLM (the paper's recorded answers, CRANE-LLM with runtime information) =="]
+def llm_answers_folder(nb_root, model):
+    """Where main_LLM.py records a model's answers on a dataset, with all the runtime information."""
+    from crane_llm.llms.config_llms import config
+
+    config.use_dataset(nb_root)
+    return config.path_llms.joinpath("llms_outputs", f"crash_detection_{model}_runinfo_full")
+
+
+def majority_detection(answers):
+    """Whether most runs predicted a crash; on a tie, what the first run said.
+    An answer that is not valid JSON with a boolean "detection" is left out."""
+    votes = [a["detection"] for a in answers if isinstance(a, dict) and isinstance(a.get("detection"), bool)]
+    if not votes:
+        return False
+    yes = sum(votes)
+    return votes[0] if 2 * yes == len(votes) else 2 * yes > len(votes)
+
+
+def recorded_llm_predictions(nb_root):
+    """Whether each model predicted a crash in each target, by majority over the runs main_LLM.py recorded."""
+    predictions = {}
+    for model in LLM_MODELS:
+        folder = llm_answers_folder(nb_root, model)
+        answers = {}
+        for path in sorted(folder.glob("*.json")):
+            with open(path, encoding="utf-8") as f:
+                answers[path.stem] = majority_detection(json.load(f))
+        if answers:
+            predictions[model] = pd.Series(answers, dtype=bool)
+    return predictions
+
+
+def summarize_with_llm(targets, lines, nb_root):
+    junobench = is_junobench(nb_root)
+    predictions = paper_llm_predictions() if junobench else recorded_llm_predictions(nb_root)
+    if not predictions:
+        return
+    source = "the paper's recorded answers" if junobench else "the answers main_LLM.py recorded, majority over the runs"
+    lines += [f"== Checker first, then the LLM ({source}, CRANE-LLM with runtime information) =="]
     for model, predicted in predictions.items():
         rows = targets[targets["instance"].isin(predicted.index)]
         if rows.empty:
@@ -282,24 +338,32 @@ def summarize_with_llm(targets, lines):
         both = llm | rows["flagged"].to_numpy()
         for name, values in (("LLM only", llm), ("checker + LLM", both)):
             m = crash_metrics(truth, values)
-            lines.append(f"{model:7} {name:14} accuracy {m['accuracy']:.3f}  precision {m['precision']:.3f}  "
-                         f"recall {m['recall']:.3f}  F1 {m['f1']:.3f}  (TP {m['tp']} FP {m['fp']} FN {m['fn']} TN {m['tn']}, n={len(truth)})")
+            if truth.all():  # without targets that should not be flagged, only recall means anything
+                lines.append(f"{model:7} {name:14} recall {m['recall']:.3f}  (TP {m['tp']} FN {m['fn']}, n={len(truth)})")
+            else:
+                lines.append(f"{model:7} {name:14} accuracy {m['accuracy']:.3f}  precision {m['precision']:.3f}  "
+                             f"recall {m['recall']:.3f}  F1 {m['f1']:.3f}  (TP {m['tp']} FP {m['fp']} FN {m['fn']} TN {m['tn']}, n={len(truth)})")
     flagged = targets[targets["flagged"]]
     lines.append(f"LLM calls avoided: {ratio(len(flagged), len(targets))} target cells answered by the checker alone")
-    if PATH_LLM_QUERY_TIMES.exists():
+    if junobench and PATH_LLM_QUERY_TIMES.exists():
         with open(PATH_LLM_QUERY_TIMES, encoding="utf-8") as f:
             query_times = {name[:-len(".txt")]: t for lib in json.load(f).values() for name, t in lib.items()}
         saved = [query_times[i] for i in flagged["instance"] if i in query_times]
         if saved:
             lines.append(f"GPT-5 query time of those cells: median {pd.Series(saved).median():.2f} s, "
                          f"against a checker median of {flagged['check_seconds'].median() * 1000:.1f} ms")
-    summarize_gpt5_cost(targets, lines)
+    if junobench:
+        summarize_gpt5_cost(targets, lines, PATH_GPT5_INPUTS, PATH_GPT5_OUTPUTS)
+    else:
+        from crane_llm.llms.config_llms import config
+
+        summarize_gpt5_cost(targets, lines, config.path_input_executed_code_runinfo, llm_answers_folder(nb_root, "gpt5"))
     lines.append("")
 
 
-def gpt5_tokens(targets):
-    """The GPT-5 tokens of one query per target: the prompt the paper sent, and
-    the mean of the answers it recorded. GPT-5's reasoning tokens were not
+def gpt5_tokens(targets, path_inputs, path_outputs):
+    """The GPT-5 tokens of one query per target: the prompt sent, and the mean
+    of the answers recorded. GPT-5's reasoning tokens were not
     recorded, so the output is a lower bound."""
     import tiktoken
     from crane_llm.llms.config_llms import config
@@ -309,7 +373,7 @@ def gpt5_tokens(targets):
     system = count_tokens(config.prompt_instruct_crash_detection_1_enforcejson, tokenizer)
     rows = []
     for lib, instance in targets[["lib", "instance"]].itertuples(index=False):
-        path_in, path_out = PATH_GPT5_INPUTS.joinpath(lib, f"{instance}.txt"), PATH_GPT5_OUTPUTS.joinpath(f"{instance}.json")
+        path_in, path_out = path_inputs.joinpath(lib, f"{instance}.txt"), path_outputs.joinpath(f"{instance}.json")
         if not path_in.exists() or not path_out.exists():
             continue
         with open(path_out, encoding="utf-8") as f:
@@ -322,9 +386,9 @@ def gpt5_tokens(targets):
     return pd.DataFrame(rows, columns=["instance", "input", "output"]).set_index("instance")
 
 
-def summarize_gpt5_cost(targets, lines):
+def summarize_gpt5_cost(targets, lines, path_inputs, path_outputs):
     try:
-        tokens = gpt5_tokens(targets)
+        tokens = gpt5_tokens(targets, path_inputs, path_outputs)
     except ImportError as exc:
         lines.append(f"GPT-5 cost left out: {exc}")
         return
@@ -345,7 +409,7 @@ def summarize_gpt5_cost(targets, lines):
     ]
 
 
-def summarize(out, with_llm):
+def summarize(out, nb_root, with_llm):
     cells = latest_records(out)
     if cells.empty:
         print(f"No results in {out}")
@@ -369,8 +433,9 @@ def summarize(out, with_llm):
     targets["prior_errors"] = targets["instance"].map(prior_errors).fillna(0).astype(int)
     summarize_targets(targets, lines)
     summarize_prior_cells(prior, lines)
+    summarize_all_cells(targets, prior, lines)
     if with_llm:
-        summarize_with_llm(targets, lines)
+        summarize_with_llm(targets, lines, nb_root)
 
     targets.to_csv(out.joinpath("target_cells.csv"), index=False)
     prior.to_csv(out.joinpath("prior_cells.csv"), index=False)
@@ -381,14 +446,14 @@ def summarize(out, with_llm):
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluate the built-in checker on a benchmark of crashing notebooks.")
-    parser.add_argument("--nb-root", default="target_nbs", help="benchmark root, laid out as <lib>/<case>/<case>_<reproduced|fixed>.ipynb")
+    parser.add_argument("--nb-root", default="target_nbs", help="benchmark root, laid out as <lib>/<case>/<case>_reproduced[_1].ipynb, optionally with <case>_fixed.ipynb")
     parser.add_argument("--libs", nargs="*", help="library folders to run, by default all of them")
     parser.add_argument("--cases", nargs="*", help="case names to run, e.g. pandas_1, by default all of them")
     parser.add_argument("--out", help="output folder, by default results/builtin_checks/<name of nb-root>")
     parser.add_argument("--timeout", type=int, default=3600, help="seconds allowed to replay one notebook")
     parser.add_argument("--rerun", action="store_true", help="replay notebooks again even if they finished before; the new results replace the old")
     parser.add_argument("--summarize-only", action="store_true", help="only summarize the results already recorded")
-    parser.add_argument("--no-llm", action="store_true", help="leave out the comparison with the paper's LLM answers")
+    parser.add_argument("--no-llm", action="store_true", help="leave out the comparison with the recorded LLM answers")
     parser.add_argument("--worker", nargs=2, metavar=("NOTEBOOK", "OUTPUT"), help=argparse.SUPPRESS)
     args = parser.parse_args()
 
@@ -400,8 +465,7 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     if not args.summarize_only:
         run_benchmark(nb_root, args.libs, set(args.cases or []), out, args.timeout, args.rerun)
-    # The recorded LLM answers are for JunoBench only.
-    summarize(out, with_llm=not args.no_llm and nb_root.resolve() == Path("target_nbs").resolve())
+    summarize(out, nb_root, with_llm=not args.no_llm)
 
 
 if __name__ == "__main__":

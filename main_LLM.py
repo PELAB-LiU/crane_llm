@@ -1,111 +1,138 @@
-# Prompt generation
-# Executed code + target cell, or executed code with runinfo + target cell, depending on the task
+"""Run the CRANE-LLM paper's LLM pipeline on a dataset: build the prompts, then query an LLM.
+
+Prompts: each reproduced and fixed notebook is replayed up to its target cell, in a
+process of its own so that nothing carries over from the previous notebook, and its
+executed cells, runtime information and target cell are written to
+<llms>/llms_inputs/executed_code_runinfo_<ablation>/<lib>/<instance>.txt. Prompts that
+already exist are kept.
+
+Queries: each prompt is sent --runs times, and the answers go to
+<llms>/llms_outputs/crash_detection_<model>_runinfo_<ablation>/<instance>.json. A file
+that already holds enough answers is skipped, so an interrupted run resumes.
+
+<llms> is llms/ for JunoBench and llms/<dataset>/ for any other dataset.
+
+    python main_LLM.py --dataset target_nbs_notebookerrorsdataset      # GPT-5, full runtime information
+    python main_LLM.py --model gemini-2.5-flash --ablations r_v s_r s_v
+    python main_LLM.py --task code                                      # executed cells only
+    python main_LLM.py --libs sklearn --cases sklearn_3 --prompts-only
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
 
 from crane_llm.llms import prompt_extractor
 from crane_llm.llms.config_llms import config
-from crane_llm.llms import result_check
 
-# current_task = "crash detection with executed code cells"
-current_task = "crash detection with executed code cells and runinfo"
-config.current_task = current_task
-print(f"Current task: {config.current_task}")
-
-lib_names = ["tensorflow", "torch", "sklearn", "numpy", "pandas", "NBspecific", "other"] #
-for lib_name in lib_names:
-    prompt_extractor.generate_prompt(lib_name, generate_all_combinations=True) #, force_regenerate=True)
-
-# # rerun the following cases only
-# lib_case_names = {
-#     "sklearn": ["sklearn_3"],
-# }
-# for lib_name, case_names in lib_case_names.items():
-#     prompt_extractor.generate_prompt(lib_name, case_names=case_names)
-
-# ----------------------------------------------------------------------------------------------
-
-# Predict if a target cell in a Jupyter notebook will crash or not, with bug allocation.
-# Using OpenAI API / Google Gemini API / local server - Qwen model from Huggingface
-from crane_llm.llms.config_llms import config
-import os, json
-from crane_llm.llms import llm_executor
-from crane_llm.llms.huggingface_model_loader import get_qwen_model
-
-# settings
-runs = 5
-llm_server = "google_gemini" # "openai_gpt", "google_gemini", "local_huggingface"
-llm_model = "gemini-2.5-flash" # "gpt-5", "gemini-2.5-flash", "Qwen/Qwen2.5-Coder-32B-Instruct"
-if llm_server == "local_huggingface": 
-    tokenizer, model = get_qwen_model(llm_model)
-tasks_to_run = [
-    # "crash detection with executed code cells",
-    "crash detection with executed code cells and runinfo"
-]
-ablations_to_run = ["r_v", "s_r", "s_v"] # "full", "r_v", "s_r", "s_v"
-lib_names = ["tensorflow", "torch", "numpy", "sklearn", "pandas", "NBspecific", "other"] # 
-for current_task in tasks_to_run:
-    config.current_task = current_task
-    config.current_llm_model = llm_model
-    print(f"Current task: {config.current_task}")
-    print(f"Current LLM model: {config.current_llm_model}")
-    # print(config.prompt_instruct)
-    for ablation_setting in ablations_to_run:
-        config.current_ablation_setting = ablation_setting
-        print(f"Current ablation setting: {config.current_ablation_setting}")
-        # optional setting for using API documentations
-        # config.current_doc = True if "runinfo" in current_task and "full" in ablation_setting else False
-        for lib_name in lib_names:
-            id_crash = 0
-            for i in range(1, runs+1, 1):
-                for filename in os.listdir(config.path_input.joinpath(lib_name)):
-                    # # covered previously failed rounds:
-                    # check_outputfile = config.path_res.joinpath(f"{filename.split('.')[0]}.json")
-                    # json_output = json.load(open(check_outputfile, 'r'))
-                    # if len(json_output)>=i:
-                    #     continue
-                    exec_llm = llm_executor.LLMExecutor(model=llm_model, libname = lib_name, filename=filename)
-                    if llm_server == "openai_gpt":
-                        exec_llm.llm_multiple_rounds_openai()
-                    elif llm_server == "google_gemini":
-                        exec_llm.llm_multiple_rounds_gemini()
-                    elif llm_server == "local_huggingface": 
-                        exec_llm.llm_multiple_rounds_huggingface(tokenizer, model)
-                    id_crash += 1
-                print(f"Number {i} round: Successfully detected {id_crash} cases")
+TASKS = {
+    "runinfo": "crash detection with executed code cells and runinfo",
+    "code": "crash detection with executed code cells",
+}
+SERVERS = {
+    "gpt-5": "openai_gpt",
+    "gpt-5-mini": "openai_gpt",
+    "gemini-2.5-flash": "google_gemini",
+    "Qwen/Qwen2.5-Coder-32B-Instruct": "local_huggingface",
+}
 
 
-# # rerun the following cases only
-# llm_server = "local_huggingface"
-# llm_model = "Qwen/Qwen2.5-Coder-32B-Instruct"
-# if llm_server == "local_huggingface": 
-#     tokenizer, model = get_qwen_model(llm_model)
-# current_task = "crash detection with executed code cells"
-# lib_case_names = {
-#     "pandas": ["pandas_2_reproduced", "pandas_13_reproduced"],
-#     "numpy": ["numpy_7_fixed", "numpy_4_reproduced"], # numpy_4_reproduced should
-#     "tensorflow": ["tensorflow_14_reproduced"],
-#     "torch": ["torch_5_fixed", "torch_10_reproduced"],
-#     "sklearn": ["sklearn_3_fixed", "sklearn_10_fixed"],
-#     "NBspecific": ["NBspecific_3_reproduced", "NBspecific_5_reproduced"], # NBspecific_3_reproduced, NBspecific_5_reproduced should
-#     "other": ["seaborn_3_fixed", "seaborn_3_reproduced"],
-# }
-# config.current_task = current_task
-# config.current_llm_model = llm_model
-# print(f"Current task: {config.current_task}")
-# print(f"Current LLM model: {config.current_llm_model}")
+def setup(args):
+    config.use_dataset(args.dataset)
+    config.current_task = TASKS[args.task]
+    config.current_llm_model = args.model
 
-# for i in range(1, runs+1, 1):
-#     id_crash = 0
-#     for lib_name, case_names in lib_case_names.items():
-#         for filename in os.listdir(config.path_input.joinpath(lib_name)):
-#             if filename.split(".")[0] not in case_names:
-#                continue
-#             exec_llm = llm_executor.LLMExecutor(model=llm_model, libname = lib_name, filename=filename)
-#             if llm_server == "openai_gpt":
-#                 exec_llm.llm_multiple_rounds_openai()
-#             elif llm_server == "google_gemini":
-#                 exec_llm.llm_multiple_rounds_gemini()
-#             elif llm_server == "local_huggingface": 
-#                 exec_llm.llm_multiple_rounds_huggingface(tokenizer, model)
-#             id_crash += 1
-#     print(f"Number {i} round: Successfully detected {id_crash} cases")
 
+def build_prompts(lib, case, ablations):
+    """Write the prompts of one case (runs in its own process)."""
+    if "full" in ablations or config.current_task == TASKS["code"]:
+        prompt_extractor.generate_prompt(lib, case_names=[case])
+    if config.current_task == TASKS["runinfo"] and set(ablations) - {"full"}:
+        prompt_extractor.generate_prompt(lib, case_names=[case], generate_all_combinations=True)
+
+
+def build_all_prompts(args, libs):
+    for lib in libs:
+        for case in sorted(prompt_extractor.list_case_names(lib)):
+            if args.cases and case not in args.cases:
+                continue
+            command = [sys.executable, os.path.abspath(__file__), "--prompt-worker", lib, case,
+                       "--dataset", args.dataset, "--task", args.task, "--ablations", *args.ablations]
+            try:
+                result = subprocess.run(command, timeout=args.timeout, env={**os.environ, "PYTHONIOENCODING": "utf-8"})
+                if result.returncode != 0:
+                    print(f"  {case}: prompts failed, exit code {result.returncode}", flush=True)
+            except subprocess.TimeoutExpired:
+                print(f"  {case}: prompts timed out", flush=True)
+
+
+def answers_so_far(path):
+    if not os.path.exists(path):
+        return 0
+    with open(path, encoding="utf-8") as f:
+        return len(json.load(f))
+
+
+def query_all(args, libs):
+    from crane_llm.llms import llm_executor
+
+    server = SERVERS[args.model]
+    if server == "local_huggingface":
+        from crane_llm.llms.huggingface_model_loader import get_qwen_model
+        tokenizer, model = get_qwen_model(args.model)
+    for ablation in args.ablations if args.task == "runinfo" else ["full"]:
+        config.current_ablation_setting = ablation
+        print(f"{config.current_task}, {ablation}, {args.model}: answers to {config.path_res}", flush=True)
+        for run in range(1, args.runs + 1):
+            for lib in libs:
+                path_lib = config.path_input.joinpath(lib)
+                if not path_lib.exists():
+                    continue
+                for filename in sorted(os.listdir(path_lib)):
+                    instance = os.path.splitext(filename)[0]
+                    if args.cases and not any(instance.startswith(f"{case}_") for case in args.cases):
+                        continue
+                    if answers_so_far(config.path_res.joinpath(f"{instance}.json")) >= run:
+                        continue
+                    executor = llm_executor.LLMExecutor(model=args.model, libname=lib, filename=filename)
+                    if server == "openai_gpt":
+                        executor.llm_multiple_rounds_openai()
+                    elif server == "google_gemini":
+                        executor.llm_multiple_rounds_gemini()
+                    else:
+                        executor.llm_multiple_rounds_huggingface(tokenizer, model)
+            print(f"Run {run} of {args.runs} done", flush=True)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Build the prompts of a dataset and query an LLM on them.")
+    parser.add_argument("--dataset", default="target_nbs", help="benchmark root, laid out as target_nbs/ (JunoBench, the default)")
+    parser.add_argument("--model", default="gpt-5", choices=list(SERVERS))
+    parser.add_argument("--task", default="runinfo", choices=list(TASKS), help="executed cells with runtime information, or executed cells only")
+    parser.add_argument("--ablations", nargs="+", default=["full"], choices=["full", "s_r", "s_v", "r_v"],
+                        help="which runtime information to give, for --task runinfo: all of it, or leave out one category")
+    parser.add_argument("--runs", type=int, default=5, help="answers to collect per prompt")
+    parser.add_argument("--libs", nargs="*", help="library folders to run, by default all of them")
+    parser.add_argument("--cases", nargs="*", help="case names to run, e.g. pandas_1, by default all of them")
+    parser.add_argument("--timeout", type=int, default=3600, help="seconds allowed to build the prompts of one case")
+    stage = parser.add_mutually_exclusive_group()
+    stage.add_argument("--prompts-only", action="store_true", help="build the prompts and stop")
+    stage.add_argument("--skip-prompts", action="store_true", help="only query, on the prompts already built")
+    parser.add_argument("--prompt-worker", nargs=2, metavar=("LIB", "CASE"), help=argparse.SUPPRESS)
+    args = parser.parse_args()
+
+    setup(args)
+    if args.prompt_worker:
+        build_prompts(*args.prompt_worker, args.ablations)
+        return
+    libs = args.libs or prompt_extractor.list_lib_names()
+    if not args.skip_prompts:
+        build_all_prompts(args, libs)
+    if not args.prompts_only:
+        query_all(args, libs)
+
+
+if __name__ == "__main__":
+    main()

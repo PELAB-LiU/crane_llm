@@ -13,7 +13,9 @@ import torch
 import ast
 from transformers import GenerationConfig
 
-load_dotenv()
+# Keys in .env win over ones already in the environment, such as a stale key
+# baked into a Docker image.
+load_dotenv(override=True)
 
 # Retry helper shared with the notebook extension (see llms/retry.py).
 # The batch runner retries non-rate-limit errors too, because long unattended

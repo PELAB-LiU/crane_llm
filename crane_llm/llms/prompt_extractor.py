@@ -1,18 +1,30 @@
 from .config_llms import config
 import os
-import re
 from ..runinfo_parser import notebook_runtime_extractor
 from ..runinfo_parser.summary_rules import filter_all_category_combinations
 import pprint
 
+def case_notebook(path_case, version_name):
+    """The notebook of one version of a case, or None. A notebook that crashes in several
+    places may be reproduced once per crash, as <case>_reproduced_<k>.ipynb; only the
+    first is used, the crash a user would meet first."""
+    names = [f"{path_case.name}_{version_name}.ipynb"]
+    if version_name == "reproduced":
+        names.append(f"{path_case.name}_reproduced_1.ipynb")
+    for name in names:
+        if path_case.joinpath(name).is_file():
+            return path_case.joinpath(name)
+    return None
+
 def list_case_names(lib_name, path_nbs = None):
-    """The case folders of a library in the benchmark, named libname_id."""
+    """The case folders of a library in the benchmark, those holding a reproduced notebook."""
     path_lib = (path_nbs or config.path_nbs).joinpath(lib_name)
-    pattern = re.compile(r'^[A-Za-z]+_\d+$')
-    return [
-        name for name in os.listdir(path_lib)
-        if os.path.isdir(path_lib.joinpath(name)) and pattern.match(name)
-    ]
+    return [name for name in os.listdir(path_lib) if case_notebook(path_lib.joinpath(name), "reproduced") is not None]
+
+def list_lib_names(path_nbs = None):
+    """The library folders of the benchmark, those holding any case."""
+    path_nbs = path_nbs or config.path_nbs
+    return sorted(name for name in os.listdir(path_nbs) if path_nbs.joinpath(name).is_dir() and list_case_names(name, path_nbs))
 
 def runtime_count_prior_cells(lib_name = "tensorflow", case_names = None):
     if case_names is None:
@@ -20,7 +32,7 @@ def runtime_count_prior_cells(lib_name = "tensorflow", case_names = None):
     res_count = {}
     for case_name in case_names:
         for version_name in ["reproduced"]:
-            path_nb = config.path_nbs.joinpath(lib_name).joinpath(case_name).joinpath(f"{case_name}_{version_name}.ipynb")
+            path_nb = case_notebook(config.path_nbs.joinpath(lib_name, case_name), version_name)
             print(f"Processing {case_name}_{version_name}")
             extracter = notebook_runtime_extractor.NotebookRuntimeExtractor(path_nb)
             count = extracter.run_prior_cells()
@@ -37,8 +49,10 @@ def generate_prompt(lib_name = "tensorflow", case_names = None, version_names = 
     
     for case_name in case_names:
         for version_name in version_names:
-            path_nb = config.path_nbs.joinpath(lib_name).joinpath(case_name).joinpath(f"{case_name}_{version_name}.ipynb")
-            
+            path_nb = case_notebook(config.path_nbs.joinpath(lib_name, case_name), version_name)
+            if path_nb is None: # e.g. a dataset without fixed notebooks
+                continue
+
             print(f"Processing {case_name}_{version_name}")
             extracter = notebook_runtime_extractor.NotebookRuntimeExtractor(path_nb)
             
@@ -47,11 +61,11 @@ def generate_prompt(lib_name = "tensorflow", case_names = None, version_names = 
                 # First check if we should skip this case entirely
                 if not force_regenerate:
                     # Check if ALL combination files already exist
-                    all_combinations = ['full', 's_r', 's_v', 'r_v']
+                    all_combinations = ['s', 'r', 'v', 's_r', 's_v', 'r_v'] # the full prompt is not a combination
                     already_exist = False
                     for abbrev in all_combinations:
                         folder_suffix = f"_{abbrev}"
-                        output_folder = str(config.path_input).replace("executed_code_runinfo", f"executed_code_runinfo{folder_suffix}")
+                        output_folder = config.path_input.parent.joinpath(f"executed_code_runinfo{folder_suffix}")
                         output_path = os.path.join(output_folder, lib_name, f"{case_name}_{version_name}.txt")
                         if os.path.exists(output_path):
                             already_exist = True
@@ -73,7 +87,7 @@ def generate_prompt(lib_name = "tensorflow", case_names = None, version_names = 
                     for abbrev, filtered_runinfo in filtered_combinations.items():
                         # Create separate folder path for each combination
                         folder_suffix = f"_{abbrev}"
-                        output_folder = str(config.path_input).replace("executed_code_runinfo", f"executed_code_runinfo{folder_suffix}")
+                        output_folder = config.path_input.parent.joinpath(f"executed_code_runinfo{folder_suffix}")
                         output_path = os.path.join(output_folder, lib_name, f"{case_name}_{version_name}.txt")
                         
                         # Create prompt with filtered runinfo

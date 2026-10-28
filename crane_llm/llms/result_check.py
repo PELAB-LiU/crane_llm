@@ -525,7 +525,7 @@ def check_all_predictions_auto(check_reasoning_flag=False, if_save_excel=True, i
             detection_modes = ["code", "runinfo"]
         for detection_mode in detection_modes:
             res = {}  # Move res dictionary inside the detection_mode loop
-            folder_path = Path(f"llms/llms_outputs/results_raw/crash_detection_{model_name}_{detection_mode}")
+            folder_path = config.path_input_parsed_res_llm.joinpath(f"crash_detection_{model_name}_{detection_mode}")
             # folder_path = folder_path_output.joinpath(detection_mode)
             
             # Check if folder exists before processing
@@ -571,7 +571,7 @@ def check_all_predictions_auto(check_reasoning_flag=False, if_save_excel=True, i
                         if code_col in res_df.columns and pd.notna(res_df.loc[row, code_col]) and res_df.loc[row, code_col]:
                             res_df.loc[row, col] = res_df.loc[row, code_col]
     if if_save_excel:
-        res_df.to_excel(Path("llms/llms_outputs/results_raw/results_parsed_detection_only.xlsx"), index=False, engine="openpyxl")
+        res_df.to_excel(config.path_input_parsed_res_llm.joinpath("results_parsed_detection_only.xlsx"), index=False, engine="openpyxl")
         return
     return res_df
 
@@ -582,7 +582,7 @@ def check_all_predictions_auto(check_reasoning_flag=False, if_save_excel=True, i
 #     for model_name in ["gemini", "qwen", "gpt5"]:
 #         for detection_mode in ["code", "runinfo", "runinfo_full_doc", "runinfo_r_v", "runinfo_s_r", "runinfo_s_v"]:
 #             res = {}
-#             folder_path = Path(f"llms/llms_outputs/results_raw/crash_detection_{model_name}_{detection_mode}")
+#             folder_path = config.path_input_parsed_res_llm.joinpath(f"crash_detection_{model_name}_{detection_mode}")
                 
 #             for filename in os.listdir(folder_path):
 #                 if (filename.endswith('.json')):

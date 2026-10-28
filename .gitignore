@@ -14,7 +14,8 @@ __pycache__/
 *.out
 
 # junobench
-target_nbs
+target_nbs*
+new_nbs
 
 # **/crash_detection_gpt5_code/
 # **/crash_detection_gpt5_runinfo/
