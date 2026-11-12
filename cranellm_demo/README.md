@@ -1,4 +1,4 @@
-# Demo: 
+# CRANE-LLM Demo
 
 A short regression notebook with six cells to check, five of which crash, to see each part of CRANE-LLM at work: the built-in checks, the LLM prediction, the runtime information, the origin of a crash, and checking cells before they run.
 
@@ -8,7 +8,7 @@ To see it before running it yourself, watch the walkthrough on YouTube (click th
 
 [![CRANE-LLM DEMO on YouTube](./crane-llm-demo_screenshot.png)](https://youtu.be/7zr86sGpZ8s)
 
-## Running the demo
+## Running the Demo
 
 Scenes 1, 5 and 6 use only the built-in checks and need no API key. Scenes 2 to 4 ask the LLM model, so they need a key; without one, switch *Use the LLM* off and they report what the built-in checks found. Whichever way you run it, start from a fresh kernel with *Check cells before they run* switched **off**.
 
@@ -32,7 +32,7 @@ Then open <http://localhost:8888>, which opens the demo notebook. Leave out `-e 
 
 Use the [same demo on Kaggle](https://www.kaggle.com/code/yarinawang/crane-llm-demo). It uses the `%%crane_llm` cell magic instead of the toolbar button; click **Copy & Edit** to run it in your own Kaggle account.
 
-## The scenes
+## The Scenes
 
 Run the notebook from the top. The purple boxes in the notebook mark the scenes, and each box also says how to fix the crash, in small grey text.
 
