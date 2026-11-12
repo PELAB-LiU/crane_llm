@@ -93,7 +93,7 @@ Push to a branch first and let the build workflow run. It performs everything th
 Each release also attaches the wheel to a GitHub Release, so people can install an exact version without PyPI at all:
 
 ```bash
-pip install https://github.com/yarinamomo/crane_llm/releases/download/v1.0.1/crane_llm-1.0.1-py3-none-any.whl
+pip install https://github.com/PELAB-LiU/crane_llm/releases/download/v1.0.1/crane_llm-1.0.1-py3-none-any.whl
 ```
 
 This is useful before the PyPI name is sorted out, and for pinning a specific build.

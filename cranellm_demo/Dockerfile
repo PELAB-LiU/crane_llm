@@ -14,7 +14,7 @@ ARG CRANE_LLM_VERSION=1.0.1
 
 LABEL org.opencontainers.image.title="CRANE-LLM demo" \
       org.opencontainers.image.description="JupyterLab with CRANE-LLM and its demo notebook" \
-      org.opencontainers.image.source="https://github.com/yarinamomo/crane_llm" \
+      org.opencontainers.image.source="https://github.com/PELAB-LiU/crane_llm" \
       org.opencontainers.image.licenses="BSD-3-Clause"
 
 RUN pip install --no-cache-dir \

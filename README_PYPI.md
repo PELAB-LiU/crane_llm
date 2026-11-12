@@ -116,11 +116,11 @@ The cell body is analysed, not executed. The verdict is the cell's output, with 
 
 ### Try the demo
 
-[![CRANE-LLM in JupyterLab: a certain AttributeError found by the built-in checker, with the origin of the crash. Click to watch the demo video.](https://raw.githubusercontent.com/yarinamomo/crane_llm/HEAD/cranellm_demo/crane-llm-demo_screenshot.png)](https://github.com/yarinamomo/crane_llm#demo-video)
+[![CRANE-LLM in JupyterLab: a certain AttributeError found by the built-in checker, with the origin of the crash. Click to watch the demo video.](https://raw.githubusercontent.com/PELAB-LiU/crane_llm/HEAD/cranellm_demo/crane-llm-demo_screenshot.png)](https://github.com/PELAB-LiU/crane_llm#demo-video)
 
 *Click the screenshot to watch the five-minute demo video on GitHub.*
 
-The repository has a [demo notebook](https://github.com/yarinamomo/crane_llm/tree/HEAD/cranellm_demo) to try this on: a short regression notebook with six cells to check, five of which crash. It walks through the built-in checks, the LLM prediction, runtime information, the origin of a crash, and checking cells before they run. Download the folder, open the notebook in JupyterLab and follow its README.
+The repository has a [demo notebook](https://github.com/PELAB-LiU/crane_llm/tree/HEAD/cranellm_demo) to try this on: a short regression notebook with six cells to check, five of which crash. It walks through the built-in checks, the LLM prediction, runtime information, the origin of a crash, and checking cells before they run. Download the folder, open the notebook in JupyterLab and follow its README.
 
 The same demo is also [on Kaggle](https://www.kaggle.com/code/yarinawang/crane-llm-demo), using the cell magic. Click **Copy & Edit** to run it in your own Kaggle account.
 
