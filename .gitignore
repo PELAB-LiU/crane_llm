@@ -26,7 +26,8 @@ new_nbs
 
 # tmp
 tmp*/
-test*
+/test*
+!/tests/
 batch_script*
 
 # Python package build metadata

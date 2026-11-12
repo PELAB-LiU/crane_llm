@@ -6,6 +6,7 @@ against the installed wheel, from outside the checkout.
 
 from __future__ import annotations
 
+import io
 import sys
 
 from crane_llm.nb_extension.cell_filter import is_internal_helper_cell
@@ -626,9 +627,11 @@ def test_builtin_checks_are_certain():
         # Notebook functions using names that are also namespace writers, as
         # attributes only; they must not stop the checks after unknown code.
         exec("def train(model):\n    model.compile()\n    model.eval()\n    setattr(model, 'x', 1)", ns)
+        exec("from abc import ABC, abstractmethod\nclass Base(ABC):\n    @abstractmethod\n    def run(self): ...", ns)
         return ns
 
     cases = [
+        ("Base()", "abstract-class"),
         ("undefined_thing + 1", "undefined-name"),
         ("nothing.head()", "missing-attribute"),
         ("nothing['a']", "not-subscriptable"),
@@ -696,6 +699,9 @@ def test_builtin_checks_are_certain():
                 df=pd.DataFrame({"age": [1, 2, 3], "fare": [4.0, 5.0, 6.0]}),
                 X=np.ones((5, 3)),
                 X4=np.ones((2, 4)),
+                with_nan=np.array([1.0, np.nan]),
+                cube=np.ones((2, 2, 2)),
+                buffer=io.StringIO(),
             )
             return ns
 
@@ -725,6 +731,8 @@ def test_builtin_checks_are_certain():
             ("df['age'].str", "missing-attribute"),
             ("df['age'] + [1, 2]", "length-mismatch"),
             ("pd.concat([])", "empty-concat"),
+            ("np.histogram(with_nan)", "non-finite-data"),
+            ("np.savetxt(buffer, cube)", "array-dimensions"),
             ("df = df.reset_index().drop(columns=['index'])\ndata1.head(25)", "undefined-name"),
         ]
 
@@ -739,7 +747,10 @@ def test_builtin_checks_are_certain():
     try:
         import numpy as np
         import pandas as pd
-        from sklearn.linear_model import LinearRegression
+        from sklearn.linear_model import LinearRegression, LogisticRegression
+        from sklearn.metrics import f1_score
+        from sklearn.model_selection import train_test_split
+        from sklearn.neighbors import KNeighborsClassifier
     except ImportError:
         pass
     else:
@@ -750,10 +761,22 @@ def test_builtin_checks_are_certain():
             ns = base()
             train = pd.DataFrame({"a": [1.0, 2.0, 3.0], "b": [4.0, 5.0, 6.0]})
             ns.update(
+                LinearRegression=LinearRegression,
+                f1_score=f1_score,
+                train_test_split=train_test_split,
+                train=train,
                 lr=LinearRegression().fit(train, [1.0, 2.0, 3.0]),
+                unfitted=LinearRegression(),
+                clf=LogisticRegression(),
+                knn=KNeighborsClassifier(n_neighbors=5).fit(train, [0, 1, 0]),
                 swapped=train[["b", "a"]],
                 one_column=train[["a"]],
                 one_column_array=np.ones((3, 1)),
+                nan_rows=np.array([[1.0, np.nan]]),
+                with_text=pd.DataFrame({"a": [1.0, 2.0, 3.0], "b": ["male", "female", "male"]}),
+                labels=np.array([0, 1, 1]),
+                scores=np.array([0.2, 0.7, 0.9]),
+                two_labels=[1.0, 2.0],
             )
             return ns
 
@@ -761,7 +784,32 @@ def test_builtin_checks_are_certain():
             ("lr.predict(swapped)", "feature-names"),
             ("lr.predict(one_column)", "feature-names"),
             ("lr.predict(one_column_array)", "feature-count"),
+            ("unfitted.predict(train)", "not-fitted"),
+            ("LinearRegression().predict(train)", "not-fitted"),
+            ("lr.fit(train, two_labels)", "sample-count"),
+            ("train_test_split(train, two_labels)", "sample-count"),
+            ("knn.predict(train)", "too-few-samples"),
+            ("f1_score(labels, scores)", "continuous-target"),
+            ("clf.fit(train, scores)", "continuous-target"),
+            ("lr.predict(nan_rows)", "non-finite-data"),
+            ("lr.fit(with_text, labels)", "bad-value"),
         ]
+
+    try:
+        import matplotlib
+
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        import numpy as np
+    except ImportError:
+        pass
+    else:
+        def namespace(base=namespace):
+            ns = base()
+            ns.update(plt=plt, flat=np.ones((2, 2, 2)))
+            return ns
+
+        cases += [("plt.imshow(flat)", "array-dimensions")]
 
     try:
         import torch
@@ -790,6 +838,18 @@ def test_builtin_checks_are_certain():
         raised = _run_target(code, namespace())
         assert raised is not None, f"{code!r} was reported to crash but ran"
         assert type(raised).__name__ == finding.exception, (code, raised, finding.exception)
+
+    # A cell that does not compile is reported only after IPython's own input
+    # transformer has rewritten magics, as it does in the kernel.
+    from IPython.core.inputtransformer2 import TransformerManager
+
+    class Shell:
+        transform_cell = staticmethod(TransformerManager().transform_cell)
+
+    finding = run_checks("print 'hello'", namespace(), Shell())
+    assert finding is not None and finding.rule == "syntax", finding
+    raised = _run_target("print 'hello'", namespace())
+    assert type(raised).__name__ == finding.exception, (raised, finding.exception)
 
     # The crash is the first one, not a later one the walk can follow.
     finding = run_checks("d.update(b=2)\nd.update(undefined_x)\nundefined_y", namespace())
