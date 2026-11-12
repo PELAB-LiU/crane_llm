@@ -4,9 +4,9 @@ A short regression notebook with six cells to check, five of which crash, to see
 
 The notebook is based on a real Kaggle notebook on the [Seoul Bike Trip](https://www.kaggle.com/datasets/tagg27/seoul-bike-trip) dataset (CC BY 4.0), and scene 2 is the crash that notebook actually hit. The data in `data/` is a synthetic copy of the original.
 
-To see it before running it yourself, watch the walkthrough:
+To see it before running it yourself, watch the walkthrough on YouTube (click the screenshot):
 
-https://github.com/user-attachments/assets/7dfc82b4-2444-4448-bc6b-2af57091c988
+[![CRANE-LLM DEMO on YouTube](./crane-llm-demo_screenshot.png)](https://youtu.be/7zr86sGpZ8s)
 
 ## Running the demo
 

@@ -13,9 +13,9 @@ On Kaggle, Colab and anywhere else a notebook runs Python, the same checks are a
 
 ## Demo video
 
-A five-minute walkthrough of the [demo notebook](./cranellm_demo/):
+A five-minute walkthrough of the [demo notebook](./cranellm_demo/). Click the screenshot to watch it on YouTube:
 
-https://github.com/user-attachments/assets/7dfc82b4-2444-4448-bc6b-2af57091c988
+[![CRANE-LLM DEMO on YouTube](./cranellm_demo/crane-llm-demo_screenshot.png)](https://youtu.be/7zr86sGpZ8s)
 
 ## Try it
 
