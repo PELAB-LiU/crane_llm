@@ -27,7 +27,7 @@ The [demo notebook](./cranellm_demo/) has six target cells to check and shows ea
 | [Your own JupyterLab](#in-your-own-jupyterlab) | Python 3.9+ | `pip install` |
 | [Kaggle](#on-kaggle) | a web browser and a Kaggle account | none |
 
-Scenes 1, 5 and 6 of the demo use only the built-in checks and work without an API key. Scenes 2 to 4 ask the LLM, so they need a key, for OpenAI or any [OpenAI-compatible provider](./README_PYPI.md#other-providers). The [demo README](./cranellm_demo/README.md) describes what each scene shows.
+Scenes 1, 5 and 6 of the demo use only the built-in checks and work without an API key. Scenes 2 to 4 ask the LLM, so they need a model: an API key for OpenAI or any [other supported provider](./README_PYPI.md#set-up-a-model), or a ChatGPT subscription. The [demo README](./cranellm_demo/README.md) describes what each scene shows.
 
 ### With Docker
 
@@ -46,12 +46,14 @@ pip install "crane-llm[lab]"
 jupyter lab
 ```
 
-Set an API key once, in any notebook cell:
+Choose a model once, in any notebook cell:
 
 ```python
 import crane_llm
-crane_llm.set_api_key("sk-...")
+crane_llm.setup()
 ```
+
+It lists the supported providers — an OpenAI API key, your ChatGPT Plus/Pro subscription (experimental), OpenRouter, Gemini, Groq, a local Ollama server or any OpenAI-compatible endpoint — and asks only what the one you pick needs.
 
 Then run a few cells, select the cell you want to check, and click **CRANE-LLM** in the toolbar. To run the demo this way, download the [demo folder](./cranellm_demo/) and open its notebook.
 

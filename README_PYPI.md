@@ -47,45 +47,68 @@ Python 3.9 or later. The toolbar button needs JupyterLab 4; the cell magic needs
 
 ## Set up a model
 
-You need an API key for the model you want to use, unless you only use the built-in checks or run a local model.
+You need a model for CRANE-LLM to ask, unless you only use the built-in checks.
 
-**On your own machine**, run this once in any notebook cell. The key is saved in `~/.crane_llm/config.json` and remembered across sessions:
+**On your own machine**, run this once in any notebook cell:
 
 ```python
 import crane_llm
-crane_llm.set_api_key("sk-...")
+crane_llm.setup()
 ```
 
-**On Kaggle and Colab**, store the key as a notebook secret named `CRANE_LLM_API_KEY`, so that it never appears in the notebook. CRANE-LLM reads the secret itself.
+It lists the supported providers, asks only what the one you pick needs (an API key typed hidden, so it never appears in the notebook, a server address, or a ChatGPT sign-in), and then lists that provider's models to choose from. The answers are saved in `~/.crane_llm/config.json` and remembered across sessions. Run it again at any time to switch.
+
+```
+  1. OpenAI (API key)
+  2. ChatGPT subscription: Plus, Pro or Team (sign in, experimental)
+  3. OpenRouter (Claude, Gemini, GPT, DeepSeek, ...)
+  4. Google Gemini
+  5. Groq
+  6. Ollama (local model, no key)
+  7. Other OpenAI-compatible endpoint
+Provider [1]: 3
+API key (hidden while you type):
+Fetching the models of OpenRouter...
+
+  1. anthropic/claude-sonnet-5.5
+  2. openai/gpt-5.5
+  3. google/gemini-3.1-pro-preview
+  ...
+  7. Search all 312 models...
+  8. Other (type the name)
+Model [1]:
+```
+
+The model list is fetched live from the provider with your key, so it shows exactly what you can use: the installed models for Ollama, your plan's models for a ChatGPT subscription. A few suggestions come first; a long list such as OpenRouter's can be searched by name. If the list cannot be fetched, the suggestions are shown and any name can still be typed. The default for OpenAI is `gpt-5`, the model of the paper's experiments.
+
+Any answer can be given in advance, so this asks nothing:
+
+```python
+crane_llm.setup("ollama", base_url="http://localhost:11434/v1", model="qwen2.5-coder:32b", test=False)
+```
+
+`crane_llm.set_api_key("sk-...", base_url=..., model=...)` still works as a non-interactive one-liner for scripts.
+
+**On Kaggle and Colab**, store an API key as a notebook secret named `CRANE_LLM_API_KEY`, so that it never appears in the notebook. CRANE-LLM reads the secret itself. Settings saved by `setup()` there last only for the session.
 
 - *Kaggle:* in the notebook editor, **Add-ons → Secrets → Add a new secret**. Tick the checkbox next to it in each notebook that should use it.
 - *Colab:* the key icon in the left sidebar, with **Notebook access** switched on.
 
-### Other providers
+### ChatGPT subscription (experimental)
 
-Any OpenAI-compatible endpoint works by adding a `base_url` and a model name. This covers Claude and Gemini through a gateway, and local models that need no account:
+Choosing **ChatGPT subscription** signs in with your ChatGPT account instead of an API key, the way OpenAI's Codex CLI does:
 
-| Provider | `base_url` | Example model |
-|---|---|---|
-| OpenAI | *(none needed)* | `gpt-5`(default) |
-| OpenRouter (Claude, Gemini, Llama, …) | `https://openrouter.ai/api/v1` | `anthropic/claude-sonnet-4.5` |
-| Google Gemini | `https://generativelanguage.googleapis.com/v1beta/openai/` | `gemini-2.5-flash` |
-| Groq | `https://api.groq.com/openai/v1` | `qwen/qwen3-32b` |
-| Ollama (local, no key) | `http://localhost:11434/v1` | `qwen2.5-coder:32b` |
+1. `setup()` prints a URL (`https://auth.openai.com/codex/device`) and a one-time code.
+2. Open the URL, log in to ChatGPT and enter the code. The cell waits until you do.
+3. Pick a model from those your plan offers.
 
-```python
-import crane_llm
-crane_llm.set_api_key(
-    "sk-or-...",
-    base_url="https://openrouter.ai/api/v1",
-    model="anthropic/claude-sonnet-4.5",
-)
+The session is stored in `~/.crane_llm/chatgpt_auth.json`, readable only by you, and renewed automatically. It is separate from the Codex CLI's own login, so neither signs the other out. `crane_llm.logout_chatgpt()` forgets it.
 
-# or entirely locally:
-crane_llm.set_api_key(base_url="http://localhost:11434/v1", model="qwen2.5-coder:32b")
-```
+Keep in mind:
 
-With a `base_url`, requests use the Chat Completions API, which every OpenAI-compatible server supports.
+- Requests count against your ChatGPT plan's usage limits, not an API bill.
+- This uses the backend behind Codex, which is not a public API. OpenAI can change or block it at any time; an API key is the dependable option.
+- The models differ from those of the paper's experiments, so results are not directly comparable.
 
 ### Where settings are read from
 
@@ -94,7 +117,7 @@ The first setting found wins:
 1. an explicit argument, such as `%%crane_llm gpt-5`
 2. the `CRANE_LLM_API_KEY`, `CRANE_LLM_MODEL` and `CRANE_LLM_BASE_URL` environment variables
 3. the provider's own variables, `OPENAI_API_KEY` and `OPENAI_BASE_URL`
-4. `~/.crane_llm/config.json`, written by `set_api_key`
+4. `~/.crane_llm/config.json`, written by `setup()` or `set_api_key`
 5. on Kaggle and Colab, a notebook secret named `CRANE_LLM_API_KEY` or `OPENAI_API_KEY`
 
 A `.env` file in the directory you started Jupyter in, or any directory above it, is read first and fills in whichever of those environment variables are not already set.

@@ -188,6 +188,79 @@ class ChatCompletionsLLMClient(_BaseLLMClient):
         return output
 
 
+class ChatGPTSubscriptionLLMClient(OpenAILLMClient):
+    """The Responses API behind a ChatGPT subscription sign-in. EXPERIMENTAL.
+
+    Same request shape as ``OpenAILLMClient``, with the differences the
+    ChatGPT backend imposes: the system prompt goes in ``instructions``,
+    ``store`` must be false, the reply is only available streamed, and
+    ``max_output_tokens`` is rejected. The SDK client is rebuilt for every call
+    because the access token is short-lived and may have been refreshed.
+    """
+
+    def _get_client(self):
+        from . import chatgpt_auth
+
+        try:
+            from openai import OpenAI
+        except Exception as exc:
+            raise RuntimeError(
+                text("errors.openai_import", error=f"{type(exc).__name__}: {exc}")
+            ) from exc
+
+        token = chatgpt_auth.access_token()
+        return OpenAI(
+            api_key=token,
+            base_url=chatgpt_auth.BASE_URL,
+            default_headers={
+                "Accept-Encoding": "gzip, deflate",
+                **chatgpt_auth.request_headers(token),
+            },
+        )
+
+    def _request_kwargs(self, prompt: str) -> Dict[str, Any]:
+        kwargs: Dict[str, Any] = {
+            "model": self.model,
+            "instructions": self.system_prompt,
+            "input": [{"role": "user", "content": prompt}],
+            "store": False,
+            "stream": True,
+        }
+        if _supports_verbosity(self.model):
+            kwargs["text"] = {"verbosity": "low"}
+        return kwargs
+
+    @retry_on_rate_limit(max_retries=5, retry_other_errors=False)
+    def _call(self, client, prompt: str) -> str:
+        deltas: List[str] = []
+        final = None
+        for event in client.responses.create(**self._request_kwargs(prompt)):
+            kind = getattr(event, "type", "")
+            if kind == "response.output_text.delta":
+                deltas.append(getattr(event, "delta", "") or "")
+            elif kind in ("response.completed", "response.incomplete", "response.failed"):
+                final = getattr(event, "response", None)
+            elif kind == "error":
+                raise _error(
+                    text("errors.model_status", status=getattr(event, "message", "error")),
+                    "".join(deltas) or None,
+                )
+
+        output = "".join(deltas).strip()
+        status = getattr(final, "status", None)
+        if status is not None and status != "completed":
+            reason = getattr(getattr(final, "incomplete_details", None), "reason", None)
+            message = (
+                text("errors.model_status_reason", status=status, reason=reason)
+                if reason
+                else text("errors.model_status", status=status)
+            )
+            raise _error(message, output or None)
+        if not output:
+            raise RuntimeError(text("errors.model_empty"))
+        return output
+
+
 def default_client(
     model: Optional[str] = None,
     include_runinfo: bool = True,
@@ -214,9 +287,10 @@ def default_client(
         else config.system_prompt_crane_llm_enforcejson_code_only
     )
 
-    client_class = (
-        OpenAILLMClient if resolved.api_style == "responses" else ChatCompletionsLLMClient
-    )
+    client_class = {
+        "responses": OpenAILLMClient,
+        settings_module.CHATGPT_STYLE: ChatGPTSubscriptionLLMClient,
+    }.get(resolved.api_style, ChatCompletionsLLMClient)
 
     return client_class(
         model=resolved.model,

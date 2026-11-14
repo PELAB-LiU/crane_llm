@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional
 
 from . import settings as settings_module
+from .chatgpt_auth import ChatGPTAuthError
 from .checker import CheckFinding, run_checks
 from .llm_client import default_client
 from .prompt_builder import build_crane_prompt
@@ -52,6 +53,8 @@ def key_rejected(
 
     if getattr(exc, "status_code", None) != 401:
         return None
+    if resolved.api_style == settings_module.CHATGPT_STYLE:
+        return ApiKeyRejectedError(text("errors.chatgpt_session_expired"))
     body = getattr(exc, "body", None)
     if isinstance(body, dict) and isinstance(body.get("error"), dict):
         body = body["error"]
@@ -72,7 +75,9 @@ def describe_error(exc: BaseException) -> str:
     named by its type, since the message alone may not say what went wrong.
     """
 
-    if isinstance(exc, (PromptBuildingError, MissingApiKeyError, ApiKeyRejectedError)):
+    if isinstance(
+        exc, (PromptBuildingError, MissingApiKeyError, ApiKeyRejectedError, ChatGPTAuthError)
+    ):
         return str(exc)
     return f"{type(exc).__name__}: {exc}"
 

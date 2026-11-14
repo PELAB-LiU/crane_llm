@@ -171,7 +171,7 @@ def test_missing_api_key_is_explained():
             raise AssertionError("expected a RuntimeError when no key is configured")
 
     assert "No API key found" in message
-    assert "set_api_key" in message
+    assert "crane_llm.setup()" in message
     assert "CRANE_LLM_API_KEY" in message
 
 
@@ -519,7 +519,7 @@ def test_hosted_secret_supplies_the_key():
     # Off Kaggle nothing is looked up and the usual message is shown.
     with _IsolatedSettings():
         assert settings.hosted_secret_api_key() is None
-        assert "set_api_key" in settings.missing_key_message()
+        assert "crane_llm.setup()" in settings.missing_key_message()
 
 
 def test_requests_do_not_offer_brotli():
@@ -1504,3 +1504,383 @@ def test_namespace_is_not_mutated():
     before = set(namespace)
     collect_live_runinfo(shell=FakeShell(namespace), target_code="model.append(4)")
     assert set(namespace) == before, f"leaked names: {set(namespace) - before}"
+
+
+# ---------------------------------------------------------------------------
+# crane_llm.setup() and the ChatGPT subscription sign-in. No network access:
+# every HTTP exchange is replaced.
+
+
+def _scripted(answers):
+    """An ``input``/``getpass`` replacement that answers in order."""
+
+    answers = list(answers)
+    asked = []
+
+    def answer(question):
+        asked.append(question)
+        if not answers:
+            raise AssertionError(f"unexpected question: {question!r}")
+        return answers.pop(0)
+
+    answer.asked = asked
+    return answer
+
+
+def _fake_jwt(exp_offset=3600, account="acct-123", email="user@example.com"):
+    import base64
+    import json
+    import time
+
+    def part(data):
+        return base64.urlsafe_b64encode(json.dumps(data).encode()).decode().rstrip("=")
+
+    claims = {
+        "exp": int(time.time()) + exp_offset,
+        "https://api.openai.com/auth": {"chatgpt_account_id": account},
+        "https://api.openai.com/profile": {"email": email},
+    }
+    return f"{part({'alg': 'none'})}.{part(claims)}.sig"
+
+
+class _FakeResponse:
+    def __init__(self, status_code, data=None):
+        self.status_code = status_code
+        self._data = data
+
+    def json(self):
+        return self._data
+
+
+class _FakeHttp:
+    """Replaces ``chatgpt_auth._http()``: answers POSTs from a script by URL."""
+
+    def __init__(self, script):
+        self.script = script  # url -> list of responses, consumed in order
+        self.posts = []
+
+    def __call__(self):
+        return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def post(self, url, **kwargs):
+        self.posts.append((url, kwargs))
+        return self.script[url].pop(0)
+
+    def get(self, url, **kwargs):
+        return self.script[url].pop(0)
+
+
+class _ListedModels:
+    """Replaces the provider's model list, which would need the network."""
+
+    def __init__(self, models=None, error="HTTP 401"):
+        self.result = (models, None) if models is not None else (None, error)
+        self.calls = []
+
+    def __enter__(self):
+        from crane_llm.nb_extension import setup_wizard
+
+        self._original = setup_wizard._list_models
+
+        def fake(provider, api_key, base_url):
+            self.calls.append((provider.id, api_key, base_url))
+            return self.result
+
+        setup_wizard._list_models = fake
+        return self
+
+    def __exit__(self, *exc):
+        from crane_llm.nb_extension import setup_wizard
+
+        setup_wizard._list_models = self._original
+        return False
+
+
+def test_setup_lists_providers_and_saves_the_choice():
+    """The interactive path: pick OpenRouter by number, type key, pick model."""
+
+    from crane_llm.nb_extension import llm_client, setup_wizard
+
+    live = ["anthropic/claude-sonnet-5.5", "openai/gpt-5.5", "mistral/small"]
+    with _IsolatedSettings() as settings, _ListedModels(live) as listed:
+        inputs = _scripted(["3", "2", "n"])  # OpenRouter, second model, no test
+        keys = _scripted(["sk-or-secret"])
+        shown = []
+        setup_wizard.setup(input=inputs, getpass=keys, output=shown.append)
+
+        stored = settings.read_config()
+        assert stored["provider"] == "openrouter"
+        assert stored["api_key"] == "sk-or-secret"
+        assert stored["base_url"] == "https://openrouter.ai/api/v1"
+        assert stored["model"] == "openai/gpt-5.5"
+        # The list was asked for with the key just typed, from the provider's URL.
+        assert listed.calls == [("openrouter", "sk-or-secret", "https://openrouter.ai/api/v1")]
+        # Suggestions first, then the rest of the provider's list.
+        listing = "\n".join(shown)
+        assert listing.index("claude-sonnet-5.5") < listing.index("gpt-5.5") < listing.index("mistral/small")
+        # Every provider was offered, the ChatGPT subscription among them.
+        listing = "\n".join(shown)
+        for provider in setup_wizard.PROVIDERS:
+            assert provider.label in listing
+        # The key was read without echo, never through input().
+        assert len(keys.asked) == 1
+        assert not any("sk-or-secret" in q for q in inputs.asked)
+        assert isinstance(llm_client.default_client(), llm_client.ChatCompletionsLLMClient)
+
+
+def test_setup_switching_provider_clears_the_old_endpoint():
+    import crane_llm
+    from crane_llm.nb_extension import llm_client
+
+    with _IsolatedSettings() as settings:
+        crane_llm.setup("groq", api_key="gsk-1", model="qwen/qwen3-32b", test=False, output=lambda _: None)
+        assert settings.resolve().base_url == "https://api.groq.com/openai/v1"
+
+        crane_llm.setup("openai", api_key="sk-2", model="gpt-5", test=False, output=lambda _: None)
+        resolved = settings.resolve()
+        assert resolved.base_url is None
+        assert resolved.api_key == "sk-2"
+        assert resolved.api_style == "responses"
+        assert isinstance(llm_client.default_client(), llm_client.OpenAILLMClient)
+
+
+def test_setup_keeps_the_saved_key_on_enter():
+    from crane_llm.nb_extension import setup_wizard
+
+    with _IsolatedSettings() as settings:
+        setup_wizard.setup("openai", api_key="sk-saved", model="gpt-5", test=False, output=lambda _: None)
+        setup_wizard.setup(
+            "openai", model="gpt-5-mini", test=False,
+            getpass=_scripted([""]), output=lambda _: None,
+        )
+        assert settings.resolve().api_key == "sk-saved"
+        assert settings.resolve().model == "gpt-5-mini"
+
+
+def test_setup_local_server_asks_for_no_key():
+    from crane_llm.nb_extension import llm_client, setup_wizard
+
+    with _IsolatedSettings() as settings, _ListedModels(["llama3.2:3b", "qwen2.5-coder:32b"]):
+        setup_wizard.setup(
+            "ollama", input=_scripted(["", "", "n"]),
+            getpass=_scripted([]), output=lambda _: None,
+        )
+        resolved = settings.resolve()
+        assert resolved.base_url == "http://localhost:11434/v1"
+        assert resolved.api_key == "local"
+        llm_client.default_client()._get_client()
+
+
+def test_setup_rejects_an_unknown_provider():
+    from crane_llm.nb_extension import setup_wizard
+
+    with _IsolatedSettings():
+        try:
+            setup_wizard.setup("acme", output=lambda _: None)
+        except ValueError as exc:
+            assert "openrouter" in str(exc)
+        else:
+            raise AssertionError("expected an unknown provider to be refused")
+
+
+def test_chatgpt_device_login_stores_tokens():
+    """The device-code flow: request a code, wait out 403s, exchange the code."""
+
+    from crane_llm.nb_extension import chatgpt_auth
+
+    token = _fake_jwt()
+    http = _FakeHttp({
+        chatgpt_auth.DEVICE_CODE_URL: [_FakeResponse(200, {"user_code": "ABCD-1234", "device_auth_id": "dev-1", "interval": 5})],
+        chatgpt_auth.DEVICE_POLL_URL: [
+            _FakeResponse(403),
+            _FakeResponse(200, {"authorization_code": "auth-code", "code_verifier": "verifier"}),
+        ],
+        chatgpt_auth.TOKEN_URL: [_FakeResponse(200, {"access_token": token, "refresh_token": "rt-1"})],
+    })
+
+    with _IsolatedSettings():
+        original = chatgpt_auth._http
+        chatgpt_auth._http = http
+        try:
+            shown, waits = [], []
+            chatgpt_auth.login(output=shown.append, sleep=waits.append)
+        finally:
+            chatgpt_auth._http = original
+
+        assert "ABCD-1234" in shown[0] and chatgpt_auth.DEVICE_VERIFY_URL in shown[0]
+        assert waits == [5, 5]
+        exchange = http.posts[-1][1]["data"]
+        assert exchange["grant_type"] == "authorization_code"
+        assert exchange["code_verifier"] == "verifier"
+        assert exchange["client_id"] == chatgpt_auth.CLIENT_ID
+        assert chatgpt_auth.load_tokens()["refresh_token"] == "rt-1"
+        assert chatgpt_auth.access_token() == token
+        # Kept beside the config file, never in ~/.codex.
+        assert ".codex" not in str(chatgpt_auth.auth_path())
+
+
+def test_chatgpt_token_is_refreshed_before_it_expires():
+    from crane_llm.nb_extension import chatgpt_auth
+
+    fresh = _fake_jwt()
+    http = _FakeHttp({
+        chatgpt_auth.TOKEN_URL: [_FakeResponse(200, {"access_token": fresh, "refresh_token": "rt-2"})],
+    })
+
+    with _IsolatedSettings():
+        chatgpt_auth.save_tokens({"access_token": _fake_jwt(exp_offset=30), "refresh_token": "rt-1"})
+        original = chatgpt_auth._http
+        chatgpt_auth._http = http
+        try:
+            assert chatgpt_auth.access_token() == fresh
+        finally:
+            chatgpt_auth._http = original
+
+        sent = http.posts[0][1]["data"]
+        assert sent == {"grant_type": "refresh_token", "refresh_token": "rt-1", "client_id": chatgpt_auth.CLIENT_ID}
+        # The rotated refresh token replaces the old one.
+        assert chatgpt_auth.load_tokens()["refresh_token"] == "rt-2"
+
+
+def test_setup_chatgpt_selects_the_subscription_client():
+    import crane_llm
+    from crane_llm.nb_extension import chatgpt_auth, llm_client
+
+    with _IsolatedSettings() as settings:
+        # Not signed in yet: the message says how to sign in.
+        settings.write_config(api_style="chatgpt")
+        assert settings.resolve().api_key is None
+        assert 'setup("chatgpt")' in settings.missing_key_message()
+
+        original_login = chatgpt_auth.login
+        chatgpt_auth.login = lambda output=print: chatgpt_auth.save_tokens(
+            {"access_token": _fake_jwt(), "refresh_token": "rt"}
+        )
+        try:
+            with _ListedModels(["gpt-5.5", "gpt-5.4"]):
+                crane_llm.setup("chatgpt", input=_scripted(["2", "n"]), output=lambda _: None)
+        finally:
+            chatgpt_auth.login = original_login
+
+        resolved = settings.resolve()
+        assert resolved.api_style == "chatgpt"
+        assert resolved.model == "gpt-5.4"
+        assert resolved.base_url == chatgpt_auth.BASE_URL
+        client = llm_client.default_client()
+        assert isinstance(client, llm_client.ChatGPTSubscriptionLLMClient)
+
+        sdk = client._get_client()
+        assert sdk.default_headers["ChatGPT-Account-ID"] == "acct-123"
+        assert sdk.default_headers["originator"] == "crane-llm"
+
+        # The backend's request contract.
+        kwargs = client._request_kwargs("hello")
+        assert kwargs["store"] is False and kwargs["stream"] is True
+        assert kwargs["instructions"] == client.system_prompt
+        assert "max_output_tokens" not in kwargs
+
+        # A key set afterwards takes over from the subscription.
+        crane_llm.set_api_key("sk-later")
+        assert settings.resolve().api_style == "responses"
+
+
+def test_chatgpt_client_assembles_the_streamed_reply():
+    from types import SimpleNamespace
+
+    from crane_llm.nb_extension.llm_client import ChatGPTSubscriptionLLMClient
+
+    events = [
+        SimpleNamespace(type="response.created"),
+        SimpleNamespace(type="response.output_text.delta", delta='{"prediction": '),
+        SimpleNamespace(type="response.output_text.delta", delta="false}"),
+        SimpleNamespace(type="response.completed", response=SimpleNamespace(status="completed")),
+    ]
+    sdk = SimpleNamespace(responses=SimpleNamespace(create=lambda **kwargs: iter(events)))
+    client = ChatGPTSubscriptionLLMClient(model="gpt-5.5", system_prompt="s")
+    assert client._call(sdk, "p") == '{"prediction": false}'
+
+
+def test_chatgpt_rejection_asks_to_sign_in_again():
+    from crane_llm.nb_extension import assistant, settings
+
+    class Unauthorized(Exception):
+        status_code = 401
+
+    resolved = settings.Settings(api_key="x", base_url="u", model="m", api_style="chatgpt")
+    message = assistant.describe_error(assistant.key_rejected(Unauthorized(), resolved))
+    assert "relogin=True" in message
+
+
+def test_setup_call_with_a_key_never_reaches_the_prompt():
+    state = NotebookSessionState()
+    state.record_executed_cell(
+        "c1", "x = 1\ncrane_llm.setup('custom', api_key='plain-secret',\n    base_url='https://h/v1')\ny = 2"
+    )
+    state.set_target_cell("c2", "print(x)")
+
+    prompt = build_crane_prompt(state, include_runinfo=False, shell=None)
+    assert "plain-secret" not in prompt
+    assert "x = 1" in prompt and "y = 2" in prompt
+
+
+def test_model_picker_searches_a_long_list():
+    """Hundreds of models: suggestions are listed, the rest is searched."""
+
+    from crane_llm.nb_extension import setup_wizard
+
+    live = [f"vendor/model-{n:03d}" for n in range(300)] + ["openai/gpt-5.5"]
+    with _IsolatedSettings() as settings, _ListedModels(live):
+        shown = []
+        # The only suggestion OpenRouter has here, then "search", then "other".
+        inputs = _scripted(["2", "model-04", "3", "n"])
+        setup_wizard.setup("openrouter", api_key="k", input=inputs, output=shown.append)
+
+        assert settings.read_config()["model"] == "vendor/model-042"
+        assert "vendor/model-150" not in "\n".join(shown)  # never listed in full
+
+
+def test_model_picker_falls_back_to_suggestions_and_typing():
+    from crane_llm.nb_extension import setup_wizard
+
+    with _IsolatedSettings() as settings, _ListedModels(None, error="HTTP 401"):
+        shown = []
+        other = len(setup_wizard._BY_ID["openai"].suggested) + 1
+        inputs = _scripted([str(other), "my-finetune", "n"])
+        setup_wizard.setup("openai", api_key="sk-x", input=inputs, output=shown.append)
+
+        assert settings.read_config()["model"] == "my-finetune"
+        listing = "\n".join(shown)
+        assert "HTTP 401" in listing and "gpt-5-mini" in listing
+
+
+def test_model_list_keeps_only_chat_models():
+    from types import SimpleNamespace
+
+    from crane_llm.nb_extension import setup_wizard
+
+    class FakeOpenAI:
+        def __init__(self, **kwargs):
+            self.models = SimpleNamespace(list=lambda: [
+                SimpleNamespace(id=i) for i in (
+                    "models/gemini-3.8-flash", "models/text-embedding-004",
+                    "gpt-5.5", "whisper-1", "tts-1", "dall-e-3", "omni-moderation-latest",
+                )
+            ])
+
+    import openai
+
+    original = openai.OpenAI
+    openai.OpenAI = FakeOpenAI
+    try:
+        models, error = setup_wizard._list_models(setup_wizard._BY_ID["gemini"], "k", "u")
+    finally:
+        openai.OpenAI = original
+
+    assert error is None
+    assert models == ["gemini-3.8-flash", "gpt-5.5"]

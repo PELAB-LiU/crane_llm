@@ -161,6 +161,45 @@
     "linear_size": "`{data}` has {size} features in its last dimension, but `{layer}` expects {expected}."
   },
 
+  "setup": {
+    "title": "CRANE-LLM setup: choose the model that predicts crashes.",
+    "current": "Currently: {provider}, model {model}.",
+    "hosted_note": "Note: on Kaggle and Colab the settings saved here are lost when the session ends. For an API key, a notebook secret named CRANE_LLM_API_KEY lasts across sessions.",
+    "choose_provider": "Provider",
+    "choose_model": "Model",
+    "invalid_choice": "Type a number from 1 to {max}.",
+    "unknown_provider": "Unknown provider '{provider}'. Choose one of: {known}.",
+    "ask_base_url": "Server URL",
+    "base_url_required": "This provider needs the URL of its OpenAI-compatible API.",
+    "ask_key": "API key (hidden while you type)",
+    "ask_key_keep": "API key (hidden while you type; Enter keeps the saved one)",
+    "key_required": "This provider needs an API key.",
+    "fetching_models": "Fetching the models of {provider}...",
+    "models_unavailable": "Could not fetch the model list ({error}); showing suggestions instead. If this says HTTP 401, the key is probably wrong.",
+    "show_all_models": "Search all {count} models...",
+    "other_model": "Other (type the name)",
+    "filter_models": "Part of the name to search for (Enter lists all)",
+    "no_match": "No model contains '{pattern}'.",
+    "back": "Back",
+    "ask_model_name": "Model name, as the provider spells it",
+    "model_required": "Enter the model name, as the provider spells it.",
+    "saved": "Saved: {provider}, model {model}, in {path}.",
+    "ask_test": "Send one short request to check it works?",
+    "testing": "Asking {model}...",
+    "test_ok": "It works. Select a cell and click CRANE-LLM, or use %%crane_llm.",
+    "test_failed": "The test request failed:\n{error}",
+    "chatgpt": {
+      "warning": "Experimental: this signs in with your ChatGPT account the way the Codex CLI does. It uses the models and usage limits of your ChatGPT plan instead of an API bill. The backend is not a public API, so OpenAI may change or block it at any time.",
+      "already_signed_in": "Already signed in as {account}. Sign in again?",
+      "signed_in": "Signed in as {account}.",
+      "device_instructions": "To sign in:\n\n  1. Open {url} in your browser and log in to ChatGPT.\n  2. Enter this code: {code}\n\nWaiting for you to finish (up to 15 minutes; interrupt the kernel to cancel)...",
+      "device_code_failed": "Could not start the ChatGPT sign-in (HTTP {status}). Try again in a minute.",
+      "poll_failed": "The ChatGPT sign-in failed while waiting for approval (HTTP {status}).",
+      "login_timeout": "The ChatGPT sign-in was not completed in time. Run crane_llm.setup(\"chatgpt\") again.",
+      "bad_token_response": "The ChatGPT sign-in returned an unexpected answer (HTTP {status}). Run crane_llm.setup(\"chatgpt\") again.",
+      "refresh_failed": "Could not renew the ChatGPT session (HTTP {status}). Try again in a minute."
+    }
+  },
   "errors": {
     "dialog_title": "CRANE-LLM",
     "select_code_cell": "Select a code cell first.",
@@ -176,7 +215,7 @@
     "no_ipython": "CRANE-LLM notebook helpers require an active IPython session.",
     "config_not_json": "{path} is not valid JSON ({error}). Fix or delete it, then retry.",
     "config_not_object": "{path} must contain a JSON object, not {kind}.",
-    "unknown_api_style": "Unknown API style '{style}'. Use 'responses' (OpenAI) or 'chat' (any OpenAI-compatible endpoint).",
+    "unknown_api_style": "Unknown API style '{style}'. Use 'responses' (OpenAI), 'chat' (any OpenAI-compatible endpoint) or 'chatgpt' (ChatGPT subscription sign-in). Running crane_llm.setup() sets it for you.",
     "openai_import": "OpenAI import failed: {error}",
     "model_truncated": "The model hit the output token limit (max_output_tokens={limit}) before finishing. Raise `max_output_tokens` in crane_llm/llms/config_llms.py and try again.",
     "model_status": "The model returned status '{status}'.",
@@ -187,7 +226,9 @@
     "model_no_choices": "The model returned no choices.",
     "missing_key_kaggle": "No API key found, so the LLM was not asked. On Kaggle, store it as a secret:\n\n  1. In the notebook editor, open Add-ons > Secrets.\n  2. Add a secret with the label CRANE_LLM_API_KEY and your key as the value.\n  3. Tick the checkbox next to it, so this notebook may read it.\n\nThen run the %%crane_llm cell again; no restart is needed. Keep the key\nout of the notebook itself, which others can read once it is shared.\n\nTo use the built-in checker only, which needs no key, write %%crane_llm --no-llm instead.",
     "missing_key_colab": "No API key found, so the LLM was not asked. On Colab, store it as a secret:\n\n  1. Click the key icon in the left sidebar (Secrets).\n  2. Add a secret named CRANE_LLM_API_KEY with your key as the value.\n  3. Switch on 'Notebook access' for it.\n\nThen run the %%crane_llm cell again; no restart is needed.\n\nTo use the built-in checker only, which needs no key, write %%crane_llm --no-llm instead.",
-    "missing_key": "No API key found, so the LLM was not asked. Set one up in any of these ways, then retry.\n\n  1. From a notebook cell, saved to {path} for future sessions:\n         import crane_llm\n         crane_llm.set_api_key(\"sk-...\")\n\n  2. As an environment variable before starting Jupyter:\n         CRANE_LLM_API_KEY=sk-...\n\n  3. In a .env file in the directory you started Jupyter from:\n         CRANE_LLM_API_KEY=sk-...\n\nAny OpenAI-compatible provider works. For one that is not OpenAI, add a\nbase_url and a model, for example OpenRouter (Claude, Gemini and others\nthrough a single key):\n         crane_llm.set_api_key(\"sk-or-...\",\n                               base_url=\"https://openrouter.ai/api/v1\",\n                               model=\"anthropic/claude-sonnet-4.5\")\n\nA local server needs no key at all, only a base_url:\n         crane_llm.set_api_key(base_url=\"http://localhost:11434/v1\",\n                               model=\"qwen2.5-coder:32b\")\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic.",
-    "key_rejected": "The API key was rejected by {endpoint}: {reason}\n\nCheck that the key is correct and belongs to that provider. A key for another\nprovider, such as OpenRouter or Gemini, also needs its base_url and a model:\n         crane_llm.set_api_key(\"sk-or-...\",\n                               base_url=\"https://openrouter.ai/api/v1\",\n                               model=\"anthropic/claude-sonnet-4.5\")\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic."
+    "missing_key": "No API key found, so the LLM was not asked. Set up a model, then retry.\n\nIn any notebook cell, saved to {path} for future sessions:\n         import crane_llm\n         crane_llm.setup()\n\nIt lists the supported providers (OpenAI, a ChatGPT subscription, OpenRouter,\nGemini, Groq, a local Ollama server, or any OpenAI-compatible endpoint) and\nasks only what the one you pick needs.\n\nA key can also come from an environment variable, or a .env file in the\ndirectory you started Jupyter from:\n         CRANE_LLM_API_KEY=sk-...\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic.",
+    "key_rejected": "The API key was rejected by {endpoint}: {reason}\n\nCheck that the key is correct and belongs to that provider. To enter it again,\nor to pick another provider, run in any cell:\n         import crane_llm\n         crane_llm.setup()\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic.",
+    "chatgpt_not_logged_in": "CRANE-LLM is set up to use a ChatGPT subscription, but you are not signed in, so the LLM was not asked. Sign in from any notebook cell:\n         import crane_llm\n         crane_llm.setup(\"chatgpt\")\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic.",
+    "chatgpt_session_expired": "The ChatGPT session has expired or was signed out elsewhere, so the LLM was not asked. Sign in again from any notebook cell:\n         import crane_llm\n         crane_llm.setup(\"chatgpt\", relogin=True)\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic."
   }
 }
