@@ -25,7 +25,7 @@ Then open <http://localhost:8888>, which opens the demo notebook. Leave out `-e 
 ### In your own JupyterLab
 
 - JupyterLab with CRANE-LLM installed (`pip install "crane-llm[lab]"`), plus `pandas`, `scikit-learn`, `matplotlib` and `seaborn`.
-- An API key set once with `crane_llm.set_api_key(...)`.
+- A model chosen once with `crane_llm.setup()`.
 - Open `cranellm_demo.ipynb` from this folder, so that it finds `data/`.
 
 ### On Kaggle

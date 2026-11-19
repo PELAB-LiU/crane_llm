@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional
 
 from ..llms.retry import retry_on_rate_limit
 from . import settings as settings_module
+from .chatgpt_auth import ChatGPTError
 from .texts import text
 
 
@@ -188,6 +189,109 @@ class ChatCompletionsLLMClient(_BaseLLMClient):
         return output
 
 
+# Plan-usage error codes from the docs, and what to tell the user.
+_CHATGPT_ERRORS = {
+    "subscription_sharing_usage_limit_exceeded": "errors.chatgpt_usage_limit",
+    "subscription_sharing_usage_unavailable": "errors.chatgpt_unavailable",
+    "subscription_sharing_user_unavailable": "errors.chatgpt_unavailable",
+    "subscription_sharing_user_not_eligible": "errors.chatgpt_not_eligible",
+    "subscription_sharing_invalid_user": "errors.chatgpt_session_expired",
+}
+
+
+def chatgpt_error_message(code: str, detail: str = "") -> str:
+    key = _CHATGPT_ERRORS.get(code or "")
+    if key:
+        return text(key)
+    return text("errors.chatgpt_request_failed", code=code or "-", detail=detail or "-")
+
+
+class ChatGPTSubscriptionLLMClient(OpenAILLMClient):
+    """The public Responses API, paid for by a ChatGPT plan. EXPERIMENTAL.
+
+    Same endpoint as ``OpenAILLMClient``, with the access token from the
+    ChatGPT sign-in as the bearer token and the request shape the docs set for
+    plan usage: ``store`` false, always streamed, the system prompt in
+    ``instructions``, and no ``max_output_tokens`` or ``reasoning``. A reply
+    counts only once ``response.completed`` arrives. Not retried on a 429: that
+    is the plan's usage limit, which a retry cannot lift.
+
+    The SDK client is rebuilt for every call because the access token is
+    short-lived and may have been refreshed.
+    """
+
+    def _get_client(self):
+        from . import chatgpt_auth
+
+        try:
+            from openai import OpenAI
+        except Exception as exc:
+            raise RuntimeError(
+                text("errors.openai_import", error=f"{type(exc).__name__}: {exc}")
+            ) from exc
+
+        return OpenAI(
+            api_key=chatgpt_auth.access_token(),
+            base_url=chatgpt_auth.BASE_URL,
+            max_retries=0,
+            default_headers={"Accept-Encoding": "gzip, deflate"},
+        )
+
+    def _request_kwargs(self, prompt: str) -> Dict[str, Any]:
+        return {
+            "model": self.model,
+            "instructions": self.system_prompt,
+            "input": [{"role": "user", "content": prompt}],
+            "store": False,
+            "stream": True,
+        }
+
+    def _call(self, client, prompt: str) -> str:
+        try:
+            stream = client.responses.create(**self._request_kwargs(prompt))
+            deltas: List[str] = []
+            final = None
+            for event in stream:
+                kind = getattr(event, "type", "")
+                if kind == "response.output_text.delta":
+                    deltas.append(getattr(event, "delta", "") or "")
+                elif kind in ("response.completed", "response.incomplete", "response.failed"):
+                    final = getattr(event, "response", None)
+                elif kind == "error":
+                    raise ChatGPTError(
+                        chatgpt_error_message(getattr(event, "code", "") or "", getattr(event, "message", "") or "")
+                    )
+        except ChatGPTError:
+            raise
+        except Exception as exc:
+            body = getattr(exc, "body", None)
+            if isinstance(body, dict) and isinstance(body.get("error"), dict):
+                body = body["error"]
+            code = body.get("code") if isinstance(body, dict) else None
+            if code:
+                raise ChatGPTError(chatgpt_error_message(code, body.get("message", ""))) from exc
+            raise
+
+        output = "".join(deltas).strip()
+        status = getattr(final, "status", None)
+        if status == "failed":
+            error = getattr(final, "error", None)
+            raise ChatGPTError(
+                chatgpt_error_message(getattr(error, "code", "") or "", getattr(error, "message", "") or "")
+            )
+        if status != "completed":
+            reason = getattr(getattr(final, "incomplete_details", None), "reason", None)
+            message = (
+                text("errors.model_status_reason", status=status, reason=reason)
+                if reason
+                else text("errors.model_status", status=status or "no response.completed")
+            )
+            raise _error(message, output or None)
+        if not output:
+            raise RuntimeError(text("errors.model_empty"))
+        return output
+
+
 def default_client(
     model: Optional[str] = None,
     include_runinfo: bool = True,
@@ -214,9 +318,10 @@ def default_client(
         else config.system_prompt_crane_llm_enforcejson_code_only
     )
 
-    client_class = (
-        OpenAILLMClient if resolved.api_style == "responses" else ChatCompletionsLLMClient
-    )
+    client_class = {
+        "responses": OpenAILLMClient,
+        settings_module.CHATGPT_STYLE: ChatGPTSubscriptionLLMClient,
+    }.get(resolved.api_style, ChatCompletionsLLMClient)
 
     return client_class(
         model=resolved.model,
