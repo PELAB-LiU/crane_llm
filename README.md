@@ -53,7 +53,7 @@ import crane_llm
 crane_llm.setup()
 ```
 
-It lists the supported providers — an OpenAI API key, your ChatGPT Plus/Pro subscription (experimental), OpenRouter, Gemini, Groq, a local Ollama server or any OpenAI-compatible endpoint — and asks only what the one you pick needs.
+It lists the supported providers — an OpenAI API key, your ChatGPT plan via *Continue with ChatGPT* (experimental, local JupyterLab only), OpenRouter, Gemini, Groq, a local Ollama server or any OpenAI-compatible endpoint — and asks only what the one you pick needs.
 
 Then run a few cells, select the cell you want to check, and click **CRANE-LLM** in the toolbar. To run the demo this way, download the [demo folder](./cranellm_demo/) and open its notebook.
 

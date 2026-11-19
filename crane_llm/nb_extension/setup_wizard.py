@@ -44,7 +44,7 @@ class Provider(NamedTuple):
 PROVIDERS: List[Provider] = [
     Provider("openai", "OpenAI (API key)", None,
              ("gpt-5", "gpt-5.5", "gpt-5.4", "gpt-5.4-mini", "gpt-5-mini"), "required"),
-    Provider("chatgpt", "ChatGPT subscription: Plus, Pro or Team (sign in, experimental)", None,
+    Provider("chatgpt", "ChatGPT plan: Continue with ChatGPT (local JupyterLab only, experimental)", None,
              (), "none"),
     Provider("openrouter", "OpenRouter (Claude, Gemini, GPT, DeepSeek, ...)", "https://openrouter.ai/api/v1",
              ("anthropic/claude-sonnet-5.5", "openai/gpt-5.5", "google/gemini-3.1-pro-preview",
@@ -144,16 +144,13 @@ def _setup_chatgpt(prompt: _Prompter, model: Optional[str], relogin: Optional[bo
 
     prompt.output(text("setup.chatgpt.warning"))
 
-    tokens = chatgpt_auth.load_tokens()
-    if tokens is not None:
-        who = chatgpt_auth.account_email(tokens.get("id_token") or tokens["access_token"]) or "?"
-        if relogin is None:
-            relogin = prompt.yes(text("setup.chatgpt.already_signed_in", account=who), default=False)
-    if tokens is None or relogin:
+    signed_in = chatgpt_auth.is_logged_in()
+    if signed_in and relogin is None:
+        who = chatgpt_auth.account_email() or "?"
+        relogin = prompt.yes(text("setup.chatgpt.already_signed_in", account=who), default=False)
+    if not signed_in or relogin:
         chatgpt_auth.login(output=prompt.output)
-        tokens = chatgpt_auth.load_tokens() or {}
-        who = chatgpt_auth.account_email(tokens.get("id_token") or tokens.get("access_token", "")) or "?"
-        prompt.output(text("setup.chatgpt.signed_in", account=who))
+        prompt.output(text("setup.chatgpt.signed_in", account=chatgpt_auth.account_email() or "?"))
 
     if model is None:
         model = _pick_model(prompt, _BY_ID["chatgpt"], None, None, current=None)
@@ -361,15 +358,21 @@ def setup(
     if settings.hosted_platform():
         output(text("setup.hosted_note"))
 
+    # The ChatGPT sign-in needs a browser on the kernel's own machine, which a
+    # hosted notebook never has.
+    offered = [p for p in PROVIDERS if not (p.id == "chatgpt" and settings.hosted_platform())]
+
     if provider is None:
         output("")
         current_provider = _current_provider(stored)
-        default_index = PROVIDERS.index(current_provider) if current_provider else 0
-        chosen = PROVIDERS[prompt.choose(text("setup.choose_provider"), [p.label for p in PROVIDERS], default_index)]
+        default_index = offered.index(current_provider) if current_provider in offered else 0
+        chosen = offered[prompt.choose(text("setup.choose_provider"), [p.label for p in offered], default_index)]
     else:
         chosen = _BY_ID.get(provider.strip().lower())
         if chosen is None:
             raise ValueError(text("setup.unknown_provider", provider=provider, known=", ".join(_BY_ID)))
+        if chosen not in offered:
+            raise ValueError(text("errors.chatgpt_hosted_unsupported"))
 
     if chosen.id == "chatgpt":
         values = _setup_chatgpt(prompt, model, relogin)

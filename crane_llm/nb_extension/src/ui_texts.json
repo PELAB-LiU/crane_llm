@@ -189,15 +189,20 @@
     "test_ok": "It works. Select a cell and click CRANE-LLM, or use %%crane_llm.",
     "test_failed": "The test request failed:\n{error}",
     "chatgpt": {
-      "warning": "Experimental: this signs in with your ChatGPT account the way the Codex CLI does. It uses the models and usage limits of your ChatGPT plan instead of an API bill. The backend is not a public API, so OpenAI may change or block it at any time.",
+      "warning": "Experimental. \"Continue with ChatGPT\" lets CRANE-LLM use your ChatGPT plan instead of an API key, through OpenAI's sign-in for open-source tools. Requests count against your plan's usage limits (on Plus, the five-hour limit is shared with every other app using it; see https://chatgpt.com/settings/usage). CRANE-LLM gets no access to your ChatGPT conversations. You can disconnect it at any time in ChatGPT's settings.",
       "already_signed_in": "Already signed in as {account}. Sign in again?",
       "signed_in": "Signed in as {account}.",
-      "device_instructions": "To sign in:\n\n  1. Open {url} in your browser and log in to ChatGPT.\n  2. Enter this code: {code}\n\nWaiting for you to finish (up to 15 minutes; interrupt the kernel to cancel)...",
-      "device_code_failed": "Could not start the ChatGPT sign-in (HTTP {status}). Try again in a minute.",
-      "poll_failed": "The ChatGPT sign-in failed while waiting for approval (HTTP {status}).",
-      "login_timeout": "The ChatGPT sign-in was not completed in time. Run crane_llm.setup(\"chatgpt\") again.",
-      "bad_token_response": "The ChatGPT sign-in returned an unexpected answer (HTTP {status}). Run crane_llm.setup(\"chatgpt\") again.",
-      "refresh_failed": "Could not renew the ChatGPT session (HTTP {status}). Try again in a minute."
+      "browser_instructions": "Continue with ChatGPT: a browser tab should open. If it does not, open this link on this computer:\n\n  {url}\n\nThe first time, ChatGPT asks you to approve CRANE-LLM for your account.\nWaiting for you to finish (up to 10 minutes; interrupt the kernel to cancel)...",
+      "browser_done": "CRANE-LLM is signed in. You can close this tab and return to the notebook.",
+      "port_busy": "Port {port} on 127.0.0.1 is in use, and the first ChatGPT sign-in has to receive the browser's answer there. Close what uses it (often another tool's sign-in) and run crane_llm.setup(\"chatgpt\") again.",
+      "login_timeout": "The ChatGPT sign-in was not completed in time. Run crane_llm.setup(\"chatgpt\") again. If the browser could not reach http://127.0.0.1, the kernel runs on another machine: see the user guide for an SSH tunnel.",
+      "bad_callback": "The ChatGPT sign-in returned an answer that does not match this attempt, so it was ignored. Run crane_llm.setup(\"chatgpt\") again.",
+      "access_denied": "The ChatGPT sign-in was cancelled in the browser. Nothing was saved.",
+      "authorize_failed": "ChatGPT refused the sign-in: {error}",
+      "exchange_failed": "The ChatGPT sign-in could not be completed (HTTP {status}). Run crane_llm.setup(\"chatgpt\") again.",
+      "bad_id_token": "The ChatGPT sign-in returned an identity token that failed its checks ({problems}), so it was not used.",
+      "plan_not_granted": "You signed in, but using your ChatGPT plan was not allowed for CRANE-LLM, so the LLM cannot be asked this way. Run crane_llm.setup(\"chatgpt\") again and allow plan usage, or choose an API key with crane_llm.setup().",
+      "refresh_failed": "Could not renew the ChatGPT session (HTTP {status}). Try again in a minute; you stay signed in."
     }
   },
   "errors": {
@@ -228,7 +233,13 @@
     "missing_key_colab": "No API key found, so the LLM was not asked. On Colab, store it as a secret:\n\n  1. Click the key icon in the left sidebar (Secrets).\n  2. Add a secret named CRANE_LLM_API_KEY with your key as the value.\n  3. Switch on 'Notebook access' for it.\n\nThen run the %%crane_llm cell again; no restart is needed.\n\nTo use the built-in checker only, which needs no key, write %%crane_llm --no-llm instead.",
     "missing_key": "No API key found, so the LLM was not asked. Set up a model, then retry.\n\nIn any notebook cell, saved to {path} for future sessions:\n         import crane_llm\n         crane_llm.setup()\n\nIt lists the supported providers (OpenAI, a ChatGPT subscription, OpenRouter,\nGemini, Groq, a local Ollama server, or any OpenAI-compatible endpoint) and\nasks only what the one you pick needs.\n\nA key can also come from an environment variable, or a .env file in the\ndirectory you started Jupyter from:\n         CRANE_LLM_API_KEY=sk-...\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic.",
     "key_rejected": "The API key was rejected by {endpoint}: {reason}\n\nCheck that the key is correct and belongs to that provider. To enter it again,\nor to pick another provider, run in any cell:\n         import crane_llm\n         crane_llm.setup()\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic.",
-    "chatgpt_not_logged_in": "CRANE-LLM is set up to use a ChatGPT subscription, but you are not signed in, so the LLM was not asked. Sign in from any notebook cell:\n         import crane_llm\n         crane_llm.setup(\"chatgpt\")\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic.",
-    "chatgpt_session_expired": "The ChatGPT session has expired or was signed out elsewhere, so the LLM was not asked. Sign in again from any notebook cell:\n         import crane_llm\n         crane_llm.setup(\"chatgpt\", relogin=True)\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic."
+    "chatgpt_not_logged_in": "CRANE-LLM is set up to use your ChatGPT plan, but you are not signed in, so the LLM was not asked. Sign in from any notebook cell:\n         import crane_llm\n         crane_llm.setup(\"chatgpt\")\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic.",
+    "chatgpt_session_expired": "The ChatGPT session has expired, or CRANE-LLM was disconnected in ChatGPT's settings, so the LLM was not asked. Sign in again from any notebook cell:\n         import crane_llm\n         crane_llm.setup(\"chatgpt\", relogin=True)\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic.",
+    "chatgpt_hosted_unsupported": "Continue with ChatGPT needs the browser and the kernel on the same computer, which Kaggle and Colab do not offer. Use an API key there, stored as a notebook secret named CRANE_LLM_API_KEY.",
+    "chatgpt_invalid_client": "ChatGPT no longer recognises this CRANE-LLM registration. Delete chatgpt_auth.json in ~/.crane_llm and run crane_llm.setup(\"chatgpt\") to register again.",
+    "chatgpt_usage_limit": "Your ChatGPT plan's usage limit for apps like CRANE-LLM has been reached, so the LLM could not answer. Check https://chatgpt.com/settings/usage, wait and try again, or switch to an API key with crane_llm.setup().\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic.",
+    "chatgpt_unavailable": "ChatGPT plan usage is temporarily unavailable. Try again in a few minutes.\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic.",
+    "chatgpt_not_eligible": "Your ChatGPT account or workspace cannot use its plan in other apps, so the LLM was not asked. Use an API key instead: crane_llm.setup().\n\nTo use the built-in checker only, which needs no key, switch off \"Use the LLM\" in\nJupyterLab, or write %%crane_llm --no-llm with the cell magic.",
+    "chatgpt_request_failed": "The request paid by your ChatGPT plan failed ({code}): {detail}"
   }
 }

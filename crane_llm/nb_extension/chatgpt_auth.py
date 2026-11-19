@@ -1,132 +1,217 @@
-"""Sign in with a ChatGPT subscription (Plus, Pro, Team) instead of an API key.
+"""Sign in with ChatGPT: use a ChatGPT plan (Plus, Pro, Business) instead of an API key.
 
-EXPERIMENTAL. This uses the same OAuth client and backend as OpenAI's Codex
-CLI, the way other third-party agents (e.g. Hermes Agent) do. That backend is
-not a documented public API: OpenAI can change or restrict it at any time, the
-models are those of your ChatGPT plan, and usage counts against that plan's
-limits rather than an API bill.
+EXPERIMENTAL. Follows OpenAI's documented flow for open-source, locally hosted
+tools ("Sign in with ChatGPT", token sharing for open source):
+https://developers.openai.com/siwc/token-sharing-open-source/sign-in
 
 How it works:
 
-1. ``login()`` runs OpenAI's device-code flow: it prints a URL and a one-time
-   code, the user approves it in a browser, and the code is exchanged for an
-   access token and a refresh token.
-2. The tokens are stored in ``chatgpt_auth.json`` next to the configuration
-   file (``~/.crane_llm/`` by default), owner-readable only. They are kept
-   apart from ``~/.codex/auth.json`` on purpose: every refresh rotates the
-   refresh token, so two programs sharing one session would sign each other
-   out.
-3. ``access_token()`` returns a valid token, refreshing it shortly before it
-   expires.
-4. Requests go to ``BASE_URL`` with the Responses API, plus the account
-   headers built by ``request_headers()``.
+1. **Registration.** The first sign-in registers CRANE-LLM as its own OAuth
+   client for the user's account: the authorize request carries
+   ``client_id=dynamic_agent_client``, the agent name and this machine's host
+   ID, and the callback returns the issued client ID (``oaiapp_...``). That ID
+   is saved and used for every later sign-in, token exchange and refresh.
+2. **Loopback redirect.** The browser is sent back to
+   ``http://127.0.0.1:<port>/auth/callback``, where ``login()`` listens. This
+   only works when the browser runs on the same machine as the kernel (local
+   JupyterLab), or reaches it through an SSH tunnel. It cannot work on
+   Kaggle or Colab, and ``login()`` refuses there.
+3. **Tokens.** Access tokens last an hour and are refreshed shortly before
+   they expire; each refresh rotates the refresh token. Everything is stored
+   in ``chatgpt_auth.json`` beside the configuration file (``~/.crane_llm/``),
+   owner-readable only, written atomically, and refreshed under a file lock.
+4. **Requests** go to the public API, ``https://api.openai.com/v1/responses``
+   and ``/v1/models``, with the access token as the bearer token. Nothing
+   calls ChatGPT's ``backend-api``.
+
+Usage is charged to the user's ChatGPT plan. For Plus the five-hour limit is
+shared with every other app using the plan; see https://chatgpt.com/settings/usage.
 """
 
 from __future__ import annotations
 
 import base64
+import contextlib
+import hashlib
 import json
 import os
+import secrets
 import stat
+import threading
 import time
+import uuid
 from datetime import datetime, timezone
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, Iterator, List, Optional
+from urllib.parse import parse_qs, urlencode, urlparse
 
 from .texts import text
 
 
 ISSUER = "https://auth.openai.com"
-# The public OAuth client of OpenAI's Codex CLI. There is no other client a
-# third party can use for ChatGPT sign-in.
-CLIENT_ID = "app_EMoamEEZ73f0CkXaXp7hrann"
-TOKEN_URL = f"{ISSUER}/oauth/token"
-DEVICE_CODE_URL = f"{ISSUER}/api/accounts/deviceauth/usercode"
-DEVICE_POLL_URL = f"{ISSUER}/api/accounts/deviceauth/token"
-DEVICE_VERIFY_URL = f"{ISSUER}/codex/device"
-DEVICE_REDIRECT_URI = f"{ISSUER}/deviceauth/callback"
+AUTHORIZE_URL = f"{ISSUER}/api/accounts/authorize"
+TOKEN_URL = f"{ISSUER}/api/accounts/oauth/token"
+DISCOVERY_URL = f"{ISSUER}/.well-known/openid-configuration"
 
-BASE_URL = "https://chatgpt.com/backend-api/codex"
+# Only for the first, registering authorize request. Never stored, and never
+# used for the token exchange or a refresh.
+REGISTRATION_CLIENT_ID = "dynamic_agent_client"
+AGENT_NAME = "CRANE-LLM"
+
+PLAN_SCOPE = "chatgpt.tokens.use.direct"
+SCOPES = f"openid profile email offline_access resource.invoke {PLAN_SCOPE}"
+RESOURCE = "https://api.openai.com/v1"
+
+BASE_URL = "https://api.openai.com/v1"
 MODELS_URL = f"{BASE_URL}/models"
 
-# Identifies this client to the backend, which asks third-party harnesses to
-# name themselves rather than pose as the Codex CLI.
-ORIGINATOR = "crane-llm"
+CALLBACK_HOST = "127.0.0.1"  # the docs require this literal host, not "localhost"
+CALLBACK_PATH = "/auth/callback"
+# The registering sign-in must use this port; later sign-ins may use any free one.
+DEFAULT_CALLBACK_PORT = 1455
 
 AUTH_FILE_NAME = "chatgpt_auth.json"
+HOST_ID_FILE_NAME = "host_id"
 
-# Refresh this long before the access token expires.
 REFRESH_SKEW_SECONDS = 120
-# Give up waiting for the user to approve the device code after this long.
-LOGIN_TIMEOUT_SECONDS = 15 * 60
+LOGIN_TIMEOUT_SECONDS = 10 * 60
 
-# Offered when the model catalogue cannot be fetched. Only slugs that the ChatGPT
-# backend accepts; it rejects the public API's "-pro" variants.
+# Refresh errors after which the stored tokens can never work again.
+_TERMINAL_REFRESH_ERRORS = {
+    "invalid_grant",
+    "invalid_refresh_token",
+    "token_expired",
+    "refresh_token_expired",
+    "refresh_token_invalidated",
+    "refresh_token_reused",
+}
+
+# Offered when the model list cannot be fetched.
 FALLBACK_MODELS = ["gpt-5.5", "gpt-5.4", "gpt-5.4-mini"]
 DEFAULT_MODEL = FALLBACK_MODELS[0]
 
 
-class ChatGPTAuthError(RuntimeError):
+class ChatGPTError(RuntimeError):
+    """A ChatGPT plan request or sign-in failed. Worded for the user."""
+
+
+class ChatGPTAuthError(ChatGPTError):
     """Signing in, or keeping the session alive, failed."""
 
 
 # ---------------------------------------------------------------------------
-# Token store
+# Storage
+
+
+def _config_dir() -> Path:
+    # Following settings.config_path() means CRANE_LLM_CONFIG moves these too,
+    # which keeps the tests away from the developer's real session.
+    from .settings import config_path
+
+    return config_path().parent
 
 
 def auth_path() -> Path:
-    """Where the tokens are kept: beside the configuration file.
+    return _config_dir() / AUTH_FILE_NAME
 
-    Following ``settings.config_path()`` means ``CRANE_LLM_CONFIG`` moves both,
-    which is what keeps the tests away from the developer's real session.
+
+def _write_private(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + ".tmp")
+    fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, stat.S_IRUSR | stat.S_IWUSR)
+    with os.fdopen(fd, "w", encoding="utf-8") as handle:
+        handle.write(content)
+    os.replace(tmp, path)
+
+
+def host_id() -> str:
+    """This machine's ``ext_agent_host_id``: a UUID made once and kept.
+
+    Opaque and not derived from anything about the user, as the docs require.
     """
 
-    from .settings import config_path
+    path = _config_dir() / HOST_ID_FILE_NAME
+    try:
+        value = path.read_text(encoding="utf-8").strip()
+        if value.startswith("urn:uuid:"):
+            return value
+    except OSError:
+        pass
+    value = f"urn:uuid:{uuid.uuid4()}"
+    _write_private(path, value + "\n")
+    return value
 
-    return config_path().parent / AUTH_FILE_NAME
 
+def load_record() -> Dict[str, Any]:
+    """Everything stored about the ChatGPT sign-in, or ``{}``.
 
-def load_tokens() -> Optional[Dict[str, Any]]:
-    """The stored tokens, or ``None`` when not signed in."""
+    Survives sign-out without its tokens, so the issued client ID is reused
+    for the next sign-in instead of registering the tool again.
+    """
 
     try:
         data = json.loads(auth_path().read_text(encoding="utf-8"))
     except (OSError, ValueError):
-        return None
-    if not isinstance(data, dict) or not data.get("access_token") or not data.get("refresh_token"):
-        return None
-    return data
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def load_tokens() -> Optional[Dict[str, Any]]:
+    """The stored record if it holds a usable session, else ``None``."""
+
+    record = load_record()
+    if record.get("client_id") and record.get("access_token") and record.get("refresh_token"):
+        return record
+    return None
 
 
 def is_logged_in() -> bool:
     return load_tokens() is not None
 
 
-def save_tokens(tokens: Dict[str, Any]) -> Path:
+def save_record(record: Dict[str, Any]) -> Path:
     path = auth_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps(tokens, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    try:
-        tmp.chmod(stat.S_IRUSR | stat.S_IWUSR)
-    except OSError:
-        pass
-    os.replace(tmp, path)
+    _write_private(path, json.dumps(record, indent=2, sort_keys=True) + "\n")
     return path
 
 
-def logout() -> bool:
-    """Forget the stored session. True if there was one."""
+def _forget_tokens(record: Dict[str, Any]) -> None:
+    """Drop the tokens but keep the registration, for the next sign-in."""
 
-    try:
-        auth_path().unlink()
-        return True
-    except FileNotFoundError:
-        return False
+    kept = {k: v for k, v in record.items() if k in ("client_id", "ext_agent_host_id", "email", "subject")}
+    save_record(kept)
+
+
+_THREAD_LOCK = threading.Lock()
+
+
+@contextlib.contextmanager
+def _refresh_lock() -> Iterator[None]:
+    """Serialise refreshes: refresh tokens rotate, so two at once sign out one.
+
+    A file lock covers several kernels on one machine; where ``fcntl`` is
+    missing (Windows) the in-process lock still covers one kernel.
+    """
+
+    with _THREAD_LOCK:
+        path = auth_path().with_name(AUTH_FILE_NAME + ".lock")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            import fcntl
+        except ImportError:
+            yield
+            return
+        with open(path, "a") as handle:
+            fcntl.flock(handle, fcntl.LOCK_EX)
+            try:
+                yield
+            finally:
+                fcntl.flock(handle, fcntl.LOCK_UN)
 
 
 # ---------------------------------------------------------------------------
-# JWT helpers. The token is only decoded, never verified: the backend does that.
+# Tokens
 
 
 def _jwt_claims(token: str) -> Dict[str, Any]:
@@ -139,47 +224,43 @@ def _jwt_claims(token: str) -> Dict[str, Any]:
         return {}
 
 
-def _is_expiring(token: str, skew_seconds: int = REFRESH_SKEW_SECONDS) -> bool:
-    exp = _jwt_claims(token).get("exp")
-    if not isinstance(exp, (int, float)):
-        # No expiry to go by: assume it is still valid and let a 401 say otherwise.
-        return False
-    return exp - skew_seconds <= time.time()
+def _check_id_token(id_token: str, client_id: str, nonce: Optional[str]) -> Dict[str, Any]:
+    """The ID token's claims, after checking issuer, audience, expiry and nonce.
+
+    The token comes straight from the token endpoint over TLS, which OpenID
+    Connect Core (3.1.3.7, rule 6) accepts in place of checking its signature.
+    """
+
+    claims = _jwt_claims(id_token)
+    audience = claims.get("aud")
+    audiences = audience if isinstance(audience, list) else [audience]
+    problems = []
+    if claims.get("iss") != ISSUER:
+        problems.append("issuer")
+    if client_id not in audiences:
+        problems.append("audience")
+    exp = claims.get("exp")
+    if not isinstance(exp, (int, float)) or exp < time.time() - 60:
+        problems.append("expiry")
+    if nonce is not None and claims.get("nonce") != nonce:
+        problems.append("nonce")
+    if problems:
+        raise ChatGPTAuthError(text("setup.chatgpt.bad_id_token", problems=", ".join(problems)))
+    return claims
 
 
-def account_email(token: str) -> Optional[str]:
-    claims = _jwt_claims(token)
+def _email(claims: Dict[str, Any]) -> Optional[str]:
+    email = claims.get("email")
+    if isinstance(email, str):
+        return email
     profile = claims.get("https://api.openai.com/profile")
     if isinstance(profile, dict) and isinstance(profile.get("email"), str):
         return profile["email"]
-    email = claims.get("email")
-    return email if isinstance(email, str) else None
+    return None
 
 
-def request_headers(token: str) -> Dict[str, str]:
-    """Headers the backend needs besides the bearer token.
-
-    ``ChatGPT-Account-ID`` selects the workspace; without it the backend
-    answers 401 or an empty model list. Residency-enforced workspaces also
-    need their region.
-    """
-
-    from .. import __version__
-
-    headers = {"originator": ORIGINATOR, "User-Agent": f"crane-llm/{__version__}"}
-    auth = _jwt_claims(token).get("https://api.openai.com/auth")
-    if isinstance(auth, dict):
-        account = auth.get("chatgpt_account_id")
-        if isinstance(account, str) and account:
-            headers["ChatGPT-Account-ID"] = account
-        residency = auth.get("chatgpt_data_residency") or auth.get("chatgpt_compute_residency")
-        if isinstance(residency, str) and residency.strip():
-            headers["x-openai-internal-codex-residency"] = residency.strip()
-    return headers
-
-
-# ---------------------------------------------------------------------------
-# HTTP
+def account_email() -> Optional[str]:
+    return load_record().get("email")
 
 
 def _http():
@@ -193,154 +274,333 @@ def _now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def _token_response(response) -> Dict[str, Any]:
+def _error_code(response) -> str:
     try:
-        data = response.json()
-    except ValueError:
-        data = None
-    if not isinstance(data, dict) or not data.get("access_token"):
-        raise ChatGPTAuthError(text("setup.chatgpt.bad_token_response", status=response.status_code))
-    return data
+        body = response.json()
+    except Exception:
+        return ""
+    if isinstance(body, dict):
+        error = body.get("error")
+        if isinstance(error, dict):
+            return str(error.get("code") or error.get("type") or "")
+        return str(error or body.get("code") or "")
+    return ""
 
 
-def refresh(tokens: Dict[str, Any]) -> Dict[str, Any]:
-    """Exchange the refresh token for a new access token and store the result."""
+def _store_token_response(record: Dict[str, Any], data: Dict[str, Any]) -> Dict[str, Any]:
+    updated = dict(record)
+    updated["access_token"] = data["access_token"]
+    if data.get("refresh_token"):
+        updated["refresh_token"] = data["refresh_token"]
+    if data.get("id_token"):
+        updated["id_token"] = data["id_token"]
+    updated["token_type"] = data.get("token_type", "Bearer")
+    expires_in = data.get("expires_in")
+    if isinstance(expires_in, (int, float)):
+        updated["expires_at"] = int(time.time() + expires_in)
+    if data.get("scope"):
+        updated["scopes"] = str(data["scope"]).split()
+    updated["saved_at"] = _now()
+    save_record(updated)
+    return updated
+
+
+def _expiring(record: Dict[str, Any]) -> bool:
+    expires_at = record.get("expires_at")
+    if not isinstance(expires_at, (int, float)):
+        expires_at = _jwt_claims(record.get("access_token", "")).get("exp")
+    if not isinstance(expires_at, (int, float)):
+        return False
+    return expires_at - REFRESH_SKEW_SECONDS <= time.time()
+
+
+def refresh(record: Dict[str, Any]) -> Dict[str, Any]:
+    """New access token from the refresh token, stored before it is returned."""
 
     with _http() as client:
         response = client.post(
             TOKEN_URL,
             data={
                 "grant_type": "refresh_token",
-                "refresh_token": tokens["refresh_token"],
-                "client_id": CLIENT_ID,
+                "client_id": record["client_id"],
+                "refresh_token": record["refresh_token"],
+                "resource": RESOURCE,
             },
         )
-    if response.status_code in (400, 401, 403):
-        # The refresh token was revoked or already rotated by another client.
-        raise ChatGPTAuthError(text("errors.chatgpt_session_expired"))
-    if response.status_code != 200:
+    if response.status_code == 200:
+        try:
+            data = response.json()
+        except ValueError:
+            data = None
+        if isinstance(data, dict) and data.get("access_token"):
+            return _store_token_response(record, data)
         raise ChatGPTAuthError(text("setup.chatgpt.refresh_failed", status=response.status_code))
 
-    data = _token_response(response)
-    updated = dict(tokens)
-    updated["access_token"] = data["access_token"]
-    if data.get("refresh_token"):
-        updated["refresh_token"] = data["refresh_token"]
-    if data.get("id_token"):
-        updated["id_token"] = data["id_token"]
-    updated["last_refresh"] = _now()
-    save_tokens(updated)
-    return updated
+    code = _error_code(response)
+    if code in _TERMINAL_REFRESH_ERRORS:
+        _forget_tokens(record)
+        raise ChatGPTAuthError(text("errors.chatgpt_session_expired"))
+    if code == "invalid_client":
+        raise ChatGPTAuthError(text("errors.chatgpt_invalid_client"))
+    # Anything else may be passing: keep the tokens and let the user retry.
+    raise ChatGPTAuthError(text("setup.chatgpt.refresh_failed", status=response.status_code))
 
 
 def access_token() -> str:
-    """A valid access token, refreshed if it is about to expire."""
+    """A valid access token, refreshed first if it is about to expire."""
 
-    tokens = load_tokens()
-    if tokens is None:
+    record = load_tokens()
+    if record is None:
         raise ChatGPTAuthError(text("errors.chatgpt_not_logged_in"))
-    if _is_expiring(tokens["access_token"]):
-        tokens = refresh(tokens)
-    return tokens["access_token"]
+    if not _expiring(record):
+        return record["access_token"]
+    with _refresh_lock():
+        # Another kernel may have refreshed while this one waited.
+        record = load_tokens()
+        if record is None:
+            raise ChatGPTAuthError(text("errors.chatgpt_not_logged_in"))
+        if _expiring(record):
+            record = refresh(record)
+    return record["access_token"]
+
+
+# ---------------------------------------------------------------------------
+# Sign-in
+
+
+def _pkce_pair() -> tuple:
+    verifier = secrets.token_urlsafe(64)
+    challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).decode().rstrip("=")
+    return verifier, challenge
+
+
+class _CallbackServer:
+    """A one-shot HTTP listener on 127.0.0.1 for the OAuth redirect."""
+
+    def __init__(self, port: int):
+        result: Dict[str, Any] = {}
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):  # noqa: N802 (http.server naming)
+                parsed = urlparse(self.path)
+                if parsed.path != CALLBACK_PATH:
+                    self.send_response(404)
+                    self.end_headers()
+                    return
+                result.update({k: v[0] for k, v in parse_qs(parsed.query).items()})
+                body = text("setup.chatgpt.browser_done").encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "text/plain; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, *args):  # keep the notebook output clean
+                pass
+
+        self.result = result
+        self.server = HTTPServer((CALLBACK_HOST, port), Handler)
+        self.server.timeout = 1.0
+        self.port = self.server.server_address[1]
+
+    @property
+    def redirect_uri(self) -> str:
+        return f"http://{CALLBACK_HOST}:{self.port}{CALLBACK_PATH}"
+
+    def wait(self, timeout_seconds: float) -> Dict[str, Any]:
+        deadline = time.monotonic() + timeout_seconds
+        try:
+            while not self.result and time.monotonic() < deadline:
+                self.server.handle_request()
+        finally:
+            self.server.server_close()
+        return self.result
+
+
+def _open_listener(registering: bool) -> _CallbackServer:
+    try:
+        return _CallbackServer(DEFAULT_CALLBACK_PORT)
+    except OSError:
+        if registering:
+            raise ChatGPTAuthError(text("setup.chatgpt.port_busy", port=DEFAULT_CALLBACK_PORT))
+    # Only the port may change after registration.
+    return _CallbackServer(0)
+
+
+def _open_browser(url: str) -> None:
+    try:
+        import webbrowser
+
+        webbrowser.open(url)
+    except Exception:
+        pass
 
 
 def login(
     output: Callable[[str], None] = print,
-    sleep: Callable[[float], None] = time.sleep,
+    open_browser: Callable[[str], None] = _open_browser,
     timeout_seconds: float = LOGIN_TIMEOUT_SECONDS,
+    listener: Optional[Callable[[bool], Any]] = None,
 ) -> Dict[str, Any]:
-    """Run the device-code sign-in and store the tokens.
+    """Sign in through the browser and store the session.
 
-    ``output`` and ``sleep`` are parameters so the flow can be tested without
-    a terminal or a real wait.
+    The first time, this also registers CRANE-LLM for the account. Later
+    sign-ins reuse the issued client ID. ``open_browser`` and ``listener`` are
+    parameters so the flow can be tested without a browser or a socket.
     """
 
+    from .settings import hosted_platform
+
+    if hosted_platform():
+        raise ChatGPTAuthError(text("errors.chatgpt_hosted_unsupported"))
+
+    record = load_record()
+    client_id = record.get("client_id")
+    registering = not client_id
+
+    server = (listener or _open_listener)(registering)
+    verifier, challenge = _pkce_pair()
+    state = secrets.token_urlsafe(24)
+    nonce = secrets.token_urlsafe(24)
+    ext_host_id = record.get("ext_agent_host_id") or host_id()
+
+    params = {
+        "client_id": REGISTRATION_CLIENT_ID if registering else client_id,
+        "ext_agent_host_id": ext_host_id,
+        "response_type": "code",
+        "redirect_uri": server.redirect_uri,
+        "scope": SCOPES,
+        "resource": RESOURCE,
+        "state": state,
+        "nonce": nonce,
+        "code_challenge_method": "S256",
+        "code_challenge": challenge,
+    }
+    if registering:
+        params["agent_name_hint"] = AGENT_NAME
+    else:
+        if record.get("id_token"):
+            params["id_token_hint"] = record["id_token"]
+        if record.get("email"):
+            params["login_hint"] = record["email"]
+    url = f"{AUTHORIZE_URL}?{urlencode(params)}"
+
+    output(text("setup.chatgpt.browser_instructions", url=url))
+    open_browser(url)
+
+    callback = server.wait(timeout_seconds)
+    if not callback:
+        raise ChatGPTAuthError(text("setup.chatgpt.login_timeout"))
+    if not secrets.compare_digest(str(callback.get("state", "")), state):
+        raise ChatGPTAuthError(text("setup.chatgpt.bad_callback"))
+    if callback.get("error"):
+        if callback["error"] == "access_denied":
+            raise ChatGPTAuthError(text("setup.chatgpt.access_denied"))
+        raise ChatGPTAuthError(
+            text("setup.chatgpt.authorize_failed", error=callback.get("error_description") or callback["error"])
+        )
+    code = callback.get("code")
+    if registering:
+        client_id = callback.get("client_id")
+    if not code or not client_id:
+        raise ChatGPTAuthError(text("setup.chatgpt.bad_callback"))
+
     with _http() as client:
-        response = client.post(DEVICE_CODE_URL, json={"client_id": CLIENT_ID})
-        if response.status_code != 200:
-            raise ChatGPTAuthError(text("setup.chatgpt.device_code_failed", status=response.status_code))
-        device = response.json()
-        user_code = device.get("user_code")
-        device_auth_id = device.get("device_auth_id")
-        if not user_code or not device_auth_id:
-            raise ChatGPTAuthError(text("setup.chatgpt.device_code_failed", status=response.status_code))
-        try:
-            interval = max(3, int(device.get("interval", 5)))
-        except (TypeError, ValueError):
-            interval = 5
-
-        output(text("setup.chatgpt.device_instructions", url=DEVICE_VERIFY_URL, code=user_code))
-
-        # Poll until the user approves. 403/404 mean "not yet".
-        deadline = time.monotonic() + timeout_seconds
-        code_response: Optional[Dict[str, Any]] = None
-        while time.monotonic() < deadline:
-            sleep(interval)
-            poll = client.post(
-                DEVICE_POLL_URL, json={"device_auth_id": device_auth_id, "user_code": user_code}
-            )
-            if poll.status_code == 200:
-                code_response = poll.json()
-                break
-            if poll.status_code not in (403, 404):
-                raise ChatGPTAuthError(text("setup.chatgpt.poll_failed", status=poll.status_code))
-        if code_response is None:
-            raise ChatGPTAuthError(text("setup.chatgpt.login_timeout"))
-
-        authorization_code = code_response.get("authorization_code")
-        code_verifier = code_response.get("code_verifier")
-        if not authorization_code or not code_verifier:
-            raise ChatGPTAuthError(text("setup.chatgpt.bad_token_response", status=200))
-
-        exchange = client.post(
+        response = client.post(
             TOKEN_URL,
             data={
                 "grant_type": "authorization_code",
-                "code": authorization_code,
-                "redirect_uri": DEVICE_REDIRECT_URI,
-                "client_id": CLIENT_ID,
-                "code_verifier": code_verifier,
+                "client_id": client_id,
+                "code": code,
+                "code_verifier": verifier,
+                "redirect_uri": server.redirect_uri,
+                "resource": RESOURCE,
             },
         )
-        if exchange.status_code != 200:
-            raise ChatGPTAuthError(text("setup.chatgpt.bad_token_response", status=exchange.status_code))
-        data = _token_response(exchange)
-        if not data.get("refresh_token"):
-            raise ChatGPTAuthError(text("setup.chatgpt.bad_token_response", status=200))
+    try:
+        data = response.json()
+    except ValueError:
+        data = None
+    if response.status_code != 200 or not isinstance(data, dict) or not data.get("access_token"):
+        if _error_code(response) == "invalid_client":
+            raise ChatGPTAuthError(text("errors.chatgpt_invalid_client"))
+        raise ChatGPTAuthError(text("setup.chatgpt.exchange_failed", status=response.status_code))
 
-    tokens = {
-        "access_token": data["access_token"],
-        "refresh_token": data["refresh_token"],
-        "last_refresh": _now(),
+    granted = str(data.get("scope") or callback.get("scope") or "").split()
+    claims = _check_id_token(data.get("id_token", ""), client_id, nonce)
+
+    new_record = {
+        "client_id": client_id,
+        "ext_agent_host_id": ext_host_id,
+        "issuer": ISSUER,
+        "subject": claims.get("sub"),
+        "email": _email(claims),
     }
-    if data.get("id_token"):
-        tokens["id_token"] = data["id_token"]
-    save_tokens(tokens)
-    return tokens
+    if not data.get("refresh_token") or PLAN_SCOPE not in granted:
+        # Signed in, but plan usage was not granted. Keep the registration so
+        # the next attempt reuses it.
+        save_record({k: v for k, v in new_record.items() if v})
+        raise ChatGPTAuthError(text("setup.chatgpt.plan_not_granted"))
+    return _store_token_response(new_record, data)
+
+
+def logout() -> bool:
+    """Revoke the refresh token and forget the tokens. True if signed in.
+
+    The registration (issued client ID, host ID) is kept for the next
+    sign-in. A failed revocation does not stop the local sign-out.
+    """
+
+    record = load_tokens()
+    if record is None:
+        return False
+    try:
+        with _http() as client:
+            endpoint = client.get(DISCOVERY_URL).json().get("revocation_endpoint")
+            if endpoint:
+                client.post(
+                    endpoint,
+                    data={
+                        "token": record["refresh_token"],
+                        "token_type_hint": "refresh_token",
+                        "client_id": record["client_id"],
+                    },
+                )
+    except Exception:
+        pass
+    _forget_tokens(record)
+    return True
+
+
+# ---------------------------------------------------------------------------
+# Models
 
 
 def fetch_models() -> Optional[List[str]]:
-    """The models this ChatGPT account may use, best first, or ``None``."""
+    """The models this ChatGPT plan may use, or ``None`` if not fetched.
+
+    The plan's ``/v1/models`` lists ``models`` entries with a ``slug`` and a
+    ``visibility``; only ``visibility == "list"`` ones are offered.
+    """
 
     try:
         token = access_token()
-        headers = {"Authorization": f"Bearer {token}", **request_headers(token)}
         with _http() as client:
-            # The catalogue is versioned by client; the high version asks for
-            # everything the account may use.
-            response = client.get(MODELS_URL, params={"client_version": "99.0.0"}, headers=headers)
-        entries = response.json().get("models") if response.status_code == 200 else None
+            response = client.get(MODELS_URL, headers={"Authorization": f"Bearer {token}"})
+        body = response.json() if response.status_code == 200 else None
     except Exception:
-        entries = None
-    if not isinstance(entries, list):
+        return None
+    if not isinstance(body, dict):
         return None
 
-    ranked = []
-    for entry in entries:
-        if not isinstance(entry, dict) or not isinstance(entry.get("slug"), str):
-            continue
-        if str(entry.get("visibility", "")).lower() in ("hide", "hidden"):
-            continue
-        priority = entry.get("priority")
-        ranked.append((priority if isinstance(priority, (int, float)) else 10_000, entry["slug"]))
-    return list(dict.fromkeys(slug for _, slug in sorted(ranked))) or None
+    if isinstance(body.get("models"), list):
+        slugs = [
+            m["slug"]
+            for m in body["models"]
+            if isinstance(m, dict) and isinstance(m.get("slug"), str) and m.get("visibility", "list") == "list"
+        ]
+    elif isinstance(body.get("data"), list):
+        slugs = [m["id"] for m in body["data"] if isinstance(m, dict) and isinstance(m.get("id"), str)]
+    else:
+        return None
+    return list(dict.fromkeys(slugs)) or None

@@ -60,7 +60,7 @@ It lists the supported providers, asks only what the one you pick needs (an API 
 
 ```
   1. OpenAI (API key)
-  2. ChatGPT subscription: Plus, Pro or Team (sign in, experimental)
+  2. ChatGPT plan: Continue with ChatGPT (local JupyterLab only, experimental)
   3. OpenRouter (Claude, Gemini, GPT, DeepSeek, ...)
   4. Google Gemini
   5. Groq
@@ -79,7 +79,7 @@ Fetching the models of OpenRouter...
 Model [1]:
 ```
 
-The model list is fetched live from the provider with your key, so it shows exactly what you can use: the installed models for Ollama, your plan's models for a ChatGPT subscription. A few suggestions come first; a long list such as OpenRouter's can be searched by name. If the list cannot be fetched, the suggestions are shown and any name can still be typed. The default for OpenAI is `gpt-5`, the model of the paper's experiments.
+The model list is fetched live from the provider with your key, so it shows exactly what you can use: the installed models for Ollama, your plan's models for a ChatGPT sign-in. A few suggestions come first; a long list such as OpenRouter's can be searched by name. If the list cannot be fetched, the suggestions are shown and any name can still be typed. The default for OpenAI is `gpt-5`, the model of the paper's experiments.
 
 Any answer can be given in advance, so this asks nothing:
 
@@ -94,21 +94,27 @@ crane_llm.setup("ollama", base_url="http://localhost:11434/v1", model="qwen2.5-c
 - *Kaggle:* in the notebook editor, **Add-ons → Secrets → Add a new secret**. Tick the checkbox next to it in each notebook that should use it.
 - *Colab:* the key icon in the left sidebar, with **Notebook access** switched on.
 
-### ChatGPT subscription (experimental)
+### ChatGPT plan (experimental)
 
-Choosing **ChatGPT subscription** signs in with your ChatGPT account instead of an API key, the way OpenAI's Codex CLI does:
+Choosing **Continue with ChatGPT** lets CRANE-LLM use your ChatGPT plan (Plus, Pro, Business) instead of an API key, through OpenAI's documented [Sign in with ChatGPT for open-source tools](https://developers.openai.com/siwc/token-sharing-open-source/sign-in):
 
-1. `setup()` prints a URL (`https://auth.openai.com/codex/device`) and a one-time code.
-2. Open the URL, log in to ChatGPT and enter the code. The cell waits until you do.
-3. Pick a model from those your plan offers.
+1. `setup()` opens a browser tab at `auth.openai.com` (and prints the link in case it does not open).
+2. The first time, ChatGPT asks you to approve CRANE-LLM for your account. This registers CRANE-LLM as its own app; later sign-ins reuse that registration.
+3. The browser is sent back to `http://127.0.0.1:1455/auth/callback`, where the notebook kernel is listening, and you pick a model from those your plan offers.
 
-The session is stored in `~/.crane_llm/chatgpt_auth.json`, readable only by you, and renewed automatically. It is separate from the Codex CLI's own login, so neither signs the other out. `crane_llm.logout_chatgpt()` forgets it.
+Requests then go to the public OpenAI API (`api.openai.com/v1/responses`) with your plan's access token. The session is stored in `~/.crane_llm/chatgpt_auth.json`, readable only by you, and renewed automatically. `crane_llm.logout_chatgpt()` revokes it; you can also disconnect CRANE-LLM in ChatGPT's settings. CRANE-LLM gets no access to your ChatGPT conversations.
+
+**Local JupyterLab only.** The browser must reach `127.0.0.1` on the machine running the kernel, so this does not work on Kaggle or Colab, where `setup()` does not offer it. For JupyterLab on a remote server, forward the port while you sign in:
+
+```bash
+ssh -L 1455:127.0.0.1:1455 your-server
+```
 
 Keep in mind:
 
-- Requests count against your ChatGPT plan's usage limits, not an API bill.
-- This uses the backend behind Codex, which is not a public API. OpenAI can change or block it at any time; an API key is the dependable option.
+- Requests count against your plan's usage limits, not an API bill. On Plus the five-hour limit is shared with every other app using the plan; see <https://chatgpt.com/settings/usage>.
 - The models differ from those of the paper's experiments, so results are not directly comparable.
+- An API key remains the dependable option.
 
 ### Where settings are read from
 

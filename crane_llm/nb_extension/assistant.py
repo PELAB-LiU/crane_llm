@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional
 
 from . import settings as settings_module
-from .chatgpt_auth import ChatGPTAuthError
+from .chatgpt_auth import ChatGPTError
 from .checker import CheckFinding, run_checks
 from .llm_client import default_client
 from .prompt_builder import build_crane_prompt
@@ -76,7 +76,7 @@ def describe_error(exc: BaseException) -> str:
     """
 
     if isinstance(
-        exc, (PromptBuildingError, MissingApiKeyError, ApiKeyRejectedError, ChatGPTAuthError)
+        exc, (PromptBuildingError, MissingApiKeyError, ApiKeyRejectedError, ChatGPTError)
     ):
         return str(exc)
     return f"{type(exc).__name__}: {exc}"

@@ -1527,7 +1527,7 @@ def _scripted(answers):
     return answer
 
 
-def _fake_jwt(exp_offset=3600, account="acct-123", email="user@example.com"):
+def _fake_jwt(exp_offset=3600, aud="oaiapp_test", nonce=None, email="user@example.com"):
     import base64
     import json
     import time
@@ -1536,10 +1536,14 @@ def _fake_jwt(exp_offset=3600, account="acct-123", email="user@example.com"):
         return base64.urlsafe_b64encode(json.dumps(data).encode()).decode().rstrip("=")
 
     claims = {
+        "iss": "https://auth.openai.com",
+        "aud": aud,
+        "sub": "user-1",
+        "email": email,
         "exp": int(time.time()) + exp_offset,
-        "https://api.openai.com/auth": {"chatgpt_account_id": account},
-        "https://api.openai.com/profile": {"email": email},
     }
+    if nonce is not None:
+        claims["nonce"] = nonce
     return f"{part({'alg': 'none'})}.{part(claims)}.sig"
 
 
@@ -1689,52 +1693,201 @@ def test_setup_rejects_an_unknown_provider():
             raise AssertionError("expected an unknown provider to be refused")
 
 
-def test_chatgpt_device_login_stores_tokens():
-    """The device-code flow: request a code, wait out 403s, exchange the code."""
+class _FakeBrowser:
+    """Stands in for the browser and the 127.0.0.1 listener of the sign-in.
+
+    Records the authorize URL and answers the redirect the way ChatGPT would,
+    echoing the attempt's ``state``. ``callback`` adds or overrides fields.
+    """
+
+    def __init__(self, callback=None, port=1455):
+        self.callback = callback or {}
+        self.port = port
+        self.url = None
+        self.registering = None
+
+    @property
+    def params(self):
+        from urllib.parse import parse_qs, urlparse
+
+        return {k: v[0] for k, v in parse_qs(urlparse(self.url).query).items()}
+
+    @property
+    def redirect_uri(self):
+        return f"http://127.0.0.1:{self.port}/auth/callback"
+
+    def listener(self, registering):
+        self.registering = registering
+        return self
+
+    def open(self, url):
+        self.url = url
+
+    def wait(self, timeout_seconds):
+        answer = {"code": "auth-code", "state": self.params["state"]}
+        answer.update(self.callback)
+        return answer
+
+
+def _sign_in(browser, token_response, http_extra=None):
+    """Run ``login()`` against the fake browser and a scripted token endpoint."""
 
     from crane_llm.nb_extension import chatgpt_auth
 
-    token = _fake_jwt()
-    http = _FakeHttp({
-        chatgpt_auth.DEVICE_CODE_URL: [_FakeResponse(200, {"user_code": "ABCD-1234", "device_auth_id": "dev-1", "interval": 5})],
-        chatgpt_auth.DEVICE_POLL_URL: [
-            _FakeResponse(403),
-            _FakeResponse(200, {"authorization_code": "auth-code", "code_verifier": "verifier"}),
-        ],
-        chatgpt_auth.TOKEN_URL: [_FakeResponse(200, {"access_token": token, "refresh_token": "rt-1"})],
-    })
+    def respond(url, **kwargs):
+        http.posts.append((url, kwargs))
+        data = token_response(browser.params) if callable(token_response) else token_response
+        return _FakeResponse(200 if "access_token" in data else 400, data)
+
+    http = _FakeHttp(http_extra or {})
+    http.post = respond
+    original = chatgpt_auth._http
+    chatgpt_auth._http = http
+    try:
+        chatgpt_auth.login(output=lambda _: None, open_browser=browser.open, listener=browser.listener)
+    finally:
+        chatgpt_auth._http = original
+    return http
+
+
+def _granted(client_id="oaiapp_test"):
+    def tokens(params):
+        return {
+            "access_token": _fake_jwt(aud="https://api.openai.com/v1"),
+            "refresh_token": "rt-1",
+            "id_token": _fake_jwt(aud=client_id, nonce=params["nonce"]),
+            "token_type": "Bearer",
+            "expires_in": 3600,
+            "scope": "openid profile email offline_access resource.invoke chatgpt.tokens.use.direct",
+        }
+
+    return tokens
+
+
+def test_chatgpt_first_sign_in_registers_crane_llm():
+    """The documented open-source flow: register via dynamic_agent_client, keep the issued ID."""
+
+    from crane_llm.nb_extension import chatgpt_auth
 
     with _IsolatedSettings():
-        original = chatgpt_auth._http
-        chatgpt_auth._http = http
-        try:
-            shown, waits = [], []
-            chatgpt_auth.login(output=shown.append, sleep=waits.append)
-        finally:
-            chatgpt_auth._http = original
+        browser = _FakeBrowser(callback={"client_id": "oaiapp_test"})
+        http = _sign_in(browser, _granted())
 
-        assert "ABCD-1234" in shown[0] and chatgpt_auth.DEVICE_VERIFY_URL in shown[0]
-        assert waits == [5, 5]
-        exchange = http.posts[-1][1]["data"]
-        assert exchange["grant_type"] == "authorization_code"
-        assert exchange["code_verifier"] == "verifier"
-        assert exchange["client_id"] == chatgpt_auth.CLIENT_ID
-        assert chatgpt_auth.load_tokens()["refresh_token"] == "rt-1"
-        assert chatgpt_auth.access_token() == token
-        # Kept beside the config file, never in ~/.codex.
+        params = browser.params
+        assert browser.url.startswith("https://auth.openai.com/api/accounts/authorize?")
+        assert params["client_id"] == "dynamic_agent_client"
+        assert params["agent_name_hint"] == "CRANE-LLM"
+        assert params["ext_agent_host_id"].startswith("urn:uuid:")
+        assert params["redirect_uri"] == "http://127.0.0.1:1455/auth/callback"
+        assert params["resource"] == "https://api.openai.com/v1"
+        assert params["code_challenge_method"] == "S256"
+        assert "chatgpt.tokens.use.direct" in params["scope"].split()
+        assert browser.registering is True
+
+        url, kwargs = http.posts[0]
+        assert url == "https://auth.openai.com/api/accounts/oauth/token"
+        sent = kwargs["data"]
+        # The exchange uses the issued ID, never dynamic_agent_client.
+        assert sent["client_id"] == "oaiapp_test"
+        assert sent["redirect_uri"] == params["redirect_uri"]
+        assert sent["resource"] == "https://api.openai.com/v1"
+        assert len(sent["code_verifier"]) >= 43
+
+        record = chatgpt_auth.load_tokens()
+        assert record["client_id"] == "oaiapp_test"
+        assert record["ext_agent_host_id"] == params["ext_agent_host_id"]
+        assert record["email"] == "user@example.com"
         assert ".codex" not in str(chatgpt_auth.auth_path())
 
 
-def test_chatgpt_token_is_refreshed_before_it_expires():
+def test_chatgpt_later_sign_in_reuses_the_issued_client_id():
     from crane_llm.nb_extension import chatgpt_auth
 
-    fresh = _fake_jwt()
+    with _IsolatedSettings():
+        chatgpt_auth.save_record({
+            "client_id": "oaiapp_test", "ext_agent_host_id": "urn:uuid:host", "email": "user@example.com",
+        })
+        browser = _FakeBrowser(port=54321)
+        http = _sign_in(browser, _granted())
+
+        params = browser.params
+        assert params["client_id"] == "oaiapp_test"
+        assert "agent_name_hint" not in params
+        assert params["login_hint"] == "user@example.com"
+        assert params["ext_agent_host_id"] == "urn:uuid:host"
+        assert browser.registering is False
+        assert http.posts[0][1]["data"]["redirect_uri"] == "http://127.0.0.1:54321/auth/callback"
+
+
+def test_chatgpt_sign_in_rejects_a_foreign_callback():
+    from crane_llm.nb_extension import chatgpt_auth
+
+    with _IsolatedSettings():
+        browser = _FakeBrowser(callback={"client_id": "oaiapp_test", "state": "someone-else"})
+        try:
+            _sign_in(browser, _granted())
+        except chatgpt_auth.ChatGPTAuthError as exc:
+            assert "does not match" in str(exc)
+        else:
+            raise AssertionError("expected a mismatched state to be refused")
+        assert not chatgpt_auth.is_logged_in()
+
+
+def test_chatgpt_sign_in_without_plan_scope_saves_no_tokens():
+    from crane_llm.nb_extension import chatgpt_auth
+
+    def no_plan(params):
+        tokens = _granted()(params)
+        tokens["scope"] = "openid profile email offline_access"
+        return tokens
+
+    with _IsolatedSettings():
+        try:
+            _sign_in(_FakeBrowser(callback={"client_id": "oaiapp_test"}), no_plan)
+        except chatgpt_auth.ChatGPTAuthError as exc:
+            assert "plan usage" in str(exc)
+        else:
+            raise AssertionError("expected missing plan scope to be refused")
+        assert not chatgpt_auth.is_logged_in()
+        # The registration is kept for the next attempt.
+        assert chatgpt_auth.load_record()["client_id"] == "oaiapp_test"
+
+
+def test_chatgpt_sign_in_is_refused_on_hosted_notebooks():
+    import os
+
+    from crane_llm.nb_extension import chatgpt_auth, setup_wizard
+
+    with _IsolatedSettings():
+        os.environ["KAGGLE_KERNEL_RUN_TYPE"] = "Interactive"
+        try:
+            try:
+                chatgpt_auth.login(output=lambda _: None)
+            except chatgpt_auth.ChatGPTAuthError as exc:
+                assert "Kaggle" in str(exc)
+            else:
+                raise AssertionError("expected the sign-in to be refused on Kaggle")
+
+            shown = []
+            with _ListedModels(["gpt-5"]):
+                setup_wizard.setup(input=_scripted(["1", "", "n"]), getpass=_scripted(["sk-x"]), output=shown.append)
+            assert not any("ChatGPT plan" in line for line in shown)
+        finally:
+            del os.environ["KAGGLE_KERNEL_RUN_TYPE"]
+
+
+def test_chatgpt_token_is_refreshed_with_the_issued_client_id():
+    from crane_llm.nb_extension import chatgpt_auth
+
+    fresh = _fake_jwt(aud="https://api.openai.com/v1")
     http = _FakeHttp({
-        chatgpt_auth.TOKEN_URL: [_FakeResponse(200, {"access_token": fresh, "refresh_token": "rt-2"})],
+        chatgpt_auth.TOKEN_URL: [_FakeResponse(200, {"access_token": fresh, "refresh_token": "rt-2", "expires_in": 3600})],
     })
 
     with _IsolatedSettings():
-        chatgpt_auth.save_tokens({"access_token": _fake_jwt(exp_offset=30), "refresh_token": "rt-1"})
+        chatgpt_auth.save_record({
+            "client_id": "oaiapp_test", "access_token": "old", "refresh_token": "rt-1", "expires_at": 0,
+        })
         original = chatgpt_auth._http
         chatgpt_auth._http = http
         try:
@@ -1742,13 +1895,40 @@ def test_chatgpt_token_is_refreshed_before_it_expires():
         finally:
             chatgpt_auth._http = original
 
-        sent = http.posts[0][1]["data"]
-        assert sent == {"grant_type": "refresh_token", "refresh_token": "rt-1", "client_id": chatgpt_auth.CLIENT_ID}
-        # The rotated refresh token replaces the old one.
+        assert http.posts[0][1]["data"] == {
+            "grant_type": "refresh_token",
+            "client_id": "oaiapp_test",
+            "refresh_token": "rt-1",
+            "resource": "https://api.openai.com/v1",
+        }
         assert chatgpt_auth.load_tokens()["refresh_token"] == "rt-2"
 
 
-def test_setup_chatgpt_selects_the_subscription_client():
+def test_chatgpt_revoked_refresh_token_signs_out_but_keeps_registration():
+    from crane_llm.nb_extension import chatgpt_auth
+
+    http = _FakeHttp({chatgpt_auth.TOKEN_URL: [_FakeResponse(400, {"error": "invalid_grant"})]})
+
+    with _IsolatedSettings():
+        chatgpt_auth.save_record({
+            "client_id": "oaiapp_test", "access_token": "old", "refresh_token": "rt-1", "expires_at": 0,
+        })
+        original = chatgpt_auth._http
+        chatgpt_auth._http = http
+        try:
+            chatgpt_auth.access_token()
+        except chatgpt_auth.ChatGPTAuthError as exc:
+            assert "relogin=True" in str(exc)
+        else:
+            raise AssertionError("expected the revoked session to be reported")
+        finally:
+            chatgpt_auth._http = original
+
+        assert not chatgpt_auth.is_logged_in()
+        assert chatgpt_auth.load_record()["client_id"] == "oaiapp_test"
+
+
+def test_setup_chatgpt_uses_the_public_api():
     import crane_llm
     from crane_llm.nb_extension import chatgpt_auth, llm_client
 
@@ -1759,9 +1939,10 @@ def test_setup_chatgpt_selects_the_subscription_client():
         assert 'setup("chatgpt")' in settings.missing_key_message()
 
         original_login = chatgpt_auth.login
-        chatgpt_auth.login = lambda output=print: chatgpt_auth.save_tokens(
-            {"access_token": _fake_jwt(), "refresh_token": "rt"}
-        )
+        chatgpt_auth.login = lambda output=print: chatgpt_auth.save_record({
+            "client_id": "oaiapp_test", "access_token": _fake_jwt(), "refresh_token": "rt",
+            "email": "user@example.com",
+        })
         try:
             with _ListedModels(["gpt-5.5", "gpt-5.4"]):
                 crane_llm.setup("chatgpt", input=_scripted(["2", "n"]), output=lambda _: None)
@@ -1771,21 +1952,23 @@ def test_setup_chatgpt_selects_the_subscription_client():
         resolved = settings.resolve()
         assert resolved.api_style == "chatgpt"
         assert resolved.model == "gpt-5.4"
-        assert resolved.base_url == chatgpt_auth.BASE_URL
+        assert resolved.base_url == "https://api.openai.com/v1"
         client = llm_client.default_client()
         assert isinstance(client, llm_client.ChatGPTSubscriptionLLMClient)
 
         sdk = client._get_client()
-        assert sdk.default_headers["ChatGPT-Account-ID"] == "acct-123"
-        assert sdk.default_headers["originator"] == "crane-llm"
+        assert str(sdk.base_url).rstrip("/") == "https://api.openai.com/v1"
+        assert "ChatGPT-Account-ID" not in sdk.default_headers
+        assert "originator" not in sdk.default_headers
 
-        # The backend's request contract.
+        # The documented request contract for plan usage.
         kwargs = client._request_kwargs("hello")
         assert kwargs["store"] is False and kwargs["stream"] is True
         assert kwargs["instructions"] == client.system_prompt
-        assert "max_output_tokens" not in kwargs
+        for unsupported in ("max_output_tokens", "temperature", "reasoning"):
+            assert unsupported not in kwargs
 
-        # A key set afterwards takes over from the subscription.
+        # A key set afterwards takes over from the plan.
         crane_llm.set_api_key("sk-later")
         assert settings.resolve().api_style == "responses"
 
@@ -1804,6 +1987,32 @@ def test_chatgpt_client_assembles_the_streamed_reply():
     sdk = SimpleNamespace(responses=SimpleNamespace(create=lambda **kwargs: iter(events)))
     client = ChatGPTSubscriptionLLMClient(model="gpt-5.5", system_prompt="s")
     assert client._call(sdk, "p") == '{"prediction": false}'
+
+
+def test_chatgpt_usage_limit_is_explained():
+    from types import SimpleNamespace
+
+    from crane_llm.nb_extension import assistant
+    from crane_llm.nb_extension.llm_client import ChatGPTSubscriptionLLMClient
+
+    failed = SimpleNamespace(
+        status="failed",
+        error=SimpleNamespace(code="subscription_sharing_usage_limit_exceeded", message="limit"),
+    )
+    events = [
+        SimpleNamespace(type="response.output_text.delta", delta="{"),
+        SimpleNamespace(type="response.failed", response=failed),
+    ]
+    sdk = SimpleNamespace(responses=SimpleNamespace(create=lambda **kwargs: iter(events)))
+    client = ChatGPTSubscriptionLLMClient(model="gpt-5.5", system_prompt="s")
+    try:
+        client._call(sdk, "p")
+    except Exception as exc:
+        message = assistant.describe_error(exc)
+    else:
+        raise AssertionError("expected the usage limit to be reported")
+    assert message.startswith("Your ChatGPT plan's usage limit")
+    assert "chatgpt.com/settings/usage" in message
 
 
 def test_chatgpt_rejection_asks_to_sign_in_again():
