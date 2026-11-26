@@ -25,9 +25,13 @@ variable beat the same name in ``.env``, and makes ``OPENAI_API_KEY`` in
 rank below step 3 predicts the wrong winner whenever the file and the shell use
 different variable names.
 
-Step 4 is what ``crane_llm.set_api_key(...)`` writes, and is the setup path we
-document for users of the installed package: it survives restarts and is not
-attached to any one notebook or directory.
+Step 4 is what ``crane_llm.setup()`` (interactive) and ``crane_llm.set_api_key(...)``
+write, and is the setup path we document for users of the installed package: it
+survives restarts and is not attached to any one notebook or directory.
+
+With ``api_style="chatgpt"`` there is no API key at all: the user signed in with
+a ChatGPT subscription and the tokens live in ``chatgpt_auth.json`` beside the
+configuration file. See ``chatgpt_auth``.
 """
 
 from __future__ import annotations
@@ -48,7 +52,15 @@ DEFAULT_CONFIG_NAME = "config.json"
 # Recognised keys in the configuration file. Anything else is preserved on
 # write but ignored on read, so a newer version's settings survive an older
 # version touching the file.
-_CONFIG_KEYS = ("api_key", "base_url", "model", "api_style", "scan_limit")
+_CONFIG_KEYS = ("provider", "api_key", "base_url", "model", "api_style", "scan_limit")
+
+# ``api_style`` values. "chatgpt" signs in with a ChatGPT subscription instead
+# of an API key; see ``chatgpt_auth``.
+API_STYLES = ("responses", "chat", "chatgpt")
+CHATGPT_STYLE = "chatgpt"
+# Stands in for the API key when signed in with ChatGPT, so that the
+# "is there a key?" checks pass. The real token is fetched per request.
+CHATGPT_KEY_PLACEHOLDER = "chatgpt-oauth"
 
 # The most values a built-in check may read from the user's data, for checks
 # that have to look at every value, such as whether a column converts to int.
@@ -160,9 +172,11 @@ def set_api_key(
     model: Optional[str] = None,
     api_style: Optional[str] = None,
 ) -> Path:
-    """Save credentials to ``~/.crane_llm/config.json``.
+    """Save credentials to ``~/.crane_llm/config.json`` without prompting.
 
-    Run once from any notebook cell::
+    ``crane_llm.setup()`` is the interactive way to do the same, and the only
+    way to sign in with a ChatGPT subscription. This function is for scripts
+    and for anyone who prefers one line::
 
         import crane_llm
         crane_llm.set_api_key("sk-...")
@@ -195,6 +209,17 @@ def set_api_key(
 
     if not normalised:
         raise ValueError("Nothing to save: pass at least one of api_key, base_url, model, api_style.")
+
+    # A key set after signing in with ChatGPT means "use this key now". Left
+    # alone, the stored "chatgpt" style would keep ignoring it.
+    if api_style is None and (api_key or base_url):
+        try:
+            stored_style = read_config().get("api_style")
+        except RuntimeError:
+            stored_style = None
+        if stored_style == CHATGPT_STYLE:
+            normalised["api_style"] = None
+            normalised["provider"] = None
 
     return write_config(**normalised)
 
@@ -322,7 +347,7 @@ class Settings(NamedTuple):
     api_key: Optional[str]
     base_url: Optional[str]
     model: str
-    api_style: str  # "responses" or "chat"
+    api_style: str  # "responses", "chat" or "chatgpt"
 
 
 def resolve(
@@ -339,6 +364,10 @@ def resolve(
     almost no OpenAI-compatible server implements ``/responses`` -- OpenRouter,
     Groq, Together, vLLM and Ollama all expose ``/chat/completions`` only.
     Azure OpenAI is the exception, hence the explicit override.
+
+    ``api_style="chatgpt"`` (written by ``setup()`` for the ChatGPT
+    subscription) ignores keys and base URLs: the endpoint is fixed and the
+    credentials are the stored ChatGPT session.
     """
 
     _load_dotenv_once()
@@ -351,6 +380,37 @@ def resolve(
         stored.get("base_url"),
     )
 
+    resolved_style = _first(
+        api_style,
+        os.environ.get("CRANE_LLM_API_STYLE"),
+        stored.get("api_style"),
+    )
+    if resolved_style is None:
+        resolved_style = "chat" if resolved_base_url else "responses"
+    resolved_style = resolved_style.lower()
+    if resolved_style not in API_STYLES:
+        raise RuntimeError(text("errors.unknown_api_style", style=resolved_style))
+
+    from ..llms.config_llms import config
+
+    if resolved_style == CHATGPT_STYLE:
+        # Signed in with a ChatGPT subscription: no key, one fixed endpoint.
+        from . import chatgpt_auth
+
+        resolved_model = _first(
+            model,
+            os.environ.get("CRANE_LLM_MODEL"),
+            stored.get("model"),
+            chatgpt_auth.DEFAULT_MODEL,
+        )
+        assert resolved_model is not None
+        return Settings(
+            api_key=CHATGPT_KEY_PLACEHOLDER if chatgpt_auth.is_logged_in() else None,
+            base_url=chatgpt_auth.BASE_URL,
+            model=resolved_model,
+            api_style=resolved_style,
+        )
+
     resolved_api_key = _first(
         api_key,
         os.environ.get("CRANE_LLM_API_KEY"),
@@ -362,8 +422,6 @@ def resolve(
     if resolved_api_key is None:
         resolved_api_key = hosted_secret_api_key()
 
-    from ..llms.config_llms import config
-
     resolved_model = _first(
         model,
         os.environ.get("CRANE_LLM_MODEL"),
@@ -371,17 +429,6 @@ def resolve(
         config.openai_llm_model,
     )
     assert resolved_model is not None  # config always supplies a default
-
-    resolved_style = _first(
-        api_style,
-        os.environ.get("CRANE_LLM_API_STYLE"),
-        stored.get("api_style"),
-    )
-    if resolved_style is None:
-        resolved_style = "chat" if resolved_base_url else "responses"
-    resolved_style = resolved_style.lower()
-    if resolved_style not in ("responses", "chat"):
-        raise RuntimeError(text("errors.unknown_api_style", style=resolved_style))
 
     return Settings(
         api_key=resolved_api_key,
@@ -398,6 +445,13 @@ def missing_key_message() -> str:
     wrong for someone who has just installed the wheel, and the sidebar shows
     it verbatim.
     """
+
+    try:
+        style = _first(os.environ.get("CRANE_LLM_API_STYLE"), read_config().get("api_style"))
+    except RuntimeError:
+        style = None
+    if style and style.lower() == CHATGPT_STYLE:
+        return text("errors.chatgpt_not_logged_in")
 
     platform = hosted_platform()
     if platform == "kaggle":

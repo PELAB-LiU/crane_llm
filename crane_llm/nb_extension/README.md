@@ -30,7 +30,7 @@ Run `jlpm` commands in `crane_llm/nb_extension`, and everything else from the re
 
 - a Python environment with **JupyterLab 4**
 - **Node.js** 20.19+ or 22.12+ on `PATH`, to compile the frontend
-- an **API key** for the model you want to call, set up as in the user guide's [Set up a model](../../README_PYPI.md#set-up-a-model)
+- a **model** to call (an API key, or a ChatGPT sign-in), set up with `crane_llm.setup()` as in the user guide's [Set up a model](../../README_PYPI.md#set-up-a-model)
 
 Every command below must run in the environment that has JupyterLab:
 

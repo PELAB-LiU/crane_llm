@@ -18,7 +18,14 @@ Subpackages:
 
 __version__ = "1.0.1"
 
-__all__ = ["__version__", "load_ipython_extension", "set_api_key", "set_scan_limit"]
+__all__ = [
+    "__version__",
+    "load_ipython_extension",
+    "setup",
+    "set_api_key",
+    "set_scan_limit",
+    "logout_chatgpt",
+]
 
 
 def _jupyter_labextension_paths():
@@ -49,12 +56,36 @@ def load_ipython_extension(ipython):
     _load(ipython)
 
 
-def set_api_key(*args, **kwargs):
-    """Store an API key in the user configuration file.
+def setup(*args, **kwargs):
+    """Choose the model provider interactively and save it.
 
-    Re-exported here because this is the one piece of setup a user of the
-    installed package has to do, and ``crane_llm.set_api_key`` is the obvious
-    place to look for it.
+    The one piece of setup a user of the installed package has to do::
+
+        import crane_llm
+        crane_llm.setup()
+
+    Lists the supported providers (OpenAI, a ChatGPT subscription, OpenRouter,
+    Gemini, Groq, Ollama, any OpenAI-compatible endpoint) and asks only what
+    the chosen one needs. See ``crane_llm.nb_extension.setup_wizard.setup``.
+    """
+
+    from .nb_extension.setup_wizard import setup as _setup
+
+    return _setup(*args, **kwargs)
+
+
+def logout_chatgpt():
+    """Forget the stored ChatGPT sign-in. True if there was one."""
+
+    from .nb_extension.setup_wizard import logout_chatgpt as _logout
+
+    return _logout()
+
+
+def set_api_key(*args, **kwargs):
+    """Store an API key in the user configuration file, without prompting.
+
+    ``setup()`` is the interactive way; this one-liner suits scripts.
     """
 
     from .nb_extension.settings import set_api_key as _set_api_key

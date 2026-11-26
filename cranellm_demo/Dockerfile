@@ -27,7 +27,7 @@ RUN pip install --no-cache-dir \
         matplotlib==3.10.3 \
         seaborn==0.13.2
 
-# Run as an ordinary user. ~/.crane_llm/config.json, written by set_api_key,
+# Run as an ordinary user. ~/.crane_llm/config.json, written by crane_llm.setup(),
 # lives in this user's home.
 RUN useradd --create-home --uid 1000 crane
 USER crane

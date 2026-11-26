@@ -28,7 +28,9 @@ _CELL_MAGIC_RE = re.compile(r"^\s*%%crane_llm\b")
 # Line magics that only drive the extension.
 _DRIVER_MAGIC_RE = re.compile(r"^\s*%(?:crane_llm\b|(?:load|reload|unload)_ext\s+crane_llm\s*$)")
 
-_SET_API_KEY_CALL_RE = re.compile(r"\bset_api_key\s*\(")
+# ``crane_llm.setup(...)`` may be given ``api_key=`` too. Matched only with
+# its module prefix, so a user's own ``setup()`` function stays in the prompt.
+_SET_API_KEY_CALL_RE = re.compile(r"\b(set_api_key|crane_llm\.setup)\s*\(")
 
 # Key formats of the providers the README documents: OpenAI and OpenRouter
 # (``sk-``, ``sk-proj-``, ``sk-or-``), Groq (``gsk_``) and Google (``AIza``).
@@ -108,7 +110,7 @@ def _drives_extension(statement: ast.stmt, driver_names: set) -> bool:
 def redact_secrets(text: str) -> str:
     """Remove API keys from text that is about to be sent to the model.
 
-    ``set_api_key(...)`` calls are dropped whole, including arguments continued
+    ``set_api_key(...)`` and ``crane_llm.setup(...)`` calls are dropped whole, including arguments continued
     on later lines, because a key need not follow any recognisable format.
     Anything else that looks like a key is replaced by ``[REDACTED]``.
     """
@@ -129,6 +131,6 @@ def redact_secrets(text: str) -> str:
         depth = tail.count("(") - tail.count(")")
         indent = line[: len(line) - len(line.lstrip())]
         newline = "\n" if line.endswith("\n") else ""
-        kept.append(f"{indent}# set_api_key(...) removed by CRANE-LLM{newline}")
+        kept.append(f"{indent}# {match.group(1)}(...) removed by CRANE-LLM{newline}")
 
     return _KEY_LITERAL_RE.sub(REDACTED, "".join(kept))
