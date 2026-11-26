@@ -17,14 +17,14 @@ Scenes 1, 5 and 6 use only the built-in checks and need no API key. Scenes 2 to 
 The image has JupyterLab, CRANE-LLM, the libraries the notebook uses and the notebook itself, all at fixed versions. With [Docker](https://docs.docker.com/get-docker/) installed:
 
 ```bash
-docker run --rm -p 127.0.0.1:8888:8888 -e CRANE_LLM_API_KEY=sk-... ghcr.io/yarinamomo/crane-llm-demo:1.0.1
+docker run --rm -p 127.0.0.1:8888:8888 -e CRANE_LLM_API_KEY=sk-... ghcr.io/yarinamomo/crane-llm-demo:1.0.2
 ```
 
 Then open <http://localhost:8888>, which opens the demo notebook. Leave out `-e CRANE_LLM_API_KEY=...` to use the built-in checks only, and add `-e CRANE_LLM_MODEL=...` and `-e CRANE_LLM_BASE_URL=...` for a provider other than OpenAI. Stop it with Ctrl+C; nothing is kept after it stops.
 
 ### In your own JupyterLab
 
-- JupyterLab with CRANE-LLM installed (`pip install "crane-llm[lab]"`), plus `pandas`, `scikit-learn`, `matplotlib` and `seaborn`.
+- JupyterLab with CRANE-LLM installed (`pip install "crane-llm[lab]"`), plus `numpy`, `pandas`, `scikit-learn`, `matplotlib` and `seaborn`.
 - A model chosen once with `crane_llm.setup()`.
 - Open `cranellm_demo.ipynb` from this folder, so that it finds `data/`.
 

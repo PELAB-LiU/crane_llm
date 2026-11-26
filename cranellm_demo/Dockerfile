@@ -10,7 +10,7 @@
 
 FROM python:3.11-slim
 
-ARG CRANE_LLM_VERSION=1.0.1
+ARG CRANE_LLM_VERSION=1.0.2
 
 LABEL org.opencontainers.image.title="CRANE-LLM demo" \
       org.opencontainers.image.description="JupyterLab with CRANE-LLM and its demo notebook" \
