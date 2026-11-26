@@ -96,7 +96,7 @@ crane_llm.setup("ollama", base_url="http://localhost:11434/v1", model="qwen2.5-c
 
 ### ChatGPT plan (experimental)
 
-Choosing **Continue with ChatGPT** lets CRANE-LLM use your ChatGPT plan (Plus, Pro, Business) instead of an API key, through OpenAI's documented [Sign in with ChatGPT for open-source tools](https://developers.openai.com/siwc/token-sharing-open-source/sign-in):
+Choosing **Continue with ChatGPT** lets CRANE-LLM use your ChatGPT plan (Plus, Pro, Business; the Free plan is not supported) instead of an API key, through OpenAI's documented [Sign in with ChatGPT for open-source tools](https://developers.openai.com/siwc/token-sharing-open-source/sign-in):
 
 1. `setup()` opens a browser tab at `auth.openai.com` (and prints the link in case it does not open).
 2. The first time, ChatGPT asks you to approve CRANE-LLM for your account. This registers CRANE-LLM as its own app; later sign-ins reuse that registration.
