@@ -7,7 +7,7 @@ cell or Python prompt; the key is read with ``getpass`` so it is neither echoed
 nor left in the cell's source.
 
 Every prompt can be answered in advance with an argument, so
-``setup("ollama", model="qwen2.5-coder:32b")`` asks nothing.
+``setup("ollama", model="qwen2.5-coder:32b", test=False)`` asks nothing.
 """
 
 from __future__ import annotations
@@ -156,7 +156,7 @@ def _setup_chatgpt(prompt: _Prompter, model: Optional[str], relogin: Optional[bo
         model = _pick_model(prompt, _BY_ID["chatgpt"], None, None, current=None)
 
     # The stored API key, if any, is kept: the "chatgpt" style ignores it, and
-    # it is still there when switching back to that provider.
+    # "key_provider" lets _setup_with_key offer it again when switching back.
     return {
         "provider": "chatgpt",
         "api_style": settings.CHATGPT_STYLE,
@@ -172,21 +172,29 @@ def _setup_with_key(
     api_key: Optional[str],
     model: Optional[str],
     base_url: Optional[str],
+    provider_given: bool,
 ) -> Dict[str, Optional[str]]:
-    same_provider = _current_provider(stored) == provider
+    current_provider = _current_provider(stored)
+    same_provider = current_provider == provider
 
     if base_url is None:
-        if provider.ask_base_url:
-            default = (stored.get("base_url") if same_provider else None) or provider.base_url
+        default = (stored.get("base_url") if same_provider else None) or provider.base_url
+        # A provider named in the call, as in setup("ollama", model=...), takes
+        # its usual address without asking, so a script does not stop here.
+        # Only a provider with no usual address ("custom") still has to ask.
+        if provider.ask_base_url and not (provider_given and default):
             while True:
                 base_url = prompt.ask(text("setup.ask_base_url"), default)
                 if base_url:
                     break
                 prompt.output(text("setup.base_url_required"))
         else:
-            base_url = provider.base_url
+            base_url = default
 
-    existing_key = stored.get("api_key") if same_provider else None
+    # The provider the stored key was typed for. Recorded separately because a
+    # switch to the ChatGPT plan changes "provider" but keeps the key.
+    key_owner = stored.get("key_provider") or (current_provider.id if current_provider else None)
+    existing_key = stored.get("api_key") if key_owner == provider.id else None
     if api_key is None and provider.key != "none":
         while True:
             question = text("setup.ask_key_keep") if existing_key else text("setup.ask_key")
@@ -200,9 +208,11 @@ def _setup_with_key(
         current = stored.get("model") if same_provider else None
         model = _pick_model(prompt, provider, api_key, base_url, current=current if isinstance(current, str) else None)
 
+    api_key = api_key if provider.key != "none" else None
     return {
         "provider": provider.id,
-        "api_key": api_key if provider.key != "none" else None,
+        "api_key": api_key,
+        "key_provider": provider.id if api_key else None,
         "base_url": base_url or None,
         "model": model,
         # Derived from base_url by settings.resolve(): Responses for OpenAI,
@@ -343,7 +353,8 @@ def setup(
 
     ``provider`` is one of ``openai``, ``chatgpt``, ``openrouter``,
     ``gemini``, ``groq``, ``ollama`` or ``custom``. Any argument given is not
-    asked for. ``test`` sends one short request at the end to check the setup
+    asked for. A named provider also takes its usual server address unless
+    ``base_url`` says otherwise; only ``custom``, which has none, asks. ``test`` sends one short request at the end to check the setup
     works (asked if not given). ``input``, ``getpass`` and ``output`` replace
     the console, for tests.
     """
@@ -377,7 +388,7 @@ def setup(
     if chosen.id == "chatgpt":
         values = _setup_chatgpt(prompt, model, relogin)
     else:
-        values = _setup_with_key(prompt, chosen, stored, api_key, model, base_url)
+        values = _setup_with_key(prompt, chosen, stored, api_key, model, base_url, provider_given=provider is not None)
 
     path = settings.write_config(**values)
     output(text("setup.saved", provider=chosen.label, model=values["model"], path=path))

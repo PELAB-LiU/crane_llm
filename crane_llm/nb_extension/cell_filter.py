@@ -28,9 +28,15 @@ _CELL_MAGIC_RE = re.compile(r"^\s*%%crane_llm\b")
 # Line magics that only drive the extension.
 _DRIVER_MAGIC_RE = re.compile(r"^\s*%(?:crane_llm\b|(?:load|reload|unload)_ext\s+crane_llm\s*$)")
 
-# ``crane_llm.setup(...)`` may be given ``api_key=`` too. Matched only with
-# its module prefix, so a user's own ``setup()`` function stays in the prompt.
-_SET_API_KEY_CALL_RE = re.compile(r"\b(set_api_key|crane_llm\.setup)\s*\(")
+# The functions that take an API key. ``setup`` is a common name, so a bare
+# ``setup(`` counts only when the text imports it from crane_llm; a user's own
+# ``setup()`` function stays in the prompt.
+_KEY_FUNCTIONS = ("set_api_key", "setup")
+
+# ``from crane_llm import setup`` and ``from crane_llm import (setup as s, ...)``.
+_FROM_IMPORT_RE = re.compile(r"^\s*from\s+crane_llm(?:\.[\w.]+)?\s+import\s+\(?([^)#\n]*)", re.MULTILINE)
+# ``import crane_llm as cl``, also inside ``import os, crane_llm as cl``.
+_MODULE_ALIAS_RE = re.compile(r"^\s*import\s+[^#\n]*?\bcrane_llm\s+as\s+(\w+)", re.MULTILINE)
 
 # Key formats of the providers the README documents: OpenAI and OpenRouter
 # (``sk-``, ``sk-proj-``, ``sk-or-``), Groq (``gsk_``) and Google (``AIza``).
@@ -107,14 +113,37 @@ def _drives_extension(statement: ast.stmt, driver_names: set) -> bool:
     return False
 
 
+def _key_call_re(text: str) -> "re.Pattern[str]":
+    """Matches a call of crane_llm's ``set_api_key`` or ``setup`` in ``text``.
+
+    Covers ``crane_llm.setup(``, a module alias (``cl.setup(``), and names
+    imported from crane_llm, renamed or not (``setup(``, ``s(``).
+    ``set_api_key(`` is matched under any name prefix, since nothing else is
+    likely to be called that.
+    """
+
+    callees = [r"\bset_api_key", r"(?<![\w.])crane_llm\.setup"]
+    for alias in _MODULE_ALIAS_RE.findall(text):
+        callees.append(rf"(?<![\w.]){re.escape(alias)}\.setup")
+    for names in _FROM_IMPORT_RE.findall(text):
+        for item in names.split(","):
+            parts = item.split()
+            if parts and parts[0] in _KEY_FUNCTIONS:
+                bound = parts[2] if len(parts) == 3 and parts[1] == "as" else parts[0]
+                callees.append(rf"(?<![\w.]){re.escape(bound)}")
+    return re.compile(rf"({'|'.join(callees)})\s*\(")
+
+
 def redact_secrets(text: str) -> str:
     """Remove API keys from text that is about to be sent to the model.
 
-    ``set_api_key(...)`` and ``crane_llm.setup(...)`` calls are dropped whole, including arguments continued
-    on later lines, because a key need not follow any recognisable format.
-    Anything else that looks like a key is replaced by ``[REDACTED]``.
+    Calls of crane_llm's ``set_api_key(...)`` and ``setup(...)``, under any
+    name they were imported as, are dropped whole, including arguments
+    continued on later lines, because a key need not follow any recognisable
+    format. Anything else that looks like a key is replaced by ``[REDACTED]``.
     """
 
+    key_call_re = _key_call_re(text)
     kept = []
     depth = 0
     for line in text.splitlines(keepends=True):
@@ -122,7 +151,7 @@ def redact_secrets(text: str) -> str:
             depth += line.count("(") - line.count(")")
             continue
 
-        match = _SET_API_KEY_CALL_RE.search(line)
+        match = key_call_re.search(line)
         if match is None:
             kept.append(line)
             continue

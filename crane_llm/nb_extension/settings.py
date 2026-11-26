@@ -52,7 +52,7 @@ DEFAULT_CONFIG_NAME = "config.json"
 # Recognised keys in the configuration file. Anything else is preserved on
 # write but ignored on read, so a newer version's settings survive an older
 # version touching the file.
-_CONFIG_KEYS = ("provider", "api_key", "base_url", "model", "api_style", "scan_limit")
+_CONFIG_KEYS = ("provider", "api_key", "key_provider", "base_url", "model", "api_style", "scan_limit")
 
 # ``api_style`` values. "chatgpt" signs in with a ChatGPT subscription instead
 # of an API key; see ``chatgpt_auth``.
@@ -209,6 +209,11 @@ def set_api_key(
 
     if not normalised:
         raise ValueError("Nothing to save: pass at least one of api_key, base_url, model, api_style.")
+
+    # Which provider this key is for is not known here; setup() then takes it
+    # to belong to the stored provider.
+    if api_key is not None:
+        normalised["key_provider"] = None
 
     # A key set after signing in with ChatGPT means "use this key now". Left
     # alone, the stored "chatgpt" style would keep ignoring it.

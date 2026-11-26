@@ -1672,13 +1672,82 @@ def test_setup_local_server_asks_for_no_key():
 
     with _IsolatedSettings() as settings, _ListedModels(["llama3.2:3b", "qwen2.5-coder:32b"]):
         setup_wizard.setup(
-            "ollama", input=_scripted(["", "", "n"]),
+            "ollama", input=_scripted(["", "n"]),  # first model, no test
             getpass=_scripted([]), output=lambda _: None,
         )
         resolved = settings.resolve()
         assert resolved.base_url == "http://localhost:11434/v1"
         assert resolved.api_key == "local"
         llm_client.default_client()._get_client()
+
+
+def test_setup_named_provider_and_model_ask_nothing():
+    """setup("ollama", model=..., test=False) must not stop a script at a prompt."""
+
+    from crane_llm.nb_extension import setup_wizard
+
+    def no_prompt(question):
+        raise AssertionError(f"unexpected prompt: {question}")
+
+    with _IsolatedSettings() as settings:
+        setup_wizard.setup(
+            "ollama", model="qwen2.5-coder:32b", test=False,
+            input=no_prompt, getpass=no_prompt, output=lambda _: None,
+        )
+        assert settings.resolve().base_url == "http://localhost:11434/v1"
+
+        # A server address saved for that provider earlier is kept.
+        setup_wizard.setup(
+            "ollama", base_url="http://gpu-box:11434/v1", model="qwen2.5-coder:32b", test=False,
+            input=no_prompt, getpass=no_prompt, output=lambda _: None,
+        )
+        setup_wizard.setup(
+            "ollama", model="llama3.2:3b", test=False,
+            input=no_prompt, getpass=no_prompt, output=lambda _: None,
+        )
+        assert settings.resolve().base_url == "http://gpu-box:11434/v1"
+
+
+def test_setup_custom_provider_still_asks_for_its_address():
+    from crane_llm.nb_extension import setup_wizard
+
+    with _IsolatedSettings() as settings:
+        inputs = _scripted(["https://llm.example.org/v1"])
+        setup_wizard.setup(
+            "custom", api_key="k", model="m", test=False,
+            input=inputs, output=lambda _: None,
+        )
+        assert len(inputs.asked) == 1
+        assert settings.resolve().base_url == "https://llm.example.org/v1"
+
+
+def test_setup_offers_the_saved_key_again_after_the_chatgpt_plan():
+    from crane_llm.nb_extension import chatgpt_auth, setup_wizard
+
+    with _IsolatedSettings() as settings:
+        setup_wizard.setup("openai", api_key="sk-saved", model="gpt-5", test=False, output=lambda _: None)
+
+        original = chatgpt_auth.is_logged_in
+        chatgpt_auth.is_logged_in = lambda: True
+        try:
+            setup_wizard.setup(
+                "chatgpt", model="gpt-5.5", relogin=False, test=False, output=lambda _: None,
+            )
+        finally:
+            chatgpt_auth.is_logged_in = original
+        assert settings.read_config()["provider"] == "chatgpt"
+
+        # Back to OpenAI: Enter keeps the key typed before the switch.
+        keys = _scripted([""])
+        setup_wizard.setup("openai", model="gpt-5", test=False, getpass=keys, output=lambda _: None)
+        assert "keep" in keys.asked[0].lower()
+        assert settings.resolve().api_key == "sk-saved"
+
+        # The key is not offered to another provider.
+        keys = _scripted(["gsk_other"])
+        setup_wizard.setup("groq", model="qwen/qwen3-32b", test=False, getpass=keys, output=lambda _: None)
+        assert "keep" not in keys.asked[0].lower()
+        assert settings.resolve().api_key == "gsk_other"
 
 
 def test_setup_rejects_an_unknown_provider():
@@ -2036,6 +2105,31 @@ def test_setup_call_with_a_key_never_reaches_the_prompt():
     prompt = build_crane_prompt(state, include_runinfo=False, shell=None)
     assert "plain-secret" not in prompt
     assert "x = 1" in prompt and "y = 2" in prompt
+
+
+def test_imported_or_aliased_setup_call_never_reaches_the_prompt():
+    """``setup`` imported from crane_llm, renamed or not, or via a module alias."""
+
+    cells = [
+        "from crane_llm import setup\nsetup('custom', api_key='secret-a')\nimport pandas as pd",
+        "from crane_llm import setup as configure\nconfigure(api_key='secret-b')\ndf = 1",
+        "import os, crane_llm as cl\ncl.setup(\n    api_key='secret-c')\nz = 3",
+        "from crane_llm import set_api_key as sak\nsak('secret-d')\nw = 4",
+    ]
+    for number, source in enumerate(cells):
+        state = NotebookSessionState()
+        state.record_executed_cell(f"c{number}", source)
+        state.set_target_cell("t", "print(1)")
+        prompt = build_crane_prompt(state, include_runinfo=False, shell=None)
+        assert "secret-" not in prompt, source
+        assert source.splitlines()[-1] in prompt
+
+
+def test_users_own_setup_function_stays_in_the_prompt():
+    from crane_llm.nb_extension.cell_filter import redact_secrets
+
+    source = "def setup(seed):\n    return seed\nsetup(42)\nmodel.setup(cfg)\n"
+    assert redact_secrets(source) == source
 
 
 def test_model_picker_searches_a_long_list():
