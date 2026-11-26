@@ -199,7 +199,7 @@
       "bad_callback": "The ChatGPT sign-in returned an answer that does not match this attempt, so it was ignored. Run crane_llm.setup(\"chatgpt\") again.",
       "access_denied": "The ChatGPT sign-in was cancelled in the browser. Nothing was saved.",
       "authorize_failed": "ChatGPT refused the sign-in: {error}",
-      "exchange_failed": "The ChatGPT sign-in could not be completed (HTTP {status}). Run crane_llm.setup(\"chatgpt\") again.",
+      "exchange_failed": "The ChatGPT sign-in could not be completed (HTTP {status}, {detail}). Run crane_llm.setup(\"chatgpt\") again.",
       "bad_id_token": "The ChatGPT sign-in returned an identity token that failed its checks ({problems}), so it was not used.",
       "plan_not_granted": "You signed in, but using your ChatGPT plan was not allowed for CRANE-LLM, so the LLM cannot be asked this way. Run crane_llm.setup(\"chatgpt\") again and allow plan usage, or choose an API key with crane_llm.setup().",
       "refresh_failed": "Could not renew the ChatGPT session (HTTP {status}). Try again in a minute; you stay signed in."

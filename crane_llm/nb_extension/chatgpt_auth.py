@@ -287,6 +287,29 @@ def _error_code(response) -> str:
     return ""
 
 
+def _error_detail(response) -> str:
+    """The server's reason for a failed OAuth request, for the error message.
+
+    OAuth errors carry no tokens, so the reason is safe to show.
+    """
+
+    code = _error_code(response)
+    try:
+        body = response.json()
+    except Exception:
+        body = None
+    description = ""
+    if isinstance(body, dict):
+        error = body.get("error")
+        description = str(
+            body.get("error_description")
+            or (error.get("message") if isinstance(error, dict) else "")
+            or body.get("detail")
+            or ""
+        )
+    return ": ".join(part for part in (code, description) if part) or "no reason given"
+
+
 def _store_token_response(record: Dict[str, Any], data: Dict[str, Any]) -> Dict[str, Any]:
     updated = dict(record)
     updated["access_token"] = data["access_token"]
@@ -524,7 +547,9 @@ def login(
     if response.status_code != 200 or not isinstance(data, dict) or not data.get("access_token"):
         if _error_code(response) == "invalid_client":
             raise ChatGPTAuthError(text("errors.chatgpt_invalid_client"))
-        raise ChatGPTAuthError(text("setup.chatgpt.exchange_failed", status=response.status_code))
+        raise ChatGPTAuthError(
+            text("setup.chatgpt.exchange_failed", status=response.status_code, detail=_error_detail(response))
+        )
 
     granted = str(data.get("scope") or callback.get("scope") or "").split()
     claims = _check_id_token(data.get("id_token", ""), client_id, nonce)
